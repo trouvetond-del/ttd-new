@@ -43,6 +43,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const body = req.body || {};
+    console.log('GetAutoSEO webhook reçu:', JSON.stringify(body).substring(0, 2000));
 
     // GetAutoSEO envoie un événement article.published ou article.updated
     const event = req.headers['x-autoseo-event'] || body.event || '';
@@ -53,9 +54,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const slugRaw = article.slug || (titre ? slugify(titre) : null);
 
     if (!titre || !contenu || !slugRaw) {
-      return res.status(400).json({
-        error: 'Missing required fields',
-        details: { titre: !!titre, contenu: !!contenu, slug: !!slugRaw },
+      // Payload incomplet : probablement un "Send Test" de connectivité,
+      // pas un vrai article. On log pour debug, mais on répond 200
+      // (un test de connectivité ne doit jamais être bloquant).
+      console.log('GetAutoSEO webhook: payload incomplet reçu (probablement un test)', JSON.stringify(body));
+      return res.status(200).json({
+        success: true,
+        note: 'Requête reçue et authentifiée, mais champs article incomplets — aucun article créé.',
+        received_keys: Object.keys(body),
       });
     }
 
