@@ -1,6 +1,7 @@
 // api/getautoseo-webhook.ts - Vercel Serverless Function
-// Reçoit les événements article.published / article.updated de GetAutoSEO
-// et fait un upsert dans la table Supabase `articles` (clé : slug)
+// Reçoit les événements article.published / article.updated / test de GetAutoSEO
+// (https://getautoseo.com) et fait un upsert dans la table Supabase `articles`
+// (clé : slug). Schéma du payload confirmé via getautoseo.com/integrations.
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
@@ -12,6 +13,7 @@ const supabase = createClient(
 );
 
 const WEBHOOK_SECRET = process.env.GETAUTOSEO_WEBHOOK_SECRET!;
+const SITE_URL = 'https://www.trouvetondemenageur.fr';
 
 function cleanMarkdownFences(text: string | null | undefined): string {
   if (!text) return '';
@@ -21,20 +23,12 @@ function cleanMarkdownFences(text: string | null | undefined): string {
     .trim();
 }
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // enlève les accents
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
-}
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Vérification du Bearer token
+  // Vérification du Bearer token (obligatoire selon la doc GetAutoSEO)
   const authHeader = req.headers.authorization || '';
   const token = authHeader.replace(/^Bearer\s+/i, '');
   if (!WEBHOOK_SECRET || token !== WEBHOOK_SECRET) {
@@ -45,33 +39,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const body = req.body || {};
     console.log('GetAutoSEO webhook reçu:', JSON.stringify(body).substring(0, 2000));
 
-    // GetAutoSEO envoie un événement article.published ou article.updated
-    const event = req.headers['x-autoseo-event'] || body.event || '';
-    const article = body.article || body.data || body;
+    // Champs exacts documentés par GetAutoSEO (Payload Fields)
+    const event: string = body.event || ''; // 'article.published' | 'article.updated' | 'test'
+    const titre: string | null = body.title || null;
+    const slug: string | null = body.slug || null;
+    const contenuHtml: string = cleanMarkdownFences(body.content_html || body.content_markdown || null);
 
-    const titre = article.title || article.titre || null;
-    const contenu = cleanMarkdownFences(article.content || article.contenu || null);
-    const slugRaw = article.slug || (titre ? slugify(titre) : null);
+    // GetAutoSEO ne fournit pas de champ "ville" (ciblage local) : on laisse
+    // NULL, il faudra le renseigner manuellement si besoin plus tard.
+    const keywordsArr: string[] = Array.isArray(body.keywords) ? body.keywords : [];
+    const motCle = keywordsArr.length > 0 ? keywordsArr.join(', ') : (body.metaKeywords || null);
 
-    if (!titre || !contenu || !slugRaw) {
-      // Payload incomplet : probablement un "Send Test" de connectivité,
-      // pas un vrai article. On log pour debug, mais on répond 200
-      // (un test de connectivité ne doit jamais être bloquant).
-      console.log('GetAutoSEO webhook: payload incomplet reçu (probablement un test)', JSON.stringify(body));
+    // "test" (Send Test) ou payload incomplet : on répond 200 sans écrire en base
+    if (event === 'test' || !titre || !slug || !contenuHtml) {
+      console.log('GetAutoSEO webhook: event de test ou payload incomplet, aucun article créé');
       return res.status(200).json({
         success: true,
-        note: 'Requête reçue et authentifiée, mais champs article incomplets — aucun article créé.',
-        received_keys: Object.keys(body),
+        note: 'Requête reçue et authentifiée. Aucun article créé (test ou champs incomplets).',
       });
     }
 
     const record = {
-      titre: String(titre).substring(0, 200),
-      contenu,
-      mot_cle: article.keyword || article.mot_cle || null,
-      ville: article.city || article.ville || null,
-      type_article: article.type || article.type_article || 'Guide',
-      slug: slugRaw,
+      titre: titre.substring(0, 200),
+      contenu: contenuHtml,
+      mot_cle: motCle,
+      ville: null,
+      type_article: 'Guide',
+      slug,
       statut: 'publie',
     };
 
@@ -85,7 +79,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Database error', details: error.message });
     }
 
-    return res.status(200).json({ success: true, event, article: data?.[0] ?? null });
+    // Format de réponse recommandé par GetAutoSEO : renvoyer l'URL publiée
+    // pour qu'ils affichent un lien "View Live" dans leur dashboard.
+    const publishedUrl = body.published_url || `${SITE_URL}/blog/${slug}`;
+
+    return res.status(200).json({
+      success: true,
+      url: publishedUrl,
+      event,
+      article: data?.[0] ?? null,
+    });
   } catch (err: any) {
     console.error('Webhook processing error:', err);
     return res.status(500).json({ error: 'Internal error', details: err.message });
