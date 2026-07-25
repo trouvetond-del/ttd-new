@@ -14,26 +14,30 @@ interface Article {
   created_at: string;
 }
 
-function getReadingTime(content: string): number {
-  const words = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
-  return Math.ceil(words / 200);
+function getReadingTime(content: string | null | undefined): number {
+  const safe = content || '';
+  const words = safe.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
 }
 
-function getExcerpt(content: string, length = 160): string {
-  const cleaned = content
+function getExcerpt(content: string | null | undefined, length = 160): string {
+  const safe = content || '';
+  const cleaned = safe
     .replace(/```html?/g, '')
     .replace(/```/g, '')
     .replace(/<[^>]*>/g, '')
     .trim();
+  if (!cleaned) return '';
   return cleaned.substring(0, length).trim() + '…';
 }
 
-function cleanTitle(title: string): string {
-  return title
+function cleanTitle(title: string | null | undefined): string {
+  const safe = title || '';
+  return safe
     .replace(/```html?/g, '')
     .replace(/```/g, '')
     .replace(/<[^>]*>/g, '')
-    .trim();
+    .trim() || 'Article sans titre';
 }
 
 function formatDate(dateStr: string): string {
@@ -81,7 +85,10 @@ export default function Blog() {
       .from('articles')
       .select('id, titre, contenu, mot_cle, ville, type_article, slug, created_at')
       .order('created_at', { ascending: false });
-    if (!error && data) setArticles(data);
+    if (!error && data) {
+      const safe = data.filter(a => a.titre || a.contenu);
+      setArticles(safe);
+    }
     setLoading(false);
   }
 

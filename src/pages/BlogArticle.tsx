@@ -14,9 +14,10 @@ interface Article {
   created_at: string;
 }
 
-function getReadingTime(content: string): number {
-  const words = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
-  return Math.ceil(words / 200);
+function getReadingTime(content: string | null | undefined): number {
+  const safe = content || '';
+  const words = safe.replace(/<[^>]*>/g, '').split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
 }
 
 function formatDate(dateStr: string): string {
@@ -27,16 +28,18 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function cleanTitle(title: string): string {
-  return title
+function cleanTitle(title: string | null | undefined): string {
+  const safe = title || '';
+  return safe
     .replace(/```html?/g, '')
     .replace(/```/g, '')
     .replace(/<[^>]*>/g, '')
-    .trim();
+    .trim() || 'Article sans titre';
 }
 
-function cleanHTML(content: string): string {
-  return content
+function cleanHTML(content: string | null | undefined): string {
+  const safe = content || '';
+  return safe
     .replace(/^```html?\n?/gm, '')
     .replace(/^```\s*$/gm, '')
     .trim();
@@ -45,7 +48,7 @@ function cleanHTML(content: string): string {
 function injectSchemaOrg(article: Article) {
   const existing = document.getElementById('schema-article');
   if (existing) existing.remove();
-  const excerpt = article.contenu.replace(/<[^>]*>/g, '').substring(0, 200);
+  const excerpt = (article.contenu || '').replace(/<[^>]*>/g, '').substring(0, 200);
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -99,7 +102,7 @@ function injectFAQSchema(content: string) {
 }
 
 function setMetaTags(article: Article) {
-  const excerpt = article.contenu.replace(/<[^>]*>/g, '').substring(0, 155).trim();
+  const excerpt = (article.contenu || '').replace(/<[^>]*>/g, '').substring(0, 155).trim();
   const url = `https://www.trouvetondemenageur.fr/blog/${article.slug}`;
   document.title = `${cleanTitle(article.titre)} | TrouveTonDéménageur`;
   const metas: Record<string, string> = {
