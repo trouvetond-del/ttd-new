@@ -89,18 +89,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Erreur lors de l\'enregistrement.', details: error.message });
     }
 
-    // Notifie l'équipe (best-effort, ne bloque pas la réponse si ça échoue)
+    // Alerte l'équipe admin (email à tous les comptes de la table `admins`).
+    // best-effort : ne bloque pas la réponse au client si ça échoue.
     try {
-      await fetch(`${process.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
+      const notifyResponse = await fetch(`${process.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
         },
         body: JSON.stringify({
-          type: 'quote_request_submitted',
+          type: 'quick_lead_alert',
           data: {
             quoteRequestId: data?.[0]?.id,
+            phone,
             fromCity,
             toCity,
             movingDate,
@@ -109,6 +111,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           },
         }),
       });
+      if (!notifyResponse.ok) {
+        console.warn('send-notification a répondu avec une erreur:', await notifyResponse.text());
+      }
     } catch (notifyError) {
       console.warn('Notification quick-lead échouée (non bloquant):', notifyError);
     }

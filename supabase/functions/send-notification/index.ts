@@ -69,7 +69,9 @@ Deno.serve(async (req: Request) => {
   try {
     const { type, recipientEmail, data, attachments } = await req.json();
 
-    if (!type || !recipientEmail) {
+    const typesResolvingRecipientInternally = ["quick_lead_alert"];
+
+    if (!type || (!recipientEmail && !typesResolvingRecipientInternally.includes(type))) {
       return new Response(
         JSON.stringify({ error: "Missing required fields: type, recipientEmail" }),
         {
@@ -81,8 +83,56 @@ Deno.serve(async (req: Request) => {
 
     let subject = "";
     let htmlContent = "";
+    let resolvedRecipients: string | string[] = recipientEmail;
 
     switch (type) {
+      case "quick_lead_alert": {
+        const { data: admins, error: adminsError } = await supabase
+          .from("admins")
+          .select("email");
+
+        if (adminsError || !admins || admins.length === 0) {
+          console.error("quick_lead_alert: no admin emails found", adminsError);
+          return new Response(
+            JSON.stringify({ error: "No admin recipients configured" }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        resolvedRecipients = admins.map((a: { email: string }) => a.email);
+
+        const isHot = data.leadScore === "chaud";
+        const scoreLabel: Record<string, string> = {
+          chaud: "🔥 CHAUD (à rappeler sous 30 min)",
+          tiede: "🌤️ Tiède (< 90 jours)",
+          froid: "❄️ Froid (> 90 jours)",
+          inconnu: "❔ Date inconnue",
+        };
+
+        subject = isHot
+          ? `🔥 NOUVEAU LEAD CHAUD — ${data.fromCity} → ${data.toCity}`
+          : `Nouveau lead publicitaire — ${data.fromCity} → ${data.toCity}`;
+
+        htmlContent = createEmailTemplate(
+          isHot ? "🔥 Nouveau lead CHAUD à rappeler vite" : "Nouveau lead publicitaire",
+          "Formulaire /devis-rapide",
+          `
+            <div style="background:${isHot ? '#fff1f0' : '#f0f9ff'}; border-left:4px solid ${isHot ? '#ef4444' : '#667eea'}; padding:20px; border-radius:6px; margin-bottom:20px;">
+              <p style="color:#333; margin:0 0 10px; font-size:16px;"><strong>Score:</strong> ${scoreLabel[data.leadScore] || data.leadScore}</p>
+              <p style="color:#333; margin:0 0 10px; font-size:16px;"><strong>📞 Téléphone:</strong> <a href="tel:${data.phone}" style="color:#667eea; font-weight:bold;">${data.phone}</a></p>
+              <p style="color:#333; margin:0 0 10px;"><strong>📍 Trajet:</strong> ${data.fromCity} → ${data.toCity}</p>
+              <p style="color:#333; margin:0 0 10px;"><strong>📅 Date souhaitée:</strong> ${data.movingDate || 'Non renseignée'}</p>
+              <p style="color:#333; margin:0;"><strong>📣 Source:</strong> ${data.source || 'inconnue'}</p>
+            </div>
+            <div style="text-align:center; margin:30px 0;">
+              <a href="https://www.trouvetondemenageur.fr/admin/quote-requests" style="display:inline-block; padding:14px 32px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#ffffff; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">
+                Voir dans l'admin
+              </a>
+            </div>
+          `
+        );
+        break;
+      }
       case "quote_request_submitted":
         subject = "Bienvenue sur TrouveTonDéménageur - Votre demande a été envoyée!";
         htmlContent = createEmailTemplate(
@@ -877,7 +927,7 @@ Deno.serve(async (req: Request) => {
     
     if (!resendApiKey) {
       console.log("Email notification (dev mode):");
-      console.log("To:", recipientEmail);
+      console.log("To:", resolvedRecipients);
       console.log("Subject:", subject);
       console.log("Content:", htmlContent);
       
@@ -885,7 +935,7 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({ 
           success: true, 
           message: "Email logged (dev mode - no API key configured)",
-          preview: { subject, to: recipientEmail }
+          preview: { subject, to: resolvedRecipients }
         }),
         {
           status: 200,
@@ -893,6 +943,8 @@ Deno.serve(async (req: Request) => {
         }
       );
     }
+
+    const toList = Array.isArray(resolvedRecipients) ? resolvedRecipients : [resolvedRecipients];
 
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -902,7 +954,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         from: "TrouveTonDéménageur <noreply@trouvetondemenageur.fr>",
-        to: [recipientEmail],
+        to: toList,
         subject: subject,
         html: htmlContent,
         ...(attachments && attachments.length > 0 ? { attachments } : {}),
