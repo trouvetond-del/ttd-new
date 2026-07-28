@@ -68,9 +68,6 @@ export function QuickLeadPage() {
             Nos déménageurs vérifiés vont être notifiés. Vous serez recontacté au{' '}
             <span className="font-semibold">{phone}</span> très rapidement.
           </p>
-          <p className="text-gray-500 text-xs mt-2">
-            Un email de confirmation vous a été envoyé à {email}.
-          </p>
         </div>
       </div>
     );

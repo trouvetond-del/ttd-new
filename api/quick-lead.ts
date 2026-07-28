@@ -113,30 +113,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Erreur lors de l\'enregistrement.', details: error.message });
     }
 
-    // Email de confirmation au client (best-effort, ne bloque pas la réponse).
-    try {
-      const clientEmailResponse = await fetch(`${process.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-        },
-        body: JSON.stringify({
-          type: 'quick_lead_confirmation',
-          recipientEmail: email,
-          data: {
-            fromCity,
-            toCity,
-            phone,
-          },
-        }),
-      });
-      if (!clientEmailResponse.ok) {
-        console.warn('Email confirmation client échoué:', await clientEmailResponse.text());
-      }
-    } catch (clientEmailError) {
-      console.warn('Email confirmation client échoué (non bloquant):', clientEmailError);
-    }
+    // Email de confirmation automatique désactivé : l'équipe contacte
+    // désormais le lead manuellement (appel ou email) sur la base de
+    // l'alerte admin ci-dessous.
 
     // Alerte l'équipe admin (email à tous les comptes de la table `admins`).
     // best-effort : ne bloque pas la réponse au client si ça échoue.
