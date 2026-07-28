@@ -69,7 +69,9 @@ Deno.serve(async (req: Request) => {
   try {
     const { type, recipientEmail, data, attachments } = await req.json();
 
-    if (!type || !recipientEmail) {
+    const typesResolvingRecipientInternally = ["quick_lead_alert"];
+
+    if (!type || (!recipientEmail && !typesResolvingRecipientInternally.includes(type))) {
       return new Response(
         JSON.stringify({ error: "Missing required fields: type, recipientEmail" }),
         {
@@ -81,8 +83,119 @@ Deno.serve(async (req: Request) => {
 
     let subject = "";
     let htmlContent = "";
+    let resolvedRecipients: string | string[] = recipientEmail;
 
     switch (type) {
+      case "quick_lead_confirmation": {
+        subject = "Bienvenue sur TrouveTonDéménageur ! Votre demande est bien reçue";
+        htmlContent = `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+              <h1 style="margin:0; font-size: 26px;">🏠 Bienvenue sur TrouveTonDéménageur !</h1>
+            </div>
+            <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+              <p>Bonjour,</p>
+
+              <p>Merci de votre demande sur <strong>TrouveTonDéménageur</strong>, votre plateforme de confiance pour trouver des déménageurs professionnels vérifiés.</p>
+
+              <h3 style="color:#3B82F6;">Votre demande est enregistrée !</h3>
+              <div style="background:#f0f9ff; padding:16px; border-radius:8px; margin: 16px 0;">
+                <p style="margin:4px 0;"><strong>📍 Trajet :</strong> ${data.fromCity} → ${data.toCity}</p>
+                <p style="margin:4px 0;"><strong>📞 Vous serez rappelé au :</strong> ${data.phone}</p>
+              </div>
+
+              <p>Vous pouvez maintenant :</p>
+              <ul>
+                <li>✅ Créer un compte gratuit pour suivre votre demande</li>
+                <li>✅ Recevoir des propositions de déménageurs vérifiés</li>
+                <li>✅ Comparer les offres et choisir la meilleure</li>
+                <li>✅ Suivre votre déménagement en temps réel</li>
+              </ul>
+
+              <div style="text-align: center;">
+                <a href="https://www.trouvetondemenageur.fr/client/signup" style="display: inline-block; background: #3B82F6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 20px 0; font-weight:bold;">Devis gratuit</a>
+              </div>
+
+              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+
+              <h3>📧 Quand allez-vous recevoir vos devis ?</h3>
+              <p><strong>Voici ce qui va se passer :</strong></p>
+              <ol>
+                <li>✅ Votre demande est enregistrée (c'est fait !)</li>
+                <li>Les déménageurs de votre région reçoivent votre demande</li>
+                <li>Ils vous envoient leurs devis sous 24-48h</li>
+                <li>Vous recevez un email pour chaque nouveau devis</li>
+                <li>Vous comparez et choisissez la meilleure offre</li>
+              </ol>
+
+              <div style="background: #EFF6FF; padding: 15px; border-left: 4px solid #3B82F6; margin: 20px 0;">
+                <p style="margin: 0;"><strong>💡 Conseil :</strong> Créez votre compte gratuit dès maintenant pour suivre l'avancement de votre demande et échanger directement avec les déménageurs.</p>
+              </div>
+
+              <p>Si vous avez des questions, notre équipe est à votre disposition.</p>
+
+              <p>Bonne chance pour votre déménagement ! 🚚</p>
+
+              <p style="margin-top: 30px;">
+                Cordialement,<br>
+                <strong>L'équipe TrouveTonDéménageur</strong>
+              </p>
+            </div>
+            <div style="text-align: center; padding: 20px; color: #6b7280; font-size: 14px;">
+              <p>© 2026 TrouveTonDéménageur - Tous droits réservés</p>
+              <p>Besoin d'aide ? Contactez-nous à support@trouvetondemenageur.fr</p>
+            </div>
+          </div>
+        `;
+        break;
+      }
+      case "quick_lead_alert": {
+        const { data: admins, error: adminsError } = await supabase
+          .from("admins")
+          .select("email");
+
+        if (adminsError || !admins || admins.length === 0) {
+          console.error("quick_lead_alert: no admin emails found", adminsError);
+          return new Response(
+            JSON.stringify({ error: "No admin recipients configured" }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        resolvedRecipients = admins.map((a: { email: string }) => a.email);
+
+        const isHot = data.leadScore === "chaud";
+        const scoreLabel: Record<string, string> = {
+          chaud: "🔥 CHAUD (à rappeler sous 30 min)",
+          tiede: "🌤️ Tiède (< 90 jours)",
+          froid: "❄️ Froid (> 90 jours)",
+          inconnu: "❔ Date inconnue",
+        };
+
+        subject = isHot
+          ? `🔥 NOUVEAU LEAD CHAUD — ${data.fromCity} → ${data.toCity}`
+          : `Nouveau lead publicitaire — ${data.fromCity} → ${data.toCity}`;
+
+        htmlContent = createEmailTemplate(
+          isHot ? "🔥 Nouveau lead CHAUD à rappeler vite" : "Nouveau lead publicitaire",
+          "Formulaire /devis-rapide",
+          `
+            <div style="background:${isHot ? '#fff1f0' : '#f0f9ff'}; border-left:4px solid ${isHot ? '#ef4444' : '#667eea'}; padding:20px; border-radius:6px; margin-bottom:20px;">
+              <p style="color:#333; margin:0 0 10px; font-size:16px;"><strong>Score:</strong> ${scoreLabel[data.leadScore] || data.leadScore}</p>
+              <p style="color:#333; margin:0 0 10px; font-size:16px;"><strong>📞 Téléphone:</strong> <a href="tel:${data.phone}" style="color:#667eea; font-weight:bold;">${data.phone}</a></p>
+              <p style="color:#333; margin:0 0 10px;"><strong>📍 Trajet:</strong> ${data.fromCity} → ${data.toCity}</p>
+              <p style="color:#333; margin:0 0 10px;"><strong>📅 Date souhaitée:</strong> ${data.movingDate || 'Non renseignée'}</p>
+              <p style="color:#333; margin:0;"><strong>📣 Source:</strong> ${data.source || 'inconnue'}</p>
+            </div>
+            <div style="text-align:center; margin:30px 0;">
+              <a href="https://www.trouvetondemenageur.fr/admin/quote-requests" style="display:inline-block; padding:14px 32px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#ffffff; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">
+                Voir dans l'admin
+              </a>
+            </div>
+          `
+        );
+        break;
+      }
       case "quote_request_submitted":
         subject = "Bienvenue sur TrouveTonDéménageur - Votre demande a été envoyée!";
         htmlContent = createEmailTemplate(
@@ -877,7 +990,7 @@ Deno.serve(async (req: Request) => {
     
     if (!resendApiKey) {
       console.log("Email notification (dev mode):");
-      console.log("To:", recipientEmail);
+      console.log("To:", resolvedRecipients);
       console.log("Subject:", subject);
       console.log("Content:", htmlContent);
       
@@ -885,7 +998,7 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({ 
           success: true, 
           message: "Email logged (dev mode - no API key configured)",
-          preview: { subject, to: recipientEmail }
+          preview: { subject, to: resolvedRecipients }
         }),
         {
           status: 200,
@@ -893,6 +1006,8 @@ Deno.serve(async (req: Request) => {
         }
       );
     }
+
+    const toList = Array.isArray(resolvedRecipients) ? resolvedRecipients : [resolvedRecipients];
 
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -902,7 +1017,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         from: "TrouveTonDéménageur <noreply@trouvetondemenageur.fr>",
-        to: [recipientEmail],
+        to: toList,
         subject: subject,
         html: htmlContent,
         ...(attachments && attachments.length > 0 ? { attachments } : {}),

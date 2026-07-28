@@ -32,6 +32,10 @@ function isValidPhone(phone: string): boolean {
   return /^(\+33|0)[1-9]\d{8}$/.test(digits);
 }
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -43,20 +47,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const toCity = (body.to_city || '').trim();
     const movingDate = (body.moving_date || '').trim();
     const phone = (body.phone || '').trim();
+    const email = (body.email || '').trim().toLowerCase();
     const source = (body.source || 'mini_formulaire').trim();
 
-    if (!fromCity || !toCity || !phone) {
-      return res.status(400).json({ error: 'Ville de départ, ville d\'arrivée et téléphone sont obligatoires.' });
+    if (!fromCity || !toCity || !phone || !email) {
+      return res.status(400).json({ error: 'Ville de départ, ville d\'arrivée, téléphone et email sont obligatoires.' });
     }
     if (!isValidPhone(phone)) {
       return res.status(400).json({ error: 'Numéro de téléphone invalide.' });
+    }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Adresse email invalide.' });
+    }
+
+    // Garde-fou anti-doublon : si le même email ou téléphone a déjà soumis
+    // une demande dans les dernières 24h, on ne recrée pas de ligne (évite
+    // de spammer l'admin de doublons en cas de double-clic ou de nouvelle
+    // visite sur la pub) et on renvoie simplement un succès au client.
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: existing } = await supabase
+      .from('quote_requests')
+      .select('id')
+      .or(`client_email.eq.${email},client_phone.eq.${phone}`)
+      .gte('created_at', since)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      return res.status(200).json({ success: true, duplicate: true, id: existing[0].id });
     }
 
     const leadScore = computeLeadScore(movingDate);
 
     const record = {
       client_name: 'Prospect publicité',
-      client_email: '',
+      client_email: email,
       client_phone: phone,
       from_address: '',
       from_city: fromCity,
@@ -89,18 +113,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Erreur lors de l\'enregistrement.', details: error.message });
     }
 
-    // Notifie l'équipe (best-effort, ne bloque pas la réponse si ça échoue)
+    // Email de confirmation au client (best-effort, ne bloque pas la réponse).
     try {
-      await fetch(`${process.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
+      const clientEmailResponse = await fetch(`${process.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
         },
         body: JSON.stringify({
-          type: 'quote_request_submitted',
+          type: 'quick_lead_confirmation',
+          recipientEmail: email,
+          data: {
+            fromCity,
+            toCity,
+            phone,
+          },
+        }),
+      });
+      if (!clientEmailResponse.ok) {
+        console.warn('Email confirmation client échoué:', await clientEmailResponse.text());
+      }
+    } catch (clientEmailError) {
+      console.warn('Email confirmation client échoué (non bloquant):', clientEmailError);
+    }
+
+    // Alerte l'équipe admin (email à tous les comptes de la table `admins`).
+    // best-effort : ne bloque pas la réponse au client si ça échoue.
+    try {
+      const notifyResponse = await fetch(`${process.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+        body: JSON.stringify({
+          type: 'quick_lead_alert',
           data: {
             quoteRequestId: data?.[0]?.id,
+            phone,
             fromCity,
             toCity,
             movingDate,
@@ -109,6 +160,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           },
         }),
       });
+      if (!notifyResponse.ok) {
+        console.warn('send-notification a répondu avec une erreur:', await notifyResponse.text());
+      }
     } catch (notifyError) {
       console.warn('Notification quick-lead échouée (non bloquant):', notifyError);
     }
