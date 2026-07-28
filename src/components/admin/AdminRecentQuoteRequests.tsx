@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search } from 'lucide-react';
+import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2 } from 'lucide-react';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import { showToast } from '../../utils/toast';
 
@@ -28,6 +28,7 @@ export default function AdminRecentQuoteRequests() {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadQuoteRequests = async () => {
     setLoading(true);
@@ -86,6 +87,27 @@ export default function AdminRecentQuoteRequests() {
   useEffect(() => {
     loadQuoteRequests();
   }, [statusFilter]);
+
+  const handleDelete = async (id: string, clientName?: string) => {
+    const confirmed = window.confirm(
+      `Supprimer définitivement la demande de devis de "${clientName || 'ce client'}" ? Cette action est irréversible.`
+    );
+    if (!confirmed) return;
+
+    setDeletingId(id);
+    try {
+      const { error } = await supabase.from('quote_requests').delete().eq('id', id);
+      if (error) throw error;
+
+      setQuoteRequests((prev) => prev.filter((q) => q.id !== id));
+      showToast('Demande de devis supprimée', 'success');
+    } catch (error) {
+      console.error('Error deleting quote request:', error);
+      showToast('Erreur lors de la suppression de la demande', 'error');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -233,13 +255,23 @@ export default function AdminRecentQuoteRequests() {
                       {getStatusBadge(q.status)}
                     </td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() => setSelectedRequestId(q.id)}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition"
-                      >
-                        <Eye className="w-3 h-3" />
-                        Voir
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setSelectedRequestId(q.id)}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition"
+                        >
+                          <Eye className="w-3 h-3" />
+                          Voir
+                        </button>
+                        <button
+                          onClick={() => handleDelete(q.id, q.client_name)}
+                          disabled={deletingId === q.id}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 text-xs rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          {deletingId === q.id ? '...' : 'Supprimer'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
