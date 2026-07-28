@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Phone, Calendar, CheckCircle, Shield, Star, ArrowRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Calendar, CheckCircle, Shield, Star, ArrowRight } from 'lucide-react';
 import { Logo } from '../components/Logo';
 
 export function QuickLeadPage() {
@@ -7,6 +7,7 @@ export function QuickLeadPage() {
   const [toCity, setToCity] = useState('');
   const [movingDate, setMovingDate] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -19,8 +20,12 @@ export function QuickLeadPage() {
     e.preventDefault();
     setError('');
 
-    if (!fromCity.trim() || !toCity.trim() || !phone.trim()) {
-      setError('Merci de remplir les 3 champs pour recevoir vos devis.');
+    if (!fromCity.trim() || !toCity.trim() || !phone.trim() || !email.trim()) {
+      setError('Merci de remplir tous les champs pour recevoir vos devis.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError('Merci de renseigner une adresse email valide.');
       return;
     }
 
@@ -29,7 +34,7 @@ export function QuickLeadPage() {
       const res = await fetch('/api/quick-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from_city: fromCity, to_city: toCity, moving_date: movingDate, phone, source }),
+        body: JSON.stringify({ from_city: fromCity, to_city: toCity, moving_date: movingDate, phone, email, source }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Une erreur est survenue.');
@@ -63,6 +68,9 @@ export function QuickLeadPage() {
             Nos déménageurs vérifiés vont être notifiés. Vous serez recontacté au{' '}
             <span className="font-semibold">{phone}</span> très rapidement.
           </p>
+          <p className="text-gray-500 text-xs mt-2">
+            Un email de confirmation vous a été envoyé à {email}.
+          </p>
         </div>
       </div>
     );
@@ -82,7 +90,7 @@ export function QuickLeadPage() {
               Recevez vos devis de déménageurs vérifiés
             </h1>
             <p className="text-sm text-gray-500 text-center mt-2 mb-6">
-              3 infos, 30 secondes, aucun engagement.
+              4 infos, 30 secondes, aucun engagement.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -138,6 +146,20 @@ export function QuickLeadPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="06 12 34 56 78"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-600" size={18} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="vous@exemple.fr"
                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />
                 </div>
