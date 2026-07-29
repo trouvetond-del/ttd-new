@@ -36,6 +36,35 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+// Envoi d'email direct via l'API Resend, sans passer par une Supabase Edge
+// Function. Choix volontaire : Vercel redéploie automatiquement à chaque
+// push, alors qu'une Edge Function Supabase doit être redéployée
+// manuellement — ça a déjà causé des emails silencieusement non envoyés.
+// Nécessite RESEND_API_KEY dans les variables d'environnement Vercel.
+async function sendEmail(to: string[], subject: string, html: string): Promise<void> {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) {
+    console.warn('RESEND_API_KEY manquante côté Vercel : email non envoyé (mode dev).');
+    return;
+  }
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${resendApiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'TrouveTonDéménageur <noreply@trouvetondemenageur.fr>',
+      to,
+      subject,
+      html,
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`Resend a répondu ${res.status}: ${await res.text()}`);
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -113,37 +142,74 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Erreur lors de l\'enregistrement.', details: error.message });
     }
 
-    // Email de confirmation automatique désactivé : l'équipe contacte
-    // désormais le lead manuellement (appel ou email) sur la base de
-    // l'alerte admin ci-dessous.
-
-    // Alerte l'équipe admin (email à tous les comptes de la table `admins`).
-    // best-effort : ne bloque pas la réponse au client si ça échoue.
+    // Email au client : lien direct vers la création de compte + demande de
+    // déménagement, avec son email déjà pré-rempli. Best-effort : ne bloque
+    // jamais la réponse au client si l'envoi échoue.
+    const signupUrl = `https://www.trouvetondemenageur.fr/client/signup?email=${encodeURIComponent(email)}`;
     try {
-      const notifyResponse = await fetch(`${process.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-        },
-        body: JSON.stringify({
-          type: 'quick_lead_alert',
-          data: {
-            quoteRequestId: data?.[0]?.id,
-            phone,
-            fromCity,
-            toCity,
-            movingDate,
-            leadScore,
-            source,
-          },
-        }),
-      });
-      if (!notifyResponse.ok) {
-        console.warn('send-notification a répondu avec une erreur:', await notifyResponse.text());
+      await sendEmail(
+        [email],
+        'Finalisez votre demande de devis déménagement',
+        `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 560px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+              <h1 style="margin:0; font-size: 24px;">🏠 TrouveTonDéménageur</h1>
+            </div>
+            <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none;">
+              <p>Bonjour,</p>
+              <p>Merci pour votre demande de devis <strong>${fromCity} → ${toCity}</strong>.</p>
+              <p>Pour recevoir vos devis de déménageurs vérifiés, finalisez votre demande en une minute :</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${signupUrl}" style="display: inline-block; background: #3B82F6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                  Finaliser ma demande
+                </a>
+              </div>
+              <p style="color:#6b7280; font-size: 14px;">Ce lien vous amène directement à la création de votre compte gratuit (email déjà rempli), pour suivre l'avancement de votre demande et échanger avec les déménageurs.</p>
+              <p style="margin-top: 30px;">Cordialement,<br><strong>L'équipe TrouveTonDéménageur</strong></p>
+            </div>
+            <div style="text-align: center; padding: 20px; color: #6b7280; font-size: 13px;">
+              <p>© 2026 TrouveTonDéménageur · support@trouvetondemenageur.fr</p>
+            </div>
+          </div>
+        `
+      );
+    } catch (clientEmailError) {
+      console.warn('Email client échoué (non bloquant):', clientEmailError);
+    }
+
+    // Alerte l'équipe admin : liste des emails admin récupérée directement
+    // depuis la table `admins`, puis envoi via Resend (même raison que
+    // ci-dessus : indépendance vis-à-vis des Edge Functions Supabase).
+    try {
+      const { data: admins } = await supabase.from('admins').select('email');
+      const adminEmails = (admins || []).map((a: { email: string }) => a.email).filter(Boolean);
+      if (adminEmails.length > 0) {
+        const isHot = leadScore === 'chaud';
+        await sendEmail(
+          adminEmails,
+          isHot
+            ? `🔥 NOUVEAU LEAD CHAUD — ${fromCity} → ${toCity}`
+            : `Nouveau lead publicitaire — ${fromCity} → ${toCity}`,
+          `
+            <div style="font-family: Arial, sans-serif; color:#333;">
+              <div style="background:${isHot ? '#fff1f0' : '#f0f9ff'}; border-left:4px solid ${isHot ? '#ef4444' : '#667eea'}; padding:20px; border-radius:6px;">
+                <p style="margin:0 0 10px;"><strong>Score:</strong> ${leadScore}</p>
+                <p style="margin:0 0 10px;"><strong>📞 Téléphone:</strong> <a href="tel:${phone}">${phone}</a></p>
+                <p style="margin:0 0 10px;"><strong>✉️ Email:</strong> <a href="mailto:${email}">${email}</a></p>
+                <p style="margin:0 0 10px;"><strong>📍 Trajet:</strong> ${fromCity} → ${toCity}</p>
+                <p style="margin:0;"><strong>📅 Date souhaitée:</strong> ${movingDate || 'Non renseignée'}</p>
+              </div>
+              <div style="text-align:center; margin:24px 0;">
+                <a href="https://www.trouvetondemenageur.fr/admin/quote-requests" style="display:inline-block; padding:12px 28px; background:#667eea; color:#fff; border-radius:8px; text-decoration:none; font-weight:bold;">Voir dans l'admin</a>
+              </div>
+            </div>
+          `
+        );
+      } else {
+        console.warn('Aucun email admin trouvé dans la table admins.');
       }
-    } catch (notifyError) {
-      console.warn('Notification quick-lead échouée (non bloquant):', notifyError);
+    } catch (adminEmailError) {
+      console.warn('Email admin échoué (non bloquant):', adminEmailError);
     }
 
     return res.status(200).json({ success: true, leadScore, id: data?.[0]?.id });
