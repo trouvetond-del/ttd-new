@@ -146,6 +146,7 @@ export function ClientProfileCompletionPage() {
             first_name: firstName.trim(),
             last_name: lastName.trim(),
             phone: phone.trim(),
+            profile_completed: true,
             updated_at: new Date().toISOString()
           })
           .eq('user_id', user?.id);
@@ -160,6 +161,7 @@ export function ClientProfileCompletionPage() {
             first_name: firstName.trim(),
             last_name: lastName.trim(),
             phone: phone.trim(),
+            profile_completed: true,
             created_at: new Date().toISOString()
           });
 

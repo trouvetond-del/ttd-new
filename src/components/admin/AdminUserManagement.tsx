@@ -104,7 +104,7 @@ export default function AdminUserManagement({
         ] = await Promise.all([
           supabase.from('admins').select('user_id'),
           supabase.from('movers').select('user_id'),
-          supabase.from('clients').select('user_id, first_name, last_name, phone'),
+          supabase.from('clients').select('user_id, first_name, last_name, phone, profile_completed'),
           supabase.rpc('get_all_users'),
         ]);
 
@@ -119,6 +119,7 @@ export default function AdminUserManagement({
             clientDataMap.set(client.user_id, {
               name: `${client.first_name || ''} ${client.last_name || ''}`.trim() || 'Non renseigné',
               phone: client.phone || 'Non renseigné',
+              profileCompleted: client.profile_completed === true,
             });
           }
         });
@@ -140,7 +141,7 @@ export default function AdminUserManagement({
               phone: clientData?.phone || 'Non renseigné',
               is_suspended: false,
               is_banned: false,
-              is_active: true,
+              is_active: clientData?.profileCompleted ?? false,
             };
           });
 
@@ -155,7 +156,7 @@ export default function AdminUserManagement({
         ] = await Promise.all([
           supabase.from('admins').select('user_id'),
           supabase.from('movers').select('*'),
-          supabase.from('clients').select('user_id, first_name, last_name, phone'),
+          supabase.from('clients').select('user_id, first_name, last_name, phone, profile_completed'),
           supabase.rpc('get_all_users'),
         ]);
 
@@ -170,6 +171,7 @@ export default function AdminUserManagement({
             clientDataMap.set(client.user_id, {
               name: `${client.first_name || ''} ${client.last_name || ''}`.trim() || 'Non renseigné',
               phone: client.phone || 'Non renseigné',
+              profileCompleted: client.profile_completed === true,
             });
           }
         });
@@ -227,7 +229,7 @@ export default function AdminUserManagement({
               phone: clientData?.phone || 'Non renseigné',
               is_suspended: false,
               is_banned: false,
-              is_active: true,
+              is_active: clientData?.profileCompleted ?? false,
             };
           });
 

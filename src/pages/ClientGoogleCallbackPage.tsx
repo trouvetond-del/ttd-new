@@ -73,6 +73,7 @@ export function ClientGoogleCallbackPage() {
                   first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
                   last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',
                   phone: '',
+                  profile_completed: false,
                   created_at: new Date().toISOString(),
                 });
               console.log('Minimal client record created for Google user');

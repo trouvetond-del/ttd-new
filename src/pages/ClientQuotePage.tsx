@@ -136,6 +136,25 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
     loadUserInfo();
   }, [user, userInfoLoaded]);
 
+  // Utilisateur arrivé via le lien magique de /devis-rapide : relie son
+  // compte fraîchement créé à la demande déjà existante, et crée sa fiche
+  // client avec le nom/téléphone déjà collectés (best-effort, non bloquant).
+  useEffect(() => {
+    if (!editingQuoteRequestId || !user) return;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/link-quick-lead-account`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ quoteRequestId: editingQuoteRequestId }),
+      }).catch((err) => console.warn('Liaison compte quick-lead échouée (non bloquant):', err));
+    });
+  }, [editingQuoteRequestId, user]);
+
   useEffect(() => {
     const loadExistingQuoteRequest = async () => {
       if (!editingQuoteRequestId) {
