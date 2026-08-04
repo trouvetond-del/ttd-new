@@ -29,5 +29,21 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase functions deploy send-profile-reminder --project-ref bvvbkaluajgdurxnnqqu
 
+      - name: Mettre à jour le template email "Magic Link"
+        run: |
+          BODY=$(python3 -c "
+import json
+with open('supabase/email-templates/magic-link.html') as f:
+    html = f.read()
+print(json.dumps({
+    'mailer_subjects_magic_link': 'Accédez à votre espace TrouveTonDemenageur',
+    'mailer_templates_magic_link_content': html
+}))
+")
+          curl -sf -X PATCH "https://api.supabase.com/v1/projects/bvvbkaluajgdurxnnqqu/config/auth" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ACCESS_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$BODY" -o /dev/null -w "HTTP %{http_code}\n"
+
       - name: Résumé
-        run: echo "✅ SQL exécuté + 2 edge functions déployées avec succès."
+        run: echo "✅ SQL exécuté + 2 edge functions déployées + template email mis à jour."
