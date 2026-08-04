@@ -12,6 +12,7 @@ interface AddressAutocompleteProps {
     latitude?: number;
     longitude?: number;
   }) => void;
+  onInputChange?: (rawValue: string) => void;
   placeholder?: string;
   label?: string;
   required?: boolean;
@@ -22,6 +23,7 @@ interface AddressAutocompleteProps {
 export default function AddressAutocomplete({
   value,
   onAddressSelect,
+  onInputChange,
   placeholder = 'Commencez à taper une adresse...',
   label,
   required = false,
@@ -31,7 +33,9 @@ export default function AddressAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const onAddressSelectRef = useRef(onAddressSelect);
+  const onInputChangeRef = useRef(onInputChange);
   const [inputValue, setInputValue] = useState(value);
+  const [mapsUnavailable, setMapsUnavailable] = useState(false);
   const isInitializedRef = useRef(false);
   // Track if address was selected from autocomplete to prevent unwanted resets
   const hasSelectedAddressRef = useRef(false);
@@ -40,6 +44,10 @@ export default function AddressAutocomplete({
   useEffect(() => {
     onAddressSelectRef.current = onAddressSelect;
   }, [onAddressSelect]);
+
+  useEffect(() => {
+    onInputChangeRef.current = onInputChange;
+  }, [onInputChange]);
 
   // Only update inputValue from prop if user hasn't selected an address
   // or if the prop value is significantly different (not just formatting changes)
@@ -78,6 +86,7 @@ export default function AddressAutocomplete({
       const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
       if (!apiKey) {
         console.error('Google Maps API key not found');
+        setMapsUnavailable(true);
         return;
       }
 
@@ -96,6 +105,7 @@ export default function AddressAutocomplete({
         timeoutId = setTimeout(() => {
           if (checkInterval) clearInterval(checkInterval);
           console.error('Timeout waiting for Google Maps to load for:', id);
+          setMapsUnavailable(true);
         }, 10000);
         return;
       }
@@ -111,6 +121,7 @@ export default function AddressAutocomplete({
       };
       script.onerror = (error) => {
         console.error('Error loading Google Maps script:', error);
+        setMapsUnavailable(true);
       };
       document.head.appendChild(script);
     };
@@ -234,6 +245,7 @@ export default function AddressAutocomplete({
             hasSelectedAddressRef.current = false;
             selectedAddressRef.current = '';
             setInputValue(e.target.value);
+            onInputChangeRef.current?.(e.target.value);
           }}
           placeholder={placeholder}
           className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent ${
@@ -248,6 +260,12 @@ export default function AddressAutocomplete({
           <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <p className="text-sm">{error}</p>
         </div>
+      )}
+      {!error && mapsUnavailable && (
+        <p className="mt-1.5 text-xs text-amber-600">
+          La suggestion d'adresses est momentanément indisponible : tapez votre adresse complète
+          (numéro, rue, ville, code postal), elle sera prise en compte quand même.
+        </p>
       )}
     </div>
   );

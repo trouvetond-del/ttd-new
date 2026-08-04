@@ -1,10 +1,38 @@
 import { useState } from 'react';
-import { MapPin, Phone, Mail, Calendar, CheckCircle, Shield, Star, ArrowRight } from 'lucide-react';
+import { Phone, Mail, Calendar, CheckCircle, Shield, Star, ArrowRight, User } from 'lucide-react';
 import { Logo } from '../components/Logo';
+import AddressAutocomplete from '../components/AddressAutocomplete';
+import { supabase } from '../lib/supabase';
+
+type AddressValue = {
+  fullAddress: string;
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+};
+
+const emptyAddress: AddressValue = {
+  fullAddress: '', street: '', city: '', postalCode: '', country: 'France',
+};
+
+// Une adresse "acceptable" tapée à la main sans passer par la suggestion
+// Google (ex: script bloqué par un bloqueur de pub) : au moins un numéro et
+// une longueur raisonnable. Moins précis pour le calcul de distance, mais on
+// ne bloque jamais la capture du lead pour cette raison.
+function isPlausibleManualAddress(raw: string): boolean {
+  return raw.trim().length >= 8 && /\d/.test(raw);
+}
 
 export function QuickLeadPage() {
-  const [fromCity, setFromCity] = useState('');
-  const [toCity, setToCity] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [fromAddress, setFromAddress] = useState<AddressValue>(emptyAddress);
+  const [toAddress, setToAddress] = useState<AddressValue>(emptyAddress);
+  const [fromAddressRaw, setFromAddressRaw] = useState('');
+  const [toAddressRaw, setToAddressRaw] = useState('');
   const [movingDate, setMovingDate] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -12,7 +40,7 @@ export function QuickLeadPage() {
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  // Source publicitaire : ?src=meta, ?src=google, etc. (à ajouter dans l'URL des annonces)
+  // Source publicitaire : ?src=meta, ?src=google, etc.
   const params = new URLSearchParams(window.location.search);
   const source = params.get('src') || 'direct';
 
@@ -20,8 +48,18 @@ export function QuickLeadPage() {
     e.preventDefault();
     setError('');
 
-    if (!fromCity.trim() || !toCity.trim() || !phone.trim() || !email.trim()) {
-      setError('Merci de remplir tous les champs pour recevoir vos devis.');
+    if (!firstName.trim() || !lastName.trim()) {
+      setError('Merci de renseigner votre nom et prénom.');
+      return;
+    }
+    const fromValid = fromAddress.fullAddress.trim() || isPlausibleManualAddress(fromAddressRaw);
+    const toValid = toAddress.fullAddress.trim() || isPlausibleManualAddress(toAddressRaw);
+    if (!fromValid || !toValid) {
+      setError('Merci de renseigner une adresse de départ et une adresse d\'arrivée complètes (numéro, rue, ville).');
+      return;
+    }
+    if (!phone.trim() || !email.trim()) {
+      setError('Merci de renseigner votre téléphone et votre email.');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
@@ -34,18 +72,45 @@ export function QuickLeadPage() {
       const res = await fetch('/api/quick-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from_city: fromCity, to_city: toCity, moving_date: movingDate, phone, email, source }),
+        body: JSON.stringify({
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          from_address: fromAddress.fullAddress || fromAddressRaw.trim(),
+          from_city: fromAddress.city,
+          from_postal_code: fromAddress.postalCode,
+          from_latitude: fromAddress.latitude ?? null,
+          from_longitude: fromAddress.longitude ?? null,
+          to_address: toAddress.fullAddress || toAddressRaw.trim(),
+          to_city: toAddress.city,
+          to_postal_code: toAddress.postalCode,
+          to_latitude: toAddress.latitude ?? null,
+          to_longitude: toAddress.longitude ?? null,
+          moving_date: movingDate,
+          phone,
+          email,
+          source,
+        }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Une erreur est survenue.');
 
-      // Événement de conversion Meta Pixel (si le pixel est installé)
-      if (typeof (window as any).fbq === 'function') {
-        (window as any).fbq('track', 'Lead');
-      }
-      // Événement de conversion Google Ads (si gtag est présent)
-      if (typeof (window as any).gtag === 'function') {
-        (window as any).gtag('event', 'generate_lead', { source });
+      // Événements de conversion
+      if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Lead');
+      if (typeof (window as any).gtag === 'function') (window as any).gtag('event', 'generate_lead', { source });
+
+      // Lien magique : connecte directement l'utilisateur, sans mot de passe,
+      // vers la page de finalisation de SA demande déjà créée (pré-remplie).
+      // Best-effort : si ça échoue, le lead est déjà en base et sera rappelé.
+      try {
+        await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: `${window.location.origin}/client/quote/${json.id}/edit`,
+            shouldCreateUser: true,
+          },
+        });
+      } catch (magicLinkError) {
+        console.warn('Lien magique non envoyé (non bloquant):', magicLinkError);
       }
 
       setSubmitted(true);
@@ -68,8 +133,9 @@ export function QuickLeadPage() {
             Nos déménageurs vérifiés vont être notifiés. Vous serez recontacté au{' '}
             <span className="font-semibold">{phone}</span> très rapidement.
           </p>
-          <p className="text-gray-500 text-xs mt-2">
-            Un email avec un lien pour finaliser votre demande vous a été envoyé à {email}.
+          <p className="text-gray-500 text-xs mt-3 bg-blue-50 rounded-lg p-3">
+            📩 Un lien vous a été envoyé à <strong>{email}</strong> pour finaliser votre dossier en 2 minutes
+            (étage, ascenseur, inventaire...) et recevoir des devis précis. Pensez à vérifier vos spams.
           </p>
         </div>
       </div>
@@ -92,37 +158,55 @@ export function QuickLeadPage() {
               Recevez vos devis de déménageurs vérifiés
             </h1>
             <p className="text-sm text-gray-500 text-center mt-2 mb-6">
-              4 infos, 30 secondes, aucun engagement.
+              1 minute, aucun engagement.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">Ville de départ</label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-600" size={18} />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Prénom</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-600" size={18} />
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Jean"
+                      className="w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Nom</label>
                   <input
                     type="text"
-                    value={fromCity}
-                    onChange={(e) => setFromCity(e.target.value)}
-                    placeholder="Paris"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Dupont"
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">Ville d'arrivée</label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-600" size={18} />
-                  <input
-                    type="text"
-                    value={toCity}
-                    onChange={(e) => setToCity(e.target.value)}
-                    placeholder="Lyon"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                  />
-                </div>
-              </div>
+              <AddressAutocomplete
+                id="from-address"
+                label="Adresse de départ"
+                required
+                value={fromAddress.fullAddress}
+                placeholder="12 rue de la Paix, Paris"
+                onAddressSelect={(addr) => setFromAddress(addr)}
+                onInputChange={(raw) => setFromAddressRaw(raw)}
+              />
+
+              <AddressAutocomplete
+                id="to-address"
+                label="Adresse d'arrivée"
+                required
+                value={toAddress.fullAddress}
+                placeholder="5 avenue Foch, Lyon"
+                onAddressSelect={(addr) => setToAddress(addr)}
+                onInputChange={(raw) => setToAddressRaw(raw)}
+              />
 
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">
