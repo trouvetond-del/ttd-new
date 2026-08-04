@@ -20,6 +20,8 @@ interface QuoteRequest {
   client_email?: string;
   client_user_id?: string;
   total_quotes?: number;
+  lead_source?: string;
+  lead_score?: string;
 }
 
 export default function AdminRecentQuoteRequests() {
@@ -234,6 +236,11 @@ export default function AdminRecentQuoteRequests() {
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium text-gray-900 dark:text-white">{q.client_name || 'Non renseigné'}</p>
                       {q.client_email && <p className="text-xs text-gray-500">{q.client_email}</p>}
+                      {q.lead_source && q.lead_source !== 'direct' && (
+                        <p className="text-[10px] text-gray-400 mt-0.5">
+                          Source: {q.lead_source}{q.lead_score ? ` · ${q.lead_score}` : ''}
+                        </p>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5 text-sm">

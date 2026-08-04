@@ -137,7 +137,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       elevator_from: false,
       elevator_to: false,
       services_needed: [],
-      additional_info: `Lead rapide via formulaire publicitaire (source: ${source})`,
+      additional_info: '',
       client_user_id: null,
       lead_score: leadScore,
       lead_source: source,
