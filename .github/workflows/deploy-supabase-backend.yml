@@ -1,0 +1,35 @@
+name: Déploiement backend Supabase (SQL + Edge Functions)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Exécuter le SQL (colonnes profile_completed / reminder_sent_at)
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quick-lead-profile-completed.sql
+
+      - name: Installer la CLI Supabase
+        run: |
+          curl -fsSL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz -o supabase.tar.gz
+          tar -xzf supabase.tar.gz
+          sudo mv supabase /usr/local/bin/supabase
+          supabase --version
+
+      - name: Déployer link-quick-lead-account
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy link-quick-lead-account --project-ref bvvbkaluajgdurxnnqqu
+
+      - name: Déployer send-profile-reminder
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy send-profile-reminder --project-ref bvvbkaluajgdurxnnqqu
+
+      - name: Résumé
+        run: echo "✅ SQL exécuté + 2 edge functions déployées avec succès."
