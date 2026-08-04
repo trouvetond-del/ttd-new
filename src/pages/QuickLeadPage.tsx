@@ -18,11 +18,21 @@ const emptyAddress: AddressValue = {
   fullAddress: '', street: '', city: '', postalCode: '', country: 'France',
 };
 
+// Une adresse "acceptable" tapée à la main sans passer par la suggestion
+// Google (ex: script bloqué par un bloqueur de pub) : au moins un numéro et
+// une longueur raisonnable. Moins précis pour le calcul de distance, mais on
+// ne bloque jamais la capture du lead pour cette raison.
+function isPlausibleManualAddress(raw: string): boolean {
+  return raw.trim().length >= 8 && /\d/.test(raw);
+}
+
 export function QuickLeadPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [fromAddress, setFromAddress] = useState<AddressValue>(emptyAddress);
   const [toAddress, setToAddress] = useState<AddressValue>(emptyAddress);
+  const [fromAddressRaw, setFromAddressRaw] = useState('');
+  const [toAddressRaw, setToAddressRaw] = useState('');
   const [movingDate, setMovingDate] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -42,8 +52,10 @@ export function QuickLeadPage() {
       setError('Merci de renseigner votre nom et prénom.');
       return;
     }
-    if (!fromAddress.fullAddress.trim() || !toAddress.fullAddress.trim()) {
-      setError('Merci de sélectionner une adresse de départ et une adresse d\'arrivée dans la liste proposée.');
+    const fromValid = fromAddress.fullAddress.trim() || isPlausibleManualAddress(fromAddressRaw);
+    const toValid = toAddress.fullAddress.trim() || isPlausibleManualAddress(toAddressRaw);
+    if (!fromValid || !toValid) {
+      setError('Merci de renseigner une adresse de départ et une adresse d\'arrivée complètes (numéro, rue, ville).');
       return;
     }
     if (!phone.trim() || !email.trim()) {
@@ -63,12 +75,12 @@ export function QuickLeadPage() {
         body: JSON.stringify({
           first_name: firstName.trim(),
           last_name: lastName.trim(),
-          from_address: fromAddress.fullAddress,
+          from_address: fromAddress.fullAddress || fromAddressRaw.trim(),
           from_city: fromAddress.city,
           from_postal_code: fromAddress.postalCode,
           from_latitude: fromAddress.latitude ?? null,
           from_longitude: fromAddress.longitude ?? null,
-          to_address: toAddress.fullAddress,
+          to_address: toAddress.fullAddress || toAddressRaw.trim(),
           to_city: toAddress.city,
           to_postal_code: toAddress.postalCode,
           to_latitude: toAddress.latitude ?? null,
@@ -183,6 +195,7 @@ export function QuickLeadPage() {
                 value={fromAddress.fullAddress}
                 placeholder="12 rue de la Paix, Paris"
                 onAddressSelect={(addr) => setFromAddress(addr)}
+                onInputChange={(raw) => setFromAddressRaw(raw)}
               />
 
               <AddressAutocomplete
@@ -192,6 +205,7 @@ export function QuickLeadPage() {
                 value={toAddress.fullAddress}
                 placeholder="5 avenue Foch, Lyon"
                 onAddressSelect={(addr) => setToAddress(addr)}
+                onInputChange={(raw) => setToAddressRaw(raw)}
               />
 
               <div>

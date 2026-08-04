@@ -138,27 +138,55 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
 
   // Utilisateur arrivé via le lien magique de /devis-rapide : relie son
   // compte fraîchement créé à la demande déjà existante, et crée sa fiche
-  // client avec le nom/téléphone déjà collectés (best-effort, non bloquant).
-  useEffect(() => {
-    if (!editingQuoteRequestId || !user) return;
+  // client avec le nom/téléphone déjà collectés. IMPORTANT : tant que
+  // client_user_id n'est pas posé, la policy RLS SELECT sur quote_requests
+  // (auth.uid() = client_user_id) bloque la lecture — donc on doit attendre
+  // la fin de cet appel avant de lancer loadExistingQuoteRequest ci-dessous.
+  const [accountLinkAttempted, setAccountLinkAttempted] = useState(false);
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) return;
-      fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/link-quick-lead-account`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ quoteRequestId: editingQuoteRequestId }),
-      }).catch((err) => console.warn('Liaison compte quick-lead échouée (non bloquant):', err));
+  useEffect(() => {
+    if (!editingQuoteRequestId) {
+      setAccountLinkAttempted(true);
+      return;
+    }
+    if (!user) return; // attend que l'auth soit chargée
+
+    let cancelled = false;
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) {
+        if (!cancelled) setAccountLinkAttempted(true);
+        return;
+      }
+      try {
+        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/link-quick-lead-account`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ quoteRequestId: editingQuoteRequestId }),
+        });
+      } catch (err) {
+        console.warn('Liaison compte quick-lead échouée (non bloquant):', err);
+      } finally {
+        if (!cancelled) setAccountLinkAttempted(true);
+      }
     });
+
+    return () => { cancelled = true; };
   }, [editingQuoteRequestId, user]);
 
   useEffect(() => {
     const loadExistingQuoteRequest = async () => {
       if (!editingQuoteRequestId) {
         setLoadingExistingData(false);
+        return;
+      }
+      // Ne charge la demande qu'une fois la tentative de liaison du compte
+      // terminée (sinon RLS bloque la lecture tant que client_user_id est
+      // encore null — cf. commentaire de l'effet ci-dessus).
+      if (!accountLinkAttempted) {
         return;
       }
 
@@ -251,7 +279,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
     };
 
     loadExistingQuoteRequest();
-  }, [editingQuoteRequestId]);
+  }, [editingQuoteRequestId, accountLinkAttempted]);
 
   // Calculate distance when addresses change
   useEffect(() => {
