@@ -25,7 +25,9 @@ function computeLeadScore(movingDateStr: string | null | undefined): 'chaud' | '
 
 function isValidPhone(phone: string): boolean {
   const digits = phone.replace(/[\s.\-()]/g, '');
-  return /^(\+33|0)[1-9]\d{8}$/.test(digits);
+  // Uniquement mobiles français 06/07 (ou +336/+337) pour le devis rapide :
+  // c'est ce numéro que les déménageurs vont appeler directement.
+  return /^(\+33[67]|0[67])\d{8}$/.test(digits);
 }
 
 function isValidEmail(email: string): boolean {

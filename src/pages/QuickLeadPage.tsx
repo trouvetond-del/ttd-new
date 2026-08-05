@@ -61,6 +61,11 @@ export function QuickLeadPage() {
       setError('Merci de renseigner votre téléphone et votre email.');
       return;
     }
+    const phoneDigits = phone.trim().replace(/[\s.\-()]/g, '');
+    if (!/^(\+33[67]|0[67])\d{8}$/.test(phoneDigits)) {
+      setError('Merci de renseigner un numéro de mobile français valide (06 ou 07).');
+      return;
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError('Merci de renseigner une adresse email valide.');
       return;

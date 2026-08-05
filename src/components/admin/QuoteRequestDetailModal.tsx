@@ -272,6 +272,7 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
               recipientEmail: clientEmail,
               data: {
                 clientName: formData.client_name,
+                quoteRequestId,
                 fromCity: formData.from_city,
                 fromPostalCode: formData.from_postal_code,
                 toCity: formData.to_city,

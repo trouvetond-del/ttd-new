@@ -967,11 +967,19 @@ Deno.serve(async (req: Request) => {
               </p>
             </div>
 
-            <div style="background:#dbeafe; padding:16px; border-radius:10px;">
+            <div style="background:#dbeafe; padding:16px; border-radius:10px; margin-bottom:20px;">
               <p style="color:#666; margin:0; font-size:14px;">
-                <strong>👉 Prochaine étape:</strong> Connectez-vous à votre espace client pour vérifier les détails et suivre les nouveaux devis.
+                <strong>👉 Prochaine étape:</strong> Vérifiez les détails et suivez les nouveaux devis depuis votre espace.
               </p>
             </div>
+
+            ${data.quoteRequestId ? `
+            <div style="text-align:center; margin: 24px 0;">
+              <a href="https://www.trouvetondemenageur.fr/client/quote/${data.quoteRequestId}/edit" style="display:inline-block; padding:14px 32px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#ffffff; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">
+                Accéder à ma demande de déménagement
+              </a>
+            </div>
+            ` : ''}
           `
         );
         break;
