@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2 } from 'lucide-react';
+import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send } from 'lucide-react';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import { showToast } from '../../utils/toast';
 
@@ -31,6 +31,7 @@ export default function AdminRecentQuoteRequests() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [invitingId, setInvitingId] = useState<string | null>(null);
 
   const loadQuoteRequests = async () => {
     setLoading(true);
@@ -108,6 +109,41 @@ export default function AdminRecentQuoteRequests() {
       showToast('Erreur lors de la suppression de la demande', 'error');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleInvite = async (id: string, clientEmail?: string) => {
+    if (!clientEmail) {
+      showToast("Cette demande n'a pas d'email client renseigné", 'error');
+      return;
+    }
+    const confirmed = window.confirm(
+      `Envoyer un email à ${clientEmail} pour créer son mot de passe et finaliser sa demande ?`
+    );
+    if (!confirmed) return;
+
+    setInvitingId(id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Session admin expirée, reconnectez-vous.');
+
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-invite-quote-lead`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ quoteRequestId: id }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Erreur lors de l'envoi");
+
+      showToast(`Invitation envoyée à ${clientEmail}`, 'success');
+    } catch (error: any) {
+      console.error('Error inviting client:', error);
+      showToast(error.message || "Erreur lors de l'envoi de l'invitation", 'error');
+    } finally {
+      setInvitingId(null);
     }
   };
 
@@ -270,6 +306,16 @@ export default function AdminRecentQuoteRequests() {
                           <Eye className="w-3 h-3" />
                           Voir
                         </button>
+                        {!q.client_user_id && (
+                          <button
+                            onClick={() => handleInvite(q.id, q.client_email)}
+                            disabled={invitingId === q.id}
+                            className="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs rounded-lg border border-emerald-200 hover:bg-emerald-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <Send className="w-3 h-3" />
+                            {invitingId === q.id ? '...' : 'Inviter'}
+                          </button>
+                        )}
                         <button
                           onClick={() => handleDelete(q.id, q.client_name)}
                           disabled={deletingId === q.id}
