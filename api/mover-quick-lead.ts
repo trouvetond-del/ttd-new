@@ -189,6 +189,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       company_name: companyName,
       siret,
       phone,
+      expires_at: expiresAt,
     };
 
     const { error } = await supabase.from('mover_lead_verifications').insert(record).select();
