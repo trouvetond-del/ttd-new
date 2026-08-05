@@ -1,0 +1,27 @@
+name: Nettoyer un compte de test (par email)
+
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: "Email du compte de test à supprimer complètement"
+        required: true
+        type: string
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Supprimer le compte et toutes ses données liées
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          EMAIL="${{ inputs.email }}"
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 <<SQL
+          DELETE FROM quick_lead_verifications WHERE email = '$EMAIL';
+          DELETE FROM quote_requests WHERE client_email = '$EMAIL';
+          DELETE FROM clients WHERE email = '$EMAIL';
+          DELETE FROM auth.users WHERE email = '$EMAIL';
+          SQL
+          echo "✅ Compte $EMAIL entièrement supprimé (auth + client + demandes + vérifications)."
