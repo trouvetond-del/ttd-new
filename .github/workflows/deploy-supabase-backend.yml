@@ -40,6 +40,11 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase functions deploy create-quick-lead-account --project-ref bvvbkaluajgdurxnnqqu
 
+      - name: Déployer send-notification
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy send-notification --project-ref bvvbkaluajgdurxnnqqu
+
       - name: Mettre à jour le template email "Magic Link"
         run: |
           python3 supabase/email-templates/build_patch_body.py
