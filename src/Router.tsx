@@ -3,6 +3,8 @@ import { useAuth } from './contexts/AuthContext';
 import { LandingPage } from './pages/LandingPage';
 import { QuickLeadPage } from './pages/QuickLeadPage';
 import { ClientCreateQuickLeadPasswordPage } from './pages/ClientCreateQuickLeadPasswordPage';
+import { MoverQuickLeadPage } from './pages/MoverQuickLeadPage';
+import { MoverCreateQuickLeadPasswordPage } from './pages/MoverCreateQuickLeadPasswordPage';
 import { ClientQuotePage } from './pages/ClientQuotePage';
 import { ClientAuthPage } from './pages/ClientAuthPage';
 import { ClientAuthChoice } from './pages/ClientAuthChoice';
@@ -415,6 +417,8 @@ export function AppRouter() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/devis-rapide" element={<QuickLeadPage />} />
           <Route path="/devis-rapide/mot-de-passe" element={<ClientCreateQuickLeadPasswordPage />} />
+          <Route path="/inscription-demenageur" element={<MoverQuickLeadPage />} />
+          <Route path="/inscription-demenageur/mot-de-passe" element={<MoverCreateQuickLeadPasswordPage />} />
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="/mission" element={<MissionPage />} />
           <Route path="/faq" element={<FAQPage />} />
