@@ -52,7 +52,7 @@ async function sendClientVerificationEmail(email: string, firstName: string, cod
     body: JSON.stringify({
       from: 'TrouveTonDemenageur <noreply@trouvetondemenageur.fr>',
       to: [email],
-      subject: `${code} — Finalisez votre demande TrouveTonDemenageur`,
+      subject: `Finalisez votre demande TrouveTonDemenageur`,
       html: `
         <!DOCTYPE html>
         <html>
@@ -64,13 +64,7 @@ async function sendClientVerificationEmail(email: string, firstName: string, cod
           </div>
           <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
             <p>Bonjour ${firstName || ''},</p>
-            <p>Merci pour votre demande sur <strong>TrouveTonDemenageur</strong>. Votre code de confirmation :</p>
-            <div style="text-align: center; margin: 24px 0;">
-              <div style="display: inline-block; background: #F3F4F6; border: 2px solid #3B82F6; border-radius: 12px; padding: 16px 32px; letter-spacing: 6px; font-size: 26px; font-weight: bold; color: #1F2937;">
-                ${code}
-              </div>
-            </div>
-            <p>Cliquez ci-dessous pour créer votre mot de passe et finaliser votre demande (étage, ascenseur, inventaire...) :</p>
+            <p>Merci pour votre demande sur <strong>TrouveTonDemenageur</strong>. Cliquez ci-dessous pour créer votre mot de passe et finaliser votre demande (étage, ascenseur, inventaire...) :</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${actionUrl}" style="display: inline-block; background: #3B82F6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
                 Créer mon mot de passe

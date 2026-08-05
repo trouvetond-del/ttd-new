@@ -21,7 +21,6 @@ export function ClientCreateQuickLeadPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -83,16 +82,14 @@ export function ClientCreateQuickLeadPasswordPage() {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) throw signInError;
 
-      setSuccess(true);
+      // Direct, sans étape intermédiaire : il arrive tout de suite sur sa
+      // demande déjà pré-remplie pour finir étage/ascenseur/cubage.
+      navigate(`/client/quote/${quoteRequestId}/edit`);
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue');
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const goToQuote = () => {
-    navigate(`/client/quote/${quoteRequestId}/edit`);
   };
 
   const Shell = ({ children }: { children: React.ReactNode }) => (
@@ -146,28 +143,6 @@ export function ClientCreateQuickLeadPasswordPage() {
           <a href="/client/login" className="inline-block bg-blue-600 text-white font-semibold px-6 py-2.5 rounded-lg text-sm">
             Se connecter
           </a>
-        </div>
-      </Shell>
-    );
-  }
-
-  if (success) {
-    return (
-      <Shell>
-        <div className="text-center">
-          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="text-emerald-600" size={32} />
-          </div>
-          <h1 className="text-lg font-bold text-gray-900 mb-2">Compte créé !</h1>
-          <p className="text-gray-600 text-sm mb-6">
-            Il ne reste plus qu'à préciser quelques détails (étage, ascenseur, inventaire...) pour recevoir des devis précis.
-          </p>
-          <button
-            onClick={goToQuote}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
-          >
-            Se connecter et voir ma demande
-          </button>
         </div>
       </Shell>
     );
