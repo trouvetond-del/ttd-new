@@ -1,11 +1,66 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Shield, CheckCircle, AlertCircle } from 'lucide-react';
+import { Shield, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { Logo } from '../components/Logo';
 import { supabase } from '../lib/supabase';
 import { validatePassword, buildPasswordErrorMessage } from '../utils/validation';
 
 type LoadState = 'loading' | 'valid' | 'invalid' | 'expired' | 'already_used';
+
+// IMPORTANT: ce composant est défini EN DEHORS de la page, au niveau du
+// module. Le définir à l'intérieur du composant (comme avant) le recréait
+// à chaque frappe clavier -> React remontait tout le formulaire à chaque
+// caractère tapé -> autoFocus se redéclenchait -> le curseur revenait sur
+// le premier champ. C'était la cause du bug signalé.
+function Shell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex flex-col">
+      <div className="flex-1 flex items-center justify-center px-4 py-10">
+        <div className="max-w-md w-full">
+          <div className="flex items-center gap-2 justify-center mb-6">
+            <Logo showText={false} />
+            <span className="font-bold text-lg bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+              trouvetondemenageur.fr
+            </span>
+          </div>
+          <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">{children}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PasswordInput({
+  value,
+  onChange,
+  autoFocus,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  autoFocus?: boolean;
+}) {
+  const [visible, setVisible] = useState(false);
+  return (
+    <div className="relative">
+      <input
+        type={visible ? 'text' : 'password'}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        autoFocus={autoFocus}
+        className="w-full px-4 py-3 pr-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        tabIndex={-1}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        aria-label={visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+      >
+        {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+      </button>
+    </div>
+  );
+}
 
 export function ClientCreateQuickLeadPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -78,12 +133,9 @@ export function ClientCreateQuickLeadPasswordPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Une erreur est survenue');
 
-      // Connecte réellement le client avec le mot de passe qu'il vient de choisir
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) throw signInError;
 
-      // Direct, sans étape intermédiaire : il arrive tout de suite sur sa
-      // demande déjà pré-remplie pour finir étage/ascenseur/cubage.
       navigate(`/client/quote/${quoteRequestId}/edit`);
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue');
@@ -91,22 +143,6 @@ export function ClientCreateQuickLeadPasswordPage() {
       setSubmitting(false);
     }
   };
-
-  const Shell = ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-4 py-10">
-        <div className="max-w-md w-full">
-          <div className="flex items-center gap-2 justify-center mb-6">
-            <Logo showText={false} />
-            <span className="font-bold text-lg bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-              trouvetondemenageur.fr
-            </span>
-          </div>
-          <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">{children}</div>
-        </div>
-      </div>
-    </div>
-  );
 
   if (loadState === 'loading') {
     return <Shell><p className="text-center text-gray-500">Vérification du lien...</p></Shell>;
@@ -162,25 +198,14 @@ export function ClientCreateQuickLeadPasswordPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-xs font-semibold text-gray-600 mb-1.5">Mot de passe</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoFocus
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-          />
+          <PasswordInput value={password} onChange={setPassword} autoFocus />
           {password && buildPasswordErrorMessage(password) && (
             <p className="text-red-500 text-xs mt-1">{buildPasswordErrorMessage(password)}</p>
           )}
         </div>
         <div>
           <label className="block text-xs font-semibold text-gray-600 mb-1.5">Confirmer le mot de passe</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-          />
+          <PasswordInput value={confirmPassword} onChange={setConfirmPassword} />
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
         <button
