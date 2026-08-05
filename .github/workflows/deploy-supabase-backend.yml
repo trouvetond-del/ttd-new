@@ -14,6 +14,7 @@ jobs:
           sudo apt-get update -y && sudo apt-get install -y postgresql-client
           psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quick-lead-profile-completed.sql
           psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quick-lead-verifications.sql
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/mover-lead-verifications.sql
 
       - name: Installer la CLI Supabase
         uses: supabase/setup-cli@v1
@@ -44,6 +45,16 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase functions deploy send-notification --project-ref bvvbkaluajgdurxnnqqu
+
+      - name: Déployer get-mover-lead-verification
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy get-mover-lead-verification --project-ref bvvbkaluajgdurxnnqqu
+
+      - name: Déployer create-mover-lead-account
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy create-mover-lead-account --project-ref bvvbkaluajgdurxnnqqu
 
       - name: Mettre à jour le template email "Magic Link"
         run: |
