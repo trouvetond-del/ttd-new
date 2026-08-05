@@ -56,6 +56,11 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase functions deploy create-mover-lead-account --project-ref bvvbkaluajgdurxnnqqu
 
+      - name: Déployer admin-invite-quote-lead
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy admin-invite-quote-lead --project-ref bvvbkaluajgdurxnnqqu
+
       - name: Mettre à jour le template email "Magic Link"
         run: |
           python3 supabase/email-templates/build_patch_body.py
