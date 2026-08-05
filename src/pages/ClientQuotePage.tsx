@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { VolumeCalculator, type FurnitureInventory } from '../components/VolumeCalculator';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 import { FurniturePhotoUpload } from '../components/FurniturePhotoUpload';
-import { validateEmail, validatePhone, getEmailValidationMessage, getPhoneValidationMessage, validatePassword, buildPasswordErrorMessage } from '../utils/validation';
+import { validateEmail, validatePhone, getEmailValidationMessage, getPhoneValidationMessage } from '../utils/validation';
 import { validateNoContactInfo } from '../utils/contactInfoValidator';
 import { showToast } from '../utils/toast';
 import { calculateRealDistance } from '../utils/distanceCalculator';
@@ -93,51 +93,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
     market_price_estimate: null as number | null
   });
   const [selectedFormula, setSelectedFormula] = useState<string>('');
-
-  // Étape "créer un mot de passe" : affichée une seule fois, juste avant
-  // l'envoi final, uniquement pour les utilisateurs arrivés via le lien
-  // magique de /devis-rapide (editingQuoteRequestId présent = ils n'ont
-  // jamais défini de mot de passe). Ainsi le mot de passe est créé APRÈS
-  // avoir rempli tous les détails du déménagement, comme demandé.
-  const [showPasswordStep, setShowPasswordStep] = useState(false);
-  const [passwordAlreadyHandled, setPasswordAlreadyHandled] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [passwordStepError, setPasswordStepError] = useState('');
-  const [settingPassword, setSettingPassword] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-
-  const handleCreatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordStepError('');
-
-    const passwordValidation = validatePassword(newPassword);
-    if (!passwordValidation.isValid) {
-      setPasswordStepError(passwordValidation.errors.join('. '));
-      return;
-    }
-    if (newPassword !== confirmNewPassword) {
-      setPasswordStepError('Les mots de passe ne correspondent pas');
-      return;
-    }
-
-    setSettingPassword(true);
-    try {
-      const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
-      if (updateError) throw updateError;
-
-      setPasswordAlreadyHandled(true);
-      setShowPasswordStep(false);
-      showToast('Mot de passe créé avec succès', 'success');
-      // Relance la vraie soumission de la demande maintenant que le mot de
-      // passe est posé, sans que l'utilisateur ait à re-cliquer.
-      setTimeout(() => formRef.current?.requestSubmit(), 50);
-    } catch (err: any) {
-      setPasswordStepError(err.message || 'Erreur lors de la création du mot de passe');
-    } finally {
-      setSettingPassword(false);
-    }
-  };
 
   useEffect(() => {
     const loadUserInfo = async () => {
@@ -506,16 +462,6 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
     e.preventDefault();
     setError('');
     setFieldErrors({});
-
-    // Utilisateur arrivé via le lien magique de /devis-rapide, jamais posé
-    // de mot de passe : on l'arrête ici, une seule fois, avant d'envoyer
-    // quoi que ce soit. Une fois le mot de passe créé, la vraie soumission
-    // est redéclenchée automatiquement (voir handleCreatePassword).
-    if (editingQuoteRequestId && !passwordAlreadyHandled) {
-      setShowPasswordStep(true);
-      return;
-    }
-
     const errors: {[key: string]: string} = {};
 
     if (!formData.from_address || !formData.from_city || !formData.from_postal_code) {
@@ -811,59 +757,6 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
       setLoading(false);
     }
   };
-
-  if (showPasswordStep) {
-    return (
-      <ClientLayout title="Créer votre mot de passe">
-        <div className="flex items-center justify-center py-16 px-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Shield className="w-8 h-8 text-blue-600" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">
-              Une dernière étape
-            </h2>
-            <p className="text-gray-600 mb-6 text-center text-sm">
-              Créez un mot de passe pour sécuriser votre compte et suivre votre demande
-              ({formData.client_email}).
-            </p>
-            <form onSubmit={handleCreatePassword} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe</label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  autoFocus
-                />
-                {newPassword && buildPasswordErrorMessage(newPassword) && (
-                  <p className="text-red-500 text-xs mt-1">{buildPasswordErrorMessage(newPassword)}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirmer le mot de passe</label>
-                <input
-                  type="password"
-                  value={confirmNewPassword}
-                  onChange={(e) => setConfirmNewPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              {passwordStepError && <p className="text-sm text-red-600">{passwordStepError}</p>}
-              <button
-                type="submit"
-                disabled={settingPassword}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-60"
-              >
-                {settingPassword ? 'Création...' : 'Créer mon mot de passe et envoyer ma demande'}
-              </button>
-            </form>
-          </div>
-        </div>
-      </ClientLayout>
-    );
-  }
 
   if (submitted) {
     return (

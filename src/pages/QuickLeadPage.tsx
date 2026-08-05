@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Phone, Mail, Calendar, CheckCircle, Shield, Star, ArrowRight, User } from 'lucide-react';
 import { Logo } from '../components/Logo';
 import AddressAutocomplete from '../components/AddressAutocomplete';
-import { supabase } from '../lib/supabase';
 
 type AddressValue = {
   fullAddress: string;
@@ -98,20 +97,9 @@ export function QuickLeadPage() {
       if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Lead');
       if (typeof (window as any).gtag === 'function') (window as any).gtag('event', 'generate_lead', { source });
 
-      // Lien magique : connecte directement l'utilisateur, sans mot de passe,
-      // vers la page de finalisation de SA demande déjà créée (pré-remplie).
-      // Best-effort : si ça échoue, le lead est déjà en base et sera rappelé.
-      try {
-        await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/client/quote/${json.id}/edit`,
-            shouldCreateUser: true,
-          },
-        });
-      } catch (magicLinkError) {
-        console.warn('Lien magique non envoyé (non bloquant):', magicLinkError);
-      }
+      // L'email de vérification (code + bouton "Créer mon mot de passe")
+      // est envoyé côté serveur par api/quick-lead.ts, indépendamment de
+      // Supabase Auth (pour éviter les templates email piégeux de Supabase).
 
       setSubmitted(true);
     } catch (err: any) {
@@ -134,8 +122,9 @@ export function QuickLeadPage() {
             <span className="font-semibold">{phone}</span> très rapidement.
           </p>
           <p className="text-gray-500 text-xs mt-3 bg-blue-50 rounded-lg p-3">
-            📩 Un lien vous a été envoyé à <strong>{email}</strong> pour finaliser votre dossier en 2 minutes
-            (étage, ascenseur, inventaire...) et recevoir des devis précis. Pensez à vérifier vos spams.
+            📩 Un email vous a été envoyé à <strong>{email}</strong> avec un bouton pour créer votre
+            mot de passe et finaliser votre dossier en 2 minutes (étage, ascenseur, inventaire...).
+            Pensez à vérifier vos spams.
           </p>
         </div>
       </div>

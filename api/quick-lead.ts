@@ -5,6 +5,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto';
 
 const supabase = createClient(
   process.env.VITE_SUPABASE_URL!,
@@ -29,6 +30,94 @@ function isValidPhone(phone: string): boolean {
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function generateToken(): string {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+function generateCode(): string {
+  return String(Math.floor(10000000 + Math.random() * 90000000));
+}
+
+async function sendClientVerificationEmail(email: string, firstName: string, code: string, actionUrl: string): Promise<void> {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) {
+    console.warn('RESEND_API_KEY manquante : email de vérification client non envoyé.');
+    return;
+  }
+  await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: 'TrouveTonDemenageur <noreply@trouvetondemenageur.fr>',
+      to: [email],
+      subject: `${code} — Finalisez votre demande TrouveTonDemenageur`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"></head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+            <h1 style="margin:0; font-size: 24px;">🏠 TrouveTonDemenageur</h1>
+            <p style="margin:8px 0 0; opacity:0.9;">Encore une étape avant vos devis</p>
+          </div>
+          <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
+            <p>Bonjour ${firstName || ''},</p>
+            <p>Merci pour votre demande sur <strong>TrouveTonDemenageur</strong>. Votre code de confirmation :</p>
+            <div style="text-align: center; margin: 24px 0;">
+              <div style="display: inline-block; background: #F3F4F6; border: 2px solid #3B82F6; border-radius: 12px; padding: 16px 32px; letter-spacing: 6px; font-size: 26px; font-weight: bold; color: #1F2937;">
+                ${code}
+              </div>
+            </div>
+            <p>Cliquez ci-dessous pour créer votre mot de passe et finaliser votre demande (étage, ascenseur, inventaire...) :</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${actionUrl}" style="display: inline-block; background: #3B82F6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                Créer mon mot de passe
+              </a>
+            </div>
+            <p style="text-align: center; color: #6B7280; font-size: 14px;">Ce lien expire dans 24 heures.</p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+            <p style="color: #6B7280; font-size: 13px;">Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email.</p>
+          </div>
+        </body>
+        </html>
+      `,
+    }),
+  });
+}
+
+async function createAndSendVerification(
+  supabase: ReturnType<typeof createClient>,
+  quoteRequestId: string,
+  email: string,
+  firstName: string
+): Promise<void> {
+  const token = generateToken();
+  const code = generateCode();
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+  const { error } = await supabase.from('quick_lead_verifications').insert({
+    quote_request_id: quoteRequestId,
+    email,
+    token,
+    code,
+    expires_at: expiresAt,
+  });
+
+  if (error) {
+    console.error('Erreur création vérification:', error);
+    return;
+  }
+
+  const baseUrl = process.env.PUBLIC_SITE_URL || 'https://www.trouvetondemenageur.fr';
+  const actionUrl = `${baseUrl}/devis-rapide/mot-de-passe?token=${token}`;
+
+  try {
+    await sendClientVerificationEmail(email, firstName, code, actionUrl);
+  } catch (emailError) {
+    console.warn('Email de vérification client échoué (non bloquant):', emailError);
+  }
 }
 
 async function sendAdminAlert(admins: string[], leadScore: string, record: any): Promise<void> {
@@ -107,7 +196,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .limit(1);
 
     if (existing && existing.length > 0) {
-      return res.status(200).json({ success: true, duplicate: true, id: existing[0].id });
+      const quoteRequestId = existing[0].id;
+      await createAndSendVerification(supabase, quoteRequestId, email, firstName);
+      return res.status(200).json({ success: true, duplicate: true, id: quoteRequestId });
     }
 
     const leadScore = computeLeadScore(movingDate);
@@ -149,6 +240,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (error) {
       console.error('Erreur insertion quick-lead:', error);
       return res.status(500).json({ error: 'Erreur lors de l\'enregistrement.', details: error.message });
+    }
+
+    const newQuoteRequestId = data?.[0]?.id;
+    if (newQuoteRequestId) {
+      await createAndSendVerification(supabase, newQuoteRequestId, email, firstName);
     }
 
     // Alerte équipe admin (best-effort)

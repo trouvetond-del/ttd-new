@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useAuth } from './contexts/AuthContext';
 import { LandingPage } from './pages/LandingPage';
 import { QuickLeadPage } from './pages/QuickLeadPage';
+import { ClientCreateQuickLeadPasswordPage } from './pages/ClientCreateQuickLeadPasswordPage';
 import { ClientQuotePage } from './pages/ClientQuotePage';
 import { ClientAuthPage } from './pages/ClientAuthPage';
 import { ClientAuthChoice } from './pages/ClientAuthChoice';
@@ -413,6 +414,7 @@ export function AppRouter() {
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/devis-rapide" element={<QuickLeadPage />} />
+          <Route path="/devis-rapide/mot-de-passe" element={<ClientCreateQuickLeadPasswordPage />} />
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="/mission" element={<MissionPage />} />
           <Route path="/faq" element={<FAQPage />} />
