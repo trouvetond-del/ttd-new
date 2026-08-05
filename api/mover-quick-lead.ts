@@ -144,13 +144,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Bloque si ce SIRET ou cet email correspond à un déménageur déjà inscrit
-    const { data: existingMover } = await supabase
+    // Deux requêtes séparées plutôt qu'un .or() interpolé en chaîne :
+    // la syntaxe mini-DSL de PostgREST peut mal interpréter certains
+    // caractères (points, etc.) présents dans un email, ce qui provoque
+    // une erreur 500 au lieu d'un vrai contrôle de doublon.
+    const { data: moverBySiret, error: siretCheckError } = await supabase
       .from('movers')
       .select('id')
-      .or(`siret.eq.${siret},email.eq.${email}`)
+      .eq('siret', siret)
       .limit(1);
 
-    if (existingMover && existingMover.length > 0) {
+    const { data: moverByEmail, error: emailCheckError } = await supabase
+      .from('movers')
+      .select('id')
+      .eq('email', email)
+      .limit(1);
+
+    if (siretCheckError || emailCheckError) {
+      console.error('Erreur vérification doublon:', siretCheckError || emailCheckError);
+      return res.status(500).json({
+        error: 'Erreur lors de la vérification.',
+        details: (siretCheckError || emailCheckError)?.message,
+      });
+    }
+
+    const existingMover = [...(moverBySiret || []), ...(moverByEmail || [])];
+
+    if (existingMover.length > 0) {
       return res.status(409).json({
         error: 'Ce SIRET ou cet email est déjà enregistré. Connectez-vous à votre espace déménageur existant.',
       });

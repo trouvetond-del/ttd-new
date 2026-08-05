@@ -56,7 +56,7 @@ export function MoverQuickLeadPage() {
         }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'Une erreur est survenue.');
+      if (!res.ok) throw new Error(json.details ? `${json.error} (${json.details})` : (json.error || 'Une erreur est survenue.'));
 
       if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Lead');
       if (typeof (window as any).gtag === 'function') (window as any).gtag('event', 'generate_lead', { source, type: 'mover' });
