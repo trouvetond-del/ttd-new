@@ -3,6 +3,10 @@ name: Déploiement backend Supabase (SQL + Edge Functions)
 on:
   workflow_dispatch: {}
 
+permissions:
+  issues: write
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -11,14 +15,20 @@ jobs:
 
       - name: Exécuter le SQL (colonnes profile_completed / reminder_sent_at)
         run: |
-          sudo apt-get update -y && sudo apt-get install -y postgresql-client
-          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quick-lead-profile-completed.sql
-          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quick-lead-verifications.sql
-          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/mover-lead-verifications.sql
-          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quote-reference-and-reminders.sql
-          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quote-requests-view-add-reference.sql
-          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quote-reminder-log-and-notif-type.sql
-          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/setup-cron-jobs.sql
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
+          set +e
+          FILES="supabase/migrations_manuelles/quick-lead-profile-completed.sql supabase/migrations_manuelles/quick-lead-verifications.sql supabase/migrations_manuelles/mover-lead-verifications.sql supabase/migrations_manuelles/quote-reference-and-reminders.sql supabase/migrations_manuelles/quote-requests-view-add-reference.sql supabase/migrations_manuelles/quote-reminder-log-and-notif-type.sql supabase/migrations_manuelles/setup-cron-jobs.sql"
+          for f in $FILES; do
+            echo "=== Running $f ==="
+            OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f "$f" 2>&1)
+            CODE=$?
+            echo "$OUT"
+            if [ $CODE -ne 0 ]; then
+              BODY=$(jq -n --arg t "SQL migration failed: $f" --arg b "$OUT" '{title:$t, body:$b}')
+              curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/issues" -d "$BODY"
+              exit 1
+            fi
+          done
 
       - name: Installer la CLI Supabase
         uses: supabase/setup-cli@v1
