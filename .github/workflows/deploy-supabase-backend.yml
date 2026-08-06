@@ -17,6 +17,8 @@ jobs:
           psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/mover-lead-verifications.sql
           psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quote-reference-and-reminders.sql
           psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quote-requests-view-add-reference.sql
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/quote-reminder-log-and-notif-type.sql
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/setup-cron-jobs.sql
 
       - name: Installer la CLI Supabase
         uses: supabase/setup-cli@v1
@@ -31,7 +33,7 @@ jobs:
       - name: Déployer send-profile-reminder
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase functions deploy send-profile-reminder --project-ref bvvbkaluajgdurxnnqqu
+        run: supabase functions deploy send-profile-reminder --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
 
       - name: Déployer get-quick-lead-verification
         env:
@@ -66,7 +68,7 @@ jobs:
       - name: Déployer send-mover-quote-reminders
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase functions deploy send-mover-quote-reminders --project-ref bvvbkaluajgdurxnnqqu
+        run: supabase functions deploy send-mover-quote-reminders --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
 
       - name: Mettre à jour le template email "Magic Link"
         run: |

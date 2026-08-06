@@ -76,6 +76,7 @@ Deno.serve(async () => {
     const days = daysUntil(request.moving_date);
     const urgency = getUrgency(days);
     if (!urgency) continue;
+    const shortRef = request.reference || `#${request.id.slice(0, 8).toUpperCase()}`;
 
     // Déménageurs ayant déjà déposé un devis sur cette demande : à exclure
     const { data: existingQuotes } = await supabaseAdmin
@@ -109,13 +110,13 @@ Deno.serve(async () => {
           user_id: mover.user_id,
           user_type: "mover",
           title: urgency.level === "urgent"
-            ? `⏰ Urgent : ${request.reference} approche, déposez votre devis`
-            : `Demande ouverte : ${request.reference}`,
+            ? `⏰ Urgent : ${shortRef} approche, déposez votre devis`
+            : `Demande ouverte : ${shortRef}`,
           message: `${request.from_city} → ${request.to_city}, déménagement le ${new Date(request.moving_date).toLocaleDateString('fr-FR')}. Soyez parmi les premiers à répondre.`,
           type: "quote_reminder",
           related_id: request.id,
           read: false,
-          data: { quote_request_id: request.id, reference: request.reference, urgency: urgency.level },
+          data: { quote_request_id: request.id, reference: shortRef, urgency: urgency.level },
         });
         notificationsCreated++;
       } catch (e) {
@@ -133,8 +134,8 @@ Deno.serve(async () => {
               from: "TrouveTonDemenageur <noreply@trouvetondemenageur.fr>",
               to: [mover.email],
               subject: isUrgent
-                ? `⏰ ${request.reference} — Déménagement dans ${days} jour(s), soyez le premier à répondre !`
-                : `Demande ouverte ${request.reference} — ${request.from_city} → ${request.to_city}`,
+                ? `⏰ ${shortRef} — Déménagement dans ${days} jour(s), soyez le premier à répondre !`
+                : `Demande ouverte ${shortRef} — ${request.from_city} → ${request.to_city}`,
               html: `
                 <!DOCTYPE html>
                 <html><head><meta charset="UTF-8"></head>
@@ -146,7 +147,7 @@ Deno.serve(async () => {
                     <p>Bonjour ${mover.company_name || ''},</p>
                     <p>Une demande de déménagement correspondant à votre zone est toujours ouverte :</p>
                     <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin: 16px 0;">
-                      <p style="margin:0 0 6px;"><strong>Référence :</strong> ${request.reference}</p>
+                      <p style="margin:0 0 6px;"><strong>Référence :</strong> ${shortRef}</p>
                       <p style="margin:0 0 6px;"><strong>Trajet :</strong> ${request.from_city} → ${request.to_city}</p>
                       <p style="margin:0;"><strong>Date :</strong> ${new Date(request.moving_date).toLocaleDateString('fr-FR')} (dans ${days} jour${days > 1 ? 's' : ''})</p>
                     </div>
