@@ -171,6 +171,22 @@ export default function MoverQuoteRequestsPage() {
         `)
         .in('status', ['new', 'quoted'])
         .not('id', 'in', `(${quotedRequestIds.length > 0 ? quotedRequestIds.join(',') : '00000000-0000-0000-0000-000000000000'})`)
+        // N'affiche que les demandes réellement complètes (le client a fini
+        // /client/quote, pas juste soumis le devis-rapide). Sans ça, les
+        // demandes venant du devis-rapide jamais finalisées (étage, taille,
+        // type, surface, cubage tous vides) apparaissaient quand même,
+        // inexploitables pour chiffrer un devis.
+        .not('from_home_size', 'is', null)
+        .neq('from_home_size', '')
+        .not('from_home_type', 'is', null)
+        .neq('from_home_type', '')
+        .not('to_home_size', 'is', null)
+        .neq('to_home_size', '')
+        .not('to_home_type', 'is', null)
+        .neq('to_home_type', '')
+        .not('from_surface_m2', 'is', null)
+        .not('volume_m3', 'is', null)
+        .gt('volume_m3', 0)
         .order('created_at', { ascending: false });
 
       console.log('Query result:', { data, error });
@@ -180,7 +196,12 @@ export default function MoverQuoteRequestsPage() {
         throw error;
       }
 
-      const requestsWithCount = await Promise.all(data.map(async (req) => {
+      const completeData = (data || []).filter((req: any) => {
+        const inv = req.furniture_inventory;
+        return inv && typeof inv === 'object' && Object.keys(inv).length > 0;
+      });
+
+      const requestsWithCount = await Promise.all(completeData.map(async (req) => {
         const { count } = await supabase
           .from('quotes')
           .select('*', { count: 'exact', head: true })

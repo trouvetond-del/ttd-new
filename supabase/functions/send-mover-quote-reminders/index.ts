@@ -49,7 +49,19 @@ Deno.serve(async () => {
     .from("quote_requests")
     .select("id, reference, from_city, to_city, moving_date, client_name")
     .in("status", ["new", "assigned", "quoted"])
-    .gte("moving_date", new Date().toISOString().split("T")[0]);
+    .gte("moving_date", new Date().toISOString().split("T")[0])
+    // Ignore les demandes jamais finalisées par le client (devis-rapide
+    // sans étage/taille/type/cubage) : pas exploitables pour un devis.
+    .not("from_home_size", "is", null)
+    .neq("from_home_size", "")
+    .not("from_home_type", "is", null)
+    .neq("from_home_type", "")
+    .not("to_home_size", "is", null)
+    .neq("to_home_size", "")
+    .not("to_home_type", "is", null)
+    .neq("to_home_type", "")
+    .not("volume_m3", "is", null)
+    .gt("volume_m3", 0);
 
   if (qrError || !openRequests) {
     return new Response(JSON.stringify({ error: qrError?.message || "Erreur chargement demandes" }), {
