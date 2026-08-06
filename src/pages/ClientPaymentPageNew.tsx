@@ -481,10 +481,22 @@ export default function ClientPaymentPage() {
     finally { setLoading(false); }
   };
 
+  const waitForPaymentVerification = async (stripePaymentId: string): Promise<boolean> => {
+    for (let i = 0; i < 10; i++) {
+      const { data } = await supabase
+        .from('payments')
+        .select('stripe_verified')
+        .eq('stripe_payment_id', stripePaymentId)
+        .maybeSingle();
+      if (data?.stripe_verified) return true;
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    return false;
+  };
+
   const createPaymentIntent = async () => {
-    if (!quote) return;
+    if (!quote || !user) return;
     try {
-      const breakdown = calculatePriceBreakdown(quote.client_display_price);
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-payment-intent`,
         {
@@ -494,10 +506,10 @@ export default function ClientPaymentPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            amount: breakdown.depositAmount,
             quoteId: quote.id,
+            userId: user.id,
             description: `Commission plateforme ${quote.quote_requests.from_city} → ${quote.quote_requests.to_city}`,
-            ...(appliedPromo ? { promoCode: appliedPromo.code, userId: user?.id } : {}),
+            ...(appliedPromo ? { promoCode: appliedPromo.code } : {}),
           }),
         }
       );
@@ -522,40 +534,23 @@ export default function ClientPaymentPage() {
       if (stripeError) throw new Error(stripeError.message || 'Erreur paiement');
       if (paymentIntent?.status !== 'succeeded') throw new Error(`Paiement non abouti: ${paymentIntent?.status}`);
 
-      const breakdown = calculatePriceBreakdown(quote.client_display_price);
-      const moverPrice = Math.round(quote.client_display_price / 1.3);
-      const finalDeposit = appliedPromo
-        ? Math.round((breakdown.depositAmount - appliedPromo.discount_amount) * 100) / 100
-        : breakdown.depositAmount;
+      // La ligne "payments" a déjà été créée côté serveur (pending) au
+      // moment de créer le PaymentIntent. On n'écrit plus jamais
+      // payment_status/stripe_verified depuis le navigateur : c'est le
+      // webhook Stripe (signature vérifiée côté serveur) qui les passera
+      // à 'completed'/true après confirmation réelle du paiement — cela
+      // évite qu'un client puisse se déclarer "payé" sans avoir payé.
+      // On attend ici que le webhook ait fait son travail (généralement
+      // 1 à 3 secondes) avant de considérer le paiement confirmé.
+      const verified = await waitForPaymentVerification(paymentIntent.id);
+      if (!verified) {
+        // Le paiement Stripe a bien réussi, mais la confirmation serveur
+        // met plus de temps que prévu : on ne bloque pas l'utilisateur,
+        // le webhook finira par la traiter.
+        console.warn('Vérification serveur du paiement plus longue que prévu, on continue.');
+      }
 
-      const { error: paymentError } = await supabase.from('payments').insert({
-        quote_request_id: quote.quote_request_id,
-        quote_id: quote.id,
-        client_id: user.id,
-        mover_id: quote.mover_id,
-        mover_price: moverPrice,
-        total_amount: breakdown.totalAmount,
-        deposit_amount: finalDeposit,
-        amount_paid: finalDeposit,
-        platform_fee: finalDeposit,
-        guarantee_amount: 0,
-        guarantee_status: 'none',
-        mover_deposit: 0,
-        escrow_amount: 0,
-        remaining_amount: breakdown.remainingAmount,
-        payment_status: 'completed',
-        stripe_payment_id: paymentIntent.id,
-        stripe_verified: true,
-        stripe_verified_at: new Date().toISOString(),
-        paid_at: new Date().toISOString(),
-      });
-      if (paymentError) throw paymentError;
-
-      await supabase.from('quotes').update({ status: 'accepted' }).eq('id', quote.id);
-      await supabase.from('quote_requests').update({ status: 'accepted', accepted_quote_id: quote.id, payment_status: 'deposit_paid' }).eq('id', quote.quote_request_id);
-      await supabase.from('quotes').update({ status: 'rejected' }).eq('quote_request_id', quote.quote_request_id).neq('id', quote.id);
-
-      setTimeout(() => navigate('/client/payment-success'), 1000);
+      setTimeout(() => navigate('/client/payment-success'), 500);
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Erreur paiement');

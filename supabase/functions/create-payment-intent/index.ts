@@ -9,7 +9,6 @@ const corsHeaders = {
 };
 
 interface PaymentIntentRequest {
-  amount: number;       // depositAmount (commission) BEFORE any promo discount
   quoteId: string;
   description?: string;
   promoCode?: string;   // optional promo code entered by client
@@ -31,10 +30,32 @@ Deno.serve(async (req: Request) => {
 
     const stripe = new Stripe(stripeSecretKey, { apiVersion: "2024-12-18.acacia" });
 
-    const { amount, quoteId, description, promoCode, userId }: PaymentIntentRequest = await req.json();
+    const { quoteId, description, promoCode, userId }: PaymentIntentRequest = await req.json();
 
-    if (!amount || amount <= 0) return json({ error: "Montant invalide" }, 400);
     if (!quoteId) return json({ error: "ID de devis manquant" }, 400);
+
+    // ── Charge le devis réel côté serveur : le montant n'est JAMAIS accepté
+    // depuis le client, pour ne pas permettre à quelqu'un de payer un
+    // montant arbitraire pour une mission de valeur bien supérieure. ──────
+    const { data: quoteRow, error: quoteError } = await supabase
+      .from("quotes")
+      .select("id, quote_request_id, mover_id, client_display_price, status")
+      .eq("id", quoteId)
+      .maybeSingle();
+
+    if (quoteError || !quoteRow) return json({ error: "Devis introuvable" }, 404);
+    if (quoteRow.status !== "pending") return json({ error: "Ce devis ne peut pas être payé (statut invalide)." }, 400);
+    if (!quoteRow.client_display_price || quoteRow.client_display_price <= 0) {
+      return json({ error: "Prix du devis invalide" }, 400);
+    }
+
+    // Reproduit exactement src/utils/marketPriceCalculation.ts::calculatePriceBreakdown
+    const moverPrice = Math.round(quoteRow.client_display_price / 1.3);
+    const platformFee = quoteRow.client_display_price - moverPrice;
+    const amount = platformFee; // = depositAmount, ce que Stripe facture réellement
+    const remainingAmount = moverPrice;
+
+    if (amount <= 0) return json({ error: "Montant de commission invalide" }, 400);
 
     // ── Validate and apply promo code if provided ──────────────────────────
     let finalAmount = amount;
@@ -121,6 +142,31 @@ Deno.serve(async (req: Request) => {
     });
 
     console.log("PaymentIntent créé:", paymentIntent.id, "amount:", finalAmount, "€");
+
+    // ── Pré-crée la ligne payments côté serveur, en 'pending' / non
+    // vérifiée. C'est le webhook Stripe (signature cryptographique
+    // vérifiée) qui la passera à 'completed' / stripe_verified=true après
+    // confirmation réelle du paiement — jamais le client directement.
+    const { error: paymentInsertError } = await supabase.from("payments").insert({
+      quote_request_id: quoteRow.quote_request_id,
+      quote_id: quoteRow.id,
+      client_id: userId || null,
+      mover_id: quoteRow.mover_id,
+      total_amount: quoteRow.client_display_price,
+      amount_paid: finalAmount,
+      platform_fee: finalAmount,
+      mover_deposit: 0,
+      remaining_amount: remainingAmount,
+      payment_status: "pending",
+      stripe_payment_id: paymentIntent.id,
+      stripe_verified: false,
+    });
+
+    if (paymentInsertError) {
+      console.error("Erreur création ligne payments:", paymentInsertError);
+      // On ne bloque pas le paiement pour autant : le webhook tentera un
+      // upsert de secours. On log fort pour investigation.
+    }
 
     // NOTE: promo usage is NOT recorded here.
     // It is recorded exclusively in the stripe-webhook function
