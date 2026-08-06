@@ -1,0 +1,18 @@
+name: Test manuel send-mover-quote-reminders
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Appeler la fonction et afficher la reponse
+        run: |
+          echo "--- send-mover-quote-reminders ---"
+          curl -s -X POST "https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/send-mover-quote-reminders" -H "Content-Type: application/json" -o /tmp/resp1.json -w "HTTP %{http_code}\n"
+          cat /tmp/resp1.json
+          echo ""
+          echo "--- send-profile-reminder ---"
+          curl -s -X POST "https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/send-profile-reminder" -H "Content-Type: application/json" -o /tmp/resp2.json -w "HTTP %{http_code}\n"
+          cat /tmp/resp2.json
