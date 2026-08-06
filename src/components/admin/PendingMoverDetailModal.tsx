@@ -186,7 +186,17 @@ export function PendingMoverDetailModal({ moverId, onClose, onStatusUpdate }: Pe
       });
 
       if (error) throw error;
-      setAiVerification(data);
+      // Normalise la réponse : si l'edge function renvoie un objet partiel
+      // (ex: mover sans documents), on force des valeurs par défaut sûres
+      // au lieu de laisser des champs undefined qui font planter le rendu
+      // (.length sur undefined -> page blanche).
+      setAiVerification({
+        overallStatus: data?.overallStatus || 'needs_review',
+        checks: Array.isArray(data?.checks) ? data.checks : [],
+        alerts: Array.isArray(data?.alerts) ? data.alerts : [],
+        expirationWarnings: Array.isArray(data?.expirationWarnings) ? data.expirationWarnings : [],
+        score: typeof data?.score === 'number' ? data.score : 0,
+      });
     } catch (error) {
       console.error('Error running AI verification:', error);
     }
@@ -482,14 +492,14 @@ export function PendingMoverDetailModal({ moverId, onClose, onStatusUpdate }: Pe
 
         <div className="p-6 max-h-[calc(100vh-200px)] overflow-y-auto">
           {/* AI Alerts Section */}
-          {aiVerification && (aiVerification.alerts.length > 0 || aiVerification.expirationWarnings.length > 0) && (
+          {aiVerification && ((aiVerification.alerts?.length ?? 0) > 0 || (aiVerification.expirationWarnings?.length ?? 0) > 0) && (
             <div className="mb-6 space-y-3">
               <h3 className="text-lg font-semibold flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-orange-600" />
                 Alertes IA
               </h3>
 
-              {aiVerification.alerts.map((alert, idx) => (
+              {(aiVerification.alerts ?? []).map((alert, idx) => (
                 <div
                   key={idx}
                   className={`p-4 rounded-lg border-l-4 ${
@@ -512,7 +522,7 @@ export function PendingMoverDetailModal({ moverId, onClose, onStatusUpdate }: Pe
                 </div>
               ))}
 
-              {aiVerification.expirationWarnings.map((warning, idx) => (
+              {(aiVerification.expirationWarnings ?? []).map((warning, idx) => (
                 <div key={idx} className="p-4 rounded-lg border-l-4 bg-orange-50 border-orange-500">
                   <div className="flex items-start gap-3">
                     <Calendar className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />

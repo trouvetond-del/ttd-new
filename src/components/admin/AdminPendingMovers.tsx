@@ -3,6 +3,7 @@ import { Clock, Eye, RefreshCw, CheckCircle, XCircle, Building, Mail, Phone, Sea
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
 import { PendingMoverDetailModal } from './PendingMoverDetailModal';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 interface PendingMover {
   id: string;
@@ -111,11 +112,13 @@ export default function AdminPendingMovers() {
       )}
 
       {selectedMoverId && (
-        <PendingMoverDetailModal
-          moverId={selectedMoverId}
-          onClose={() => setSelectedMoverId(null)}
-          onStatusUpdate={loadMovers}
-        />
+        <ErrorBoundary fallbackLabel="Impossible d'afficher les détails de ce déménageur">
+          <PendingMoverDetailModal
+            moverId={selectedMoverId}
+            onClose={() => setSelectedMoverId(null)}
+            onStatusUpdate={loadMovers}
+          />
+        </ErrorBoundary>
       )}
     </div>
   );
