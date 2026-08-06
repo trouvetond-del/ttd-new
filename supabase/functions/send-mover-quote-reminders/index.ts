@@ -17,13 +17,15 @@ function daysUntil(dateStr: string): number {
 }
 
 // Urgence + fréquence minimale entre deux relances pour la même paire
-// (déménageur, demande).
+// (déménageur, demande). Max 12h d'écart dans tous les cas = au moins
+// 2 relances/jour tant que la demande reste ouverte, plus fréquent si
+// le déménagement approche.
 function getUrgency(days: number): { level: string; minHoursBetweenReminders: number } | null {
   if (days < 0) return null; // date passée, on arrête de relancer
   if (days <= 3) return { level: 'urgent', minHoursBetweenReminders: 4 };
-  if (days <= 7) return { level: 'proche', minHoursBetweenReminders: 24 };
-  if (days <= 21) return { level: 'normal', minHoursBetweenReminders: 48 };
-  return { level: 'lointain', minHoursBetweenReminders: 96 };
+  if (days <= 7) return { level: 'proche', minHoursBetweenReminders: 8 };
+  if (days <= 21) return { level: 'normal', minHoursBetweenReminders: 12 };
+  return { level: 'lointain', minHoursBetweenReminders: 12 };
 }
 
 function coverageMatches(coverageArea: string[] | null, fromCity: string, toCity: string): boolean {
