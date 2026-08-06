@@ -130,6 +130,7 @@ export default function MoverQuoteRequestsPage() {
         .from('quote_requests_with_privacy')
         .select(`
           id,
+          reference,
           client_user_id,
           client_name,
           client_email,
@@ -215,6 +216,7 @@ export default function MoverQuoteRequestsPage() {
       const query = filters.searchQuery.toLowerCase();
       filtered = filtered.filter(
         (req) =>
+          req.reference?.toLowerCase().includes(query) ||
           req.from_city?.toLowerCase().includes(query) ||
           req.to_city?.toLowerCase().includes(query) ||
           req.home_size?.toLowerCase().includes(query)
@@ -359,6 +361,9 @@ export default function MoverQuoteRequestsPage() {
 
                 <div className="grid lg:grid-cols-[1fr,400px] gap-6 mb-4">
                   <div className="flex-1">
+                    {request.reference && (
+                      <p className="text-xs font-mono text-slate-400 mb-2">{request.reference}</p>
+                    )}
                     <div className="flex items-start justify-between mb-6">
                       <div className="flex items-center gap-3">
                         <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-base font-semibold">

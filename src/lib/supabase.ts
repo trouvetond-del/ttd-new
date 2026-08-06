@@ -52,6 +52,7 @@ export type MoverDocument = {
 
 export type QuoteRequest = {
   id: string;
+  reference?: string;
   client_user_id?: string;
   client_name: string;
   client_email: string;

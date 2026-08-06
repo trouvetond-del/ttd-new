@@ -6,6 +6,7 @@ import { showToast } from '../../utils/toast';
 
 interface QuoteRequest {
   id: string;
+  reference?: string;
   created_at: string;
   from_address: string;
   to_address: string;
@@ -186,6 +187,7 @@ export default function AdminRecentQuoteRequests() {
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
+      (q.reference || '').toLowerCase().includes(term) ||
       (q.client_name || '').toLowerCase().includes(term) ||
       (q.client_email || '').toLowerCase().includes(term) ||
       (q.from_address || '').toLowerCase().includes(term) ||
@@ -270,7 +272,10 @@ export default function AdminRecentQuoteRequests() {
                       {new Date(q.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{q.client_name || 'Non renseigné'}</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {q.client_name || 'Non renseigné'}
+                        {q.reference && <span className="ml-2 text-[10px] font-mono text-gray-400">{q.reference}</span>}
+                      </p>
                       {q.client_email && <p className="text-xs text-gray-500">{q.client_email}</p>}
                       {q.lead_source && q.lead_source !== 'direct' && (
                         <p className="text-[10px] text-gray-400 mt-0.5">
