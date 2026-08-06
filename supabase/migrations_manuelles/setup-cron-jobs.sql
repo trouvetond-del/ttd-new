@@ -8,6 +8,20 @@ CREATE EXTENSION IF NOT EXISTS pg_net;
 -- Retire d'éventuelles anciennes programmations avant de les recréer (idempotent)
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-mover-quote-reminders-3h';
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-profile-reminder-hourly';
+SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-client-quote-reminder-12h';
+
+-- Relance des clients qui ont un compte mais n'ont jamais fini de remplir
+-- leur demande (étage, taille, type, cubage), toutes les 12 heures
+SELECT cron.schedule(
+  'send-client-quote-reminder-12h',
+  '0 */12 * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/send-client-quote-reminder',
+    headers := '{"Content-Type": "application/json"}'::jsonb
+  );
+  $$
+);
 
 -- Relance des déménageurs sur les demandes ouvertes, toutes les 3 heures
 -- (la fonction elle-même respecte une fréquence minimale par paire

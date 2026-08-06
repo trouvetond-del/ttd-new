@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface RouteMapProps {
   fromAddress: string;
@@ -7,6 +7,15 @@ interface RouteMapProps {
   toAddress: string;
   toCity: string;
   toPostalCode: string;
+}
+
+// Une adresse masquée par la vue de confidentialité (mover sans accès payant)
+// ressemble à "Ville uniquement (Paris 75001)" ou "Adresse masquée" -- ce
+// n'est pas une vraie adresse géocodable. Dans ce cas on géocode juste
+// ville + code postal, qui donne un point suffisamment précis pour voir le
+// trajet sans révéler l'adresse exacte.
+function isMaskedAddress(address: string): boolean {
+  return !address || address.startsWith('Ville uniquement') || address.startsWith('Adresse masquée');
 }
 
 export default function RouteMap({
@@ -19,9 +28,11 @@ export default function RouteMap({
 }: RouteMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
+    setError(null);
 
     const loadGoogleMaps = () => {
       if (window.google && window.google.maps) {
@@ -34,6 +45,7 @@ export default function RouteMap({
       script.async = true;
       script.defer = true;
       script.onload = () => initializeMap();
+      script.onerror = () => setError("Impossible de charger la carte (Google Maps indisponible).");
       document.head.appendChild(script);
     };
 
@@ -42,14 +54,28 @@ export default function RouteMap({
 
       const geocoder = new google.maps.Geocoder();
 
-      const fromFullAddress = `${fromAddress}, ${fromPostalCode} ${fromCity}, France`;
-      const toFullAddress = `${toAddress}, ${toPostalCode} ${toCity}, France`;
+      const fromFullAddress = isMaskedAddress(fromAddress)
+        ? `${fromPostalCode} ${fromCity}, France`
+        : `${fromAddress}, ${fromPostalCode} ${fromCity}, France`;
+      const toFullAddress = isMaskedAddress(toAddress)
+        ? `${toPostalCode} ${toCity}, France`
+        : `${toAddress}, ${toPostalCode} ${toCity}, France`;
 
       try {
-        const [fromResult, toResult] = await Promise.all([
+        let [fromResult, toResult] = await Promise.all([
           geocodeAddress(geocoder, fromFullAddress),
           geocodeAddress(geocoder, toFullAddress),
         ]);
+
+        // Repli : si l'adresse complète échoue pour une autre raison
+        // (adresse mal saisie, etc.), retente avec juste ville + code postal
+        // avant d'abandonner complètement.
+        if (!fromResult && !isMaskedAddress(fromAddress)) {
+          fromResult = await geocodeAddress(geocoder, `${fromPostalCode} ${fromCity}, France`);
+        }
+        if (!toResult && !isMaskedAddress(toAddress)) {
+          toResult = await geocodeAddress(geocoder, `${toPostalCode} ${toCity}, France`);
+        }
 
         if (fromResult && toResult) {
           const bounds = new google.maps.LatLngBounds();
@@ -119,9 +145,12 @@ export default function RouteMap({
               }
             }
           );
+        } else {
+          setError("Impossible de localiser l'une des deux adresses sur la carte.");
         }
       } catch (error) {
         console.error('Error geocoding addresses:', error);
+        setError('Une erreur est survenue lors du chargement de la carte.');
       }
     };
 
@@ -143,6 +172,14 @@ export default function RouteMap({
 
     loadGoogleMaps();
   }, [fromAddress, fromCity, fromPostalCode, toAddress, toCity, toPostalCode]);
+
+  if (error) {
+    return (
+      <div className="w-full h-96 rounded-lg border border-slate-200 flex items-center justify-center bg-slate-50 px-6">
+        <p className="text-sm text-slate-500 text-center">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div
