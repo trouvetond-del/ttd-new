@@ -1,6 +1,9 @@
--- Extensions nécessaires pour programmer des tâches périodiques depuis Postgres
-CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA extensions;
-CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
+-- Extensions nécessaires pour programmer des tâches périodiques depuis Postgres.
+-- Pas de "WITH SCHEMA" explicite : sur Supabase, pg_cron/pg_net sont déjà
+-- pré-installées dans des schémas dédiés (cron / net) ; forcer un autre
+-- schéma ici ferait échouer la commande si l'extension existe déjà ailleurs.
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+CREATE EXTENSION IF NOT EXISTS pg_net;
 
 -- Retire d'éventuelles anciennes programmations avant de les recréer (idempotent)
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-mover-quote-reminders-3h';
