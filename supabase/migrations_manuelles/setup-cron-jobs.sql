@@ -11,6 +11,7 @@ SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-profile-remind
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-client-quote-reminder-12h';
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-photo-protection-reminder-6h';
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-client-reengagement-daily';
+SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-mover-profile-reminder-6h';
 
 -- Relance des clients qui ont un compte mais n'ont jamais fini de remplir
 -- leur demande (étage, taille, type, cubage), toutes les 12 heures
@@ -76,9 +77,22 @@ SELECT cron.schedule(
   $$
 );
 
+-- Relance des déménageurs qui ont commencé une inscription mais ne l'ont
+-- jamais terminée (siret encore PENDING-xxx), toutes les 6 heures
+SELECT cron.schedule(
+  'send-mover-profile-reminder-6h',
+  '0 */6 * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/send-mover-profile-reminder',
+    headers := '{"Content-Type": "application/json"}'::jsonb
+  );
+  $$
+);
+
 -- Vérification : doit renvoyer tous les jobs actifs
 SELECT jobname, schedule, active FROM cron.job WHERE jobname IN (
   'send-mover-quote-reminders-3h', 'send-profile-reminder-hourly',
   'send-client-quote-reminder-12h', 'send-photo-protection-reminder-6h',
-  'send-client-reengagement-daily'
+  'send-client-reengagement-daily', 'send-mover-profile-reminder-6h'
 );
