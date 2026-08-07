@@ -1,4 +1,4 @@
-name: Test manuel API quick-lead
+name: Test manuel API quick-lead v2
 
 on:
   workflow_dispatch: {}
@@ -10,16 +10,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Tester l'API quick-lead reelle et publier le resultat
+      - name: Tester l'API quick-lead reelle (bons noms de champs) et publier le resultat
         run: |
           sudo apt-get update -y && sudo apt-get install -y jq
-          echo "--- Test 1: page devis-rapide (HTML) ---"
-          R1=$(curl -s -o /dev/null -w "%{http_code}" -L https://www.trouvetondemenageur.fr/devis-rapide)
-          echo "--- Test 2: page inscription-demenageur (HTML) ---"
-          R2=$(curl -s -o /dev/null -w "%{http_code}" -L https://www.trouvetondemenageur.fr/inscription-demenageur)
-          echo "--- Test 3: appel reel a api/quick-lead avec des fausses donnees ---"
-          R3=$(curl -s -X POST https://www.trouvetondemenageur.fr/api/quick-lead -H "Content-Type: application/json" -d '{"firstName":"TestQA","lastName":"Audit","fromAddress":"1 rue de Test, 75001 Paris","fromCity":"Paris","fromPostalCode":"75001","toAddress":"1 rue de Test, 69001 Lyon","toCity":"Lyon","toPostalCode":"69001","phone":"0612345678","email":"test-qa-audit-2026@example.com"}')
-          echo "--- Test 4: appel reel a api/mover-quick-lead avec des fausses donnees ---"
-          R4=$(curl -s -X POST https://www.trouvetondemenageur.fr/api/mover-quick-lead -H "Content-Type: application/json" -d '{"managerFirstname":"TestQA","managerLastname":"Audit","companyName":"Test SARL QA","siret":"00000000000000","phone":"0612345678","email":"test-mover-qa-audit-2026@example.com"}')
-          BODY=$(jq -n --arg a "$R1" --arg b "$R2" --arg c "$R3" --arg d "$R4" '{title: "Diagnostic tunnels de capture (pourquoi 0 lead)", body: ("Page /devis-rapide HTTP: " + $a + "\n\nPage /inscription-demenageur HTTP: " + $b + "\n\napi/quick-lead reponse:\n```\n" + $c + "\n```\n\napi/mover-quick-lead reponse:\n```\n" + $d + "\n```")}')
+          TS=$(date +%s)
+          echo "--- Test client (api/quick-lead) ---"
+          R1=$(curl -s -X POST https://www.trouvetondemenageur.fr/api/quick-lead -H "Content-Type: application/json" -d "{\"first_name\":\"TestQA\",\"last_name\":\"Audit$TS\",\"from_address\":\"1 rue de Rivoli\",\"from_city\":\"Paris\",\"from_postal_code\":\"75001\",\"to_address\":\"1 place Bellecour\",\"to_city\":\"Lyon\",\"to_postal_code\":\"69001\",\"phone\":\"0612345678\",\"email\":\"test-qa-$TS@example.com\"}")
+          echo "--- Test mover (api/mover-quick-lead) - SIRET valide Luhn ---"
+          R2=$(curl -s -X POST https://www.trouvetondemenageur.fr/api/mover-quick-lead -H "Content-Type: application/json" -d "{\"manager_firstname\":\"TestQA\",\"manager_lastname\":\"Audit$TS\",\"company_name\":\"Test SARL QA $TS\",\"siret\":\"73282932000074\",\"phone\":\"0612345678\",\"email\":\"test-mover-qa-$TS@example.com\"}")
+          BODY=$(jq -n --arg a "$R1" --arg b "$R2" '{title: "Diagnostic v2 - tunnels de capture", body: ("api/quick-lead:\n```\n" + $a + "\n```\n\napi/mover-quick-lead:\n```\n" + $b + "\n```")}')
           curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/issues" -d "$BODY"
