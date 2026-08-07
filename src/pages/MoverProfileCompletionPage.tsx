@@ -357,29 +357,10 @@ export default function MoverProfileCompletionPage() {
         hasErrors = true;
       }
 
-      // Validate bank details
-      const ibanCheck = validateIban(companyData.iban);
-      if (!ibanCheck.isValid) {
-        newErrors['iban'] = ibanCheck.error!;
-        newTouched['iban'] = true;
-        hasErrors = true;
-      }
-      if (!companyData.bic.trim()) {
-        newErrors['bic'] = 'Le BIC est requis';
-        newTouched['bic'] = true;
-        hasErrors = true;
-      }
-      if (!companyData.bank_name.trim()) {
-        newErrors['bank_name'] = 'Le nom de la banque est requis';
-        newTouched['bank_name'] = true;
-        hasErrors = true;
-      }
-      if (!companyData.account_holder_name.trim()) {
-        newErrors['account_holder_name'] = 'Le titulaire du compte est requis';
-        newTouched['account_holder_name'] = true;
-        hasErrors = true;
-      }
-      
+      // RIB retiré de cette étape (voir plus haut) : plus de validation
+      // obligatoire ici. Les champs restent en base pour un éventuel ajout
+      // ultérieur (ex: section "Mes coordonnées bancaires" côté profil).
+
       // Validate trucks only if mover owns vehicles
       if (vehicleOwnership === 'owns') {
         let hasCompleteTruck = false;
@@ -1226,70 +1207,11 @@ export default function MoverProfileCompletionPage() {
         </div>
       </div>
 
-      {/* Coordonnées bancaires (RIB) */}
-      <div className="border-t pt-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-1 flex items-center gap-2">
-          <Landmark className="w-5 h-5 text-blue-600" /> Coordonnées bancaires (RIB)
-        </h3>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              IBAN <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={companyData.iban}
-              onChange={(e) => setCompanyData({ ...companyData, iban: e.target.value.toUpperCase().replace(/\s/g, '') })}
-              placeholder="FR76 1234 5678 9012 3456 7890 123"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent font-mono ${fieldErrors.iban && touchedFields.iban ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
-            />
-            <p className="text-xs text-gray-400 mt-0.5">Format : FR76 suivi de 23 chiffres</p>
-            {fieldErrors.iban && touchedFields.iban && <p className="text-red-500 text-sm mt-1">{fieldErrors.iban}</p>}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                BIC / SWIFT <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={companyData.bic}
-                onChange={(e) => setCompanyData({ ...companyData, bic: e.target.value.toUpperCase() })}
-                placeholder="BNPAFRPP"
-                maxLength={11}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent font-mono ${fieldErrors.bic && touchedFields.bic ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
-              />
-              {fieldErrors.bic && touchedFields.bic && <p className="text-red-500 text-sm mt-1">{fieldErrors.bic}</p>}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nom de la banque <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={companyData.bank_name}
-                onChange={(e) => setCompanyData({ ...companyData, bank_name: e.target.value })}
-                placeholder="BNP Paribas, Crédit Agricole..."
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent ${fieldErrors.bank_name && touchedFields.bank_name ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
-              />
-              {fieldErrors.bank_name && touchedFields.bank_name && <p className="text-red-500 text-sm mt-1">{fieldErrors.bank_name}</p>}
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Titulaire du compte <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={companyData.account_holder_name}
-              onChange={(e) => setCompanyData({ ...companyData, account_holder_name: e.target.value })}
-              placeholder="Nom du titulaire (entreprise ou personne)"
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:border-transparent ${fieldErrors.account_holder_name && touchedFields.account_holder_name ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'}`}
-            />
-            {fieldErrors.account_holder_name && touchedFields.account_holder_name && <p className="text-red-500 text-sm mt-1">{fieldErrors.account_holder_name}</p>}
-          </div>
-        </div>
-      </div>
+      {/* Coordonnées bancaires (RIB) — retiré de l'inscription initiale.
+          Nouveau modèle : le client paie la commission plateforme via
+          Stripe, et paie le solde (marge déménageur) directement au
+          déménageur le jour J. La plateforme n'a donc plus besoin du RIB
+          du déménageur à ce stade. */}
 
       {/* Geographic Areas */}
       <div className="border-t pt-6">

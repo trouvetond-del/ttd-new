@@ -94,7 +94,7 @@ export default function MoverInviteSignupPage() {
     if (!managerFirstname.trim() || !managerLastname.trim()) { showToast('Nom et prénom requis', 'error'); setStep('verify'); return; }
     const fnCheck = validateName(managerFirstname); if (!fnCheck.isValid) { showToast(fnCheck.error!, 'error'); setStep('verify'); return; }
     const lnCheck = validateName(managerLastname); if (!lnCheck.isValid) { showToast(lnCheck.error!, 'error'); setStep('verify'); return; }
-    if (!iban.trim() || !bic.trim() || !bankName.trim() || !accountHolderName.trim()) { showToast('Coordonnées bancaires (RIB) requises', 'error'); setStep('verify'); return; }
+    // RIB retiré de l'inscription (nouveau modèle de paiement).
     if (!kbisFiles.length) { showToast('KBIS requis', 'error'); setStep('documents'); return; }
     if (!identityRectoFiles.length) { showToast('Pièce identité recto requise', 'error'); setStep('documents'); return; }
     if (!identityVersoFiles.length) { showToast('Pièce identité verso requise', 'error'); setStep('documents'); return; }
@@ -234,34 +234,10 @@ export default function MoverInviteSignupPage() {
                 <div><label className="block text-sm font-medium text-gray-700 mb-1">Téléphone gérant</label><input type="tel" value={managerPhone} onChange={e => setManagerPhone(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="06 12 34 56 78" /></div>
               </div></div>
 
-            {/* RIB / Bank details */}
-            <div className="border-t border-gray-200 pt-5">
-              <h3 className="text-sm font-semibold text-gray-900 mb-1 flex items-center gap-2"><Landmark className="w-4 h-4 text-blue-600" /> Coordonnées bancaires (RIB)</h3>
-              <p className="text-xs text-gray-500 mb-3">Pour recevoir le remboursement de la garantie après chaque mission validée.</p>
-              
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">IBAN <span className="text-red-500">*</span></label>
-                  <input type="text" value={iban} onChange={e => setIban(e.target.value.toUpperCase().replace(/\s/g, ''))} placeholder="FR76 1234 5678 9012 3456 7890 123" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-mono" />
-                  <p className="text-xs text-gray-400 mt-0.5">Format : FR76 suivi de 23 chiffres</p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">BIC / SWIFT <span className="text-red-500">*</span></label>
-                    <input type="text" value={bic} onChange={e => setBic(e.target.value.toUpperCase())} placeholder="BNPAFRPP" maxLength={11} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm font-mono" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Nom de la banque <span className="text-red-500">*</span></label>
-                    <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} placeholder="BNP Paribas, Crédit Agricole..." className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Titulaire du compte <span className="text-red-500">*</span></label>
-                  <input type="text" value={accountHolderName} onChange={e => setAccountHolderName(e.target.value)} placeholder="Nom du titulaire (entreprise ou personne)" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end"><button onClick={() => { if (!companyName.trim()) { showToast('Raison sociale requise', 'error'); return; } const fnV = validateName(managerFirstname); if (!fnV.isValid) { showToast(fnV.error!, 'error'); return; } const lnV = validateName(managerLastname); if (!lnV.isValid) { showToast(lnV.error!, 'error'); return; } const ibanV = validateIban(iban); if (!ibanV.isValid) { showToast(ibanV.error!, 'error'); return; } if (!bic.trim()) { showToast('BIC requis', 'error'); return; } if (!bankName.trim()) { showToast('Nom de la banque requis', 'error'); return; } if (!accountHolderName.trim()) { showToast('Titulaire du compte requis', 'error'); return; } setStep('documents'); }} className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Continuer <ArrowRight className="w-4 h-4" /></button></div>
+            {/* RIB / Bank details — retiré (nouveau modèle : plus besoin
+                du RIB déménageur à l'inscription, le client paie le solde
+                directement au déménageur le jour J). */}
+            <div className="flex justify-end"><button onClick={() => { if (!companyName.trim()) { showToast('Raison sociale requise', 'error'); return; } const fnV = validateName(managerFirstname); if (!fnV.isValid) { showToast(fnV.error!, 'error'); return; } const lnV = validateName(managerLastname); if (!lnV.isValid) { showToast(lnV.error!, 'error'); return; } setStep('documents'); }} className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Continuer <ArrowRight className="w-4 h-4" /></button></div>
           </div>)}
 
           {/* STEP 2: DOCUMENTS */}
