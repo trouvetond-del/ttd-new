@@ -169,7 +169,32 @@ export function ClientProfileCompletionPage() {
       }
 
       showToast('Profil complété avec succès', 'success');
-      navigate('/client/quote');
+
+      // Même correctif que handleClientLogin / ClientGoogleCallbackPage :
+      // sans ce check, un client qui revient ici avec une demande déjà
+      // commencée mais incomplète atterrissait sur un formulaire /client/quote
+      // vierge -- créant une 2e demande en doublon au lieu de terminer la
+      // première (qui restait invisible aux déménageurs, orpheline).
+      const { data: existingQuotes } = await supabase
+        .from('quote_requests')
+        .select('id, from_home_size, from_home_type, to_home_size, to_home_type, volume_m3')
+        .eq('client_user_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (existingQuotes && existingQuotes.length > 0) {
+        const latestQuote = existingQuotes[0];
+        const isIncomplete =
+          !latestQuote.from_home_size ||
+          !latestQuote.from_home_type ||
+          !latestQuote.to_home_size ||
+          !latestQuote.to_home_type ||
+          !latestQuote.volume_m3;
+
+        navigate(isIncomplete ? `/client/quote/${latestQuote.id}/edit` : '/client/quote');
+      } else {
+        navigate('/client/quote');
+      }
     } catch (err: any) {
       console.error('Error completing profile:', err);
       setError(err.message || 'Erreur lors de la sauvegarde du profil');
