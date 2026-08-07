@@ -22,10 +22,10 @@ function daysUntil(dateStr: string): number {
 // le déménagement approche.
 function getUrgency(days: number): { level: string; minHoursBetweenReminders: number } | null {
   if (days < 0) return null; // date passée, on arrête de relancer
-  if (days <= 3) return { level: 'urgent', minHoursBetweenReminders: 4 };
-  if (days <= 7) return { level: 'proche', minHoursBetweenReminders: 8 };
-  if (days <= 21) return { level: 'normal', minHoursBetweenReminders: 12 };
-  return { level: 'lointain', minHoursBetweenReminders: 12 };
+  if (days <= 3) return { level: 'urgent', minHoursBetweenReminders: 2 };
+  if (days <= 7) return { level: 'proche', minHoursBetweenReminders: 4 };
+  if (days <= 21) return { level: 'normal', minHoursBetweenReminders: 6 };
+  return { level: 'lointain', minHoursBetweenReminders: 8 };
 }
 
 function coverageMatches(coverageArea: string[] | null, fromCity: string, toCity: string): boolean {
