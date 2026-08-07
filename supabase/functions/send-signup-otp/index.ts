@@ -49,39 +49,39 @@ Deno.serve(async (req: Request) => {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Check if email already exists in auth.users
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(
-      (u) => u.email?.toLowerCase() === normalizedEmail
-    );
+    // Vérifie l'existence par email directement sur les tables de rôle
+    // (movers/clients/admins ont toutes une colonne email) plutôt que via
+    // auth.admin.listUsers(), qui ne renvoie que 50 utilisateurs par page
+    // par défaut : au-delà de 50 comptes sur la plateforme, cette
+    // vérification devenait silencieusement peu fiable et pouvait laisser
+    // passer un message d'erreur générique au lieu d'indiquer le bon rôle
+    // déjà utilisé pour cet email.
+    const { data: moverData } = await supabaseAdmin
+      .from("movers").select("id").ilike("email", normalizedEmail).maybeSingle();
+    const { data: clientData } = await supabaseAdmin
+      .from("clients").select("id").ilike("email", normalizedEmail).maybeSingle();
+    const { data: adminData } = await supabaseAdmin
+      .from("admins").select("id").ilike("email", normalizedEmail).maybeSingle();
 
-    if (existingUser) {
-      // Check role
-      const { data: moverData } = await supabaseAdmin
-        .from("movers").select("id").eq("user_id", existingUser.id).maybeSingle();
-      const { data: clientData } = await supabaseAdmin
-        .from("clients").select("id").eq("user_id", existingUser.id).maybeSingle();
-      const { data: adminData } = await supabaseAdmin
-        .from("admins").select("id").eq("user_id", existingUser.id).maybeSingle();
-
-      if (adminData) {
-        return new Response(
-          JSON.stringify({ error: "Cette adresse email est déjà utilisée par un compte administrateur." }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (moverData && userType === "client") {
-        return new Response(
-          JSON.stringify({ error: "Cette adresse email est déjà utilisée par un compte déménageur. Veuillez utiliser la connexion partenaire." }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      if (clientData && userType === "mover") {
-        return new Response(
-          JSON.stringify({ error: "Cette adresse email est déjà utilisée par un compte client. Veuillez utiliser la connexion client." }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
+    if (adminData) {
+      return new Response(
+        JSON.stringify({ error: "Cette adresse email est déjà utilisée par un compte administrateur." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (moverData && userType === "client") {
+      return new Response(
+        JSON.stringify({ error: "Cette adresse email est déjà utilisée par un compte déménageur. Veuillez utiliser la connexion partenaire." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (clientData && userType === "mover") {
+      return new Response(
+        JSON.stringify({ error: "Cette adresse email est déjà utilisée par un compte client. Veuillez utiliser la connexion client." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (moverData || clientData) {
       return new Response(
         JSON.stringify({ error: "Ce compte existe déjà. Veuillez vous connecter." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }

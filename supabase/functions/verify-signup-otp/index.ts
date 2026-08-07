@@ -141,14 +141,22 @@ Deno.serve(async (req: Request) => {
         console.error("Error creating client record:", clientError);
       }
     } else if (userType === "mover") {
-      // Create minimal mover record so the user is recognized as mover on next login
+      // BUG CRITIQUE CORRIGÉ : siret a une contrainte UNIQUE + NOT NULL en
+      // base. Une chaîne vide "" n'est pas NULL -- elle compte comme une
+      // vraie valeur pour l'unicité. Avec siret: "" ici, SEUL le tout
+      // premier mover inscrit via ce flux passait ; tous les suivants
+      // échouaient sur cet INSERT (erreur juste loggée en console, jamais
+      // remontée à l'utilisateur, qui recevait "Compte créé avec succès"
+      // sans jamais avoir de ligne movers -- compte fantôme silencieux).
+      // Un placeholder unique par utilisateur est écrasé par le vrai SIRET
+      // dès que le mover termine /mover/profile-completion.
       const { error: moverError } = await supabaseAdmin
         .from("movers")
         .insert({
           user_id: userId,
           email: normalizedEmail,
           company_name: "",
-          siret: "",
+          siret: `PENDING-${userId}`,
           phone: "",
           manager_firstname: "",
           manager_lastname: "",
