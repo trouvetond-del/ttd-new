@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send } from 'lucide-react';
+import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing } from 'lucide-react';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import { showToast } from '../../utils/toast';
 
@@ -23,6 +23,10 @@ interface QuoteRequest {
   total_quotes?: number;
   lead_source?: string;
   lead_score?: string;
+  from_home_size?: string | null;
+  from_home_type?: string | null;
+  to_home_size?: string | null;
+  to_home_type?: string | null;
 }
 
 export default function AdminRecentQuoteRequests() {
@@ -33,6 +37,7 @@ export default function AdminRecentQuoteRequests() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [invitingId, setInvitingId] = useState<string | null>(null);
+  const [remindingId, setRemindingId] = useState<string | null>(null);
 
   const loadQuoteRequests = async () => {
     setLoading(true);
@@ -75,6 +80,10 @@ export default function AdminRecentQuoteRequests() {
             client_email: q.client_email,
             client_user_id: q.client_user_id,
             total_quotes: count || 0,
+            from_home_size: q.from_home_size,
+            from_home_type: q.from_home_type,
+            to_home_size: q.to_home_size,
+            to_home_type: q.to_home_type,
           };
         })
       );
@@ -145,6 +154,41 @@ export default function AdminRecentQuoteRequests() {
       showToast(error.message || "Erreur lors de l'envoi de l'invitation", 'error');
     } finally {
       setInvitingId(null);
+    }
+  };
+
+  const handleManualReminder = async (id: string, clientEmail?: string) => {
+    if (!clientEmail) {
+      showToast("Cette demande n'a pas d'email client renseigné", 'error');
+      return;
+    }
+    const confirmed = window.confirm(
+      `Envoyer maintenant l'email "informations manquantes" à ${clientEmail} ?`
+    );
+    if (!confirmed) return;
+
+    setRemindingId(id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Session admin expirée, reconnectez-vous.');
+
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-send-client-quote-reminder`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ quoteRequestId: id }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Erreur lors de l'envoi");
+
+      showToast(`Relance envoyée à ${clientEmail}`, 'success');
+    } catch (error: any) {
+      console.error('Error sending manual reminder:', error);
+      showToast(error.message || "Erreur lors de l'envoi de la relance", 'error');
+    } finally {
+      setRemindingId(null);
     }
   };
 
@@ -319,6 +363,17 @@ export default function AdminRecentQuoteRequests() {
                           >
                             <Send className="w-3 h-3" />
                             {invitingId === q.id ? '...' : 'Inviter'}
+                          </button>
+                        )}
+                        {q.client_user_id && (!q.from_home_size || !q.from_home_type || !q.to_home_size || !q.to_home_type || !q.volume_m3) && (
+                          <button
+                            onClick={() => handleManualReminder(q.id, q.client_email)}
+                            disabled={remindingId === q.id}
+                            title="Ce client a un compte mais sa demande est incomplète (pas de cubage) : lui envoyer un rappel maintenant"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-200 hover:bg-amber-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <BellRing className="w-3 h-3" />
+                            {remindingId === q.id ? '...' : 'Relancer'}
                           </button>
                         )}
                         <button

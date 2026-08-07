@@ -16,6 +16,7 @@ interface PendingMover {
   verification_status: string;
   invitation_source: string | null;
   vehicle_ownership: string | null;
+  siret: string;
   created_at: string;
 }
 
@@ -31,12 +32,21 @@ export default function AdminPendingMovers() {
     setLoading(true);
     const { data, error } = await supabase
       .from('movers')
-      .select('id, company_name, email, phone, city, manager_firstname, manager_lastname, verification_status, invitation_source, vehicle_ownership, created_at')
+      .select('id, company_name, email, phone, city, manager_firstname, manager_lastname, verification_status, invitation_source, vehicle_ownership, siret, created_at')
       .eq('verification_status', 'pending')
       .order('created_at', { ascending: false });
 
     if (error) { showToast('Erreur chargement', 'error'); }
-    setMovers((data || []).filter(m => !m.email?.endsWith('@trouveton.fr')));
+    setMovers((data || []).filter(m =>
+      !m.email?.endsWith('@trouveton.fr') &&
+      // Inscription abandonnée avant /mover/profile-completion : siret encore au
+      // format placeholder "PENDING-{userId}" posé à la création du compte
+      // (voir verify-signup-otp / MoverGoogleCallbackPage). Tant que ce placeholder
+      // n'a pas été remplacé par un vrai SIRET, le déménageur n'a rempli aucune
+      // info ni uploadé aucun document -- rien à valider, on ne l'affiche pas ici.
+      // Il est relancé automatiquement par send-mover-profile-reminder (cron 6h).
+      !m.siret?.startsWith('PENDING-')
+    ));
     setLoading(false);
   };
 
