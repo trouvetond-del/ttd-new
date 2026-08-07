@@ -240,7 +240,7 @@ function generateClientWelcomeEmail(firstName: string): string {
           </ul>
 
           <div style="text-align: center;">
-            <a href="https://trouvetondemenageur.fr" class="button">Accéder à mon espace</a>
+            <a href="https://www.trouvetondemenageur.fr/client/dashboard" class="button">Accéder à mon espace</a>
           </div>
 
           <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
