@@ -183,15 +183,20 @@ export function MessagingInterface({
     try {
       setCheckingPayment(true);
 
-      const { data: paymentData } = await supabase
+      // Une demande peut avoir PLUSIEURS lignes payments (une par devis
+      // pour lequel un paiement a été tenté, y compris des tentatives
+      // jamais finalisées). .maybeSingle() plantait dès qu'il y en avait
+      // plus d'une -- capturé par le catch plus bas, mais résultat :
+      // isPaid restait bloqué à false même pour un client ayant réellement
+      // payé, verrouillant la messagerie à tort.
+      const { data: paymentRows } = await supabase
         .from('payments')
         .select('payment_status')
-        .eq('quote_request_id', quoteRequestId)
-        .maybeSingle();
+        .eq('quote_request_id', quoteRequestId);
 
-      if (paymentData) {
+      if (paymentRows && paymentRows.length > 0) {
         const completedStatuses = ['completed', 'deposit_released', 'released_to_mover', 'fully_paid'];
-        if (completedStatuses.includes(paymentData.payment_status)) {
+        if (paymentRows.some((p) => completedStatuses.includes(p.payment_status))) {
           setIsPaid(true);
           return;
         }
@@ -360,7 +365,7 @@ export function MessagingInterface({
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !conversation || sending) return;
+    if (!newMessage.trim() || !conversation || sending || !isPaid) return;
 
     const messageContent = newMessage.trim();
     setNewMessage('');
@@ -467,13 +472,15 @@ export function MessagingInterface({
       </div>
 
       <form onSubmit={handleSendMessage} className="p-4 border-t bg-gray-50 rounded-b-xl">
-        {!isPaid && userType === 'client' ? (
+        {!isPaid ? (
           <div className="flex items-center gap-3 p-4 bg-amber-50 border-2 border-amber-200 rounded-lg">
             <Lock className="w-5 h-5 text-amber-600 flex-shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-semibold text-amber-900">Messagerie verrouillée</p>
               <p className="text-xs text-amber-700 mt-1">
-                Vous devez effectuer le paiement pour déverrouiller la messagerie.
+                {userType === 'client'
+                  ? 'Vous devez effectuer le paiement pour déverrouiller la messagerie.'
+                  : "La messagerie s'active une fois le paiement du client confirmé."}
               </p>
             </div>
             <CreditCard className="w-5 h-5 text-amber-600" />
