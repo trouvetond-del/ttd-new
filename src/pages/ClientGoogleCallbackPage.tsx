@@ -60,7 +60,30 @@ export function ClientGoogleCallbackPage() {
           .maybeSingle();
 
         if (clientData && clientData.first_name?.trim() && clientData.last_name?.trim() && clientData.phone?.trim()) {
-          navigate('/client/dashboard', { replace: true });
+          // Même correctif que handleClientLogin (useNavigationHelpers.ts) :
+          // un client dont la dernière demande est incomplète doit être
+          // ramené sur la page pour la terminer, pas envoyé sur le dashboard
+          // où rien ne signale le problème.
+          const { data: existingQuotes } = await supabase
+            .from('quote_requests')
+            .select('id, from_home_size, from_home_type, to_home_size, to_home_type, volume_m3')
+            .eq('client_user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+          if (existingQuotes && existingQuotes.length > 0) {
+            const latestQuote = existingQuotes[0];
+            const isIncomplete =
+              !latestQuote.from_home_size ||
+              !latestQuote.from_home_type ||
+              !latestQuote.to_home_size ||
+              !latestQuote.to_home_type ||
+              !latestQuote.volume_m3;
+
+            navigate(isIncomplete ? `/client/quote/${latestQuote.id}/edit` : '/client/dashboard', { replace: true });
+          } else {
+            navigate('/client/dashboard', { replace: true });
+          }
         } else {
           // Create minimal client record if it doesn't exist yet
           if (!clientData) {

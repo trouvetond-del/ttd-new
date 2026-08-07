@@ -38,13 +38,13 @@ const AdminVerificationAlerts: React.FC = () => {
         { data: reports },
         { data: expiring }
       ] = await Promise.all([
-        supabase.from('movers').select('verification_status'),
+        supabase.from('movers').select('verification_status, siret'),
         supabase.from('verification_reports').select('status').order('created_at', { ascending: false }).limit(100),
         supabase.rpc('get_expiring_documents', { days_threshold: 30 }),
       ]);
 
       const newStats: VerificationStats = {
-        pendingMovers: movers?.filter(m => m.verification_status === 'pending').length || 0,
+        pendingMovers: movers?.filter(m => m.verification_status === 'pending' && !m.siret?.startsWith('PENDING-')).length || 0,
         verifiedMovers: movers?.filter(m => m.verification_status === 'verified').length || 0,
         rejectedMovers: movers?.filter(m => m.verification_status === 'rejected').length || 0,
         expiringDocuments: expiring?.length || 0,

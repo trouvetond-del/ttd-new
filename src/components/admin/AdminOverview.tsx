@@ -114,7 +114,7 @@ export default function AdminOverview({
         supabase.from('quotes').select('id, status').eq('status', 'accepted'),
         supabase
           .from('movers')
-          .select('id, company_name, created_at')
+          .select('id, company_name, siret, created_at')
           .eq('verification_status', 'pending')
           .order('created_at', { ascending: false }),
         supabase.from('activity_logs').select('*').order('created_at', { ascending: false }).limit(20),
@@ -232,7 +232,7 @@ const escrowBalance =
           trend: 'up',
         },
         pendingApprovals: {
-          value: pendingMovers?.length || 0,
+          value: (pendingMovers || []).filter((m: any) => !m.siret?.startsWith('PENDING-')).length,
           change: 0,
           trend: 'up', // Changed from 'down' to 'up' to match type constraint
         },
@@ -324,11 +324,11 @@ const KPICard = ({
     const loadPendingMovers = async () => {
       const { data } = await supabase
         .from('movers')
-        .select('id, company_name, email, phone, created_at')
+        .select('id, company_name, email, phone, siret, created_at')
         .eq('verification_status', 'pending')
         .order('created_at', { ascending: false })
         .limit(5);
-      const filteredData = (data || []).filter((m) => !m.email?.endsWith('@trouveton.fr'));
+      const filteredData = (data || []).filter((m) => !m.email?.endsWith('@trouveton.fr') && !m.siret?.startsWith('PENDING-'));
       setPendingMovers(filteredData);
       setLoadingMovers(false);
     };
