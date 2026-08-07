@@ -42,6 +42,15 @@ export default function MovingTracking() {
   const [quoteRequest, setQuoteRequest] = useState<QuoteRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<'client' | 'mover' | null>(null);
+  // Compte les photos déjà prises pour la phase en cours -- utilisé pour
+  // bloquer le bouton "Confirmer" tant qu'aucune photo n'a été prise.
+  // Avant ce correctif, rien n'empêchait de cliquer directement sur
+  // "Confirmer et passer à l'étape suivante" sans jamais avoir pris la
+  // moindre photo, ce qui viderait le système de preuve anti-litige de
+  // toute utilité.
+  const [beforePhotoCount, setBeforePhotoCount] = useState(0);
+  const [loadingPhotoCount, setLoadingPhotoCount] = useState(0);
+  const [unloadingPhotoCount, setUnloadingPhotoCount] = useState(0);
 
   useEffect(() => {
     if (quoteRequestId) {
@@ -99,6 +108,17 @@ export default function MovingTracking() {
         if (newStatus) {
           setMovingStatus(newStatus);
         }
+      }
+
+      const { data: existingPhotos } = await supabase
+        .from('moving_photos')
+        .select('photo_type')
+        .eq('quote_request_id', quoteRequestId);
+
+      if (existingPhotos) {
+        setBeforePhotoCount(existingPhotos.filter((p) => p.photo_type === 'before_departure').length);
+        setLoadingPhotoCount(existingPhotos.filter((p) => p.photo_type === 'loading').length);
+        setUnloadingPhotoCount(existingPhotos.filter((p) => p.photo_type === 'unloading').length);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -294,13 +314,18 @@ export default function MovingTracking() {
             <PhotoUpload
               quoteRequestId={quoteRequestId}
               photoType="before_departure"
+              onPhotoUploaded={() => setBeforePhotoCount((c) => c + 1)}
             />
 
             <button
               onClick={() => updateStatus('before_photos_uploaded')}
-              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+              disabled={beforePhotoCount === 0}
+              title={beforePhotoCount === 0 ? 'Prenez au moins une photo avant de continuer' : undefined}
+              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Confirmer et passer à l'étape suivante
+              {beforePhotoCount === 0
+                ? '📷 Prenez au moins une photo pour continuer'
+                : "Confirmer et passer à l'étape suivante"}
             </button>
           </div>
         )}
@@ -330,13 +355,16 @@ export default function MovingTracking() {
             <PhotoUpload
               quoteRequestId={quoteRequestId}
               photoType="loading"
+              onPhotoUploaded={() => setLoadingPhotoCount((c) => c + 1)}
             />
 
             <button
               onClick={() => updateStatus('loading_photos_uploaded')}
-              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+              disabled={loadingPhotoCount === 0}
+              title={loadingPhotoCount === 0 ? 'Prenez au moins une photo avant de continuer' : undefined}
+              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Confirmer le chargement
+              {loadingPhotoCount === 0 ? '📷 Prenez au moins une photo pour continuer' : 'Confirmer le chargement'}
             </button>
           </div>
         )}
@@ -366,13 +394,16 @@ export default function MovingTracking() {
             <PhotoUpload
               quoteRequestId={quoteRequestId}
               photoType="unloading"
+              onPhotoUploaded={() => setUnloadingPhotoCount((c) => c + 1)}
             />
 
             <button
               onClick={() => updateStatus('unloading_photos_uploaded')}
-              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
+              disabled={unloadingPhotoCount === 0}
+              title={unloadingPhotoCount === 0 ? 'Prenez au moins une photo avant de continuer' : undefined}
+              className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Confirmer le déchargement
+              {unloadingPhotoCount === 0 ? '📷 Prenez au moins une photo pour continuer' : 'Confirmer le déchargement'}
             </button>
           </div>
         )}
@@ -390,7 +421,7 @@ export default function MovingTracking() {
 
             <div className="space-y-3">
               <button
-                onClick={() => alert('Vous serez redirigé vers la page de déclaration de sinistre')}
+                onClick={() => navigate(`/client/moving/${quoteRequestId}/damage-report`)}
                 className="w-full bg-orange-600 text-white py-3 rounded-lg hover:bg-orange-700 transition font-semibold"
               >
                 Déclarer un sinistre
