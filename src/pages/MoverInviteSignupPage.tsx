@@ -4,6 +4,7 @@ import { Building, User, Lock, CheckCircle, AlertCircle, FileText, Shield, EyeOf
 import { supabase } from '../lib/supabase';
 import { showToast } from '../utils/toast';
 import { validatePassword, validateName } from '../utils/validation';
+import { validateIban } from '../utils/ibanValidation';
 
 interface ProspectData {
   id: string; company_name: string; siret: string; email: string; phone: string; mobile: string;
@@ -260,7 +261,7 @@ export default function MoverInviteSignupPage() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end"><button onClick={() => { if (!companyName.trim()) { showToast('Raison sociale requise', 'error'); return; } const fnV = validateName(managerFirstname); if (!fnV.isValid) { showToast(fnV.error!, 'error'); return; } const lnV = validateName(managerLastname); if (!lnV.isValid) { showToast(lnV.error!, 'error'); return; } if (!iban.trim()) { showToast('IBAN requis', 'error'); return; } if (!bic.trim()) { showToast('BIC requis', 'error'); return; } if (!bankName.trim()) { showToast('Nom de la banque requis', 'error'); return; } if (!accountHolderName.trim()) { showToast('Titulaire du compte requis', 'error'); return; } setStep('documents'); }} className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Continuer <ArrowRight className="w-4 h-4" /></button></div>
+            <div className="flex justify-end"><button onClick={() => { if (!companyName.trim()) { showToast('Raison sociale requise', 'error'); return; } const fnV = validateName(managerFirstname); if (!fnV.isValid) { showToast(fnV.error!, 'error'); return; } const lnV = validateName(managerLastname); if (!lnV.isValid) { showToast(lnV.error!, 'error'); return; } const ibanV = validateIban(iban); if (!ibanV.isValid) { showToast(ibanV.error!, 'error'); return; } if (!bic.trim()) { showToast('BIC requis', 'error'); return; } if (!bankName.trim()) { showToast('Nom de la banque requis', 'error'); return; } if (!accountHolderName.trim()) { showToast('Titulaire du compte requis', 'error'); return; } setStep('documents'); }} className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Continuer <ArrowRight className="w-4 h-4" /></button></div>
           </div>)}
 
           {/* STEP 2: DOCUMENTS */}

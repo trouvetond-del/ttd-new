@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { showToast } from '../utils/toast';
 import { isEmailVerificationEnabled } from '../utils/emailVerification';
+import { validateIban } from '../utils/ibanValidation';
 import { DocumentUploadInput } from '../components/DocumentUploadInput';
 import { MultiDocumentUploadInput } from '../components/MultiDocumentUploadInput';
 import { GeographicAreaSelector } from '../components/GeographicAreaSelector';
@@ -357,8 +358,9 @@ export default function MoverProfileCompletionPage() {
       }
 
       // Validate bank details
-      if (!companyData.iban.trim()) {
-        newErrors['iban'] = 'L\'IBAN est requis';
+      const ibanCheck = validateIban(companyData.iban);
+      if (!ibanCheck.isValid) {
+        newErrors['iban'] = ibanCheck.error!;
         newTouched['iban'] = true;
         hasErrors = true;
       }
