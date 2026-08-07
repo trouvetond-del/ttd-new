@@ -86,13 +86,19 @@ export function MoverGoogleCallbackPage() {
           // New mover via Google — create minimal mover record
           // so the user is saved as mover even if they don't complete profile now
           try {
+            // BUG CRITIQUE CORRIGÉ (même cause que verify-signup-otp) :
+            // siret est UNIQUE + NOT NULL en base. Une chaîne vide compte
+            // comme une vraie valeur pour l'unicité -- seul le tout
+            // premier mover inscrit via Google passait, les suivants
+            // échouaient silencieusement sur cet insert (catch plus bas,
+            // jamais remonté à l'utilisateur).
             await supabase
               .from('movers')
               .insert({
                 user_id: user.id,
                 email: user.email || '',
                 company_name: '',
-                siret: '',
+                siret: `PENDING-${user.id}`,
                 phone: '',
                 manager_firstname: user.user_metadata?.full_name?.split(' ')[0] || '',
                 manager_lastname: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || '',

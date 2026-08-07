@@ -682,7 +682,7 @@ export default function AdminUserManagement({
                         {user.company_name && (
                           <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
                         )}
-                        {user.siret && (
+                        {user.siret && !user.siret.startsWith('PENDING-') && (
                           <p className="text-xs text-gray-500 dark:text-gray-400">SIRET: {user.siret}</p>
                         )}
                         {user.phone && user.phone !== 'Non renseigné' && (
