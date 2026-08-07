@@ -132,7 +132,7 @@ Deno.serve(async (req: Request) => {
               </ul>
 
               <div style="text-align: center;">
-                <a href="https://trouvetondemenageur.fr/mover/dashboard" class="button">Accéder à mon tableau de bord</a>
+                <a href="https://www.trouvetondemenageur.fr/mover/dashboard" class="button">Accéder à mon tableau de bord</a>
               </div>
 
               <h3>📧 Comment ça marche ?</h3>

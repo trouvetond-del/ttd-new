@@ -144,7 +144,7 @@ async function sendAdminAlert(admins: string[], leadScore: string, record: any):
             <p style="margin:0;"><strong>📅 Date souhaitée:</strong> ${record.moving_date || 'Non renseignée'}</p>
           </div>
           <div style="text-align:center; margin:24px 0;">
-            <a href="https://www.trouvetondemenageur.fr/admin/quote-requests" style="display:inline-block; padding:12px 28px; background:#667eea; color:#fff; border-radius:8px; text-decoration:none; font-weight:bold;">Voir dans l'admin</a>
+            <a href="https://www.trouvetondemenageur.fr/admin/dashboard/recent_quotes" style="display:inline-block; padding:12px 28px; background:#667eea; color:#fff; border-radius:8px; text-decoration:none; font-weight:bold;">Voir dans l'admin</a>
           </div>
         </div>
       `,

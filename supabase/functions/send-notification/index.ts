@@ -188,7 +188,7 @@ Deno.serve(async (req: Request) => {
               <p style="color:#333; margin:0;"><strong>📣 Source:</strong> ${data.source || 'inconnue'}</p>
             </div>
             <div style="text-align:center; margin:30px 0;">
-              <a href="https://www.trouvetondemenageur.fr/admin/quote-requests" style="display:inline-block; padding:14px 32px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#ffffff; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">
+              <a href="https://www.trouvetondemenageur.fr/admin/dashboard/recent_quotes" style="display:inline-block; padding:14px 32px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:#ffffff; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px;">
                 Voir dans l'admin
               </a>
             </div>
