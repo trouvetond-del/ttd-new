@@ -50,6 +50,11 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase functions deploy verify-signup-otp --project-ref bvvbkaluajgdurxnnqqu
 
+      - name: Déployer create-invited-mover
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy create-invited-mover --project-ref bvvbkaluajgdurxnnqqu
+
       - name: Déployer send-profile-reminder
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}

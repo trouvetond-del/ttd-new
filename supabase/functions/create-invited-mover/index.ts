@@ -76,11 +76,15 @@ Deno.serve(async (req: Request) => {
 
     if (authError) {
       if (authError.message.includes("already been registered") || authError.message.includes("already exists")) {
-        // User exists in auth but no mover profile — try to update their password
-        const { data: existingUsers } = await supabase.auth.admin.listUsers();
-        const existingUser = existingUsers?.users?.find((u: any) => u.email === email);
-        
-        if (!existingUser) {
+        // User exists in auth but no mover profile — try to update their password.
+        // On récupère son id via la table movers/clients par email plutôt que
+        // listUsers() (limité à 50 résultats par page par défaut, peu fiable
+        // au-delà de 50 comptes sur la plateforme).
+        const { data: moverRow } = await supabase.from("movers").select("user_id").eq("email", email).maybeSingle();
+        const { data: clientRow } = await supabase.from("clients").select("user_id").eq("email", email).maybeSingle();
+        const existingUserId = moverRow?.user_id || clientRow?.user_id;
+
+        if (!existingUserId) {
           return new Response(
             JSON.stringify({ error: "already_exists", message: "Ce compte existe déjà. Essayez de vous connecter." }),
             { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -88,13 +92,13 @@ Deno.serve(async (req: Request) => {
         }
 
         // Update their password and metadata
-        await supabase.auth.admin.updateUserById(existingUser.id, {
+        await supabase.auth.admin.updateUserById(existingUserId, {
           password,
           email_confirm: true,
           user_metadata: { user_type: "mover", company_name: companyName || prospect.company_name },
         });
 
-        userId = existingUser.id;
+        userId = existingUserId;
         console.log("Reused existing auth user:", userId);
       } else {
         throw authError;
