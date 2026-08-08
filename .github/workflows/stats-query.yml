@@ -20,6 +20,24 @@ jobs:
           -- Uniquement des agrégats (moyennes, comptages, pourcentages) --
           -- jamais de nom, email ou adresse individuelle dans ces requêtes.
 
+          \echo '=== 0) Fenetre temporelle : premiere et derniere quote_request, total tout confondu ==='
+          SELECT count(*) AS total_quote_requests_tout_statut,
+                 min(created_at) AS premiere_demande,
+                 max(created_at) AS derniere_demande
+          FROM quote_requests;
+
+          \echo '=== 0bis) Repartition par source (lead_source) ==='
+          SELECT COALESCE(lead_source, '(null, formulaire complet direct)') AS source, count(*) AS total
+          FROM quote_requests
+          GROUP BY 1
+          ORDER BY 2 DESC;
+
+          \echo '=== 0ter) Combien de demandes ont un compte client lie (client_user_id non null) vs simple lead ==='
+          SELECT
+            count(*) FILTER (WHERE client_user_id IS NOT NULL) AS avec_compte,
+            count(*) FILTER (WHERE client_user_id IS NULL) AS sans_compte_lead_seul
+          FROM quote_requests;
+
           \echo '=== 1) Demandes COMPLETES (meme critere que partout dans l app) : total, tout-temps et 90 derniers jours ==='
           SELECT
             count(*) FILTER (WHERE true) AS total_completes_tout_temps,
@@ -30,6 +48,23 @@ jobs:
             AND to_home_size IS NOT NULL AND to_home_size <> ''
             AND to_home_type IS NOT NULL AND to_home_type <> ''
             AND volume_m3 IS NOT NULL AND volume_m3 > 0;
+
+          \echo '=== 1bis) Repartition des demandes INCOMPLETES : quel champ manque le plus souvent ==='
+          SELECT
+            count(*) AS total_incompletes,
+            count(*) FILTER (WHERE from_city IS NULL OR from_city = '') AS sans_ville_depart,
+            count(*) FILTER (WHERE to_city IS NULL OR to_city = '') AS sans_ville_arrivee,
+            count(*) FILTER (WHERE from_home_size IS NULL OR from_home_size = '') AS sans_taille_depart,
+            count(*) FILTER (WHERE volume_m3 IS NULL OR volume_m3 <= 0) AS sans_cubage,
+            count(*) FILTER (WHERE client_user_id IS NULL) AS sans_compte_client
+          FROM quote_requests
+          WHERE NOT (
+            from_home_size IS NOT NULL AND from_home_size <> ''
+            AND from_home_type IS NOT NULL AND from_home_type <> ''
+            AND to_home_size IS NOT NULL AND to_home_size <> ''
+            AND to_home_type IS NOT NULL AND to_home_type <> ''
+            AND volume_m3 IS NOT NULL AND volume_m3 > 0
+          );
 
           \echo '=== 2) % de demandes completes ayant recu au moins 1 devis (90 derniers jours) ==='
           WITH base AS (
@@ -73,6 +108,17 @@ jobs:
           SELECT count(*) AS demenageurs_verifies_actifs
           FROM movers
           WHERE verification_status = 'verified' AND is_active = true;
+
+          \echo '=== 5) Total comptes clients (table clients) et total movers tout statut, avec dates ==='
+          SELECT (SELECT count(*) FROM clients) AS total_clients,
+                 (SELECT count(*) FROM movers) AS total_movers_tout_statut,
+                 (SELECT min(created_at) FROM clients) AS premier_client,
+                 (SELECT max(created_at) FROM clients) AS dernier_client;
+
+          \echo '=== 6) quick_lead_verifications : combien de leads devis-rapide ont demarre, combien ont clique le lien (used_at) ==='
+          SELECT count(*) AS total_quick_leads,
+                 count(*) FILTER (WHERE used_at IS NOT NULL) AS ont_clique_le_lien
+          FROM quick_lead_verifications;
           SQL
           )
           echo "$OUT"
