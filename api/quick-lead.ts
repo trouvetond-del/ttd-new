@@ -54,22 +54,22 @@ async function sendClientVerificationEmail(email: string, firstName: string, cod
     body: JSON.stringify({
       from: 'TrouveTonDemenageur <noreply@trouvetondemenageur.fr>',
       to: [email],
-      subject: `Finalisez votre demande TrouveTonDemenageur`,
+      subject: `${firstName ? firstName + ', vos' : 'Vos'} devis de déménagement vous attendent`,
       html: `
         <!DOCTYPE html>
         <html>
         <head><meta charset="UTF-8"></head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-            <h1 style="margin:0; font-size: 24px;">🏠 TrouveTonDemenageur</h1>
-            <p style="margin:8px 0 0; opacity:0.9;">Encore une étape avant vos devis</p>
+            <h1 style="margin:0; font-size: 24px;">🏠 Plus qu'une étape</h1>
+            <p style="margin:8px 0 0; opacity:0.9;">2 minutes pour recevoir vos devis</p>
           </div>
           <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
             <p>Bonjour ${firstName || ''},</p>
-            <p>Merci pour votre demande sur <strong>TrouveTonDemenageur</strong>. Cliquez ci-dessous pour créer votre mot de passe et finaliser votre demande (étage, ascenseur, inventaire...) :</p>
+            <p>Votre demande de déménagement a bien été reçue sur <strong>TrouveTonDemenageur</strong>. Il ne manque plus qu'une chose pour que nos déménageurs vérifiés (KBIS, assurance RC Pro) puissent vous envoyer leurs devis : créer votre mot de passe pour finaliser les derniers détails (étage, ascenseur, inventaire).</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${actionUrl}" style="display: inline-block; background: #3B82F6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                Créer mon mot de passe
+                Recevoir mes devis
               </a>
             </div>
             <p style="text-align: center; color: #6B7280; font-size: 14px;">Ce lien expire dans 24 heures.</p>

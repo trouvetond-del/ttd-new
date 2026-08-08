@@ -12,6 +12,7 @@ SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-client-quote-r
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-photo-protection-reminder-6h';
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-client-reengagement-daily';
 SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-mover-profile-reminder-6h';
+SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-quick-lead-verification-reminder-2h';
 
 -- Relance des clients qui ont un compte mais n'ont jamais fini de remplir
 -- leur demande (étage, taille, type, cubage), toutes les 12 heures
@@ -90,9 +91,23 @@ SELECT cron.schedule(
   $$
 );
 
+-- Relance (une seule fois) des leads /devis-rapide qui n'ont jamais
+-- cliqué le lien de vérification, toutes les 2 heures
+SELECT cron.schedule(
+  'send-quick-lead-verification-reminder-2h',
+  '0 */2 * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/send-quick-lead-verification-reminder',
+    headers := '{"Content-Type": "application/json"}'::jsonb
+  );
+  $$
+);
+
 -- Vérification : doit renvoyer tous les jobs actifs
 SELECT jobname, schedule, active FROM cron.job WHERE jobname IN (
   'send-mover-quote-reminders-3h', 'send-profile-reminder-hourly',
   'send-client-quote-reminder-12h', 'send-photo-protection-reminder-6h',
-  'send-client-reengagement-daily', 'send-mover-profile-reminder-6h'
+  'send-client-reengagement-daily', 'send-mover-profile-reminder-6h',
+  'send-quick-lead-verification-reminder-2h'
 );
