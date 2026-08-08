@@ -32,6 +32,13 @@ export function QuickLeadPage() {
   const [toAddress, setToAddress] = useState<AddressValue>(emptyAddress);
   const [fromAddressRaw, setFromAddressRaw] = useState('');
   const [toAddressRaw, setToAddressRaw] = useState('');
+  // Ville de secours, saisie à la main : uniquement affichée/utilisée quand
+  // l'utilisateur a tapé une adresse sans sélectionner de suggestion Google
+  // (fromAddress.city reste alors vide). Sans ça, la demande arrive en admin
+  // sans ville, invisible pour le matching déménageurs et injustifiable en
+  // admin (cf. cas Isabelle Hauguel du 08/08).
+  const [fromCityManual, setFromCityManual] = useState('');
+  const [toCityManual, setToCityManual] = useState('');
   const [movingDate, setMovingDate] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -57,6 +64,17 @@ export function QuickLeadPage() {
       setError('Merci de renseigner une adresse de départ et une adresse d\'arrivée complètes (numéro, rue, ville).');
       return;
     }
+    // La ville est obligatoire dans tous les cas : soit fournie par Google
+    // (fromAddress.city), soit saisie à la main si l'autocomplete n'a pas
+    // été utilisé. Sans ville, la demande est inexploitable pour les
+    // déménageurs et invisible dans le matching -- on ne la laisse plus
+    // passer, même si le reste de l'adresse est "plausible".
+    const resolvedFromCity = fromAddress.city || fromCityManual.trim();
+    const resolvedToCity = toAddress.city || toCityManual.trim();
+    if (!resolvedFromCity || !resolvedToCity) {
+      setError('Merci de préciser la ville de départ et la ville d\'arrivée.');
+      return;
+    }
     if (!phone.trim() || !email.trim()) {
       setError('Merci de renseigner votre téléphone et votre email.');
       return;
@@ -80,12 +98,12 @@ export function QuickLeadPage() {
           first_name: firstName.trim(),
           last_name: lastName.trim(),
           from_address: fromAddress.fullAddress || fromAddressRaw.trim(),
-          from_city: fromAddress.city,
+          from_city: resolvedFromCity,
           from_postal_code: fromAddress.postalCode,
           from_latitude: fromAddress.latitude ?? null,
           from_longitude: fromAddress.longitude ?? null,
           to_address: toAddress.fullAddress || toAddressRaw.trim(),
-          to_city: toAddress.city,
+          to_city: resolvedToCity,
           to_postal_code: toAddress.postalCode,
           to_latitude: toAddress.latitude ?? null,
           to_longitude: toAddress.longitude ?? null,
@@ -191,6 +209,23 @@ export function QuickLeadPage() {
                 onAddressSelect={(addr) => setFromAddress(addr)}
                 onInputChange={(raw) => setFromAddressRaw(raw)}
               />
+              {fromAddressRaw.trim().length > 0 && !fromAddress.city && (
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                    Ville de départ
+                  </label>
+                  <input
+                    type="text"
+                    value={fromCityManual}
+                    onChange={(e) => setFromCityManual(e.target.value)}
+                    placeholder="Ex : Le Havre"
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                  <p className="mt-1 text-xs text-amber-600">
+                    Suggestion d'adresse non sélectionnée : précisez la ville pour qu'on puisse vous trouver un déménageur.
+                  </p>
+                </div>
+              )}
 
               <AddressAutocomplete
                 id="to-address"
@@ -201,6 +236,23 @@ export function QuickLeadPage() {
                 onAddressSelect={(addr) => setToAddress(addr)}
                 onInputChange={(raw) => setToAddressRaw(raw)}
               />
+              {toAddressRaw.trim().length > 0 && !toAddress.city && (
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                    Ville d'arrivée
+                  </label>
+                  <input
+                    type="text"
+                    value={toCityManual}
+                    onChange={(e) => setToCityManual(e.target.value)}
+                    placeholder="Ex : Lyon"
+                    className="w-full px-3 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                  <p className="mt-1 text-xs text-amber-600">
+                    Suggestion d'adresse non sélectionnée : précisez la ville pour qu'on puisse vous trouver un déménageur.
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">

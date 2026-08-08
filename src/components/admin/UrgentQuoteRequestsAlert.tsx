@@ -122,7 +122,7 @@ export default function UrgentQuoteRequestsAlert() {
                           <Calendar className="w-4 h-4 text-orange-600 flex-shrink-0" />
                           <span className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">
                             {new Date(request.moving_date).toLocaleDateString('fr-FR')}
-                            {request.date_flexibility_days && request.date_flexibility_days > 0 && (
+                            {!!request.date_flexibility_days && request.date_flexibility_days > 0 && (
                               <span className="ml-1 text-orange-600">
                                 (±{request.date_flexibility_days}j)
                               </span>

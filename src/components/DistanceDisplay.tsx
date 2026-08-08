@@ -58,6 +58,14 @@ export function DistanceDisplay({
 
     if (fromAddress && fromCity && toAddress && toCity) {
       fetchDistance();
+    } else {
+      // Ville (ou adresse) manquante -- typiquement une demande créée via
+      // /devis-rapide en saisie manuelle sans ville. Sans ça, l'effet
+      // ci-dessus ne se déclenche jamais et "loading" restait bloqué à
+      // true indéfiniment (spinner "Calcul distance..." qui ne s'arrête
+      // jamais -- cf. cas Isabelle Hauguel du 08/08).
+      setLoading(false);
+      setError(true);
     }
   }, [fromAddress, fromCity, fromPostalCode, toAddress, toCity, toPostalCode]);
 

@@ -950,7 +950,7 @@ export default function MoverMyQuotesPage({ notificationQuoteRequestId, onQuoteR
                           </button>
                         )}
 
-                        {quote.quote_request.date_flexibility_days && quote.quote_request.date_flexibility_days > 0 && (
+                        {!!quote.quote_request.date_flexibility_days && quote.quote_request.date_flexibility_days > 0 && (
                           <div className="text-sm">
                             <span className="font-medium text-slate-900">Flexibilité:</span>{' '}
                             <span className="text-slate-600">±{quote.quote_request.date_flexibility_days} jours</span>

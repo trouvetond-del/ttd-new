@@ -175,6 +175,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!firstName || !lastName || !fromAddress || !toAddress || !phone || !email) {
       return res.status(400).json({ error: 'Nom, prénom, adresses, téléphone et email sont obligatoires.' });
     }
+    // Défense en profondeur : le front (QuickLeadPage) empêche déjà la
+    // soumission sans ville, mais cet endpoint est public et peut être
+    // appelé directement. Une demande sans ville est inexploitable pour le
+    // matching déménageurs et invisible dans les recherches par zone.
+    if (!fromCity || !toCity) {
+      return res.status(400).json({ error: 'La ville de départ et la ville d\'arrivée sont obligatoires.' });
+    }
     if (!isValidPhone(phone)) {
       return res.status(400).json({ error: 'Numéro de téléphone invalide.' });
     }
