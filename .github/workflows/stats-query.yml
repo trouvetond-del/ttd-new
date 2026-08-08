@@ -1,0 +1,73 @@
+name: Stats (lecture seule, temporaire)
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Requête stats agrégées (aucune PII)
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 <<'SQL'
+          -- Uniquement des agrégats (moyennes, comptages, pourcentages) --
+          -- jamais de nom, email ou adresse individuelle dans ces requêtes.
+
+          \echo '=== 1) Demandes COMPLETES (meme critere que partout dans l app) : total, tout-temps et 90 derniers jours ==='
+          SELECT
+            count(*) FILTER (WHERE true) AS total_completes_tout_temps,
+            count(*) FILTER (WHERE created_at >= now() - interval '90 days') AS completes_90j
+          FROM quote_requests
+          WHERE from_home_size IS NOT NULL AND from_home_size <> ''
+            AND from_home_type IS NOT NULL AND from_home_type <> ''
+            AND to_home_size IS NOT NULL AND to_home_size <> ''
+            AND to_home_type IS NOT NULL AND to_home_type <> ''
+            AND volume_m3 IS NOT NULL AND volume_m3 > 0;
+
+          \echo '=== 2) % de demandes completes ayant recu au moins 1 devis (90 derniers jours) ==='
+          WITH base AS (
+            SELECT qr.id,
+                   (SELECT count(*) FROM quotes q WHERE q.quote_request_id = qr.id) AS nb_devis
+            FROM quote_requests qr
+            WHERE qr.created_at >= now() - interval '90 days'
+              AND qr.from_home_size IS NOT NULL AND qr.from_home_size <> ''
+              AND qr.from_home_type IS NOT NULL AND qr.from_home_type <> ''
+              AND qr.to_home_size IS NOT NULL AND qr.to_home_size <> ''
+              AND qr.to_home_type IS NOT NULL AND qr.to_home_type <> ''
+              AND qr.volume_m3 IS NOT NULL AND qr.volume_m3 > 0
+          )
+          SELECT
+            count(*) AS demandes_completes_90j,
+            count(*) FILTER (WHERE nb_devis >= 1) AS avec_au_moins_1_devis,
+            round(100.0 * count(*) FILTER (WHERE nb_devis >= 1) / NULLIF(count(*), 0), 1) AS pct_avec_devis,
+            round(avg(nb_devis) FILTER (WHERE nb_devis >= 1), 1) AS moyenne_devis_quand_au_moins_1
+          FROM base;
+
+          \echo '=== 3) Delai moyen/median jusquau premier devis (heures), demandes completes des 90 derniers jours ayant recu >=1 devis ==='
+          WITH first_quote AS (
+            SELECT qr.id, qr.created_at AS demande_creee,
+                   (SELECT min(q.created_at) FROM quotes q WHERE q.quote_request_id = qr.id) AS premier_devis
+            FROM quote_requests qr
+            WHERE qr.created_at >= now() - interval '90 days'
+              AND qr.from_home_size IS NOT NULL AND qr.from_home_size <> ''
+              AND qr.from_home_type IS NOT NULL AND qr.from_home_type <> ''
+              AND qr.to_home_size IS NOT NULL AND qr.to_home_size <> ''
+              AND qr.to_home_type IS NOT NULL AND qr.to_home_type <> ''
+              AND qr.volume_m3 IS NOT NULL AND qr.volume_m3 > 0
+          )
+          SELECT
+            count(*) AS echantillon,
+            round(avg(EXTRACT(EPOCH FROM (premier_devis - demande_creee)) / 3600)::numeric, 1) AS delai_moyen_heures,
+            round(percentile_cont(0.5) WITHIN GROUP (ORDER BY EXTRACT(EPOCH FROM (premier_devis - demande_creee)) / 3600)::numeric, 1) AS delai_median_heures
+          FROM first_quote
+          WHERE premier_devis IS NOT NULL;
+
+          \echo '=== 4) Nombre de demenageurs verifies actifs, pour contextualiser ==='
+          SELECT count(*) AS demenageurs_verifies_actifs
+          FROM movers
+          WHERE verification_status = 'verified' AND is_active = true;
+          SQL
