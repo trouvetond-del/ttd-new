@@ -171,6 +171,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const phone = (body.phone || '').trim();
     const email = (body.email || '').trim().toLowerCase();
     const source = (body.source || 'mini_formulaire').trim();
+    const allowedHomeSizes = ['Studio', 'T1', 'T2', 'T3', 'T4', 'T5+'];
+    const homeSize = allowedHomeSizes.includes(body.home_size) ? body.home_size : '';
+    const homeType = body.home_type === 'Maison' ? 'Maison' : 'Appartement';
+    // Volume de secours si le front n'en a pas envoyé (défense en profondeur,
+    // même barème que QuickLeadPage.tsx) : sans ça une demande "sans devis
+    // rapide" resterait invisible pour le matching déménageurs (qui exige
+    // volume_m3 > 0) même en ayant renseigné la taille du logement.
+    const volumeBySize: Record<string, number> = { Studio: 15, T1: 20, T2: 30, T3: 45, T4: 60, 'T5+': 80 };
+    const volumeM3 = typeof body.volume_m3 === 'number' && body.volume_m3 > 0
+      ? body.volume_m3
+      : (volumeBySize[homeSize] || null);
 
     if (!firstName || !lastName || !fromAddress || !toAddress || !phone || !email) {
       return res.status(400).json({ error: 'Nom, prénom, adresses, téléphone et email sont obligatoires.' });
@@ -181,6 +192,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // matching déménageurs et invisible dans les recherches par zone.
     if (!fromCity || !toCity) {
       return res.status(400).json({ error: 'La ville de départ et la ville d\'arrivée sont obligatoires.' });
+    }
+    if (!homeSize) {
+      return res.status(400).json({ error: 'La taille du logement est obligatoire.' });
     }
     if (!isValidPhone(phone)) {
       return res.status(400).json({ error: 'Numéro de téléphone invalide.' });
@@ -215,15 +229,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       from_postal_code: fromPostalCode,
       from_latitude: body.from_latitude ?? null,
       from_longitude: body.from_longitude ?? null,
-      from_home_size: '',
-      from_home_type: '',
+      from_home_size: homeSize,
+      from_home_type: homeType,
+      to_home_size: homeSize,
+      to_home_type: homeType,
+      volume_m3: volumeM3,
       to_address: toAddress,
       to_city: toCity,
       to_postal_code: toPostalCode,
       to_latitude: body.to_latitude ?? null,
       to_longitude: body.to_longitude ?? null,
-      to_home_size: '',
-      to_home_type: '',
       moving_date: movingDate || null,
       date_flexibility_days: 0,
       floor_from: 0,

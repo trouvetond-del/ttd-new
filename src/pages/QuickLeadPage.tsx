@@ -39,6 +39,43 @@ export function QuickLeadPage() {
   // admin (cf. cas Isabelle Hauguel du 08/08).
   const [fromCityManual, setFromCityManual] = useState('');
   const [toCityManual, setToCityManual] = useState('');
+  // Type de logement collecté dès ce premier formulaire (comme Nextories,
+  // Demenagement24, Officiel du déménagement, AnyVan...) au lieu d'être
+  // repoussé après création de compte. Corrige à la source le problème du
+  // "cubage manquant" et permet un prix indicatif instantané, qui augmente
+  // la confiance et la conversion sur tous les sites concurrents étudiés.
+  const [homeSize, setHomeSize] = useState('');
+  const [homeType, setHomeType] = useState<'Appartement' | 'Maison'>('Appartement');
+
+  // Même barème que src/utils/priceValidation.ts (SmartPriceCalculator),
+  // pour rester cohérent avec l'estimation affichée ailleurs dans l'app.
+  const HOME_SIZE_BASE_PRICE: Record<string, number> = {
+    Studio: 750, T1: 1000, T2: 1500, T3: 2250, T4: 3000, 'T5+': 3750,
+  };
+  const HOME_SIZE_VOLUME_M3: Record<string, number> = {
+    Studio: 15, T1: 20, T2: 30, T3: 45, T4: 60, 'T5+': 80,
+  };
+
+  function haversineKm(lat1?: number, lng1?: number, lat2?: number, lng2?: number): number | null {
+    if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) return null;
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  const priceEstimate = (() => {
+    if (!homeSize) return null;
+    let base = HOME_SIZE_BASE_PRICE[homeSize] || 1500;
+    if (homeType === 'Maison') base *= 1.2;
+    const distance = haversineKm(fromAddress.latitude, fromAddress.longitude, toAddress.latitude, toAddress.longitude);
+    if (distance) {
+      if (distance > 200) base += 90 + (distance - 200) * 0.45;
+      else if (distance > 50) base += (distance - 50) * 0.6;
+    }
+    return { min: Math.round(base * 0.85 / 10) * 10, max: Math.round(base * 1.15 / 10) * 10 };
+  })();
   const [movingDate, setMovingDate] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -73,6 +110,10 @@ export function QuickLeadPage() {
     const resolvedToCity = toAddress.city || toCityManual.trim();
     if (!resolvedFromCity || !resolvedToCity) {
       setError('Merci de préciser la ville de départ et la ville d\'arrivée.');
+      return;
+    }
+    if (!homeSize) {
+      setError('Merci d\'indiquer la taille de votre logement pour recevoir une estimation.');
       return;
     }
     if (!phone.trim() || !email.trim()) {
@@ -111,6 +152,9 @@ export function QuickLeadPage() {
           phone,
           email,
           source,
+          home_size: homeSize,
+          home_type: homeType,
+          volume_m3: HOME_SIZE_VOLUME_M3[homeSize] || null,
         }),
       });
       const json = await res.json();
@@ -250,6 +294,56 @@ export function QuickLeadPage() {
                   />
                   <p className="mt-1 text-xs text-amber-600">
                     Suggestion d'adresse non sélectionnée : précisez la ville pour qu'on puisse vous trouver un déménageur.
+                  </p>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                  Taille de votre logement actuel
+                </label>
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  {(['Appartement', 'Maison'] as const).map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setHomeType(t)}
+                      className={`col-span-1 py-2 rounded-lg text-sm font-medium border transition ${
+                        homeType === t
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : 'bg-white text-gray-600 border-gray-200'
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {['Studio', 'T1', 'T2', 'T3', 'T4', 'T5+'].map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => setHomeSize(size)}
+                      className={`py-2 rounded-lg text-sm font-medium border transition ${
+                        homeSize === size
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : 'bg-white text-gray-600 border-gray-200'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {priceEstimate && (
+                <div className="bg-gradient-to-br from-blue-50 to-emerald-50 border border-blue-200 rounded-xl p-4 text-center">
+                  <p className="text-xs text-gray-600 mb-1">Estimation indicative de votre déménagement</p>
+                  <p className="text-2xl font-bold text-blue-700">
+                    {priceEstimate.min}€ – {priceEstimate.max}€
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Prix réel confirmé par le(s) déménageur(s) qui vous contacteront
                   </p>
                 </div>
               )}
