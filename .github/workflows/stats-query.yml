@@ -9,11 +9,14 @@ permissions:
 jobs:
   stats:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     steps:
       - name: Requête stats agrégées (aucune PII)
         run: |
-          sudo apt-get update -y && sudo apt-get install -y postgresql-client
-          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 <<'SQL'
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
+          OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 <<'SQL' 2>&1
           -- Uniquement des agrégats (moyennes, comptages, pourcentages) --
           -- jamais de nom, email ou adresse individuelle dans ces requêtes.
 
@@ -71,3 +74,7 @@ jobs:
           FROM movers
           WHERE verification_status = 'verified' AND is_active = true;
           SQL
+          )
+          echo "$OUT"
+          BODY=$(jq -n --arg t "Stats agrégées $(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg b "$OUT" '{title:$t, body:("```\n" + $b + "\n```")}')
+          curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/issues" -d "$BODY"
