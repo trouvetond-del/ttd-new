@@ -403,14 +403,14 @@ export function QuickLeadPage() {
               </button>
             </form>
 
-            <div className="flex items-center justify-center gap-4 mt-5 text-[11px] text-gray-500">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 mt-5 text-[11px] text-gray-500">
               <div className="flex items-center gap-1">
                 <Shield size={13} className="text-blue-600" />
                 Sans engagement
               </div>
               <div className="flex items-center gap-1">
                 <Star size={13} className="text-blue-600" />
-                Déménageurs vérifiés
+                KBIS, assurance RC Pro et URSSAF vérifiés
               </div>
             </div>
           </div>
