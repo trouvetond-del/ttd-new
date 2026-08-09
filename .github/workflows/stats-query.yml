@@ -17,71 +17,17 @@ jobs:
         run: |
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
           set +e
-          OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 <<'SQL' 2>&1
-          -- Diagnostic contraintes UNIQUE sur quote_requests
+          OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
 
-          \echo '=== A) Toutes les contraintes de la table quote_requests ==='
-          SELECT conname, contype, pg_get_constraintdef(oid) AS definition
-          FROM pg_constraint
-          WHERE conrelid = 'quote_requests'::regclass
-          ORDER BY contype, conname;
-
-          \echo '=== B) Tous les index UNIQUE sur quote_requests ==='
-          SELECT indexname, indexdef
-          FROM pg_indexes
-          WHERE tablename = 'quote_requests' AND indexdef ILIKE '%UNIQUE%';
-
-          \echo '=== C) Colonnes NOT NULL sans DEFAULT (pour construire un INSERT de repro valide) ==='
-          SELECT column_name, data_type, is_nullable, column_default
-          FROM information_schema.columns
-          WHERE table_name = 'quote_requests' AND is_nullable = 'NO' AND column_default IS NULL
-          ORDER BY ordinal_position;
-
-          \echo '=== D) Tous les triggers BEFORE INSERT sur quote_requests (au cas ou plusieurs se marchent dessus) ==='
-          SELECT tgname, pg_get_triggerdef(oid) AS definition
-          FROM pg_trigger
-          WHERE tgrelid = 'quote_requests'::regclass AND NOT tgisinternal;
-          \echo '=== E) Reproduction : deux INSERT successifs, meme client_user_id, transaction annulee (aucun impact reel) ==='
-          BEGIN;
-          DO $$
-          DECLARE
-            test_user uuid := gen_random_uuid();
-            ref1 text;
-            ref2 text;
-          BEGIN
-            INSERT INTO quote_requests (
-              client_user_id, client_name, client_email, client_phone,
-              from_address, from_city, from_postal_code,
-              to_address, to_city, to_postal_code,
-              moving_date, status
-            ) VALUES (
-              test_user, 'Test Un', 'test1@example.com', '0600000000',
-              '1 rue Test', 'Paris', '75001',
-              '2 rue Test', 'Lyon', '69000',
-              CURRENT_DATE + 30, 'new'
-            ) RETURNING reference INTO ref1;
-            RAISE NOTICE 'Premier INSERT OK, reference=%', ref1;
-
-            INSERT INTO quote_requests (
-              client_user_id, client_name, client_email, client_phone,
-              from_address, from_city, from_postal_code,
-              to_address, to_city, to_postal_code,
-              moving_date, status
-            ) VALUES (
-              test_user, 'Test Un', 'test1@example.com', '0600000000',
-              '1 rue Test', 'Paris', '75001',
-              '2 rue Test', 'Lyon', '69000',
-              CURRENT_DATE + 30, 'new'
-            ) RETURNING reference INTO ref2;
-            RAISE NOTICE 'Deuxieme INSERT (meme client_user_id) OK, reference=%', ref2;
-
-            IF ref1 = ref2 THEN
-              RAISE EXCEPTION 'COLLISION REPRODUITE: % = %', ref1, ref2;
-            ELSE
-              RAISE NOTICE 'PAS DE COLLISION: % != %', ref1, ref2;
-            END IF;
-          END $$;
-          ROLLBACK;
+          \echo '=== F) Code source des fonctions declenchees AFTER INSERT sur quote_requests ==='
+          SELECT pg_get_functiondef(oid)
+          FROM pg_proc
+          WHERE proname IN (
+            'notify_admins_on_quote_request_insert',
+            'detect_activity_zone_matches',
+            'detect_return_trip_opportunities',
+            'notify_movers_with_nearby_missions'
+          );
           SQL
           )
           echo "$OUT"
