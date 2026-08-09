@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { validateEmail, getEmailValidationMessage } from '../utils/validation';
+import { validateEmail, getEmailValidationMessage, normalizeEmail } from '../utils/validation';
 import { showToast } from '../utils/toast';
 import { useNavigationHelpers } from '../hooks/useNavigationHelpers';
 
@@ -44,7 +44,9 @@ export function MoverAuthPage() {
     setError('');
     setFieldErrors({});
 
-    if (!validateEmail(email)) {
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!validateEmail(normalizedEmail)) {
       setFieldErrors({ email: getEmailValidationMessage() });
       setError(getEmailValidationMessage());
       showToast(getEmailValidationMessage(), 'error');
@@ -60,7 +62,7 @@ export function MoverAuthPage() {
     setLoading(true);
 
     try {
-      await handleMoverLogin(email, password);
+      await handleMoverLogin(normalizedEmail, password);
     } catch (err: any) {
       setError(err.message || 'Erreur de connexion');
       showToast(err.message || 'Erreur de connexion', 'error');

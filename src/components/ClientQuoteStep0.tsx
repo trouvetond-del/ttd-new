@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { validateEmail, validatePhone } from '../utils/validation';
+import { validateEmail, validatePhone, normalizeEmail } from '../utils/validation';
 import { showToast } from '../utils/toast';
 
 // Étape 0 de /client/quote : email d'abord, avant tout détail
@@ -56,7 +56,7 @@ export function ClientQuoteStep0() {
     const newErrors: { [key: string]: string } = {};
     if (!firstName.trim()) newErrors.firstName = 'Prénom requis';
     if (!lastName.trim()) newErrors.lastName = 'Nom requis';
-    if (!validateEmail(email)) newErrors.email = 'Email invalide';
+    if (!validateEmail(normalizeEmail(email))) newErrors.email = 'Email invalide';
     if (!validatePhone(phone)) newErrors.phone = 'Téléphone invalide';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -66,6 +66,7 @@ export function ClientQuoteStep0() {
     e.preventDefault();
     if (!validate()) return;
 
+    const normalizedEmail = normalizeEmail(email);
     setLoading(true);
     try {
       const res = await fetch(
@@ -74,7 +75,7 @@ export function ClientQuoteStep0() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            email: email.trim(),
+            email: normalizedEmail,
             phone: phone.trim(),
             firstName: firstName.trim(),
             lastName: lastName.trim(),

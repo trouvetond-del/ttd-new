@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { validateEmail, getEmailValidationMessage, validatePassword, buildPasswordErrorMessage, validateName, validatePhone, getPhoneValidationMessage } from '../utils/validation';
+import { validateEmail, getEmailValidationMessage, normalizeEmail, validatePassword, buildPasswordErrorMessage, validateName, validatePhone, getPhoneValidationMessage } from '../utils/validation';
 import { showToast } from '../utils/toast';
 import { useNavigationHelpers } from '../hooks/useNavigationHelpers';
 
@@ -56,6 +56,8 @@ export function ClientAuthPage({ initialMode = 'login' }: ClientAuthPageProps) {
     setError('');
     setFieldErrors({});
 
+    const normalizedEmail = normalizeEmail(email);
+
     if (mode === 'signup') {
       const firstNameValidation = validateName(firstName);
       if (!firstNameValidation.isValid) {
@@ -85,7 +87,7 @@ export function ClientAuthPage({ initialMode = 'login' }: ClientAuthPageProps) {
       }
     }
 
-    if (!validateEmail(email)) {
+    if (!validateEmail(normalizedEmail)) {
       setFieldErrors({ email: getEmailValidationMessage() });
       setError(getEmailValidationMessage());
       showToast(getEmailValidationMessage(), 'error');
@@ -116,13 +118,13 @@ export function ClientAuthPage({ initialMode = 'login' }: ClientAuthPageProps) {
 
     try {
       if (mode === 'signup') {
-        await handleClientSignup(email, password, false, {
+        await handleClientSignup(normalizedEmail, password, false, {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
           phone: phone.trim(),
         });
       } else if (mode === 'login') {
-        await handleClientLogin(email, password);
+        await handleClientLogin(normalizedEmail, password);
       }
     } catch (err: any) {
       let errorMessage = 'Erreur de connexion';

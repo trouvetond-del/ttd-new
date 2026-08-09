@@ -14,15 +14,23 @@ export const validateName = (name: string): { isValid: boolean; error?: string }
   return { isValid: true };
 };
 
-export const validateEmail = (email: string): boolean => {
-  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+// Normalise un email avant validation ET avant tout envoi réseau :
+// espaces superflus supprimés, casse uniformisée. Évite les
+// incohérences ("Test@Test.com" traité différemment de
+// "test@test.com" selon l'écran) et les faux rejets liés à un espace
+// accidentel en début/fin de saisie (copier-coller, autofill mobile).
+export const normalizeEmail = (email: string): string => email.trim().toLowerCase();
 
-  if (!emailRegex.test(email)) {
+export const validateEmail = (email: string): boolean => {
+  const normalized = normalizeEmail(email);
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  if (!emailRegex.test(normalized)) {
     return false;
   }
 
   const blockedDomains = ['example.com', 'test.com', 'fake.com'];
-  const domain = email.split('@')[1].toLowerCase();
+  const domain = normalized.split('@')[1];
 
   if (blockedDomains.includes(domain)) {
     return false;

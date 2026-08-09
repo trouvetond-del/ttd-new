@@ -40,7 +40,8 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { email, phone, firstName, lastName, marketingConsent, smsConsent } = await req.json();
+    const { email: rawEmail, phone, firstName, lastName, marketingConsent, smsConsent } = await req.json();
+    const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : rawEmail;
 
     if (!email || !isValidEmail(email)) {
       return new Response(JSON.stringify({ error: "Adresse email invalide." }), {

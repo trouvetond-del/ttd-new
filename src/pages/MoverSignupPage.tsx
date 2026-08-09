@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 import { GeographicAreaSelector } from '../components/GeographicAreaSelector';
 import { DocumentUploadInput } from '../components/DocumentUploadInput';
 import { MultiDocumentUploadInput } from '../components/MultiDocumentUploadInput';
-import { validateEmail, validatePhone, validateSiret, validatePostalCode, validateRegistrationNumber, validatePassword, validateName, getEmailValidationMessage, getPhoneValidationMessage, getSiretValidationMessage, getPostalCodeValidationMessage, getRegistrationNumberValidationMessage } from '../utils/validation';
+import { validateEmail, validatePhone, validateSiret, validatePostalCode, validateRegistrationNumber, validatePassword, validateName, getEmailValidationMessage, getPhoneValidationMessage, getSiretValidationMessage, getPostalCodeValidationMessage, getRegistrationNumberValidationMessage, normalizeEmail } from '../utils/validation';
 import { showToast } from '../utils/toast';
 
 type MoverSignupPageProps = {
@@ -115,10 +115,15 @@ export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
     setFieldErrors({});
     setLoading(true);
 
+    const normalizedEmail = normalizeEmail(authData.email);
+    if (normalizedEmail !== authData.email) {
+      setAuthData(prev => ({ ...prev, email: normalizedEmail }));
+    }
+
     const errors: {[key: string]: string} = {};
 
     try {
-      if (!validateEmail(authData.email)) {
+      if (!validateEmail(normalizedEmail)) {
         errors.email = getEmailValidationMessage();
       }
 
@@ -241,6 +246,11 @@ export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
     setError('');
     setFieldErrors({});
 
+    const normalizedCompanyEmail = normalizeEmail(companyData.email);
+    if (normalizedCompanyEmail !== companyData.email) {
+      setCompanyData(prev => ({ ...prev, email: normalizedCompanyEmail }));
+    }
+
     const errors: {[key: string]: string} = {};
 
     // Validation du SIRET
@@ -255,7 +265,7 @@ export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
       errors.postal_code = postalCodeValidation.error || getPostalCodeValidationMessage();
     }
 
-    if (!validateEmail(companyData.email)) {
+    if (!validateEmail(normalizedCompanyEmail)) {
       errors.company_email = getEmailValidationMessage();
     }
 

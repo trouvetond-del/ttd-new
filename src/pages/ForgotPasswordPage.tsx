@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Mail, CheckCircle, KeyRound } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { validateEmail, getEmailValidationMessage } from '../utils/validation';
+import { validateEmail, getEmailValidationMessage, normalizeEmail } from '../utils/validation';
 import { showToast } from '../utils/toast';
 
 interface ForgotPasswordPageProps {
@@ -20,7 +20,9 @@ export function ForgotPasswordPage() {
     e.preventDefault();
     setError('');
 
-    if (!validateEmail(email)) {
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!validateEmail(normalizedEmail)) {
       setError(getEmailValidationMessage());
       showToast(getEmailValidationMessage(), 'error');
       return;
@@ -30,18 +32,29 @@ export function ForgotPasswordPage() {
 
     try {
       // Envoyer un code OTP par email au lieu d'un lien de réinitialisation
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
         // Pas de redirectTo - Supabase enverra un code à 6 chiffres
       });
 
       if (resetError) throw resetError;
 
+      setEmail(normalizedEmail);
       setSent(true);
       showToast('Code de réinitialisation envoyé avec succès', 'success');
     } catch (err: any) {
       console.error('Password reset error:', err);
-      setError('Erreur lors de l\'envoi du code. Veuillez réessayer.');
-      showToast('Erreur lors de l\'envoi du code', 'error');
+      // Supabase limite le nombre d'envois par email sur une courte
+      // fenêtre (anti-abus) : deux demandes rapprochées pour le même
+      // email déclenchent ce rate-limit, pas une erreur de validation.
+      // Message générique précédent laissait croire à un email rejeté.
+      const msg = (err?.message || '').toLowerCase();
+      if (msg.includes('rate limit') || msg.includes('too many requests') || err?.status === 429) {
+        setError('Trop de demandes pour cet email en peu de temps. Patientez quelques instants avant de réessayer.');
+        showToast('Trop de demandes récentes, patientez un instant', 'error');
+      } else {
+        setError('Erreur lors de l\'envoi du code. Veuillez réessayer.');
+        showToast('Erreur lors de l\'envoi du code', 'error');
+      }
     } finally {
       setLoading(false);
     }
