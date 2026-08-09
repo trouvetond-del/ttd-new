@@ -170,6 +170,7 @@ export default function MoverQuoteRequestsPage() {
           is_data_masked
         `)
         .in('status', ['new', 'quoted'])
+        .eq('is_draft', false)
         .not('id', 'in', `(${quotedRequestIds.length > 0 ? quotedRequestIds.join(',') : '00000000-0000-0000-0000-000000000000'})`)
         // N'affiche que les demandes réellement complètes (le client a fini
         // /client/quote, pas juste soumis le devis-rapide). Sans ça, les

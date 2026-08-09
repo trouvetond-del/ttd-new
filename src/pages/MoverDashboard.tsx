@@ -73,6 +73,9 @@ export function MoverDashboard({ onNotificationQuoteRequest }: MoverDashboardPro
           .from('quote_requests')
           .select('*', { count: 'exact', head: true })
           .in('status', ['new', 'quoted'])
+          .eq('is_draft', false)
+          .not('from_home_size', 'is', null)
+          .neq('from_home_size', '')
           .not('id', 'in', `(${quotedRequestIds.length > 0 ? quotedRequestIds.join(',') : '00000000-0000-0000-0000-000000000000'})`);
 
         const pendingQuotes = myQuotes?.filter(q => q.status === 'pending').length || 0;

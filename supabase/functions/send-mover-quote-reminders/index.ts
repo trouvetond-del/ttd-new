@@ -51,6 +51,7 @@ Deno.serve(async () => {
     .from("quote_requests")
     .select("id, reference, from_city, to_city, moving_date, client_name")
     .in("status", ["new", "assigned", "quoted"])
+    .eq("is_draft", false)
     .gte("moving_date", new Date().toISOString().split("T")[0])
     // Ignore les demandes jamais finalisées par le client (devis-rapide
     // sans étage/taille/type/cubage) : pas exploitables pour un devis.
