@@ -21,16 +21,11 @@ jobs:
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
 
-          \echo '=== Colonnes de la table articles (creee hors migrations versionnees) ==='
-          SELECT column_name, data_type, is_nullable
-          FROM information_schema.columns
-          WHERE table_name = 'articles'
-          ORDER BY ordinal_position;
+          \echo '=== Repartition par statut et type_article ==='
+          SELECT statut, type_article, count(*) FROM articles GROUP BY 1, 2 ORDER BY 3 DESC;
 
-          \echo '=== Contenu reel : combien d articles, publies ou non ==='
-          SELECT count(*) AS total, count(*) FILTER (WHERE published = true) AS publies
-          FROM articles;
-          SELECT slug, title, published, created_at FROM articles ORDER BY created_at DESC LIMIT 10;
+          \echo '=== 10 derniers articles ==='
+          SELECT slug, titre, ville, type_article, statut, created_at FROM articles ORDER BY created_at DESC LIMIT 10;
 
           \echo '=== Une eventuelle table villes/cities existe deja ? ==='
           SELECT table_name FROM information_schema.tables
