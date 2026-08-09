@@ -16,6 +16,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Verification contenu sitemap
+        run: |
+          curl -s "https://www.trouvetondemenageur.fr/sitemap.xml" -o /tmp/sitemap.xml
+          echo "=== URLs demenagement dans le sitemap ==="
+          grep -o '<loc>[^<]*demenagement[^<]*</loc>' /tmp/sitemap.xml
+          echo "=== Nombre total d URLs ==="
+          grep -c '<loc>' /tmp/sitemap.xml
+
       - name: Verification HTTP finale complete
         run: |
           sudo apt-get update -y && sudo apt-get install -y jq
