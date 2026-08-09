@@ -12,6 +12,7 @@ import { showToast } from '../utils/toast';
 import { calculateRealDistance } from '../utils/distanceCalculator';
 import { calculateMarketPrice } from '../utils/marketPriceCalculation';
 import { ClientLayout } from '../components/ClientLayout';
+import { ClientQuoteStep0 } from '../components/ClientQuoteStep0';
 
 type ClientQuotePageProps = {
   editingQuoteRequestId?: string | null;
@@ -787,6 +788,17 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
         </div>
       </ClientLayout>
     );
+  }
+
+  // Step 0 : visiteur non connecté sur une NOUVELLE demande (pas
+  // d'editingQuoteRequestId). Composant entièrement isolé -- rien
+  // d'autre dans ce fichier n'est modifié pour ce chantier. Un
+  // visiteur déjà connecté, ou en train d'éditer un brouillon
+  // existant (editingQuoteRequestId présent, donc déjà passé par le
+  // step 0 ou par un autre parcours de connexion), continue sur le
+  // wizard existant inchangé ci-dessous.
+  if (!editingQuoteRequestId && !user) {
+    return <ClientQuoteStep0 />;
   }
 
   if (loadingExistingData) {

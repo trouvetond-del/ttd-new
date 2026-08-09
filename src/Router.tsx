@@ -6,6 +6,7 @@ import { ClientCreateQuickLeadPasswordPage } from './pages/ClientCreateQuickLead
 import { MoverQuickLeadPage } from './pages/MoverQuickLeadPage';
 import { MoverCreateQuickLeadPasswordPage } from './pages/MoverCreateQuickLeadPasswordPage';
 import { ClientQuotePage } from './pages/ClientQuotePage';
+import ClientQuoteResumePage from './pages/ClientQuoteResumePage';
 import { ClientAuthPage } from './pages/ClientAuthPage';
 import { ClientAuthChoice } from './pages/ClientAuthChoice';
 import { ClientDashboard } from './pages/ClientDashboard';
@@ -490,12 +491,9 @@ export function AppRouter() {
           />
           <Route
             path="/client/quote"
-            element={
-              <ClientProtectedRoute>
-                <ClientQuotePage />
-              </ClientProtectedRoute>
-            }
+            element={<ClientQuotePage />}
           />
+          <Route path="/client/quote/reprendre" element={<ClientQuoteResumePage />} />
           <Route
             path="/client/quote/:quoteRequestId/edit"
             element={

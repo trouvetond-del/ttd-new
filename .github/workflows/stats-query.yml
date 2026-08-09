@@ -46,11 +46,20 @@ jobs:
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
           BEGIN;
-          \i supabase/migrations_manuelles/city-pages-table.sql
-          \i supabase/migrations_manuelles/city-pages-seed.sql
+          \i supabase/migrations_manuelles/quote-requests-sms-consent.sql
 
-          \echo '=== Resultat (transaction annulee) ==='
-          SELECT slug, nom_ville, departement, statut FROM city_pages ORDER BY nom_ville;
+          \echo '=== Simulation insertion brouillon step0 (champs vides autorises, is_draft=true par defaut) ==='
+          INSERT INTO quote_requests (
+            client_user_id, client_name, client_email, client_phone,
+            from_address, from_city, from_postal_code,
+            to_address, to_city, to_postal_code,
+            status, marketing_consent, sms_consent
+          ) VALUES (
+            gen_random_uuid(), 'Test Step0', 'teststep0@example.com', '0600000000',
+            '', '', '', '', '', '',
+            'new', true, false
+          ) RETURNING id, is_draft, reference, resume_token, marketing_consent, sms_consent;
+
           ROLLBACK;
           SQL
           )
