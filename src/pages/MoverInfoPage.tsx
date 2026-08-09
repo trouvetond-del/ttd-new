@@ -56,6 +56,29 @@ export function MoverInfoPage() {
             {/* Feature Cards */}
             <div className="space-y-8 mb-12">
 
+              {/* Leads qualifiés */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:border-cyan-200 transition-all">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Users className="w-7 h-7 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Des Demandes Qualifiées, Près de Chez Vous</h2>
+                </div>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  Vous ne recevez que des demandes de déménagement correspondant à votre zone de couverture et à vos services. Chaque client a renseigné son adresse, le volume à déménager et sa date : vous chiffrez votre devis sur une base concrète, pas sur un formulaire à moitié rempli.
+                </p>
+                <div className="space-y-3">
+                  <div className="bg-cyan-50 rounded-xl p-4 flex items-start gap-3">
+                    <Shield className="w-5 h-5 text-cyan-600 mt-0.5 flex-shrink-0" />
+                    <div><strong>Commission claire et affichée :</strong> vous savez exactement ce que TTD prélève avant d&apos;accepter une mission, aucun frais caché.</div>
+                  </div>
+                  <div className="bg-cyan-50 rounded-xl p-4 flex items-start gap-3">
+                    <Zap className="w-5 h-5 text-cyan-600 mt-0.5 flex-shrink-0" />
+                    <div><strong>Vous choisissez vos missions :</strong> aucune obligation d&apos;accepter une demande qui ne vous convient pas.</div>
+                  </div>
+                </div>
+              </div>
+
               {/* Protection Réclamations */}
               <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:border-blue-200 transition-all">
                 <div className="flex items-center gap-4 mb-4">

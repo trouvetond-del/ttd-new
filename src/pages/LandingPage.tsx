@@ -86,7 +86,7 @@ export function LandingPage() {
             </h1>
 
             <p className="text-xl md:text-2xl text-blue-50/95 mb-12 leading-relaxed max-w-2xl mx-auto animate-fadeInUp font-normal" style={{ animationDelay: '0.2s' }}>
-              La seule plateforme française qui analyse vos photos de déménagement pour protéger les clients et les pros des litiges grâce à une intelligence artificielle impartiale.
+              Un meuble abîmé ? Notre IA compare vos photos avant/après et tranche en votre faveur — la plateforme française de déménagement qui protège clients et pros des litiges grâce à une intelligence artificielle impartiale.
             </p>
 
             <div className="flex justify-center mb-12 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
@@ -99,6 +99,10 @@ export function LandingPage() {
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform relative" />
               </button>
             </div>
+
+            <p className="text-center text-blue-100/90 text-sm font-medium mb-4 animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
+              Gratuit, sans engagement, jusqu'à 3 devis en 24h
+            </p>
 
             {/* ✅ Fix 5: Removed "hidden sm:flex" from "Zéro litige" — now visible on mobile */}
             <div className="mt-12 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-md p-5 rounded-2xl border border-blue-400/30 max-w-3xl mx-auto animate-fadeInUp shadow-xl" style={{ animationDelay: '0.8s' }}>
@@ -115,7 +119,7 @@ export function LandingPage() {
                 <div className="w-px h-4 bg-white/20 hidden sm:block"></div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-blue-300" />
-                  <span>Zéro litige</span>
+                  <span>Litiges évités grâce à l'IA</span>
                 </div>
               </div>
             </div>
@@ -189,6 +193,7 @@ export function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-2">TrouveTonDemenageur</h3>
               <p className="text-blue-200 text-sm leading-relaxed">Vérifie, accompagne et arbitre. Avant, pendant et après votre déménagement.</p>
+              <p className="text-blue-300/80 text-xs mt-3 leading-relaxed">30% à la réservation, sécurisés sur la plateforme — le solde se règle directement avec votre déménageur le jour J.</p>
             </div>
 
             <div className="hidden md:flex items-center">

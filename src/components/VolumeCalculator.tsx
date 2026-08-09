@@ -514,7 +514,7 @@ export function VolumeCalculator({ onClose, onCalculated, initialInventory }: Vo
                         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                           <h3 className="font-bold text-2xl mb-2">{room.name}</h3>
                           <p className="text-sm text-blue-100">
-                            {isSelected ? 'Configurée - Cliquez pour modifier' : 'Cliquez pour configurer'}
+                            {isSelected ? '✓ Configurée — cliquez pour modifier' : 'Cliquez pour configurer cette pièce'}
                           </p>
                         </div>
                       </div>

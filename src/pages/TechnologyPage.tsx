@@ -177,7 +177,7 @@ export function TechnologyPage() {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <span className="text-green-600 mt-1">✓</span>
-                  <span className="text-gray-700"><strong>Précision 94%</strong> - Taux de détection leader du marché</span>
+                  <span className="text-gray-700"><strong>Précision 94%</strong> - Taux de détection des dommages sur photos</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-600 mt-1">✓</span>
