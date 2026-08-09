@@ -20,82 +20,18 @@ jobs:
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
-          BEGIN;
 
-          \i supabase/migrations_manuelles/draft-quote-requests-system.sql
+          \echo '=== Colonnes ajoutees, presentes en prod ==='
+          SELECT column_name, data_type, is_nullable, column_default
+          FROM information_schema.columns
+          WHERE table_name = 'quote_requests' AND column_name IN ('is_draft', 'submitted_at', 'resume_token', 'marketing_consent');
 
-          \echo '=== TEST 1 : creation d un brouillon (is_draft=true par defaut) -> zero notification ==='
-          DO $$
-          DECLARE
-            test_user uuid := gen_random_uuid();
-            new_id uuid;
-            notif_count integer;
-          BEGIN
-            INSERT INTO quote_requests (
-              client_user_id, client_name, client_email, client_phone,
-              from_address, from_city, from_postal_code,
-              to_address, to_city, to_postal_code,
-              from_home_size, from_home_type, to_home_size, to_home_type, volume_m3,
-              moving_date, status
-            ) VALUES (
-              test_user, 'Test Draft', 'testdraft@example.com', '0600000000',
-              '1 rue Test', 'Paris', '75001',
-              '2 rue Test', 'Lyon', '69000',
-              'T2', 'Appartement', 'T2', 'Appartement', 20,
-              CURRENT_DATE + 30, 'new'
-            ) RETURNING id INTO new_id;
+          \echo '=== Triggers actifs sur quote_requests apres deploiement ==='
+          SELECT tgname FROM pg_trigger WHERE tgrelid = 'quote_requests'::regclass AND NOT tgisinternal ORDER BY tgname;
 
-            SELECT count(*) INTO notif_count FROM notifications WHERE related_id = new_id;
-            RAISE NOTICE 'Brouillon cree, id=%, notifications generees=%', new_id, notif_count;
-            IF notif_count > 0 THEN
-              RAISE EXCEPTION 'ECHEC: un brouillon a genere % notification(s), il ne devrait en generer AUCUNE', notif_count;
-            ELSE
-              RAISE NOTICE 'OK: brouillon = zero notification, comme attendu';
-            END IF;
-
-            -- ETAPE 2 : bascule vers soumis
-            UPDATE quote_requests SET is_draft = false, submitted_at = now() WHERE id = new_id;
-
-            SELECT count(*) INTO notif_count FROM notifications WHERE related_id = new_id;
-            RAISE NOTICE 'Apres passage is_draft=false, notifications generees=%', notif_count;
-            IF notif_count = 0 THEN
-              RAISE EXCEPTION 'ECHEC: la soumission finale n a genere AUCUNE notification, le matching est casse';
-            ELSE
-              RAISE NOTICE 'OK: soumission = % notification(s) generee(s), matching fonctionnel', notif_count;
-            END IF;
-          END $$;
-
-          \echo '=== TEST 2 : ancien parcours (INSERT direct avec is_draft=false explicite) reste fonctionnel (retro-compat) ==='
-          DO $$
-          DECLARE
-            test_user uuid := gen_random_uuid();
-            new_id uuid;
-            notif_count integer;
-          BEGIN
-            INSERT INTO quote_requests (
-              client_user_id, client_name, client_email, client_phone,
-              from_address, from_city, from_postal_code,
-              to_address, to_city, to_postal_code,
-              from_home_size, from_home_type, to_home_size, to_home_type, volume_m3,
-              moving_date, status, is_draft
-            ) VALUES (
-              test_user, 'Test Direct', 'testdirect@example.com', '0600000001',
-              '1 rue Test', 'Paris', '75001',
-              '2 rue Test', 'Lyon', '69000',
-              'T2', 'Appartement', 'T2', 'Appartement', 20,
-              CURRENT_DATE + 30, 'new', false
-            ) RETURNING id INTO new_id;
-
-            SELECT count(*) INTO notif_count FROM notifications WHERE related_id = new_id;
-            RAISE NOTICE 'INSERT direct is_draft=false, notifications generees=%', notif_count;
-            IF notif_count = 0 THEN
-              RAISE EXCEPTION 'ECHEC: le parcours de soumission actuel (INSERT direct) est casse';
-            ELSE
-              RAISE NOTICE 'OK: parcours actuel toujours fonctionnel';
-            END IF;
-          END $$;
-
-          ROLLBACK;
+          \echo '=== Verification : toutes les demandes existantes sont bien is_draft=false (backfill) ==='
+          SELECT count(*) AS total, count(*) FILTER (WHERE is_draft = false) AS non_brouillon, count(*) FILTER (WHERE is_draft = true) AS brouillon
+          FROM quote_requests;
           SQL
           )
           echo "$OUT"
