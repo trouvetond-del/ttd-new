@@ -435,94 +435,39 @@ export function LandingPage() {
               La confiance, <span className="gradient-text">ça se prouve.</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
-              Clients et professionnels témoignent.
+              Plateforme lancée en 2026 — voici comment on la construit, sans rien inventer.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-              <div className="flex items-center gap-1 mb-4">
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
+                <ShieldCheck className="w-7 h-7 text-white" />
               </div>
-              <p className="text-gray-700 leading-relaxed mb-6">
-                "Un meuble était déjà abîmé avant le départ. L'IA l'a détecté immédiatement. Résultat : aucun litige, aucun stress. Je recommande les yeux fermés."
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Déménageurs vérifiés</h3>
+              <p className="text-gray-700 leading-relaxed">
+                KBIS, assurance RC Pro et immatriculation URSSAF contrôlés avant validation de chaque professionnel. Pas d'exception.
               </p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                  SM
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900">S. Martin</p>
-                  <p className="text-sm text-gray-500">Paris → Lyon • Déc 2025</p>
-                </div>
-              </div>
             </div>
 
             <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-              <div className="flex items-center gap-1 mb-4">
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
+                <Camera className="w-7 h-7 text-white" />
               </div>
-              <p className="text-gray-700 leading-relaxed mb-6">
-                "Fini les accusations injustifiées. Les photos sont là, l'IA tranche. Mes clients ont confiance et moi aussi. C'est du sérieux."
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Arbitrage IA impartial</h3>
+              <p className="text-gray-700 leading-relaxed">
+                Photos avant/après horodatées en cas de litige. Notre IA compare objectivement, sans parti pris pour le client ou le déménageur.
               </p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                  JD
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900">J. Dupont</p>
-                  <p className="text-sm text-gray-500">Déménageur professionnel</p>
-                </div>
-              </div>
             </div>
 
             <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-              <div className="flex items-center gap-1 mb-4">
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
+                <Star className="w-7 h-7 text-white" />
               </div>
-              <p className="text-gray-700 leading-relaxed mb-6">
-                "3 devis en 24h, des avis vérifiés, un suivi photo complet. J'ai déménagé en toute sérénité. Le niveau de service est rare."
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Les premiers avis arrivent</h3>
+              <p className="text-gray-700 leading-relaxed">
+                Chaque déménagement terminé déclenche une demande d'avis vérifié. On préfère commencer à zéro plutôt qu'afficher de faux avis.
               </p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold">
-                  ML
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900">M. Lefebvre</p>
-                  <p className="text-sm text-gray-500">Marseille → Bordeaux • Nov 2025</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 text-center animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
-            <div className="inline-flex items-center gap-8 bg-white px-8 py-4 rounded-2xl shadow-lg border border-gray-100">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 mb-1">98%</div>
-                <div className="text-sm text-gray-600">Taux de satisfaction</div>
-              </div>
-              <div className="w-px h-12 bg-gray-200"></div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 mb-1">4.8/5</div>
-                <div className="text-sm text-gray-600">Note moyenne</div>
-              </div>
-              <div className="w-px h-12 bg-gray-200"></div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 mb-1">1 247</div>
-                <div className="text-sm text-gray-600">Avis clients</div>
-              </div>
             </div>
           </div>
         </div>
