@@ -1,4 +1,4 @@
-import { Truck, LogIn, Shield, Camera, FileCheck, CheckCircle, ArrowRight, Sparkles, Star, Award, Zap, Phone, Mail, MessageCircle, Facebook, Twitter, Linkedin, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb } from 'lucide-react';
+import { Truck, LogIn, Shield, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, Sparkles, Star, Award, Zap, Phone, Mail, MessageCircle, Facebook, Twitter, Linkedin, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb } from 'lucide-react';
 import { SupportChat } from '../components/SupportChat';
 import { Logo } from '../components/Logo';
 import { useState, useRef } from 'react';
@@ -134,22 +134,20 @@ export function LandingPage() {
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="flex items-center justify-center gap-4 mb-12">
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">2 847</div>
-              <div className="text-xs text-gray-500">Déménagements</div>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-12">
+            <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              <span>KBIS vérifié</span>
             </div>
-            <div className="w-px h-10 bg-gray-200"></div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900 flex items-center gap-1 justify-center">
-                4.8 <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              </div>
-              <div className="text-xs text-gray-500">Satisfaction</div>
+            <div className="w-px h-4 bg-gray-200 hidden sm:block"></div>
+            <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              <span>Assurance RC Pro vérifiée</span>
             </div>
-            <div className="w-px h-10 bg-gray-200"></div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-gray-900">157</div>
-              <div className="text-xs text-gray-500">Professionnels</div>
+            <div className="w-px h-4 bg-gray-200 hidden sm:block"></div>
+            <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              <span>URSSAF vérifiée</span>
             </div>
           </div>
 
