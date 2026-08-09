@@ -20,32 +20,14 @@ jobs:
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
+          BEGIN;
+          \i supabase/migrations_manuelles/normalize-mover-city.sql
 
-          \echo '=== Ville de siege des demenageurs verifies + actifs ==='
-          SELECT city, count(*) AS nb
-          FROM movers
+          \echo '=== Resultat apres normalisation (transaction annulee) ==='
+          SELECT city, count(*) FROM movers
           WHERE verification_status = 'verified' AND is_active = true
-          GROUP BY city
-          ORDER BY nb DESC, city;
-
-          \echo '=== Type de couverture (departments vs all_france vs custom) ==='
-          SELECT coverage_type, count(*) FROM movers
-          WHERE verification_status = 'verified' AND is_active = true
-          GROUP BY 1 ORDER BY 2 DESC;
-
-          \echo '=== Departements couverts (activity_departments), agreges ==='
-          SELECT dept, count(*) AS nb_movers
-          FROM movers, unnest(activity_departments) AS dept
-          WHERE verification_status = 'verified' AND is_active = true
-          GROUP BY dept
-          ORDER BY nb_movers DESC, dept
-          LIMIT 30;
-
-          \echo '=== Detail complet (une ligne par mover verifie actif) ==='
-          SELECT company_name, city, postal_code, coverage_type, activity_departments
-          FROM movers
-          WHERE verification_status = 'verified' AND is_active = true
-          ORDER BY city;
+          GROUP BY city ORDER BY count(*) DESC, city;
+          ROLLBACK;
           SQL
           )
           echo "$OUT"
