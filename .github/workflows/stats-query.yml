@@ -21,14 +21,20 @@ jobs:
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
 
-          \i scripts/qa-test-accounts.sql
+          \echo '=== Colonnes de la table articles (creee hors migrations versionnees) ==='
+          SELECT column_name, data_type, is_nullable
+          FROM information_schema.columns
+          WHERE table_name = 'articles'
+          ORDER BY ordinal_position;
 
-          \echo '=== Verification finale ==='
-          SELECT u.email, u.email_confirmed_at IS NOT NULL AS email_confirme
-          FROM auth.users u
-          WHERE u.email IN ('qa-test-client@trouvetondemenageur.fr', 'qa-test-mover@trouvetondemenageur.fr');
-          SELECT email, profile_completed FROM clients WHERE email = 'qa-test-client@trouvetondemenageur.fr';
-          SELECT email, verification_status, is_active FROM movers WHERE email = 'qa-test-mover@trouvetondemenageur.fr';
+          \echo '=== Contenu reel : combien d articles, publies ou non ==='
+          SELECT count(*) AS total, count(*) FILTER (WHERE published = true) AS publies
+          FROM articles;
+          SELECT slug, title, published, created_at FROM articles ORDER BY created_at DESC LIMIT 10;
+
+          \echo '=== Une eventuelle table villes/cities existe deja ? ==='
+          SELECT table_name FROM information_schema.tables
+          WHERE table_schema = 'public' AND (table_name ILIKE '%ville%' OR table_name ILIKE '%city%' OR table_name ILIKE '%cities%');
           SQL
           )
           echo "$OUT"
