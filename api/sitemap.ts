@@ -16,12 +16,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     .eq('statut', 'publie')
     .order('created_at', { ascending: false });
 
+  const { data: cityPages } = await supabase
+    .from('city_pages')
+    .select('slug, updated_at')
+    .eq('statut', 'published');
+
   const baseUrl = 'https://www.trouvetondemenageur.fr';
 
   const staticPages = [
     { url: '/', priority: '1.0', changefreq: 'weekly' },
     { url: '/blog', priority: '0.9', changefreq: 'daily' },
   ];
+
+  const cityPageEntries = (cityPages || []).map(c => ({
+    url: `/demenagement/${c.slug}`,
+    priority: '0.9',
+    changefreq: 'weekly',
+    lastmod: c.updated_at?.split('T')[0],
+  }));
 
   const articlePages = (articles || []).map(a => ({
     url: `/blog/${a.slug}`,
@@ -30,7 +42,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     lastmod: a.created_at?.split('T')[0],
   }));
 
-  const allPages = [...staticPages, ...articlePages];
+  const allPages = [...staticPages, ...cityPageEntries, ...articlePages];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

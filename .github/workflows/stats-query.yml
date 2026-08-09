@@ -21,12 +21,11 @@ jobs:
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
           BEGIN;
-          \i supabase/migrations_manuelles/normalize-mover-city.sql
+          \i supabase/migrations_manuelles/city-pages-table.sql
+          \i supabase/migrations_manuelles/city-pages-seed.sql
 
-          \echo '=== Resultat apres normalisation (transaction annulee) ==='
-          SELECT city, count(*) FROM movers
-          WHERE verification_status = 'verified' AND is_active = true
-          GROUP BY city ORDER BY count(*) DESC, city;
+          \echo '=== Resultat (transaction annulee) ==='
+          SELECT slug, nom_ville, departement, statut FROM city_pages ORDER BY nom_ville;
           ROLLBACK;
           SQL
           )

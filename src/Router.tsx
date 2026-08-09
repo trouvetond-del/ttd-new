@@ -52,6 +52,7 @@ import { PressPage } from './pages/PressPage';
 import { HelpCenterPage } from './pages/HelpCenterPage';
 import { MovingGuidePage } from './pages/MovingGuidePage';
 import Blog from './pages/Blog';
+import CityPage from './pages/CityPage';
 import BlogArticle from './pages/BlogArticle';
 import { EmailVerificationPage } from './pages/EmailVerificationPage';
 import { CheckEmailPage } from './pages/CheckEmailPage';
@@ -432,6 +433,7 @@ export function AppRouter() {
           <Route path="/help" element={<HelpCenterPage />} />
           <Route path="/guide" element={<MovingGuidePage />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/demenagement/:slug" element={<CityPage />} />
           <Route path="/blog/:slug" element={<BlogArticle />} />
           {/* Legal Routes */}
           <Route path="/legal/mentions" element={<LegalMentionsPage />} />
