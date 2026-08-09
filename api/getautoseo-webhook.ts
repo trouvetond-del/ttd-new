@@ -23,6 +23,32 @@ function cleanMarkdownFences(text: string | null | undefined): string {
     .trim();
 }
 
+// Détecte les 3 signatures exactes des 8 articles corrompus trouvés en base
+// le 09/08 : titre vide, slug anormalement long (le contenu HTML entier
+// s'était retrouvé collé dans le champ slug), ou balises ```html/```
+// résiduelles non nettoyées dans le contenu final. Un article qui matche
+// l'un de ces critères est mis en 'brouillon' au lieu de 'publie' -- il
+// reste dans la table (rien n'est perdu, relecture manuelle possible)
+// mais n'est plus jamais visible publiquement ni soumis au sitemap
+// (cf. filtres statut='publie' ajoutés dans Blog.tsx / BlogArticle.tsx /
+// api/sitemap.ts). Une seule contrainte à la fois signalée dans la
+// réponse pour faciliter le diagnostic si GetAutoSEO doit être notifié.
+function detectCorruption(titre: string, slug: string, contenuHtml: string): string | null {
+  if (!titre || titre.trim().length === 0) {
+    return 'titre vide';
+  }
+  if (!slug || slug.length > 100) {
+    return `slug invalide (longueur ${slug?.length ?? 0}, max 100)`;
+  }
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return 'slug contient des caractères hors [a-z0-9-] (probable contenu HTML collé dans le slug)';
+  }
+  if (/```/.test(contenuHtml) || /<\/?(html|body|article)>/i.test(contenuHtml)) {
+    return 'balises markdown (```) ou HTML de structure (<html>/<body>/<article>) résiduelles dans le contenu';
+  }
+  return null;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -69,6 +95,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       statut: 'publie',
     };
 
+    const corruptionReason = detectCorruption(record.titre, record.slug, record.contenu);
+    if (corruptionReason) {
+      console.warn(`GetAutoSEO webhook: article mis en brouillon (${corruptionReason})`, { slug, titre });
+      record.statut = 'brouillon';
+    }
+
     const { data, error } = await supabase
       .from('articles')
       .upsert(record, { onConflict: 'slug' })
@@ -88,6 +120,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       url: publishedUrl,
       event,
       article: data?.[0] ?? null,
+      ...(corruptionReason ? {
+        warning: `Article reçu mais mis en brouillon (non publié) : ${corruptionReason}. Relecture manuelle nécessaire avant publication.`,
+      } : {}),
     });
   } catch (err: any) {
     console.error('Webhook processing error:', err);
