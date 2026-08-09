@@ -43,6 +43,7 @@ CREATE TRIGGER on_quote_request_insert
   AFTER INSERT ON quote_requests
   FOR EACH ROW WHEN (NEW.is_draft = false)
   EXECUTE FUNCTION notify_admins_on_quote_request_insert();
+DROP TRIGGER IF EXISTS on_quote_request_draft_submitted ON quote_requests;
 CREATE TRIGGER on_quote_request_draft_submitted
   AFTER UPDATE OF is_draft ON quote_requests
   FOR EACH ROW WHEN (OLD.is_draft = true AND NEW.is_draft = false)
@@ -53,6 +54,7 @@ CREATE TRIGGER trigger_detect_activity_zone
   AFTER INSERT ON quote_requests
   FOR EACH ROW WHEN (NEW.is_draft = false)
   EXECUTE FUNCTION detect_activity_zone_matches();
+DROP TRIGGER IF EXISTS trigger_detect_activity_zone_draft_submitted ON quote_requests;
 CREATE TRIGGER trigger_detect_activity_zone_draft_submitted
   AFTER UPDATE OF is_draft ON quote_requests
   FOR EACH ROW WHEN (OLD.is_draft = true AND NEW.is_draft = false)
@@ -63,6 +65,7 @@ CREATE TRIGGER trigger_detect_return_trip
   AFTER INSERT ON quote_requests
   FOR EACH ROW WHEN (NEW.is_draft = false)
   EXECUTE FUNCTION detect_return_trip_opportunities();
+DROP TRIGGER IF EXISTS trigger_detect_return_trip_draft_submitted ON quote_requests;
 CREATE TRIGGER trigger_detect_return_trip_draft_submitted
   AFTER UPDATE OF is_draft ON quote_requests
   FOR EACH ROW WHEN (OLD.is_draft = true AND NEW.is_draft = false)
@@ -73,6 +76,7 @@ CREATE TRIGGER trigger_notify_nearby_missions
   AFTER INSERT ON quote_requests
   FOR EACH ROW WHEN (NEW.is_draft = false)
   EXECUTE FUNCTION notify_movers_with_nearby_missions();
+DROP TRIGGER IF EXISTS trigger_notify_nearby_missions_draft_submitted ON quote_requests;
 CREATE TRIGGER trigger_notify_nearby_missions_draft_submitted
   AFTER UPDATE OF is_draft ON quote_requests
   FOR EACH ROW WHEN (OLD.is_draft = true AND NEW.is_draft = false)
