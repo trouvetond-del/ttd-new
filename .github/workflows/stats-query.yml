@@ -16,20 +16,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verification HTTP des pages villes en production
+      - name: Verification HTTP finale complete
         run: |
           sudo apt-get update -y && sudo apt-get install -y jq
           set +e
           OUT=""
-          for path in "demenagement/paris" "demenagement/paris/index.html" "demenagement/paris/" "demenagement/marseille/index.html"; do
+          for path in "demenagement/saint-etienne" "demenagement/lyon" "demenagement/lille" "demenagement/nantes" "demenagement/bordeaux" "demenagement/toulouse" "demenagement/ville-inexistante-xyz" "blog" "client/quote" "mover/signup" "sitemap.xml"; do
             URL="https://www.trouvetondemenageur.fr/$path"
             CODE=$(curl -s -L -o /tmp/page.html -w "%{http_code}" "$URL")
-            TITLE=$(grep -o '<title>[^<]*</title>' /tmp/page.html)
-            ROOT=$(grep -o '<div id=\"root\">.\{1,150\}' /tmp/page.html)
-            OUT="$OUT\n=== $URL -> HTTP $CODE ===\nTitle: $TITLE\nRoot: $ROOT\n---\n"
+            TITLE=$(grep -o '<title>[^<]*</title>' /tmp/page.html | head -1)
+            SIZE=$(wc -c < /tmp/page.html)
+            OUT="$OUT\n=== /$path -> HTTP $CODE (taille: ${SIZE}o) ===\nTitle: $TITLE\n---\n"
           done
           echo -e "$OUT"
-          BODY=$(echo -e "$OUT" | jq -Rs '{title: "Verification HTTP v2 - fichier statique direct", body: ("```\n" + . + "\n```")}')
+          BODY=$(echo -e "$OUT" | jq -Rs '{title: "Verification HTTP finale - toutes villes + routes critiques", body: ("```\n" + . + "\n```")}')
           curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/issues" -d "$BODY"
 
       - name: Requête stats agrégées (aucune PII)
