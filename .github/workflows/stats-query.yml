@@ -21,19 +21,15 @@ jobs:
           sudo apt-get update -y && sudo apt-get install -y jq
           set +e
           OUT=""
-          for slug in paris saint-etienne marseille; do
-            URL="https://www.trouvetondemenageur.fr/demenagement/$slug"
-            CODE=$(curl -s -o /tmp/page_$slug.html -w "%{http_code}" "$URL")
-            OUT="$OUT\n=== $URL -> HTTP $CODE ===\n"
-            OUT="$OUT\nTitle: $(grep -o '<title>[^<]*</title>' /tmp/page_$slug.html)\n"
-            OUT="$OUT\nCanonical: $(grep -o '<link rel=\"canonical\"[^>]*>' /tmp/page_$slug.html)\n"
-            OUT="$OUT\nJSON-LD present: $(grep -q 'application/ld+json' /tmp/page_$slug.html && echo OUI || echo NON)\n"
-            OUT="$OUT\nContenu #root non vide: $(grep -q '<div id=\"root\"><div' /tmp/page_$slug.html && echo OUI || echo NON)\n"
-            OUT="$OUT\nExtrait #root (300 chars): $(grep -o '<div id=\"root\">.\{1,300\}' /tmp/page_$slug.html)\n"
-            OUT="$OUT\n---\n"
+          for path in "demenagement/paris" "demenagement/paris/index.html" "demenagement/paris/" "demenagement/marseille/index.html"; do
+            URL="https://www.trouvetondemenageur.fr/$path"
+            CODE=$(curl -s -L -o /tmp/page.html -w "%{http_code}" "$URL")
+            TITLE=$(grep -o '<title>[^<]*</title>' /tmp/page.html)
+            ROOT=$(grep -o '<div id=\"root\">.\{1,150\}' /tmp/page.html)
+            OUT="$OUT\n=== $URL -> HTTP $CODE ===\nTitle: $TITLE\nRoot: $ROOT\n---\n"
           done
           echo -e "$OUT"
-          BODY=$(echo -e "$OUT" | jq -Rs '{title: "Verification HTTP pages villes", body: ("```\n" + . + "\n```")}')
+          BODY=$(echo -e "$OUT" | jq -Rs '{title: "Verification HTTP v2 - fichier statique direct", body: ("```\n" + . + "\n```")}')
           curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/issues" -d "$BODY"
 
       - name: Requête stats agrégées (aucune PII)
