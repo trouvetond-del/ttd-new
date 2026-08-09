@@ -16,6 +16,7 @@ jobs:
       - name: Requête stats agrégées (aucune PII)
         run: |
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
+          set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 <<'SQL' 2>&1
           -- Diagnostic contraintes UNIQUE sur quote_requests
 
