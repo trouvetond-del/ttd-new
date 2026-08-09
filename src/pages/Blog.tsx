@@ -84,6 +84,7 @@ export default function Blog() {
     const { data, error } = await supabase
       .from('articles')
       .select('id, titre, contenu, mot_cle, ville, type_article, slug, created_at')
+      .eq('statut', 'publie')
       .order('created_at', { ascending: false });
     if (!error && data) {
       const safe = data.filter(a => a.titre || a.contenu);

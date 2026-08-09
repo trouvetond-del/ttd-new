@@ -13,6 +13,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { data: articles } = await supabase
     .from('articles')
     .select('slug, created_at')
+    .eq('statut', 'publie')
     .order('created_at', { ascending: false });
 
   const baseUrl = 'https://www.trouvetondemenageur.fr';

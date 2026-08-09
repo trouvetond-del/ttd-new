@@ -160,6 +160,7 @@ export default function BlogArticle() {
       .from('articles')
       .select('*')
       .eq('slug', articleSlug)
+      .eq('statut', 'publie')
       .single();
 
     if (error || !data) { navigate('/blog'); return; }
@@ -172,6 +173,7 @@ export default function BlogArticle() {
     const { data: relatedData } = await supabase
       .from('articles')
       .select('id, titre, slug, type_article, ville, created_at')
+      .eq('statut', 'publie')
       .neq('id', data.id)
       .or(`type_article.eq.${data.type_article},ville.eq.${data.ville || 'null'}`)
       .limit(3);

@@ -21,15 +21,20 @@ jobs:
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
 
-          \echo '=== Repartition par statut et type_article ==='
-          SELECT statut, type_article, count(*) FROM articles GROUP BY 1, 2 ORDER BY 3 DESC;
+          \echo '=== AVANT : articles cibles par les criteres de corruption ==='
+          SELECT slug, titre, statut, length(slug) AS len_slug
+          FROM articles
+          WHERE (titre IS NULL OR titre = '') OR length(slug) > 100 OR slug ILIKE '%html%'
+          ORDER BY created_at;
 
-          \echo '=== 10 derniers articles ==='
-          SELECT slug, titre, ville, type_article, statut, created_at FROM articles ORDER BY created_at DESC LIMIT 10;
+          \echo '=== Depublication (statut -> brouillon) ==='
+          UPDATE articles
+          SET statut = 'brouillon'
+          WHERE (titre IS NULL OR titre = '') OR length(slug) > 100 OR slug ILIKE '%html%';
 
-          \echo '=== Une eventuelle table villes/cities existe deja ? ==='
-          SELECT table_name FROM information_schema.tables
-          WHERE table_schema = 'public' AND (table_name ILIKE '%ville%' OR table_name ILIKE '%city%' OR table_name ILIKE '%cities%');
+          \echo '=== APRES : etat de la table articles ==='
+          SELECT statut, count(*) FROM articles GROUP BY 1;
+          SELECT slug, titre, statut FROM articles WHERE statut = 'publie' ORDER BY created_at DESC;
           SQL
           )
           echo "$OUT"
