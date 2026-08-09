@@ -19,15 +19,41 @@ jobs:
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
 
-          \echo '=== F) Code source des fonctions declenchees AFTER INSERT sur quote_requests ==='
-          SELECT pg_get_functiondef(oid)
-          FROM pg_proc
-          WHERE proname IN (
-            'notify_admins_on_quote_request_insert',
-            'detect_activity_zone_matches',
-            'detect_return_trip_opportunities',
-            'notify_movers_with_nearby_missions'
-          );
+          \echo '=== G) Contraintes UNIQUE sur la table notifications ==='
+          SELECT conname, contype, pg_get_constraintdef(oid) AS definition
+          FROM pg_constraint
+          WHERE conrelid = 'notifications'::regclass AND contype = 'u';
+
+          \echo '=== H) Index UNIQUE sur notifications (au cas ou pose via index plutot que CONSTRAINT) ==='
+          SELECT indexname, indexdef
+          FROM pg_indexes
+          WHERE tablename = 'notifications' AND indexdef ILIKE '%UNIQUE%';
+
+          \echo '=== I) Nombre d admins actifs (le trigger boucle sur TOUS les admins) ==='
+          SELECT count(*) FROM admins;
+
+          \echo '=== J) Reproduction ciblee : simuler exactement ce que fait le trigger, deux demandes du meme "nouveau client", meme admin ==='
+          BEGIN;
+          DO $$
+          DECLARE
+            fake_admin_user uuid := (SELECT user_id FROM admins LIMIT 1);
+            fake_qr_id_1 uuid := gen_random_uuid();
+            fake_qr_id_2 uuid := gen_random_uuid();
+          BEGIN
+            IF fake_admin_user IS NULL THEN
+              RAISE NOTICE 'Aucun admin trouve, test ignore';
+              RETURN;
+            END IF;
+
+            INSERT INTO notifications (user_id, user_type, type, title, message, related_id, created_at)
+            VALUES (fake_admin_user, 'admin', 'new_quote_request', 'Nouvelle demande de devis', 'Test route 1', fake_qr_id_1, NOW());
+            RAISE NOTICE 'Premiere notification admin OK';
+
+            INSERT INTO notifications (user_id, user_type, type, title, message, related_id, created_at)
+            VALUES (fake_admin_user, 'admin', 'new_quote_request', 'Nouvelle demande de devis', 'Test route 2', fake_qr_id_2, NOW());
+            RAISE NOTICE 'Deuxieme notification admin (meme admin, meme type, related_id different) OK';
+          END $$;
+          ROLLBACK;
           SQL
           )
           echo "$OUT"
