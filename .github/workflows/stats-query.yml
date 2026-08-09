@@ -20,12 +20,19 @@ jobs:
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
-          BEGIN;
 
-          \echo '=== REPRO : 3 INSERT consecutifs, EXACTEMENT comme le frontend actuel (is_draft et resume_token non specifies, defauts appliques) ==='
+          \echo '=== Application REELLE du correctif setval (idempotent, sans transaction) ==='
+          \i supabase/migrations_manuelles/quote-reference-and-reminders.sql
+
+          \echo '=== Etat de la sequence apres correctif ==='
+          SELECT last_value FROM quote_requests_reference_seq;
+          SELECT COALESCE(MAX(substring(reference from 5)::bigint), 0) AS max_reference_utilisee
+          FROM quote_requests WHERE reference ~ '^DEM-[0-9]+$';
+
+          \echo '=== RE-REPRODUCTION du scenario signale (3 INSERT, comme le frontend actuel), transaction annulee ==='
+          BEGIN;
           DO $$
           DECLARE
-            ids uuid[] := ARRAY[]::uuid[];
             new_id uuid;
             i int;
           BEGIN
@@ -37,23 +44,16 @@ jobs:
                 from_home_size, from_home_type, to_home_size, to_home_type, volume_m3,
                 moving_date, status
               ) VALUES (
-                gen_random_uuid(), 'Test Repro ' || i, 'testrepro' || i || '@example.com', '060000000' || i,
+                gen_random_uuid(), 'Test Repro2 ' || i, 'testrepro2' || i || '@example.com', '060000000' || i,
                 '1 rue Test', 'Paris', '75001',
                 '2 rue Test', 'Lyon', '69000',
                 'T2', 'Appartement', 'T2', 'Appartement', 20,
                 CURRENT_DATE + 30, 'new'
               ) RETURNING id INTO new_id;
-              ids := array_append(ids, new_id);
               RAISE NOTICE 'INSERT % OK, id=%', i, new_id;
             END LOOP;
-            RAISE NOTICE 'Les 3 INSERT ont reussi sans collision. ids=%', ids;
+            RAISE NOTICE 'SUCCES: les 3 INSERT ont reussi sans collision apres correctif';
           END $$;
-
-          \echo '=== Verification des is_draft / resume_token generes par ces 3 INSERT ==='
-          SELECT client_email, is_draft, resume_token, status
-          FROM quote_requests WHERE client_email LIKE 'testrepro%@example.com'
-          ORDER BY client_email;
-
           ROLLBACK;
           SQL
           )
