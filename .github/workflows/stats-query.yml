@@ -13,46 +13,88 @@ jobs:
       contents: read
       issues: write
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Requête stats agrégées (aucune PII)
         run: |
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
-
-          \echo '=== G) Contraintes UNIQUE sur la table notifications ==='
-          SELECT conname, contype, pg_get_constraintdef(oid) AS definition
-          FROM pg_constraint
-          WHERE conrelid = 'notifications'::regclass AND contype = 'u';
-
-          \echo '=== H) Index UNIQUE sur notifications (au cas ou pose via index plutot que CONSTRAINT) ==='
-          SELECT indexname, indexdef
-          FROM pg_indexes
-          WHERE tablename = 'notifications' AND indexdef ILIKE '%UNIQUE%';
-
-          \echo '=== I) Nombre d admins actifs (le trigger boucle sur TOUS les admins) ==='
-          SELECT count(*) FROM admins;
-
-          \echo '=== J) Reproduction ciblee : simuler exactement ce que fait le trigger, deux demandes du meme "nouveau client", meme admin ==='
           BEGIN;
+
+          \i supabase/migrations_manuelles/draft-quote-requests-system.sql
+
+          \echo '=== TEST 1 : creation d un brouillon (is_draft=true par defaut) -> zero notification ==='
           DO $$
           DECLARE
-            fake_admin_user uuid := (SELECT user_id FROM admins LIMIT 1);
-            fake_qr_id_1 uuid := gen_random_uuid();
-            fake_qr_id_2 uuid := gen_random_uuid();
+            test_user uuid := gen_random_uuid();
+            new_id uuid;
+            notif_count integer;
           BEGIN
-            IF fake_admin_user IS NULL THEN
-              RAISE NOTICE 'Aucun admin trouve, test ignore';
-              RETURN;
+            INSERT INTO quote_requests (
+              client_user_id, client_name, client_email, client_phone,
+              from_address, from_city, from_postal_code,
+              to_address, to_city, to_postal_code,
+              from_home_size, from_home_type, to_home_size, to_home_type, volume_m3,
+              moving_date, status
+            ) VALUES (
+              test_user, 'Test Draft', 'testdraft@example.com', '0600000000',
+              '1 rue Test', 'Paris', '75001',
+              '2 rue Test', 'Lyon', '69000',
+              'T2', 'Appartement', 'T2', 'Appartement', 20,
+              CURRENT_DATE + 30, 'new'
+            ) RETURNING id INTO new_id;
+
+            SELECT count(*) INTO notif_count FROM notifications WHERE related_id = new_id;
+            RAISE NOTICE 'Brouillon cree, id=%, notifications generees=%', new_id, notif_count;
+            IF notif_count > 0 THEN
+              RAISE EXCEPTION 'ECHEC: un brouillon a genere % notification(s), il ne devrait en generer AUCUNE', notif_count;
+            ELSE
+              RAISE NOTICE 'OK: brouillon = zero notification, comme attendu';
             END IF;
 
-            INSERT INTO notifications (user_id, user_type, type, title, message, related_id, created_at)
-            VALUES (fake_admin_user, 'admin', 'new_quote_request', 'Nouvelle demande de devis', 'Test route 1', fake_qr_id_1, NOW());
-            RAISE NOTICE 'Premiere notification admin OK';
+            -- ETAPE 2 : bascule vers soumis
+            UPDATE quote_requests SET is_draft = false, submitted_at = now() WHERE id = new_id;
 
-            INSERT INTO notifications (user_id, user_type, type, title, message, related_id, created_at)
-            VALUES (fake_admin_user, 'admin', 'new_quote_request', 'Nouvelle demande de devis', 'Test route 2', fake_qr_id_2, NOW());
-            RAISE NOTICE 'Deuxieme notification admin (meme admin, meme type, related_id different) OK';
+            SELECT count(*) INTO notif_count FROM notifications WHERE related_id = new_id;
+            RAISE NOTICE 'Apres passage is_draft=false, notifications generees=%', notif_count;
+            IF notif_count = 0 THEN
+              RAISE EXCEPTION 'ECHEC: la soumission finale n a genere AUCUNE notification, le matching est casse';
+            ELSE
+              RAISE NOTICE 'OK: soumission = % notification(s) generee(s), matching fonctionnel', notif_count;
+            END IF;
           END $$;
+
+          \echo '=== TEST 2 : ancien parcours (INSERT direct avec is_draft=false explicite) reste fonctionnel (retro-compat) ==='
+          DO $$
+          DECLARE
+            test_user uuid := gen_random_uuid();
+            new_id uuid;
+            notif_count integer;
+          BEGIN
+            INSERT INTO quote_requests (
+              client_user_id, client_name, client_email, client_phone,
+              from_address, from_city, from_postal_code,
+              to_address, to_city, to_postal_code,
+              from_home_size, from_home_type, to_home_size, to_home_type, volume_m3,
+              moving_date, status, is_draft
+            ) VALUES (
+              test_user, 'Test Direct', 'testdirect@example.com', '0600000001',
+              '1 rue Test', 'Paris', '75001',
+              '2 rue Test', 'Lyon', '69000',
+              'T2', 'Appartement', 'T2', 'Appartement', 20,
+              CURRENT_DATE + 30, 'new', false
+            ) RETURNING id INTO new_id;
+
+            SELECT count(*) INTO notif_count FROM notifications WHERE related_id = new_id;
+            RAISE NOTICE 'INSERT direct is_draft=false, notifications generees=%', notif_count;
+            IF notif_count = 0 THEN
+              RAISE EXCEPTION 'ECHEC: le parcours de soumission actuel (INSERT direct) est casse';
+            ELSE
+              RAISE NOTICE 'OK: parcours actuel toujours fonctionnel';
+            END IF;
+          END $$;
+
           ROLLBACK;
           SQL
           )
