@@ -45,22 +45,30 @@ jobs:
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
           set +e
           OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
-          BEGIN;
-          \i supabase/migrations_manuelles/quote-requests-sms-consent.sql
 
-          \echo '=== Simulation insertion brouillon step0 (champs vides autorises, is_draft=true par defaut) ==='
-          INSERT INTO quote_requests (
-            client_user_id, client_name, client_email, client_phone,
-            from_address, from_city, from_postal_code,
-            to_address, to_city, to_postal_code,
-            status, marketing_consent, sms_consent
-          ) VALUES (
-            gen_random_uuid(), 'Test Step0', 'teststep0@example.com', '0600000000',
-            '', '', '', '', '', '',
-            'new', true, false
-          ) RETURNING id, is_draft, reference, resume_token, marketing_consent, sms_consent;
+          \echo '=== Le compte existe-t-il toujours ? ==='
+          SELECT id, email, email_confirmed_at IS NOT NULL AS email_confirme,
+                 banned_until, deleted_at, aud, role, confirmed_at IS NOT NULL AS confirme,
+                 encrypted_password IS NOT NULL AS a_un_mdp
+          FROM auth.users WHERE email = 'qa-test-client@trouvetondemenageur.fr';
 
-          ROLLBACK;
+          \echo '=== Le mot de passe QaTestClient2026! correspond-il au hash stocke ? ==='
+          SELECT email,
+                 (encrypted_password = extensions.crypt('QaTestClient2026!', encrypted_password)) AS mdp_correspond
+          FROM auth.users WHERE email = 'qa-test-client@trouvetondemenageur.fr';
+
+          \echo '=== Ligne dans auth.identities existe-t-elle bien ? ==='
+          SELECT provider, provider_id, user_id FROM auth.identities i
+          JOIN auth.users u ON u.id = i.user_id
+          WHERE u.email = 'qa-test-client@trouvetondemenageur.fr';
+
+          \echo '=== Ligne clients associee ==='
+          SELECT user_id, email, profile_completed FROM clients WHERE email = 'qa-test-client@trouvetondemenageur.fr';
+
+          \echo '=== Comparaison : format dun compte admin connu fonctionnel (sans email/hash) ==='
+          SELECT aud, role, banned_until, deleted_at, confirmed_at IS NOT NULL AS confirme,
+                 email_confirmed_at IS NOT NULL AS email_confirme
+          FROM auth.users WHERE id IN (SELECT user_id FROM admins LIMIT 1);
           SQL
           )
           echo "$OUT"
