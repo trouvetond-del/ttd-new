@@ -40,6 +40,47 @@ jobs:
           SELECT tgname, pg_get_triggerdef(oid) AS definition
           FROM pg_trigger
           WHERE tgrelid = 'quote_requests'::regclass AND NOT tgisinternal;
+          \echo '=== E) Reproduction : deux INSERT successifs, meme client_user_id, transaction annulee (aucun impact reel) ==='
+          BEGIN;
+          DO $$
+          DECLARE
+            test_user uuid := gen_random_uuid();
+            ref1 text;
+            ref2 text;
+          BEGIN
+            INSERT INTO quote_requests (
+              client_user_id, client_name, client_email, client_phone,
+              from_address, from_city, from_postal_code,
+              to_address, to_city, to_postal_code,
+              moving_date, status
+            ) VALUES (
+              test_user, 'Test Un', 'test1@example.com', '0600000000',
+              '1 rue Test', 'Paris', '75001',
+              '2 rue Test', 'Lyon', '69000',
+              CURRENT_DATE + 30, 'new'
+            ) RETURNING reference INTO ref1;
+            RAISE NOTICE 'Premier INSERT OK, reference=%', ref1;
+
+            INSERT INTO quote_requests (
+              client_user_id, client_name, client_email, client_phone,
+              from_address, from_city, from_postal_code,
+              to_address, to_city, to_postal_code,
+              moving_date, status
+            ) VALUES (
+              test_user, 'Test Un', 'test1@example.com', '0600000000',
+              '1 rue Test', 'Paris', '75001',
+              '2 rue Test', 'Lyon', '69000',
+              CURRENT_DATE + 30, 'new'
+            ) RETURNING reference INTO ref2;
+            RAISE NOTICE 'Deuxieme INSERT (meme client_user_id) OK, reference=%', ref2;
+
+            IF ref1 = ref2 THEN
+              RAISE EXCEPTION 'COLLISION REPRODUITE: % = %', ref1, ref2;
+            ELSE
+              RAISE NOTICE 'PAS DE COLLISION: % != %', ref1, ref2;
+            END IF;
+          END $$;
+          ROLLBACK;
           SQL
           )
           echo "$OUT"
