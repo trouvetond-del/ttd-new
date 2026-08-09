@@ -16,7 +16,31 @@ SET reference = 'DEM-' || LPAD(numbered.rn::text, 6, '0')
 FROM numbered
 WHERE qr.id = numbered.id;
 
-SELECT setval('quote_requests_reference_seq', GREATEST((SELECT COUNT(*) FROM quote_requests), 1));
+-- setval basé sur COUNT(*) : cassé si des lignes ont été supprimées, ou
+-- si la séquence a avancé au-delà du nombre de lignes actuelles (ex :
+-- transactions annulées -- nextval() n'est JAMAIS rollback par Postgres,
+-- c'est volontaire pour ne pas bloquer les transactions concurrentes).
+-- Ce fichier étant rejoué à chaque déploiement du pipeline, un setval
+-- non-idempotent qui peut reculer la séquence est une bombe à retardement :
+-- il finit par faire réémettre une référence déjà attribuée, provoquant
+-- "duplicate key value violates unique constraint quote_requests_reference_unique".
+-- Fix : on avance la séquence jusqu'au MAX(numéro déjà utilisé), et
+-- JAMAIS en dessous de sa valeur actuelle.
+DO $$
+DECLARE
+  v_max_used bigint;
+  v_current bigint;
+BEGIN
+  SELECT COALESCE(MAX(substring(reference from 5)::bigint), 0) INTO v_max_used
+  FROM quote_requests
+  WHERE reference ~ '^DEM-[0-9]+$';
+
+  SELECT last_value INTO v_current FROM quote_requests_reference_seq;
+
+  IF v_max_used > v_current THEN
+    PERFORM setval('quote_requests_reference_seq', v_max_used);
+  END IF;
+END $$;
 
 CREATE OR REPLACE FUNCTION set_quote_request_reference()
 RETURNS TRIGGER AS $$
