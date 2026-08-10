@@ -16,52 +16,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Verification contenu sitemap
-        run: |
-          curl -s "https://www.trouvetondemenageur.fr/sitemap.xml" -o /tmp/sitemap.xml
-          echo "=== URLs demenagement dans le sitemap ==="
-          grep -o '<loc>[^<]*demenagement[^<]*</loc>' /tmp/sitemap.xml
-          echo "=== Nombre total d URLs ==="
-          grep -c '<loc>' /tmp/sitemap.xml
-
-      - name: Verification HTTP finale complete
-        run: |
-          sudo apt-get update -y && sudo apt-get install -y jq
-          set +e
-          OUT=""
-          for path in "demenagement/saint-etienne" "demenagement/lyon" "demenagement/lille" "demenagement/nantes" "demenagement/bordeaux" "demenagement/toulouse" "demenagement/ville-inexistante-xyz" "blog" "client/quote" "mover/signup" "sitemap.xml"; do
-            URL="https://www.trouvetondemenageur.fr/$path"
-            CODE=$(curl -s -L -o /tmp/page.html -w "%{http_code}" "$URL")
-            TITLE=$(grep -o '<title>[^<]*</title>' /tmp/page.html | head -1)
-            SIZE=$(wc -c < /tmp/page.html)
-            OUT="$OUT\n=== /$path -> HTTP $CODE (taille: ${SIZE}o) ===\nTitle: $TITLE\n---\n"
-          done
-          echo -e "$OUT"
-          BODY=$(echo -e "$OUT" | jq -Rs '{title: "Verification HTTP finale - toutes villes + routes critiques", body: ("```\n" + . + "\n```")}')
-          curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/issues" -d "$BODY"
-
-      - name: Requête stats agrégées (aucune PII)
+      - name: Verification URL Supabase reellement utilisee en production
         run: |
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
           set +e
-          OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -P pager=off <<'SQL' 2>&1
 
-          \echo '=== TOUTES les colonnes potentiellement bloquantes pour le compte QA client ==='
-          SELECT id, email, confirmed_at, email_confirmed_at, banned_until, deleted_at,
-                 is_sso_user, is_anonymous, aud, role, invited_at, recovery_sent_at,
-                 raw_app_meta_data, encrypted_password IS NOT NULL AS a_mdp,
-                 length(encrypted_password) AS longueur_hash
-          FROM auth.users WHERE email = 'qa-test-client@trouvetondemenageur.fr';
+          MAIN_JS=$(curl -s https://www.trouvetondemenageur.fr/ | grep -oP '/assets/index-[a-zA-Z0-9_-]+\.js' | head -1)
+          curl -s "https://www.trouvetondemenageur.fr${MAIN_JS}" -o /tmp/main.js
+          PROD_SUPABASE=$(grep -oP '[a-zA-Z0-9-]+\.supabase\.co' /tmp/main.js | sort -u)
+          EXPECTED_SUPABASE=$(echo "${{ secrets.SUPABASE_DB_URL }}" | grep -oP '(?<=@db\.)[a-zA-Z0-9-]+(?=\.supabase\.co)')
 
-          \echo '=== Doublons eventuels (insensible a la casse, espaces) ==='
-          SELECT id, email, length(email) AS longueur_email, created_at
-          FROM auth.users WHERE lower(trim(email)) = 'qa-test-client@trouvetondemenageur.fr';
+          OUT="Fichier JS principal: ${MAIN_JS}
+Domaines supabase.co trouves dans le bundle de production:
+${PROD_SUPABASE}
 
-          \echo '=== Meme verification confirmed_at sur un compte admin fonctionnel, pour comparer ==='
-          SELECT id, email, confirmed_at, email_confirmed_at, is_sso_user, is_anonymous
-          FROM auth.users WHERE id IN (SELECT user_id FROM admins LIMIT 1);
-          SQL
-          )
+Projet attendu (extrait de SUPABASE_DB_URL, celui interroge par psql toute la session): ${EXPECTED_SUPABASE}.supabase.co
+
+CONCORDANCE: $(echo "$PROD_SUPABASE" | grep -q "$EXPECTED_SUPABASE" && echo "OUI, meme projet" || echo "NON -- PROJETS DIFFERENTS, C'EST LA CAUSE")"
+
           echo "$OUT"
-          BODY=$(jq -n --arg t "Stats agrégées $(date -u +%Y-%m-%dT%H:%M:%SZ)" --arg b "$OUT" '{title:$t, body:("```\n" + $b + "\n```")}')
+          BODY=$(jq -n --arg t "Verification projet Supabase production vs DB interrogee" --arg b "$OUT" '{title:$t, body:("```\n" + $b + "\n```")}')
           curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/issues" -d "$BODY"
