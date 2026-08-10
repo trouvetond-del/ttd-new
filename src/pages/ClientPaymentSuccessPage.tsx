@@ -1,13 +1,59 @@
 import { CheckCircle, FileText, Calendar, Phone, Mail, Shield, AlertTriangle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 import { ClientLayout } from '../components/ClientLayout';
+import { supabase } from '../lib/supabase';
 
 interface ClientPaymentSuccessPageProps {
-  onContinue: () => void;
+  onContinue?: () => void;
 }
 
 export default function ClientPaymentSuccessPage({onContinue }: ClientPaymentSuccessPageProps) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const trackedRef = useRef(false);
+
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+
+    const trackPurchase = async () => {
+      const quoteId = searchParams.get('quoteId');
+      let depositValue: number | undefined;
+
+      if (quoteId) {
+        try {
+          const { data } = await supabase
+            .from('quotes')
+            .select('client_display_price')
+            .eq('id', quoteId)
+            .maybeSingle();
+          if (data?.client_display_price) {
+            // Frais de réservation = 30% du prix affiché (montant réellement encaissé par TTD)
+            depositValue = Math.round(data.client_display_price * 0.3 * 100) / 100;
+          }
+        } catch (err) {
+          console.error('Tracking: impossible de récupérer le montant du devis', err);
+        }
+      }
+
+      if (typeof (window as any).fbq === 'function') {
+        const eventData: Record<string, unknown> = { currency: 'EUR' };
+        if (depositValue !== undefined) eventData.value = depositValue;
+        (window as any).fbq('track', 'Purchase', eventData);
+      }
+      if (typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'conversion', {
+          send_to: 'AW_CONVERSION_ID_HERE/AW_CONVERSION_LABEL_HERE',
+          value: depositValue,
+          currency: 'EUR',
+        });
+      }
+    };
+
+    trackPurchase();
+  }, [searchParams]);
+
   return (
     <ClientLayout title="Paiement confirmé">
       <div className="max-w-2xl mx-auto">
