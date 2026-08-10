@@ -1,8 +1,26 @@
 import { CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
 
 export function MoverSignupSuccess() {
   const navigate = useNavigate();
+  const trackedRef = useRef(false);
+
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+
+    if (typeof (window as any).fbq === 'function') {
+      (window as any).fbq('track', 'Lead');
+      (window as any).fbq('trackCustom', 'MoverSignupComplete', { source: 'full_signup' });
+    }
+    if (typeof (window as any).gtag === 'function') {
+      (window as any).gtag('event', 'conversion', {
+        send_to: 'AW_CONVERSION_ID_HERE/AW_CONVERSION_LABEL_HERE',
+      });
+    }
+  }, []);
+
   return (
     <div
       className="min-h-screen relative flex items-center justify-center p-4"
