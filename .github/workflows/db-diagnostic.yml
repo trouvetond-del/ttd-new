@@ -1,4 +1,4 @@
-name: Stats (lecture seule, temporaire)
+name: DB Diagnostic
 
 on:
   workflow_dispatch: {}
