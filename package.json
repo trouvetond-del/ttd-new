@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node scripts/prerender-city-pages.mjs",
+    "build": "vite build && node scripts/prerender-city-pages.mjs && node scripts/prerender-blog-articles.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json"

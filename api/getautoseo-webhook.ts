@@ -115,6 +115,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // pour qu'ils affichent un lien "View Live" dans leur dashboard.
     const publishedUrl = body.published_url || `${SITE_URL}/blog/${slug}`;
 
+    // Un article "publie" doit être pré-rendu statiquement (title/meta/
+    // JSON-LD dans le HTML, pas injectés en JS -- voir
+    // scripts/prerender-blog-articles.mjs) pour être visible des robots
+    // qui n'exécutent pas JavaScript. Comme ce script tourne au moment
+    // du build, un nouvel article publié entre deux déploiements ne
+    // serait pré-rendu qu'au prochain déploiement manuel -- potentiellement
+    // des jours plus tard. On déclenche donc ici un redeploy Vercel via
+    // Deploy Hook (à créer dans Vercel > Settings > Git > Deploy Hooks,
+    // puis renseigner son URL dans la variable d'environnement
+    // VERCEL_DEPLOY_HOOK_URL). Non-bloquant : si la variable est absente
+    // ou l'appel échoue, l'article reste publié en base et sera pré-rendu
+    // au prochain déploiement normal -- juste avec un délai.
+    if (record.statut === 'publie' && process.env.VERCEL_DEPLOY_HOOK_URL) {
+      fetch(process.env.VERCEL_DEPLOY_HOOK_URL, { method: 'POST' }).catch((err) => {
+        console.error('[getautoseo-webhook] Échec du déclenchement du redeploy (non bloquant):', err.message);
+      });
+    }
+
     return res.status(200).json({
       success: true,
       url: publishedUrl,
