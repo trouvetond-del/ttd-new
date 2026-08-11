@@ -81,12 +81,12 @@ export function LandingPage() {
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] animate-fadeInUp">
               <span className="block text-white mb-3 drop-shadow-2xl">Déménagez sereinement.</span>
               <span className="block bg-gradient-to-r from-emerald-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent drop-shadow-lg">
-                Vos affaires protégées par l'IA
+                Le bon déménageur, un vrai suivi humain
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl text-blue-50/95 mb-12 leading-relaxed max-w-2xl mx-auto animate-fadeInUp font-normal" style={{ animationDelay: '0.2s' }}>
-              Un meuble abîmé ? Notre IA compare vos photos avant/après et tranche en votre faveur — la plateforme française de déménagement qui protège clients et pros des litiges grâce à une intelligence artificielle impartiale.
+              Déménageurs vérifiés partout en France, accompagnement humain à chaque étape, et une protection anti-litige assistée par IA en cas de pépin.
             </p>
 
             <div className="flex justify-center mb-12 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
@@ -109,17 +109,17 @@ export function LandingPage() {
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white font-medium">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-blue-300" />
-                  <span>Analyse photo par IA</span>
+                  <span>Suivi humain</span>
                 </div>
                 <div className="w-px h-4 bg-white/20 hidden sm:block"></div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-blue-300" />
-                  <span>Arbitrage impartial</span>
+                  <span>Déménageurs vérifiés</span>
                 </div>
                 <div className="w-px h-4 bg-white/20 hidden sm:block"></div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-blue-300" />
-                  <span>Litiges évités grâce à l'IA</span>
+                  <span>Protection anti-litige (IA)</span>
                 </div>
               </div>
             </div>
