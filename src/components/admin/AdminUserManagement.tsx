@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { isMoverQualified } from '../../lib/moverQualification';
 import {
   Users,
   Truck,
@@ -367,6 +368,8 @@ export default function AdminUserManagement({
     }
 
     try {
+      const blockedMovers: string[] = [];
+
       for (const userId of selectedUsers) {
         const user = users.find((u) => u.id === userId);
         if (!user) continue;
@@ -376,6 +379,18 @@ export default function AdminUserManagement({
         switch (action) {
           case 'approve':
             if (user.role === 'mover') {
+              // Jamais de passage en "verified" sans email/téléphone/SIRET
+              // valides -- verification_status='verified' + is_active=true
+              // est exactement ce que ClientQuotePage.tsx filtre pour montrer
+              // un déménageur à un vrai client. Une fiche incomplète (ex.
+              // SIRET encore au format PENDING-) ne doit jamais passer ici,
+              // quel que soit l'écran ou le bouton utilisé pour approuver.
+              const { qualified, reasons } = isMoverQualified(user);
+              if (!qualified) {
+                blockedMovers.push(`${user.company_name || user.email || userId} (${reasons.join(', ')})`);
+                continue;
+              }
+
               // Update mover status
               await supabase
                 .from('movers')
@@ -441,6 +456,12 @@ export default function AdminUserManagement({
       };
 
       showToast(`${actionLabels[action]} effectuée avec succès`, 'success');
+      if (blockedMovers.length > 0) {
+        showToast(
+          `${blockedMovers.length} déménageur(s) NON approuvé(s) : inscription incomplète ou invalide -- ${blockedMovers.join(' ; ')}`,
+          'error'
+        );
+      }
       setSelectedUsers(new Set());
       loadUsers();
     } catch (error) {

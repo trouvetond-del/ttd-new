@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import { isMoverQualified } from '../../lib/moverQualification';
 import {
   DollarSign,
   TrendingUp,
@@ -336,7 +337,19 @@ const KPICard = ({
     const handleApprove = async (moverId: string) => {
       // Find the mover to get their email and company name
       const mover = pendingMovers.find(m => m.id === moverId);
-      
+
+      // Défense en profondeur : cette liste est déjà filtrée plus haut
+      // pour exclure les SIRET PENDING-, mais on revérifie ici avant
+      // toute écriture verification_status='verified' -- voir
+      // src/lib/moverQualification.ts pour la règle unique.
+      if (mover) {
+        const { qualified, reasons } = isMoverQualified(mover);
+        if (!qualified) {
+          alert(`Impossible d'approuver : inscription incomplète (${reasons.join(', ')}). Cette fiche ne doit pas être visible par les clients tant que ces informations ne sont pas correctes.`);
+          return;
+        }
+      }
+
       const { error } = await supabase
         .from('movers')
         .update({ verification_status: 'verified', is_active: true })

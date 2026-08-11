@@ -130,14 +130,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const phone = (body.phone || '').trim();
     const email = (body.email || '').trim().toLowerCase();
 
+    // Ces 3 champs (email actif, téléphone, SIRET réel) sont la condition
+    // minimale, partout sur le site, pour qu'une inscription déménageur
+    // devienne visible par nos équipes -- voir src/lib/moverQualification.ts
+    // (règle appliquée en miroir ici côté serveur, ce flux ne passe pas par
+    // React).
+    const INCOMPLETE_MSG = 'Votre demande ne sera pas visible par nos équipes tant que votre email actif, votre numéro de téléphone et votre SIRET (format français réel) ne sont pas correctement renseignés.';
+
     if (!managerFirstname || !managerLastname || !companyName || !siret || !phone || !email) {
-      return res.status(400).json({ error: 'Tous les champs sont obligatoires.' });
+      return res.status(400).json({ error: `Tous les champs sont obligatoires. ${INCOMPLETE_MSG}` });
     }
     if (!isValidSiret(siret)) {
-      return res.status(400).json({ error: 'Numéro SIRET invalide.' });
+      return res.status(400).json({ error: `Numéro SIRET invalide. ${INCOMPLETE_MSG}` });
     }
     if (!isValidPhone(phone)) {
-      return res.status(400).json({ error: 'Numéro de mobile invalide (06 ou 07).' });
+      return res.status(400).json({ error: `Numéro de mobile invalide (06 ou 07). ${INCOMPLETE_MSG}` });
     }
     if (!isValidEmail(email)) {
       return res.status(400).json({ error: 'Adresse email invalide.' });
