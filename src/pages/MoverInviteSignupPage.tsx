@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Building, User, Lock, CheckCircle, AlertCircle, FileText, Shield, EyeOff, Eye, Loader2, MapPin, Phone, Mail, ArrowRight, X, Check, Upload, Truck, Plus, Trash2, Landmark } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showToast } from '../utils/toast';
-import { validatePassword, validateName } from '../utils/validation';
+import { validatePassword, validateName, validateSiret, getSiretValidationMessage } from '../utils/validation';
 import { validateIban } from '../utils/ibanValidation';
 
 interface ProspectData {
@@ -27,6 +27,7 @@ export default function MoverInviteSignupPage() {
   // Editable company fields (issue 6)
   const [companyName, setCompanyName] = useState('');
   const [siret, setSiret] = useState('');
+  const [siretError, setSiretError] = useState('');
   const [companyPhone, setCompanyPhone] = useState('');
   const [companyMobile, setCompanyMobile] = useState('');
   const [companyAddress, setCompanyAddress] = useState('');
@@ -91,6 +92,13 @@ export default function MoverInviteSignupPage() {
   const handleSubmit = async () => {
     if (!prospect) return;
     if (!companyName.trim()) { showToast('Raison sociale requise', 'error'); setStep('verify'); return; }
+    const siretCheck = validateSiret(siret);
+    if (!siretCheck.isValid) {
+      setSiretError(siretCheck.error || getSiretValidationMessage());
+      showToast(siretCheck.error || getSiretValidationMessage(), 'error');
+      setStep('verify');
+      return;
+    }
     if (!managerFirstname.trim() || !managerLastname.trim()) { showToast('Nom et prénom requis', 'error'); setStep('verify'); return; }
     const fnCheck = validateName(managerFirstname); if (!fnCheck.isValid) { showToast(fnCheck.error!, 'error'); setStep('verify'); return; }
     const lnCheck = validateName(managerLastname); if (!lnCheck.isValid) { showToast(lnCheck.error!, 'error'); setStep('verify'); return; }
@@ -145,7 +153,7 @@ export default function MoverInviteSignupPage() {
 
       const cov = [department, prospect.region].filter(Boolean);
       const { data: md, error: me } = await supabase.from('movers').insert({
-        user_id: userId, company_name: companyName, siret: siret || `IMPORT-${Date.now()}`,
+        user_id: userId, company_name: companyName, siret: siret.trim(),
         email: prospect.email, phone: companyPhone || companyMobile || '', address: companyAddress || '',
         city: city || '', postal_code: postalCode || '', manager_firstname: managerFirstname,
         manager_lastname: managerLastname, manager_phone: managerPhone || '', description: '',
@@ -218,7 +226,22 @@ export default function MoverInviteSignupPage() {
             {(!companyPhone && !companyMobile) && <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800 flex items-center gap-2"><Phone className="w-4 h-4" /> Merci de renseigner votre numéro de téléphone pour être contacté par les clients.</div>}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div><label className="block text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><Building className="w-3 h-3" /> Raison sociale <span className="text-red-500">*</span></label><input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" /></div>
-              <div><label className="block text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><Shield className="w-3 h-3" /> SIRET</label><input type="text" value={siret} onChange={e => setSiret(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" /></div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><Shield className="w-3 h-3" /> SIRET <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  value={siret}
+                  onChange={e => { setSiret(e.target.value); if (siretError) setSiretError(''); }}
+                  onBlur={() => {
+                    if (!siret) return;
+                    const v = validateSiret(siret);
+                    setSiretError(v.isValid ? '' : (v.error || getSiretValidationMessage()));
+                  }}
+                  placeholder="14 chiffres, ex: 123 456 789 00001"
+                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${siretError ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
+                />
+                {siretError && <p className="text-red-500 text-xs mt-1">{siretError}</p>}
+              </div>
               <div><label className="block text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><Mail className="w-3 h-3" /> Email</label><div className="px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm text-gray-600">{prospect.email}</div></div>
               <div><label className="block text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><Phone className="w-3 h-3" /> Téléphone</label><input type="tel" value={companyPhone} onChange={e => setCompanyPhone(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" /></div>
               <div><label className="block text-xs font-medium text-gray-500 mb-1 flex items-center gap-1"><Phone className="w-3 h-3" /> Mobile</label><input type="tel" value={companyMobile} onChange={e => setCompanyMobile(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" /></div>
