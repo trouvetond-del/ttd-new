@@ -172,8 +172,12 @@ export default function ClientQuotesPage() {
 
       if (error) throw error;
 
-      const requestsWithQuotes = data.filter(req => req.quotes && req.quotes.length > 0);
-      setQuoteRequests(requestsWithQuotes);
+      // Toutes les demandes sont gardées, y compris celles sans encore
+      // aucun devis -- avant, elles étaient filtrées et disparaissaient
+      // purement et simplement de cette page pour le client, qui pouvait
+      // croire sa demande perdue. Elles s'affichent maintenant avec un
+      // état "recherche en cours" au lieu d'être invisibles.
+      setQuoteRequests(data || []);
     } catch (error) {
       console.error('Error fetching quotes:', error);
     } finally {
@@ -338,12 +342,12 @@ export default function ClientQuotesPage() {
   const selectedRequest = selectedRequestId ? quoteRequests.find(r => r.id === selectedRequestId) : null;
 
   return (
-    <ClientLayout title="Mes devis reçus" subtitle={`${quoteRequests.length} demande${quoteRequests.length > 1 ? 's' : ''} avec des devis`}>
+    <ClientLayout title="Mes devis reçus" subtitle={`${quoteRequests.length} demande${quoteRequests.length > 1 ? 's' : ''} de déménagement`}>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-800 mb-2">Mes devis reçus</h1>
           <p className="text-slate-600">
-            {quoteRequests.length} demande{quoteRequests.length > 1 ? 's' : ''} avec des devis
+            {quoteRequests.length} demande{quoteRequests.length > 1 ? 's' : ''} de déménagement
           </p>
         </div>
 
@@ -351,10 +355,10 @@ export default function ClientQuotesPage() {
         {!selectedRequest && (
           <div className="space-y-3">
             {quoteRequests
-              .filter(request => request.quotes.some(quote => quote.status !== 'rejected'))
               .map((request) => {
                 const activeQuotes = request.quotes.filter(q => q.status !== 'rejected');
                 const hasAccepted = activeQuotes.some(q => q.status === 'accepted');
+                const hasNoQuotesYet = activeQuotes.length === 0;
                 const lowestPrice = activeQuotes.length > 0 
                   ? Math.min(...activeQuotes.map(q => q.client_display_price))
                   : 0;
@@ -382,12 +386,25 @@ export default function ClientQuotesPage() {
                             Accepté
                           </span>
                         )}
+                        {hasNoQuotesYet && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
+                            <span className="relative flex h-1.5 w-1.5">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
+                            </span>
+                            Recherche en cours
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="text-xs text-slate-500">
-                            {activeQuotes.length} devis reçu{activeQuotes.length > 1 ? 's' : ''}
-                          </p>
+                          {hasNoQuotesYet ? (
+                            <p className="text-xs text-slate-400">Devis sous 24-48h</p>
+                          ) : (
+                            <p className="text-xs text-slate-500">
+                              {activeQuotes.length} devis reçu{activeQuotes.length > 1 ? 's' : ''}
+                            </p>
+                          )}
                           {lowestPrice > 0 && (
                             <p className="text-sm font-semibold text-slate-800">
                               à partir de {lowestPrice.toLocaleString('fr-FR')} € TTC
@@ -405,10 +422,19 @@ export default function ClientQuotesPage() {
                   </button>
                 );
               })}
-            {quoteRequests.filter(r => r.quotes.some(q => q.status !== 'rejected')).length === 0 && (
-              <div className="text-center py-12">
-                <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-500">Aucun devis reçu pour le moment</p>
+            {quoteRequests.length === 0 && (
+              <div className="text-center py-12 px-6">
+                <div className="relative w-14 h-14 mx-auto mb-4">
+                  <Package className="w-14 h-14 text-blue-200" />
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-4 w-4 bg-blue-500"></span>
+                  </span>
+                </div>
+                <p className="text-slate-700 font-medium mb-1">Recherche de déménageurs en cours</p>
+                <p className="text-slate-500 text-sm max-w-sm mx-auto">
+                  Votre demande est active et visible par nos déménageurs vérifiés. Les premiers devis arrivent généralement sous 24 à 48h -- vous recevrez un email dès qu'une proposition sera disponible.
+                </p>
               </div>
             )}
           </div>
