@@ -69,6 +69,11 @@ export function MoverDashboard({ onNotificationQuoteRequest }: MoverDashboardPro
 
         const quotedRequestIds = myQuotes?.map(q => q.quote_request_id) || [];
 
+        // Mêmes critères de complétude que MoverQuoteRequestsPage.tsx (la
+        // vraie liste consultée juste après) -- sinon ce compteur affiche
+        // des demandes que le déménageur ne verra jamais en cliquant
+        // dessus (ex: devis-rapide jamais terminé, volume_m3 = 0), ce qui
+        // donne l'impression que le site est cassé.
         const { count: availableCount } = await supabase
           .from('quote_requests')
           .select('*', { count: 'exact', head: true })
@@ -76,6 +81,15 @@ export function MoverDashboard({ onNotificationQuoteRequest }: MoverDashboardPro
           .eq('is_draft', false)
           .not('from_home_size', 'is', null)
           .neq('from_home_size', '')
+          .not('from_home_type', 'is', null)
+          .neq('from_home_type', '')
+          .not('to_home_size', 'is', null)
+          .neq('to_home_size', '')
+          .not('to_home_type', 'is', null)
+          .neq('to_home_type', '')
+          .not('from_surface_m2', 'is', null)
+          .not('volume_m3', 'is', null)
+          .gt('volume_m3', 0)
           .not('id', 'in', `(${quotedRequestIds.length > 0 ? quotedRequestIds.join(',') : '00000000-0000-0000-0000-000000000000'})`);
 
         const pendingQuotes = myQuotes?.filter(q => q.status === 'pending').length || 0;
