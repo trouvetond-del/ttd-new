@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase';
 import { showToast } from '../utils/toast';
 import { isEmailVerificationEnabled } from '../utils/emailVerification';
 import { validateIban } from '../utils/ibanValidation';
+import { MOVER_INCOMPLETE_SUBMISSION_MESSAGE } from '../lib/moverQualification';
 import { DocumentUploadInput } from '../components/DocumentUploadInput';
 import { MultiDocumentUploadInput } from '../components/MultiDocumentUploadInput';
 import { GeographicAreaSelector } from '../components/GeographicAreaSelector';
@@ -413,7 +414,15 @@ export default function MoverProfileCompletionPage() {
     
     setFieldErrors(prev => ({ ...prev, ...newErrors }));
     setTouchedFields(prev => ({ ...prev, ...newTouched }));
-    
+
+    // Email/téléphone/SIRET valides sont les 3 conditions minimales pour
+    // qu'un déménageur devienne visible par nos équipes -- voir
+    // src/lib/moverQualification.ts. Un message explicite en plus des
+    // erreurs par champ, pour que ce soit sans ambiguïté.
+    if (hasErrors && (newErrors['siret'] || newErrors['company_phone'] || newErrors['phone'])) {
+      showToast(MOVER_INCOMPLETE_SUBMISSION_MESSAGE, 'error');
+    }
+
     return !hasErrors;
   };
 

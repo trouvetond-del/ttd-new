@@ -3,6 +3,7 @@ import { X, AlertTriangle, CheckCircle, XCircle, FileText, Calendar, Building, U
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
 import { MoverEditModal } from './MoverEditModal';
+import { isMoverQualified } from '../../lib/moverQualification';
 
 interface PendingMoverDetailModalProps {
   moverId: string;
@@ -239,6 +240,18 @@ export function PendingMoverDetailModal({ moverId, onClose, onStatusUpdate }: Pe
   };
 
   const handleApproveDirectly = async () => {
+    // Jamais d'activation directe sans email/téléphone/SIRET valides -- voir
+    // src/lib/moverQualification.ts. C'est le seul bypass qui active un
+    // compte immédiatement sans passer par le contrat Dropbox Sign, donc
+    // le plus risqué : il doit rester strictement verrouillé.
+    if (moverDetails) {
+      const { qualified, reasons } = isMoverQualified(moverDetails);
+      if (!qualified) {
+        showToast(`Impossible d'approuver : inscription incomplète (${reasons.join(', ')})`, 'error');
+        return;
+      }
+    }
+
     if (!window.confirm('Approuver DIRECTEMENT sans contrat Dropbox Sign ?\n\nCette action active le compte immédiatement.')) {
       return;
     }

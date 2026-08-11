@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Download, Edit2, Save, Truck, Mail, Phone, Calendar, MapPin, FileText, CheckCircle, Award, Package, Euro, Eye, Check, XCircle, AlertTriangle, RefreshCw, Upload, Plus, Landmark, Clock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
+import { isMoverQualified } from '../../lib/moverQualification';
 
 interface MoverDetailModalProps {
   moverId: string;
@@ -744,9 +745,16 @@ export default function MoverDetailModal({ moverId, onClose, onUpdate }: MoverDe
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Fiche Déménageur Complète
-          </h2>
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              {moverInfo && !isMoverQualified(moverInfo).qualified ? 'Inscription Incomplète' : 'Fiche Déménageur Complète'}
+            </h2>
+            {moverInfo && !isMoverQualified(moverInfo).qualified && (
+              <p className="text-sm text-amber-600 dark:text-amber-400 mt-0.5">
+                Non visible par les clients ({isMoverQualified(moverInfo).reasons.join(', ')})
+              </p>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handleDelete}

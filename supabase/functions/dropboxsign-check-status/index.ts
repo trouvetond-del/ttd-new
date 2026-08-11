@@ -88,15 +88,35 @@ Deno.serve(async (req: Request) => {
       // ════════════════════════════════════════
       // 1. ACTIVATE MOVER
       // ════════════════════════════════════════
-      const { error: moverErr } = await supabase.from("movers").update({
-        verification_status: "verified",
-        is_active: true,
-        last_verification_date: new Date().toISOString(),
-      }).eq("id", contract.mover_id);
+      // Même garde-fou que dropboxsign-webhook/index.ts et
+      // src/lib/moverQualification.ts : jamais d'activation sans
+      // email/téléphone/SIRET valides, même via ce contrôle automatique.
+      const { data: moverToActivate } = await supabase
+        .from("movers")
+        .select("email, phone, siret, company_name")
+        .eq("id", contract.mover_id)
+        .maybeSingle();
 
-      activated = !moverErr;
-      if (moverErr) console.error("Mover activation error:", moverErr);
-      else console.log("Mover activated:", contract.mover_id);
+      const isQualified = moverToActivate &&
+        moverToActivate.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(moverToActivate.email.trim()) &&
+        moverToActivate.phone && /^(0|\+33)[1-9][0-9]{8}$/.test(moverToActivate.phone.replace(/[\s.-]/g, "")) &&
+        moverToActivate.siret && !moverToActivate.siret.startsWith("PENDING-") && /^\d{14}$/.test(moverToActivate.siret.replace(/\s/g, "")) &&
+        moverToActivate.company_name;
+
+      if (!isQualified) {
+        console.error("Mover NOT activated: profil incomplet malgré contrat signé:", contract.mover_id, moverToActivate);
+        activated = false;
+      } else {
+        const { error: moverErr } = await supabase.from("movers").update({
+          verification_status: "verified",
+          is_active: true,
+          last_verification_date: new Date().toISOString(),
+        }).eq("id", contract.mover_id);
+
+        activated = !moverErr;
+        if (moverErr) console.error("Mover activation error:", moverErr);
+        else console.log("Mover activated:", contract.mover_id);
+      }
 
       // ════════════════════════════════════════
       // 2. DOWNLOAD & STORE SIGNED PDF

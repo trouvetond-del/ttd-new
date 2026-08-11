@@ -96,12 +96,31 @@ Deno.serve(async (req: Request) => {
       }).eq("id", contract.id);
 
       // ⭐ ACTIVATE MOVER
-      await supabase.from("movers").update({
-        verification_status: "verified",
-        is_active: true,
-        last_verification_date: new Date().toISOString(),
-      }).eq("id", contract.mover_id);
-      console.log("Mover activated:", contract.mover_id);
+      // Jamais d'activation sans email/téléphone/SIRET valides, même via ce
+      // webhook automatique -- copie compacte de la règle définie dans
+      // src/lib/moverQualification.ts (à garder en miroir si elle évolue).
+      const { data: moverToActivate } = await supabase
+        .from("movers")
+        .select("email, phone, siret, company_name")
+        .eq("id", contract.mover_id)
+        .maybeSingle();
+
+      const isQualified = moverToActivate &&
+        moverToActivate.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(moverToActivate.email.trim()) &&
+        moverToActivate.phone && /^(0|\+33)[1-9][0-9]{8}$/.test(moverToActivate.phone.replace(/[\s.-]/g, "")) &&
+        moverToActivate.siret && !moverToActivate.siret.startsWith("PENDING-") && /^\d{14}$/.test(moverToActivate.siret.replace(/\s/g, "")) &&
+        moverToActivate.company_name;
+
+      if (!isQualified) {
+        console.error("Mover NOT activated: profil incomplet malgré contrat signé:", contract.mover_id, moverToActivate);
+      } else {
+        await supabase.from("movers").update({
+          verification_status: "verified",
+          is_active: true,
+          last_verification_date: new Date().toISOString(),
+        }).eq("id", contract.mover_id);
+        console.log("Mover activated:", contract.mover_id);
+      }
 
       // Welcome email to mover
       try {
