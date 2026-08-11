@@ -158,21 +158,5 @@ jobs:
             -H "Content-Type: application/json" \
             -d @/tmp/auth_config_patch.json -o /dev/null -w "HTTP %{http_code}\n"
 
-      - name: DIAGNOSTIC TEMPORAIRE - verification projet Supabase production
-        run: |
-          set +e
-          sudo apt-get install -y jq 2>/dev/null
-          MAIN_JS=$(curl -s https://www.trouvetondemenageur.fr/ | grep -oP '/assets/index-[a-zA-Z0-9_-]+\.js' | head -1)
-          curl -s "https://www.trouvetondemenageur.fr${MAIN_JS}" -o /tmp/main.js
-          PROD_SUPABASE=$(grep -oP '[a-zA-Z0-9-]+\.supabase\.co' /tmp/main.js | sort -u)
-          EXPECTED_SUPABASE=$(echo "${{ secrets.SUPABASE_DB_URL }}" | grep -oP '(?<=@db\.)[a-zA-Z0-9-]+(?=\.supabase\.co)')
-          OUT="Fichier JS: ${MAIN_JS}
-Domaines supabase.co dans le bundle prod: ${PROD_SUPABASE}
-Projet attendu (SUPABASE_DB_URL): ${EXPECTED_SUPABASE}.supabase.co
-CONCORDANCE: $(echo "$PROD_SUPABASE" | grep -q "$EXPECTED_SUPABASE" && echo OUI || echo 'NON -- PROJETS DIFFERENTS')"
-          echo "$OUT"
-          BODY=$(jq -n --arg t "DIAGNOSTIC: projet Supabase prod vs DB" --arg b "$OUT" '{title:$t, body:("```\n" + $b + "\n```")}')
-          curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/${{ github.repository }}/issues" -d "$BODY"
-
       - name: Résumé
         run: echo "✅ SQL exécuté + 2 edge functions déployées + template email mis à jour."
