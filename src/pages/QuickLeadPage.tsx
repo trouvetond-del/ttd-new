@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Phone, Mail, Calendar, CheckCircle, Shield, Star, ArrowRight, User } from 'lucide-react';
 import { Logo } from '../components/Logo';
 import AddressAutocomplete from '../components/AddressAutocomplete';
@@ -86,6 +86,38 @@ export function QuickLeadPage() {
   // Source publicitaire : ?src=meta, ?src=google, etc.
   const params = new URLSearchParams(window.location.search);
   const source = params.get('src') || 'direct';
+
+  // Capture partielle : dès que email + téléphone valides sont saisis, on
+  // enregistre en tâche de fond -- même si la personne abandonne avant de
+  // finir le reste du formulaire (adresses, date...), on garde de quoi la
+  // rappeler. Débounce 1.5s, totalement silencieux en cas d'échec.
+  const partialCaptureTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (partialCaptureTimeout.current) clearTimeout(partialCaptureTimeout.current);
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+    const phoneDigits = phone.trim().replace(/[\s.\-()]/g, '');
+    const phoneOk = /^(\+33|0)[1-9]\d{8}$/.test(phoneDigits);
+    if (!emailOk || !phoneOk) return;
+
+    partialCaptureTimeout.current = setTimeout(() => {
+      fetch('/api/save-partial-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadType: 'client',
+          email,
+          phone,
+          firstName,
+          lastName,
+          source,
+        }),
+      }).catch(() => {});
+    }, 1500);
+
+    return () => {
+      if (partialCaptureTimeout.current) clearTimeout(partialCaptureTimeout.current);
+    };
+  }, [email, phone, firstName, lastName, source]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
