@@ -410,9 +410,31 @@ function RedirectIfAuthenticated({ children, fallbackType }: { children: React.R
   return <>{children}</>;
 }
 
+// Le script gtag.js chargé dans index.html envoie un page_view automatique
+// au tout premier chargement du site, mais PAS lors des navigations
+// internes (React Router change l'URL sans recharger la page). Sans ce
+// composant, Google Analytics et le suivi des conversions Google Ads ne
+// verraient jamais que la toute première page visitée par chaque personne,
+// jamais les pages suivantes -- montre-le une seule fois, en haut de
+// l'arbre, à l'intérieur de <BrowserRouter> pour avoir accès à useLocation.
+function AnalyticsRouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    if (typeof (window as any).gtag === 'function') {
+      (window as any).gtag('event', 'page_view', {
+        page_path: location.pathname + location.search,
+        page_location: window.location.href,
+        page_title: document.title,
+      });
+    }
+  }, [location.pathname, location.search]);
+  return null;
+}
+
 export function AppRouter() {
   return (
     <BrowserRouter>
+      <AnalyticsRouteTracker />
       <div className="min-h-screen smooth-scroll">
         <Routes>
           {/* Public Routes */}
