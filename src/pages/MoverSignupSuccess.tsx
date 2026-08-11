@@ -16,7 +16,7 @@ export function MoverSignupSuccess() {
     }
     if (typeof (window as any).gtag === 'function') {
       (window as any).gtag('event', 'conversion', {
-        send_to: 'AW_CONVERSION_ID_HERE/AW_CONVERSION_LABEL_HERE',
+        send_to: 'AW-18014813834/GE-YCM2J_98cEIr9kI5D',
       });
     }
   }, []);
