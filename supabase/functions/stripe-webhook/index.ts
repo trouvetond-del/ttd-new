@@ -172,6 +172,108 @@ Deno.serve(async (req: Request) => {
             else console.log("Promo usage recorded for code:", paymentIntent.metadata?.promo_code);
           }
         }
+        // ── Faire passer le devis en "accepté" + notifier le déménageur ────
+        // BUG CRITIQUE CORRIGÉ : cette logique existait dans l'ancienne page
+        // src/pages/ClientPaymentPage.tsx (remplacée depuis par
+        // ClientPaymentPageNew.tsx, qui ne l'a jamais reprise -- l'ancien
+        // fichier est resté dans le repo sans être branché à aucune route,
+        // ce qui a caché la disparition de cette étape). Résultat en
+        // production : après un paiement réussi, quotes.status restait
+        // 'pending' pour toujours, quote_requests.accepted_quote_id n'était
+        // jamais renseigné, les devis concurrents des autres déménageurs
+        // n'étaient jamais rejetés, et AUCUNE notification n'était envoyée
+        // au déménageur pour lui dire qu'il avait gagné la mission.
+        //
+        // Fait ici (webhook, jamais côté navigateur) pour la même raison que
+        // le reste de ce fichier : c'est le seul point où le paiement est
+        // réellement confirmé par signature Stripe vérifiée côté serveur.
+        //
+        // Idempotence : le .eq('status', 'pending') fait que si Stripe
+        // renvoie cet évènement deux fois (retry), la deuxième exécution ne
+        // met à jour aucune ligne (déjà 'accepted') -- on n'exécute donc le
+        // rejet des devis concurrents et l'envoi des emails que la première
+        // fois, jamais en double.
+        try {
+          const { data: quoteRow } = await supabase
+            .from("quotes")
+            .select("id, quote_request_id, mover_id, price, client_display_price")
+            .eq("id", quoteId)
+            .maybeSingle();
+
+          if (quoteRow) {
+            const { data: acceptedRows, error: acceptError } = await supabase
+              .from("quotes")
+              .update({ status: "accepted" })
+              .eq("id", quoteId)
+              .eq("status", "pending")
+              .select("id");
+
+            if (acceptError) {
+              console.error("Error accepting quote:", acceptError);
+            } else if (acceptedRows && acceptedRows.length > 0) {
+              // Première fois qu'on traite cet évènement pour ce devis.
+              await supabase
+                .from("quote_requests")
+                .update({
+                  status: "accepted",
+                  accepted_quote_id: quoteId,
+                  payment_status: "deposit_paid",
+                })
+                .eq("id", quoteRow.quote_request_id);
+
+              await supabase
+                .from("quotes")
+                .update({ status: "rejected" })
+                .eq("quote_request_id", quoteRow.quote_request_id)
+                .neq("id", quoteId);
+
+              const { data: moverData } = await supabase
+                .from("movers")
+                .select("email")
+                .eq("id", quoteRow.mover_id)
+                .maybeSingle();
+
+              const { data: requestData } = await supabase
+                .from("quote_requests")
+                .select("client_email, client_name, from_city, to_city, moving_date")
+                .eq("id", quoteRow.quote_request_id)
+                .maybeSingle();
+
+              if (moverData?.email && requestData) {
+                const notify = (type: string, extra: Record<string, unknown> = {}) =>
+                  fetch(`${supabaseUrl}/functions/v1/send-notification`, {
+                    method: "POST",
+                    headers: {
+                      Authorization: `Bearer ${supabaseServiceKey}`,
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      type,
+                      recipientEmail: moverData.email,
+                      data: {
+                        price: quoteRow.price || Math.round(quoteRow.client_display_price / 1.3),
+                        movingDate: new Date(requestData.moving_date).toLocaleDateString("fr-FR"),
+                        fromCity: requestData.from_city,
+                        toCity: requestData.to_city,
+                        clientEmail: requestData.client_email,
+                        clientName: requestData.client_name,
+                        ...extra,
+                      },
+                    }),
+                  }).catch((e) => console.error(`Notification '${type}' échouée (non bloquant):`, e.message));
+
+                await Promise.all([notify("quote_accepted"), notify("payment_received")]);
+                console.log("Devis accepté + déménageur notifié:", quoteId);
+              }
+            }
+          }
+        } catch (acceptFlowError: any) {
+          // Ne doit jamais faire échouer l'accusé de réception du webhook
+          // à Stripe -- le paiement lui-même reste valide même si cette
+          // partie plante ; à surveiller dans les logs le cas échéant.
+          console.error("Erreur flux acceptation devis (non bloquant):", acceptFlowError.message);
+        }
+
         break;
       }
 
