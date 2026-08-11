@@ -49,7 +49,7 @@ Deno.serve(async () => {
   // Demandes encore ouvertes à la mise en relation
   const { data: openRequests, error: qrError } = await supabaseAdmin
     .from("quote_requests")
-    .select("id, reference, from_city, to_city, moving_date, client_name")
+    .select("id, reference, from_city, to_city, moving_date, client_name, created_at")
     .in("status", ["new", "assigned", "quoted"])
     .eq("is_draft", false)
     .gte("moving_date", new Date().toISOString().split("T")[0])
@@ -100,9 +100,22 @@ Deno.serve(async () => {
       .eq("quote_request_id", request.id);
     const quotedMoverIds = new Set((existingQuotes || []).map((q) => q.mover_id));
 
+    // Élargissement progressif hors zone : si personne n'a encore
+    // positionné de devis, une demande qui reste invisible/sans réponse
+    // ne fait bonne impression pour personne (client comme plateforme).
+    // On élargit à TOUS les déménageurs vérifiés (plus seulement ceux
+    // dont la zone déclarée correspond) si la demande est urgente
+    // (≤ 3 jours) OU reste sans aucun devis depuis plus de 24h -- plutôt
+    // que d'arroser tout le monde dès la création, ce qui userait vite
+    // la patience des déménageurs recevant des demandes hors zone en
+    // permanence.
+    const hoursOpen = (Date.now() - new Date(request.created_at).getTime()) / (1000 * 60 * 60);
+    const broadenBeyondZone = quotedMoverIds.size === 0 && (urgency.level === "urgent" || hoursOpen >= 24);
+
     for (const mover of movers) {
       if (quotedMoverIds.has(mover.id)) continue;
-      if (!coverageMatches(mover.coverage_area, request.from_city, request.to_city)) continue;
+      const inZone = coverageMatches(mover.coverage_area, request.from_city, request.to_city);
+      if (!inZone && !broadenBeyondZone) continue;
 
       // Dernière relance envoyée à ce déménageur pour cette demande
       const { data: lastReminder } = await supabaseAdmin
@@ -160,6 +173,7 @@ Deno.serve(async () => {
                   </div>
                   <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
                     <p>Bonjour ${mover.company_name || ''},</p>
+                    ${!inZone ? `<p style="background:#fef3c7; padding:10px 14px; border-radius:6px; font-size:14px;">📍 Cette demande est en dehors de votre zone habituelle, mais reste ouverte sans devis pour l'instant -- elle vous est proposée en complément si ça vous intéresse.</p>` : ''}
                     <p>Une demande de déménagement correspondant à votre zone est toujours ouverte :</p>
                     <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin: 16px 0;">
                       <p style="margin:0 0 6px;"><strong>Référence :</strong> ${shortRef}</p>
