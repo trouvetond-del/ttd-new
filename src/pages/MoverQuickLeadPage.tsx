@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Phone, Mail, Building, User, CheckCircle, ArrowRight, Shield, Star, Hash } from 'lucide-react';
 import { Logo } from '../components/Logo';
 import { validateSiret } from '../utils/validation';
@@ -16,6 +16,40 @@ export function MoverQuickLeadPage() {
 
   const params = new URLSearchParams(window.location.search);
   const source = params.get('src') || 'direct';
+
+  // Capture partielle : dès que le minimum exploitable (raison sociale +
+  // nom + prénom + SIRET valide) est rempli, on l'enregistre en tâche de
+  // fond -- même si la personne abandonne avant de finir le formulaire
+  // (téléphone/email), on garde de quoi la recontacter. Débounce 1.5s
+  // pour ne pas spammer l'API à chaque frappe. Totalement silencieux :
+  // aucune erreur possible ici ne doit gêner la personne.
+  const partialCaptureTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (partialCaptureTimeout.current) clearTimeout(partialCaptureTimeout.current);
+    const siretOk = validateSiret(siret).isValid;
+    if (!companyName.trim() || !managerFirstname.trim() || !managerLastname.trim() || !siretOk) return;
+
+    partialCaptureTimeout.current = setTimeout(() => {
+      fetch('/api/save-partial-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadType: 'mover',
+          companyName,
+          firstName: managerFirstname,
+          lastName: managerLastname,
+          siret,
+          phone,
+          email,
+          source,
+        }),
+      }).catch(() => {});
+    }, 1500);
+
+    return () => {
+      if (partialCaptureTimeout.current) clearTimeout(partialCaptureTimeout.current);
+    };
+  }, [companyName, managerFirstname, managerLastname, siret, phone, email, source]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

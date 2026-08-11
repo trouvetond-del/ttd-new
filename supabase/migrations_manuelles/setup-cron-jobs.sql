@@ -104,10 +104,27 @@ SELECT cron.schedule(
   $$
 );
 
+-- Retire une éventuelle ancienne programmation avant recréation (idempotent)
+SELECT cron.unschedule(jobid) FROM cron.job WHERE jobname = 'send-partial-lead-reminder-3h';
+
+-- Relance des leads client/déménageur capturés partiellement sur
+-- /devis-rapide et /inscription-demenageur mais jamais finalisés,
+-- toutes les 3 heures
+SELECT cron.schedule(
+  'send-partial-lead-reminder-3h',
+  '0 */3 * * *',
+  $$
+  SELECT net.http_post(
+    url := 'https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/send-partial-lead-reminder',
+    headers := '{"Content-Type": "application/json"}'::jsonb
+  );
+  $$
+);
+
 -- Vérification : doit renvoyer tous les jobs actifs
 SELECT jobname, schedule, active FROM cron.job WHERE jobname IN (
   'send-mover-quote-reminders-3h', 'send-profile-reminder-hourly',
   'send-client-quote-reminder-12h', 'send-photo-protection-reminder-6h',
   'send-client-reengagement-daily', 'send-mover-profile-reminder-6h',
-  'send-quick-lead-verification-reminder-2h'
+  'send-quick-lead-verification-reminder-2h', 'send-partial-lead-reminder-3h'
 );
