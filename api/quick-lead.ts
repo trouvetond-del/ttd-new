@@ -258,6 +258,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       lead_score: leadScore,
       lead_source: source,
       status: 'new',
+      // Permet à l'admin de distinguer ce parcours (minimal, souvent
+      // incomplet) des autres pour savoir qui relancer par téléphone
+      // en plus de l'email.
+      entry_channel: 'quick_lead',
     };
 
     const { data, error } = await supabase.from('quote_requests').insert([record]).select();

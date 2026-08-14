@@ -77,7 +77,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: quoteRequest, error: qrError } = await supabaseAdmin
       .from("quote_requests")
-      .select("id, client_name, client_email, client_user_id")
+      .select("id, client_name, client_email, client_user_id, from_city, to_city")
       .eq("id", quoteRequestId)
       .maybeSingle();
 
@@ -101,6 +101,18 @@ Deno.serve(async (req: Request) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Un déménageur a-t-il déjà répondu ? Si oui, le message doit être
+    // urgent : le client a une offre qui l'attend et ne peut pas la voir
+    // tant qu'il n'a pas de compte. Note : ceci suppose que la demande est
+    // déjà is_draft=false (seul cas où un devis a pu être déposé, puisque
+    // les brouillons sont invisibles des déménageurs).
+    const { count: quotesCount } = await supabaseAdmin
+      .from("quotes")
+      .select("id", { count: "exact", head: true })
+      .eq("quote_request_id", quoteRequestId);
+
+    const hasQuotes = (quotesCount || 0) > 0;
 
     const leadToken = generateToken();
     const code = generateCode();
@@ -134,21 +146,27 @@ Deno.serve(async (req: Request) => {
         body: JSON.stringify({
           from: "TrouveTonDemenageur <noreply@trouvetondemenageur.fr>",
           to: [email],
-          subject: "Finalisez votre demande TrouveTonDemenageur",
+          subject: hasQuotes
+            ? "Un déménageur a répondu à votre demande !"
+            : "Finalisez votre demande TrouveTonDemenageur",
           html: `
             <!DOCTYPE html>
             <html><head><meta charset="UTF-8"></head>
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
               <div style="background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
                 <h1 style="margin:0; font-size: 24px;">🏠 TrouveTonDemenageur</h1>
-                <p style="margin:8px 0 0; opacity:0.9;">Encore une étape avant vos devis</p>
+                <p style="margin:8px 0 0; opacity:0.9;">${hasQuotes ? 'Une offre vous attend' : 'Encore une étape avant vos devis'}</p>
               </div>
               <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
                 <p>Bonjour ${firstName},</p>
-                <p>Merci pour votre demande sur <strong>TrouveTonDemenageur</strong>. Cliquez ci-dessous pour créer votre mot de passe et finaliser votre demande (étage, ascenseur, inventaire...) :</p>
+                ${hasQuotes
+                  ? `<p><strong>Bonne nouvelle : un déménageur a déjà répondu à votre demande${quoteRequest.from_city ? ` (${quoteRequest.from_city} → ${quoteRequest.to_city})` : ''} !</strong></p>
+                     <p>Il ne vous reste plus qu'à créer votre mot de passe pour voir son offre et pouvoir l'accepter :</p>`
+                  : `<p>Merci pour votre demande sur <strong>TrouveTonDemenageur</strong>. Cliquez ci-dessous pour créer votre mot de passe et finaliser votre demande (étage, ascenseur, inventaire...) :</p>`
+                }
                 <div style="text-align: center; margin: 30px 0;">
                   <a href="${actionUrl}" style="display: inline-block; background: #3B82F6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                    Créer mon mot de passe
+                    ${hasQuotes ? 'Voir mon offre' : 'Créer mon mot de passe'}
                   </a>
                 </div>
                 <p style="text-align: center; color: #6B7280; font-size: 14px;">Ce lien expire dans 24 heures.</p>
@@ -163,7 +181,7 @@ Deno.serve(async (req: Request) => {
       console.warn("RESEND_API_KEY manquante : invitation non envoyée.");
     }
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ success: true, hasQuotes }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

@@ -26,13 +26,19 @@ Deno.serve(async () => {
 
   const { data: incompleteRequests, error } = await supabaseAdmin
     .from("quote_requests")
-    .select("id, client_name, client_email, from_city, to_city, created_at")
+    .select(
+      "id, client_name, client_email, from_city, to_city, created_at, moving_date, volume_m3, from_home_size, from_home_type, to_home_size, to_home_type, from_surface_m2, to_surface_m2"
+    )
     .not("client_user_id", "is", null)
     .not("client_email", "is", null)
+    // Un brouillon jamais soumis (is_draft=true) reçoit un message différent
+    // ("vous n'avez pas terminé") via le cron send-draft-reminder --
+    // pas celui-ci, qui est pour les demandes déjà soumises mais incomplètes.
+    .eq("is_draft", false)
     .lte("created_at", threeHoursAgo)
     .gte("created_at", thirtyDaysAgo)
     .or(
-      "from_home_size.is.null,from_home_size.eq.,from_home_type.is.null,from_home_type.eq.,to_home_size.is.null,to_home_size.eq.,to_home_type.is.null,to_home_type.eq.,volume_m3.is.null,volume_m3.eq.0"
+      "moving_date.is.null,from_home_size.is.null,from_home_size.eq.,from_home_type.is.null,from_home_type.eq.,to_home_size.is.null,to_home_size.eq.,to_home_type.is.null,to_home_type.eq.,volume_m3.is.null,volume_m3.eq.0,from_surface_m2.is.null,from_surface_m2.eq.0,to_surface_m2.is.null,to_surface_m2.eq.0"
     );
 
   if (error || !incompleteRequests) {
@@ -48,6 +54,7 @@ Deno.serve(async () => {
       .from("client_quote_reminder_log")
       .select("sent_at")
       .eq("quote_request_id", request.id)
+      .eq("reminder_type", "missing_info")
       .order("sent_at", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -58,6 +65,15 @@ Deno.serve(async () => {
     }
 
     const firstName = (request.client_name || "").split(" ")[0] || "";
+
+    const missingLabels: string[] = [];
+    if (!request.moving_date) missingLabels.push("la date de déménagement");
+    if (!request.volume_m3) missingLabels.push("le cubage (volume en m³)");
+    if (!request.from_home_size || !request.from_home_type) missingLabels.push("le type de logement de départ");
+    if (!request.to_home_size || !request.to_home_type) missingLabels.push("le type de logement d'arrivée");
+    if (!request.from_surface_m2) missingLabels.push("la surface du logement de départ");
+    if (!request.to_surface_m2) missingLabels.push("la surface du logement d'arrivée");
+    if (missingLabels.length === 0) continue;
 
     if (resendApiKey && request.client_email) {
       try {
@@ -77,7 +93,10 @@ Deno.serve(async () => {
                 </div>
                 <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
                   <p>Bonjour ${firstName},</p>
-                  <p>Votre demande de déménagement ${request.from_city ? `(${request.from_city} → ${request.to_city})` : ''} n'est pas encore terminée : il manque encore l'étage, la taille du logement ou le cubage.</p>
+                  <p>Votre demande de déménagement ${request.from_city ? `(${request.from_city} → ${request.to_city})` : ''} n'est pas encore terminée. Il vous manque :</p>
+                  <ul style="margin: 12px 0; padding-left: 20px;">
+                    ${missingLabels.map((label) => `<li>${label}</li>`).join("\n                    ")}
+                  </ul>
                   <p><strong>Tant que ces informations ne sont pas renseignées, aucun déménageur ne peut voir votre demande ni vous envoyer de devis.</strong></p>
                   <div style="text-align: center; margin: 30px 0;">
                     <a href="https://www.trouvetondemenageur.fr/client/quote/${request.id}/edit" style="display: inline-block; background: #3B82F6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
@@ -95,7 +114,10 @@ Deno.serve(async () => {
       }
     }
 
-    await supabaseAdmin.from("client_quote_reminder_log").insert({ quote_request_id: request.id });
+    await supabaseAdmin.from("client_quote_reminder_log").insert({
+      quote_request_id: request.id,
+      reminder_type: "missing_info",
+    });
   }
 
   return new Response(

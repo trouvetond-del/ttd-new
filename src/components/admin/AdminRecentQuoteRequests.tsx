@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing } from 'lucide-react';
+import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall } from 'lucide-react';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import { showToast } from '../../utils/toast';
 
@@ -15,6 +15,8 @@ interface QuoteRequest {
   moving_date: string;
   volume_m3?: number;
   surface_m2?: number;
+  from_surface_m2?: number | null;
+  to_surface_m2?: number | null;
   status: string;
   client_name?: string;
   client_phone?: string;
@@ -27,6 +29,38 @@ interface QuoteRequest {
   from_home_type?: string | null;
   to_home_size?: string | null;
   to_home_type?: string | null;
+  is_draft?: boolean;
+  entry_channel?: string | null;
+  additional_info?: string | null;
+}
+
+// entry_channel n'est fiabilisé côté code que pour /devis-rapide
+// ('quick_lead') et le formulaire complet ('full_form') -- voir la PR.
+// Le formulaire publicitaire externe (webhook hors de ce repo) n'écrit pas
+// ce champ ; on le déduit ici par repli via son additional_info fixe.
+// Si ce webhook change un jour son texte, ce repli cesse simplement de
+// matcher (aucun risque, juste un badge qui redevient "inconnu").
+function resolveEntryChannel(q: QuoteRequest): 'quick_lead' | 'full_form' | 'ad_lead_form' | null {
+  if (q.entry_channel === 'quick_lead' || q.entry_channel === 'full_form' || q.entry_channel === 'ad_lead_form') {
+    return q.entry_channel;
+  }
+  if (q.additional_info?.includes('Lead rapide via formulaire publicitaire')) {
+    return 'ad_lead_form';
+  }
+  return null;
+}
+
+// Champs requis pour qu'une demande soit réellement exploitable par un
+// déménageur, même si elle est techniquement "visible" (is_draft=false).
+function getMissingFieldLabels(q: QuoteRequest): string[] {
+  const missing: string[] = [];
+  if (!q.moving_date) missing.push('la date de déménagement');
+  if (!q.volume_m3) missing.push('le cubage');
+  if (!q.from_home_size || !q.from_home_type) missing.push('le logement de départ');
+  if (!q.to_home_size || !q.to_home_type) missing.push("le logement d'arrivée");
+  if (!q.from_surface_m2) missing.push('la surface de départ');
+  if (!q.to_surface_m2) missing.push("la surface d'arrivée");
+  return missing;
 }
 
 export default function AdminRecentQuoteRequests() {
@@ -38,6 +72,7 @@ export default function AdminRecentQuoteRequests() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [invitingId, setInvitingId] = useState<string | null>(null);
   const [remindingId, setRemindingId] = useState<string | null>(null);
+  const [remindingDraftId, setRemindingDraftId] = useState<string | null>(null);
 
   const loadQuoteRequests = async () => {
     setLoading(true);
@@ -74,6 +109,8 @@ export default function AdminRecentQuoteRequests() {
             moving_date: q.moving_date,
             volume_m3: q.volume_m3,
             surface_m2: q.surface_m2,
+            from_surface_m2: q.from_surface_m2,
+            to_surface_m2: q.to_surface_m2,
             status: q.status,
             client_name: q.client_name,
             client_phone: q.client_phone,
@@ -84,6 +121,9 @@ export default function AdminRecentQuoteRequests() {
             from_home_type: q.from_home_type,
             to_home_size: q.to_home_size,
             to_home_type: q.to_home_type,
+            is_draft: q.is_draft,
+            entry_channel: q.entry_channel,
+            additional_info: q.additional_info,
           };
         })
       );
@@ -189,6 +229,41 @@ export default function AdminRecentQuoteRequests() {
       showToast(error.message || "Erreur lors de l'envoi de la relance", 'error');
     } finally {
       setRemindingId(null);
+    }
+  };
+
+  const handleDraftReminder = async (id: string, clientEmail?: string) => {
+    if (!clientEmail) {
+      showToast("Cette demande n'a pas d'email client renseigné", 'error');
+      return;
+    }
+    const confirmed = window.confirm(
+      `Envoyer maintenant l'email "vous n'avez pas terminé votre demande" à ${clientEmail} ?`
+    );
+    if (!confirmed) return;
+
+    setRemindingDraftId(id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Session admin expirée, reconnectez-vous.');
+
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-send-draft-reminder`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ quoteRequestId: id }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Erreur lors de l'envoi");
+
+      showToast(`Relance envoyée à ${clientEmail}`, 'success');
+    } catch (error: any) {
+      console.error('Error sending draft reminder:', error);
+      showToast(error.message || "Erreur lors de l'envoi de la relance", 'error');
+    } finally {
+      setRemindingDraftId(null);
     }
   };
 
@@ -301,6 +376,7 @@ export default function AdminRecentQuoteRequests() {
                 <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Date</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Client</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Canal</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Départ → Arrivée</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Date déménagement</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Volume</th>
@@ -326,6 +402,21 @@ export default function AdminRecentQuoteRequests() {
                           Source: {q.lead_source}{q.lead_score ? ` · ${q.lead_score}` : ''}
                         </p>
                       )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {(() => {
+                        const channel = resolveEntryChannel(q);
+                        if (channel === 'quick_lead') {
+                          return <span className="inline-flex items-center px-2 py-0.5 bg-purple-50 text-purple-700 text-[10px] font-medium rounded-full border border-purple-200">Devis rapide</span>;
+                        }
+                        if (channel === 'ad_lead_form') {
+                          return <span className="inline-flex items-center px-2 py-0.5 bg-orange-50 text-orange-700 text-[10px] font-medium rounded-full border border-orange-200">Pub</span>;
+                        }
+                        if (channel === 'full_form') {
+                          return <span className="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-medium rounded-full border border-blue-200">Formulaire complet</span>;
+                        }
+                        return <span className="text-[10px] text-gray-400">—</span>;
+                      })()}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5 text-sm">
@@ -355,27 +446,65 @@ export default function AdminRecentQuoteRequests() {
                           <Eye className="w-3 h-3" />
                           Voir
                         </button>
-                        {!q.client_user_id && (
-                          <button
-                            onClick={() => handleInvite(q.id, q.client_email)}
-                            disabled={invitingId === q.id}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs rounded-lg border border-emerald-200 hover:bg-emerald-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <Send className="w-3 h-3" />
-                            {invitingId === q.id ? '...' : 'Inviter'}
-                          </button>
-                        )}
-                        {q.client_user_id && (!q.from_home_size || !q.from_home_type || !q.to_home_size || !q.to_home_type || !q.volume_m3) && (
-                          <button
-                            onClick={() => handleManualReminder(q.id, q.client_email)}
-                            disabled={remindingId === q.id}
-                            title="Ce client a un compte mais sa demande est incomplète (pas de cubage) : lui envoyer un rappel maintenant"
-                            className="flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-200 hover:bg-amber-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <BellRing className="w-3 h-3" />
-                            {remindingId === q.id ? '...' : 'Relancer'}
-                          </button>
-                        )}
+                        {(() => {
+                          // Ordre de priorité : pas de compte d'abord (rien
+                          // d'autre n'est possible sans compte), puis
+                          // brouillon jamais soumis, puis infos manquantes
+                          // sur une demande déjà soumise. Un seul bouton de
+                          // relance à la fois par ligne.
+                          if (!q.client_user_id) {
+                            const urgent = (q.total_quotes || 0) > 0;
+                            return (
+                              <button
+                                onClick={() => handleInvite(q.id, q.client_email)}
+                                disabled={invitingId === q.id}
+                                title={urgent ? "Un déménageur a déjà répondu : ce client doit créer son compte pour voir l'offre" : "Ce client n'a pas encore de compte"}
+                                className={
+                                  urgent
+                                    ? "flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-700 text-xs rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed animate-pulse"
+                                    : "flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs rounded-lg border border-emerald-200 hover:bg-emerald-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                }
+                              >
+                                <Send className="w-3 h-3" />
+                                {invitingId === q.id ? '...' : urgent ? 'Relancer (devis reçu)' : 'Inviter'}
+                              </button>
+                            );
+                          }
+
+                          if (q.is_draft) {
+                            return (
+                              <button
+                                onClick={() => handleDraftReminder(q.id, q.client_email)}
+                                disabled={remindingDraftId === q.id}
+                                title="Ce client a un compte mais n'a jamais envoyé sa demande : lui envoyer un rappel maintenant"
+                                className="flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-200 hover:bg-amber-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <BellRing className="w-3 h-3" />
+                                {remindingDraftId === q.id ? '...' : 'Relancer (brouillon non terminé)'}
+                              </button>
+                            );
+                          }
+
+                          const missing = getMissingFieldLabels(q);
+                          if (missing.length > 0) {
+                            const channel = resolveEntryChannel(q);
+                            const needsCall = channel === 'quick_lead' || channel === 'ad_lead_form';
+                            return (
+                              <button
+                                onClick={() => handleManualReminder(q.id, q.client_email)}
+                                disabled={remindingId === q.id}
+                                title={`Il manque : ${missing.join(', ')}${needsCall ? ' — un appel est recommandé en plus de l\'email' : ''}`}
+                                className="flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-200 hover:bg-amber-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <BellRing className="w-3 h-3" />
+                                {remindingId === q.id ? '...' : 'Relancer (infos manquantes)'}
+                                {needsCall && <PhoneCall className="w-3 h-3 ml-0.5" />}
+                              </button>
+                            );
+                          }
+
+                          return null;
+                        })()}
                         <button
                           onClick={() => handleDelete(q.id, q.client_name)}
                           disabled={deletingId === q.id}

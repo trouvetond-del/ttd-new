@@ -1,11 +1,12 @@
-// supabase/functions/admin-send-client-quote-reminder/index.ts
-// Appelée par l'admin depuis "Demandes de Devis Récentes" (bouton "Relancer")
-// pour envoyer IMMÉDIATEMENT l'email "finalisez votre demande" à un client
-// qui a déjà un compte mais dont la demande est incomplète (étage/taille/
-// type/cubage manquants) -- sans attendre le prochain passage du cron
-// send-client-quote-reminder (toutes les 12h) et sans le throttle de 24h
-// entre deux relances automatiques, puisque c'est une action volontaire
-// de l'admin sur UNE demande précise.
+// supabase/functions/admin-send-draft-reminder/index.ts
+// Appelée par l'admin depuis "Demandes de Devis Récentes" (bouton
+// "Relancer (brouillon non terminé)") pour un client qui a un compte
+// (client_user_id renseigné) mais dont la demande est toujours
+// is_draft=true -- c'est-à-dire qu'il n'a JAMAIS cliqué sur "envoyer".
+// Différent de admin-send-client-quote-reminder : le message n'est pas
+// "il manque le cubage" mais "vous n'avez pas terminé votre demande",
+// et le lien pointe vers /client/quote/reprendre (pas /edit directement),
+// pour couvrir le cas où le client n'est plus connecté.
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
@@ -44,7 +45,6 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Vérifie que l'appelant est bien un admin
     const { data: adminRow } = await supabaseAdmin
       .from("admins")
       .select("id")
@@ -68,9 +68,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: request, error: qrError } = await supabaseAdmin
       .from("quote_requests")
-      .select(
-        "id, client_name, client_email, client_user_id, from_city, to_city, from_home_size, from_home_type, to_home_size, to_home_type, from_surface_m2, to_surface_m2, volume_m3, moving_date"
-      )
+      .select("id, client_name, client_email, client_user_id, is_draft, resume_token, from_city, to_city")
       .eq("id", quoteRequestId)
       .maybeSingle();
 
@@ -83,9 +81,14 @@ Deno.serve(async (req: Request) => {
 
     if (!request.client_user_id) {
       return new Response(
-        JSON.stringify({
-          error: "Ce client n'a pas encore de compte -- utilisez plutôt le bouton \"Inviter\".",
-        }),
+        JSON.stringify({ error: "Ce client n'a pas encore de compte -- utilisez plutôt le bouton \"Inviter\"." }),
+        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!request.is_draft) {
+      return new Response(
+        JSON.stringify({ error: "Cette demande a déjà été soumise, ce n'est plus un brouillon." }),
         { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -97,26 +100,8 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Liste des champs manquants, en français, pour un email qui dit
-    // précisément ce qu'il reste à faire plutôt qu'un message générique
-    // ("il manque l'étage, la taille du logement ou le cubage" avant, peu
-    // importe ce qui manquait vraiment).
-    const missingLabels: string[] = [];
-    if (!request.moving_date) missingLabels.push("la date de déménagement");
-    if (!request.volume_m3) missingLabels.push("le cubage (volume en m³)");
-    if (!request.from_home_size || !request.from_home_type) missingLabels.push("le type de logement de départ");
-    if (!request.to_home_size || !request.to_home_type) missingLabels.push("le type de logement d'arrivée");
-    if (!request.from_surface_m2) missingLabels.push("la surface du logement de départ");
-    if (!request.to_surface_m2) missingLabels.push("la surface du logement d'arrivée");
-
-    if (missingLabels.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "Cette demande est déjà complète, rien à relancer." }),
-        { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     const firstName = (request.client_name || "").split(" ")[0] || "";
+    const resumeUrl = `https://www.trouvetondemenageur.fr/client/quote/reprendre?token=${request.resume_token}`;
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     let emailSent = false;
 
@@ -127,24 +112,21 @@ Deno.serve(async (req: Request) => {
         body: JSON.stringify({
           from: "TrouveTonDemenageur <noreply@trouvetondemenageur.fr>",
           to: [request.client_email],
-          subject: "Il vous reste 2 minutes pour recevoir vos devis de déménagement",
+          subject: "Vous n'avez pas terminé votre demande de déménagement",
           html: `
             <!DOCTYPE html>
             <html><head><meta charset="UTF-8"></head>
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
               <div style="background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                <h1 style="margin:0; font-size: 22px;">🏠 Votre demande n'est pas encore visible</h1>
+                <h1 style="margin:0; font-size: 22px;">🏠 Il vous reste une étape</h1>
               </div>
               <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
                 <p>Bonjour ${firstName},</p>
-                <p>Votre demande de déménagement ${request.from_city ? `(${request.from_city} → ${request.to_city})` : ''} n'est pas encore terminée. Il vous manque :</p>
-                <ul style="margin: 12px 0; padding-left: 20px;">
-                  ${missingLabels.map((label) => `<li>${label}</li>`).join("\n                  ")}
-                </ul>
-                <p><strong>Tant que ces informations ne sont pas renseignées, aucun déménageur ne peut voir votre demande ni vous envoyer de devis.</strong></p>
+                <p>Vous avez commencé une demande de déménagement${request.from_city ? ` (${request.from_city} → ${request.to_city})` : ''} sur TrouveTonDemenageur, mais vous ne l'avez pas envoyée.</p>
+                <p><strong>Tant qu'elle n'est pas envoyée, aucun déménageur ne peut la voir ni vous répondre.</strong></p>
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="https://www.trouvetondemenageur.fr/client/quote/${request.id}/edit" style="display: inline-block; background: #3B82F6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                    Finaliser ma demande (2 minutes)
+                  <a href="${resumeUrl}" style="display: inline-block; background: #3B82F6; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+                    Reprendre ma demande
                   </a>
                 </div>
               </div>
@@ -154,18 +136,16 @@ Deno.serve(async (req: Request) => {
       });
       emailSent = res.ok;
       if (!res.ok) {
-        console.error("Erreur envoi email (relance manuelle admin):", await res.text());
+        console.error("Erreur envoi email (relance brouillon manuelle admin):", await res.text());
       }
     } else {
       console.warn("RESEND_API_KEY manquante : relance non envoyée.");
     }
 
-    // Log dans la même table que le cron, pour garder un historique unique et
-    // éviter que le cron ne renvoie un doublon dans l'heure qui suit.
     await supabaseAdmin.from("client_quote_reminder_log").insert({
       quote_request_id: request.id,
       triggered_by: "admin",
-      reminder_type: "missing_info",
+      reminder_type: "draft_incomplete",
     });
 
     if (!emailSent) {
@@ -180,7 +160,7 @@ Deno.serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error: any) {
-    console.error("Error in admin-send-client-quote-reminder:", error);
+    console.error("Error in admin-send-draft-reminder:", error);
     return new Response(JSON.stringify({ error: error.message || "Erreur serveur" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -728,7 +728,8 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
             ...formData,
             furniture_inventory: furnitureInventory,
             furniture_photos: furniturePhotos,
-            client_user_id: user?.id || null
+            client_user_id: user?.id || null,
+            entry_channel: 'full_form'
           }]);
 
         if (submitError) throw submitError;
