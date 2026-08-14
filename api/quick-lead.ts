@@ -196,6 +196,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!homeSize) {
       return res.status(400).json({ error: 'La taille du logement est obligatoire.' });
     }
+    // Défense en profondeur (même logique que ville/taille ci-dessus) : le
+    // front rend maintenant la date obligatoire, mais cet endpoint est
+    // public. Sans date, le score chaud/tiède/froid tombe à "inconnu" et la
+    // demande est moins bien priorisée pour les déménageurs.
+    if (!movingDate) {
+      return res.status(400).json({ error: 'La date de déménagement est obligatoire.' });
+    }
     if (!isValidPhone(phone)) {
       return res.status(400).json({ error: 'Numéro de téléphone invalide.' });
     }
