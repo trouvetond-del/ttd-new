@@ -128,6 +128,10 @@ export function QuickLeadPage() {
       setError('Merci de préciser la ville de départ et la ville d\'arrivée.');
       return;
     }
+    if (!movingDate.trim()) {
+      setError('Merci de renseigner votre date de déménagement.');
+      return;
+    }
     if (!phone.trim() || !email.trim()) {
       setError('Merci de renseigner votre téléphone et votre email.');
       return;
@@ -312,12 +316,13 @@ export function QuickLeadPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                  Date de déménagement <span className="text-gray-400 font-normal">(optionnel)</span>
+                  Date de déménagement
                 </label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-600" size={18} />
                   <input
                     type="date"
+                    required
                     value={movingDate}
                     onChange={(e) => setMovingDate(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"

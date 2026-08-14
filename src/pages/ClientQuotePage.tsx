@@ -521,9 +521,19 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
       if (editingQuoteRequestId) {
         const { data: currentRequest } = await supabase
           .from('quote_requests')
-          .select('status, accepted_quote_id')
+          .select('status, accepted_quote_id, is_draft')
           .eq('id', editingQuoteRequestId)
           .single();
+
+        // Bug critique corrigé : une demande créée en brouillon (quick-lead,
+        // is_draft=true) qui est ensuite complétée via ce formulaire d'édition
+        // ne passait jamais is_draft à false. Or MoverDashboard et
+        // MoverQuoteRequestsPage filtrent explicitement is_draft=false : la
+        // demande restait donc invisible pour TOUS les déménageurs, à vie,
+        // même une fois entièrement remplie par le client (aucun email de
+        // notification n'était jamais envoyé). On détecte ici la première
+        // vraie soumission (transition brouillon -> finalisée).
+        const isFirstRealSubmission = currentRequest?.is_draft === true;
 
         const updateData: any = {
           ...formData,
@@ -531,6 +541,11 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
           furniture_photos: furniturePhotos,
           updated_at: new Date().toISOString()
         };
+
+        if (isFirstRealSubmission) {
+          updateData.is_draft = false;
+          updateData.submitted_at = new Date().toISOString();
+        }
 
         if (currentRequest?.status === 'accepted') {
           updateData.status = 'quoted';
@@ -560,6 +575,67 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
 
           if (expireError) {
             console.error('Error expiring quotes:', expireError);
+          }
+        }
+
+        // Première vraie soumission d'un brouillon complété : personne n'a
+        // encore de devis sur cette demande (elle était invisible), donc le
+        // bloc "notifier les déménageurs ayant déjà un devis" juste en
+        // dessous ne notifiera personne. On reproduit ici la même notification
+        // que pour une nouvelle demande créée directement (branche insert
+        // ci-dessous), sinon la demande finalisée reste sans email envoyé.
+        if (isFirstRealSubmission) {
+          try {
+            const { data: verifiedMovers } = await supabase
+              .from('movers')
+              .select('id, user_id, email, company_name, coverage_type, activity_departments')
+              .eq('verification_status', 'verified')
+              .eq('is_active', true);
+
+            if (verifiedMovers && verifiedMovers.length > 0) {
+              const fromDept = formData.from_postal_code?.substring(0, 2);
+              const toDept = formData.to_postal_code?.substring(0, 2);
+
+              const matchingMovers = verifiedMovers.filter(mover => {
+                if (mover.coverage_type === 'all_france') return true;
+                if (mover.coverage_type === 'departments' && mover.activity_departments?.length > 0) {
+                  return mover.activity_departments.includes(fromDept) || mover.activity_departments.includes(toDept);
+                }
+                return true;
+              });
+
+              for (const mover of matchingMovers) {
+                try {
+                  await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+                    },
+                    body: JSON.stringify({
+                      type: 'activity_zone_new_quote',
+                      recipientEmail: mover.email,
+                      data: {
+                        companyName: mover.company_name,
+                        fromCity: formData.from_city,
+                        fromPostalCode: formData.from_postal_code,
+                        toCity: formData.to_city,
+                        toPostalCode: formData.to_postal_code,
+                        movingDate: new Date(formData.moving_date).toLocaleDateString('fr-FR'),
+                        homeSize: `${formData.from_home_type} ${formData.from_home_size}`,
+                        volumeM3: formData.volume_m3,
+                        surfaceM2: formData.from_surface_m2,
+                        servicesNeeded: formData.services_needed
+                      }
+                    })
+                  });
+                } catch (moverEmailError) {
+                  console.error('Error sending mover notification email (first submission):', moverEmailError);
+                }
+              }
+            }
+          } catch (moverNotifError) {
+            console.error('Error notifying movers on first submission:', moverNotifError);
           }
         }
 
