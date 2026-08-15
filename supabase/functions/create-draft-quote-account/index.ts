@@ -133,6 +133,7 @@ Deno.serve(async (req: Request) => {
         status: "new",
         marketing_consent: !!marketingConsent,
         sms_consent: !!smsConsent,
+        entry_channel: "full_form",
       })
       .select("id, resume_token")
       .single();
