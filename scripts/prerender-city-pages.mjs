@@ -92,7 +92,7 @@ function buildHtml(city, counts) {
         <h1 style="font-size:2.5rem;font-weight:800;color:#111827;margin-bottom:1.5rem;">Déménagement à ${escapeHtml(city.nom_ville)}</h1>
         <p style="font-size:1.125rem;color:#4B5563;line-height:1.7;max-width:48rem;margin-bottom:2rem;">${escapeHtml(city.intro_locale)}</p>
         <p style="font-weight:600;color:#1F2937;margin-bottom:2rem;">${availability}</p>
-        <a href="/client/quote" style="display:inline-block;background:#2563EB;color:white;padding:1rem 2rem;border-radius:1rem;font-weight:700;text-decoration:none;">Obtenir mon devis pour ${escapeHtml(city.nom_ville)}</a>
+        <a href="/devis-rapide" style="display:inline-block;background:#2563EB;color:white;padding:1rem 2rem;border-radius:1rem;font-weight:700;text-decoration:none;">Obtenir mon devis pour ${escapeHtml(city.nom_ville)}</a>
         ${zonesHtml}
       </div>
     </div>`;

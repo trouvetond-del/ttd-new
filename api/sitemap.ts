@@ -25,17 +25,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const staticPages = [
     { url: '/', priority: '1.0', changefreq: 'weekly' },
+    { url: '/devis-rapide', priority: '0.95', changefreq: 'weekly' },
     { url: '/blog', priority: '0.9', changefreq: 'daily' },
+    { url: '/guide-demenagement', priority: '0.7', changefreq: 'monthly' },
+    { url: '/faq', priority: '0.6', changefreq: 'monthly' },
+    { url: '/pricing', priority: '0.6', changefreq: 'monthly' },
+    { url: '/about', priority: '0.5', changefreq: 'monthly' },
+    { url: '/contact', priority: '0.5', changefreq: 'monthly' },
+    { url: '/technology', priority: '0.4', changefreq: 'monthly' },
+    { url: '/mover/signup', priority: '0.6', changefreq: 'monthly' },
   ];
+  const validSlug = (s: unknown): s is string =>
+    typeof s === 'string' && s.trim() !== '' && s !== 'null' && s !== 'undefined';
 
-  const cityPageEntries = (cityPages || []).map(c => ({
+  const cityPageEntries = (cityPages || []).filter(c => validSlug(c.slug)).map(c => ({
     url: `/demenagement/${c.slug}`,
     priority: '0.9',
     changefreq: 'weekly',
     lastmod: c.updated_at?.split('T')[0],
   }));
 
-  const articlePages = (articles || []).map(a => ({
+  const articlePages = (articles || []).filter(a => validSlug(a.slug)).map(a => ({
     url: `/blog/${a.slug}`,
     priority: '0.8',
     changefreq: 'monthly',
