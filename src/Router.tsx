@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import NotFoundPage from './pages/NotFoundPage';
 import { useAuth } from './contexts/AuthContext';
 import { LandingPage } from './pages/LandingPage';
 import { QuickLeadPage } from './pages/QuickLeadPage';
@@ -774,7 +775,7 @@ export function AppRouter() {
           <Route path="/admin/dashboard/:tab" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
 
           {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <ToastContainer />
       </div>
