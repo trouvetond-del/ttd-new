@@ -309,7 +309,6 @@ export function LandingPage() {
                       <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
                         <Camera className="w-6 h-6 text-white" />
                       </div>
-                      <span className="text-sm font-bold text-blue-300 bg-blue-500/20 px-3 py-1 rounded-full">IA</span>
                     </div>
                     <p className="text-white font-bold text-lg mb-1">Détection en temps réel</p>
                     <p className="text-gray-300 text-sm leading-relaxed">
@@ -321,7 +320,6 @@ export function LandingPage() {
                       <div className="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
                         <Shield className="w-6 h-6 text-white" />
                       </div>
-                      <span className="text-sm font-bold text-cyan-300 bg-cyan-500/20 px-3 py-1 rounded-full">Neutre</span>
                     </div>
                     <p className="text-white font-bold text-lg mb-1">Verdict impartial</p>
                     <p className="text-gray-300 text-sm leading-relaxed">
@@ -333,7 +331,6 @@ export function LandingPage() {
                       <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg">
                         <FileCheck className="w-6 h-6 text-white" />
                       </div>
-                      <span className="text-sm font-bold text-green-300 bg-green-500/20 px-3 py-1 rounded-full">Certifié</span>
                     </div>
                     <p className="text-white font-bold text-lg mb-1">Traçabilité certifiée</p>
                     <p className="text-gray-300 text-sm leading-relaxed">
@@ -345,7 +342,6 @@ export function LandingPage() {
                       <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg">
                         <Shield className="w-6 h-6 text-white" />
                       </div>
-                      <span className="text-sm font-bold text-orange-300 bg-orange-500/20 px-3 py-1 rounded-full">Preuves</span>
                     </div>
                     <p className="text-white font-bold text-lg mb-1">Litiges désamorcés</p>
                     <p className="text-gray-300 text-sm leading-relaxed">
