@@ -25,7 +25,7 @@ function build(a) {
   const url = `${SITE_URL}/blog/${a.slug}`;
   const ld = { '@context': 'https://schema.org', '@type': 'Article', headline: clean(a.titre), datePublished: a.created_at, dateModified: a.updated_at || a.created_at, mainEntityOfPage: url, publisher: { '@type': 'Organization', name: 'TrouveTonDéménageur', logo: { '@type': 'ImageObject', url: `${SITE_URL}/ttd-logo.png` } } };
   const paras = text.substring(0, 4000).split(/(?<=\.)\s+/).reduce((acc, s, i) => { const k = Math.floor(i / 4); acc[k] = (acc[k] || '') + ' ' + s; return acc; }, []);
-  const body = `<div id="root"><article style="max-width:48rem;margin:0 auto;padding:3rem 1.5rem;font-family:system-ui,sans-serif;"><p><a href="/blog">Blog</a></p><h1>${esc(clean(a.titre))}</h1>${paras.map(p => `<p>${esc(p.trim())}</p>`).join('')}<p><a href="/devis-rapide">Obtenir mon devis gratuit</a></p></article></div>`;
+  const body = `<div id="root"><article style="max-width:48rem;margin:0 auto;padding:3rem 1.5rem;font-family:system-ui,sans-serif;"><p><a href="/blog">Blog</a></p><h1>${esc(clean(a.titre))}</h1>${paras.map(p => `<p>${esc(p.trim())}</p>`).join('')}<p><a href="/client/auth-choice">Obtenir mon devis gratuit</a></p></article></div>`;
   let h = tpl;
   h = h.replace(/<title>.*?<\/title>/s, `<title>${esc(title)}</title>`);
   h = h.replace(/<meta\s+name="title"\s+content="[^"]*"\s*\/>/s, `<meta name="title" content="${esc(title)}" />`);
