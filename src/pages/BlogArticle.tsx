@@ -337,7 +337,7 @@ export default function BlogArticle() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/devis-rapide"
+              to="/client/auth-choice"
               className="inline-flex items-center justify-center gap-2 bg-white text-blue-700 font-bold px-7 py-3.5 rounded-full hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20"
             >
               Obtenir mon devis gratuit

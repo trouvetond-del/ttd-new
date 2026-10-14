@@ -106,7 +106,7 @@ export function PricingPage() {
                 </li>
               </ul>
               <button
-                onClick={() => navigate('/devis-rapide')}
+                onClick={() => navigate('/client/auth-choice')}
                 className="w-full bg-gray-100 text-gray-900 py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors"
               >
                 Obtenir un devis
@@ -145,7 +145,7 @@ export function PricingPage() {
                 </li>
               </ul>
               <button
-                onClick={() => navigate('/devis-rapide')}
+                onClick={() => navigate('/client/auth-choice')}
                 className="w-full bg-white text-blue-600 py-3 rounded-xl font-bold hover:bg-blue-50 transition-colors"
               >
                 Obtenir un devis
@@ -181,7 +181,7 @@ export function PricingPage() {
                 </li>
               </ul>
               <button
-                onClick={() => navigate('/devis-rapide')}
+                onClick={() => navigate('/client/auth-choice')}
                 className="w-full bg-gray-100 text-gray-900 py-3 rounded-xl font-bold hover:bg-gray-200 transition-colors"
               >
                 Obtenir un devis
