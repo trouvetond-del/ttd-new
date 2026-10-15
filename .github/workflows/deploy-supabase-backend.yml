@@ -17,7 +17,7 @@ jobs:
         run: |
           sudo apt-get update -y && sudo apt-get install -y postgresql-client jq
           set +e
-          FILES="supabase/migrations_manuelles/critical-payment-security-fix.sql supabase/migrations_manuelles/fix-quote-requests-direct-acceptance.sql supabase/migrations_manuelles/fix-messaging-payment-gate.sql supabase/migrations_manuelles/precaution-drop-old-reviews-policy.sql supabase/migrations_manuelles/mover-reminder-sent-at.sql supabase/migrations_manuelles/quick-lead-profile-completed.sql supabase/migrations_manuelles/quick-lead-verifications.sql supabase/migrations_manuelles/mover-lead-verifications.sql supabase/migrations_manuelles/quote-reference-and-reminders.sql supabase/migrations_manuelles/quote-requests-view-add-reference-v2.sql supabase/migrations_manuelles/quote-reminder-log-and-notif-type.sql supabase/migrations_manuelles/nearby-mission-notif-require-complete.sql supabase/migrations_manuelles/client-quote-reminder-log.sql supabase/migrations_manuelles/client-quote-reminder-log-triggered-by.sql supabase/migrations_manuelles/urgent-quote-requests-require-complete.sql supabase/migrations_manuelles/normalize-mover-city.sql supabase/migrations_manuelles/quick-lead-verification-reminder.sql supabase/migrations_manuelles/draft-quote-requests-system.sql supabase/migrations_manuelles/city-pages-table.sql supabase/migrations_manuelles/city-pages-seed.sql supabase/migrations_manuelles/quote-requests-sms-consent.sql supabase/migrations_manuelles/reengagement-and-photo-reminder-setup.sql supabase/migrations_manuelles/partial-leads-capture.sql supabase/migrations_manuelles/quote-requests-view-add-is-draft.sql supabase/migrations_manuelles/client-no-request-reminder-count.sql supabase/migrations_manuelles/setup-cron-jobs.sql"
+          FILES="supabase/migrations_manuelles/critical-payment-security-fix.sql supabase/migrations_manuelles/fix-quote-requests-direct-acceptance.sql supabase/migrations_manuelles/fix-messaging-payment-gate.sql supabase/migrations_manuelles/precaution-drop-old-reviews-policy.sql supabase/migrations_manuelles/mover-reminder-sent-at.sql supabase/migrations_manuelles/quick-lead-profile-completed.sql supabase/migrations_manuelles/quick-lead-verifications.sql supabase/migrations_manuelles/mover-lead-verifications.sql supabase/migrations_manuelles/quote-reference-and-reminders.sql supabase/migrations_manuelles/quote-requests-view-add-reference-v2.sql supabase/migrations_manuelles/quote-reminder-log-and-notif-type.sql supabase/migrations_manuelles/nearby-mission-notif-require-complete.sql supabase/migrations_manuelles/client-quote-reminder-log.sql supabase/migrations_manuelles/client-quote-reminder-log-triggered-by.sql supabase/migrations_manuelles/urgent-quote-requests-require-complete.sql supabase/migrations_manuelles/normalize-mover-city.sql supabase/migrations_manuelles/quick-lead-verification-reminder.sql supabase/migrations_manuelles/draft-quote-requests-system.sql supabase/migrations_manuelles/city-pages-table.sql supabase/migrations_manuelles/city-pages-seed.sql supabase/migrations_manuelles/quote-requests-sms-consent.sql supabase/migrations_manuelles/reengagement-and-photo-reminder-setup.sql supabase/migrations_manuelles/partial-leads-capture.sql supabase/migrations_manuelles/quote-requests-view-add-is-draft.sql supabase/migrations_manuelles/client-no-request-reminder-count.sql supabase/migrations_manuelles/setup-cron-jobs.sql supabase/migrations_manuelles/review-request-setup.sql supabase/migrations_manuelles/ai-agents-monitoring-fraud.sql"
           for f in $FILES; do
             echo "=== Running $f ==="
             OUT=$(psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f "$f" 2>&1)
@@ -174,6 +174,11 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase functions deploy send-client-no-request-reminder --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+      - name: Déployer send-review-request
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy send-review-request --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+
 
       - name: Mettre à jour le template email "Magic Link"
         run: |
@@ -185,3 +190,18 @@ jobs:
 
       - name: Résumé
         run: echo "✅ SQL exécuté + 2 edge functions déployées + template email mis à jour."
+
+      - name: Déployer agent-monitor-errors
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy agent-monitor-errors --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+
+      - name: Déployer agent-fraud-guard
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy agent-fraud-guard --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+
+      - name: Déployer admin-unblock-user
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy admin-unblock-user --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
