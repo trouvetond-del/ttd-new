@@ -21,6 +21,10 @@ const ALERT_TYPE_LABELS: Record<string, string> = {
   multiple_accounts: 'Comptes multiples',
   payment_fraud: 'Fraude au paiement',
   location_mismatch: 'Incohérence de localisation',
+  fake_mover: 'Faux déménageur',
+  fake_client: 'Faux client',
+  site_attack: 'Attaque / robot',
+  disposable_email: 'Email jetable',
 };
 
 const SEVERITY_COLORS = {
