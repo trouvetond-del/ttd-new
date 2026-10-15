@@ -29,9 +29,7 @@ export function EmailVerificationPage() {
           showToast('Email vérifié avec succès !', 'success');
 
           setTimeout(() => {
-            // Après vérification, le client est connecté : on l'envoie
-            // directement sur son espace, pas sur la page d'accueil.
-            navigate('/client/dashboard', { replace: true });
+            onVerified();
           }, 2000);
         } else {
           throw new Error('Lien de vérification invalide');
@@ -45,7 +43,7 @@ export function EmailVerificationPage() {
     };
 
     verifyEmail();
-  }, [navigate]);
+  }, [onVerified]);
 
   return (
     <div
@@ -111,7 +109,7 @@ export function EmailVerificationPage() {
             </h2>
             <p className="text-gray-600 mb-6">{message}</p>
             <button
-              onClick={() => navigate('/client/login')}
+              onClick={onError}
               className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
             >
               Retour à la connexion
