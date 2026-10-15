@@ -57,17 +57,16 @@ Deno.serve(async (req) => {
     .select("id, moving_date, status, from_city, to_city")
     .lt("moving_date", today)
     .in("status", ["new", "assigned", "quoted", "accepted"])
-    .order("moving_date", { ascending: false })
-    .limit(50);
+    .order("moving_date", { ascending: false });
   if (!expErr && expired?.length) {
     const open = expired.filter((q) => q.status !== "accepted");
     const notDone = expired.filter((q) => q.status === "accepted");
     const fmt = (q: { moving_date: string; from_city?: string | null; to_city?: string | null }) =>
       `${q.moving_date}${q.from_city ? ` (${q.from_city} → ${q.to_city ?? "?"})` : ""}`;
     if (open.length) issues.push({ level: "warning", key: `moves:expired:${today}`,
-      message: `${open.length} demande(s) de déménagement ont une date dépassée sans devis accepté : ${open.slice(0, 10).map(fmt).join(", ")}.` });
+      message: `${open.length} demande(s) de déménagement ont une date dépassée sans devis accepté : ${open.map(fmt).join(", ")}.` });
     if (notDone.length) issues.push({ level: "warning", key: `moves:not-completed:${today}`,
-      message: `${notDone.length} déménagement(s) accepté(s) ont une date dépassée mais ne sont pas marqués terminés : ${notDone.slice(0, 10).map(fmt).join(", ")}.` });
+      message: `${notDone.length} déménagement(s) accepté(s) ont une date dépassée mais ne sont pas marqués terminés : ${notDone.map(fmt).join(", ")}.` });
   }
 
   const status = issues.some((i) => i.level === "critical") ? "critical" : issues.length ? "warning" : "ok";
