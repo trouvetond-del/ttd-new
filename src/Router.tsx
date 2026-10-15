@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import NotFoundPage from './pages/NotFoundPage';
 import { useAuth } from './contexts/AuthContext';
 import { LandingPage } from './pages/LandingPage';
@@ -432,10 +432,36 @@ function AnalyticsRouteTracker() {
   return null;
 }
 
+
+// Le lien du mail de confirmation d'inscription renvoie vers l'URL de base
+// du site (config Supabase), avec les jetons dans le # de l'URL. Sans ce
+// composant, un client qui clique le lien arrivait sur la page d'accueil,
+// connecté mais coincé. On détecte ce retour et on l'envoie sur
+// /verify-email (qui valide la session puis redirige vers son espace).
+function AuthEmailHashRedirect() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    const hash = window.location.hash || '';
+    if (
+      hash.includes('access_token') &&
+      hash.includes('type=signup') &&
+      location.pathname !== '/verify-email'
+    ) {
+      navigate('/verify-email' + hash, { replace: true });
+    }
+    // Uniquement au chargement initial : le hash de confirmation n'existe
+    // qu'à l'arrivée depuis le mail, jamais en navigation interne.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return null;
+}
+
 export function AppRouter() {
   return (
     <BrowserRouter>
       <AnalyticsRouteTracker />
+      <AuthEmailHashRedirect />
       <div className="min-h-screen smooth-scroll">
         <Routes>
           {/* Public Routes */}
