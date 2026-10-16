@@ -2,12 +2,12 @@
 // Vérifie les pages clés du site, la base de données, les tâches planifiées,
 // les paiements et emails en échec, puis alerte l'admin si besoin.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { adminClient, aiSummary, alertAdmins, escapeHtml, isAuthorizedCaller, shouldSend } from "../_shared/agent-utils.ts";
+import { adminClient, aiSummary, alertAdmins, escapeHtml, notifyAdminsOnly, isAuthorizedCaller, shouldSend } from "../_shared/agent-utils.ts";
 
 const SITE = "https://www.trouvetondemenageur.fr";
 const PAGES = ["/", "/devis-rapide", "/client/auth-choice", "/mover/signup", "/sitemap.xml"];
 
-type Issue = { level: "warning" | "critical"; key: string; message: string };
+type Issue = { level: "warning" | "critical"; key: string; message: string; noEmail?: boolean };
 
 Deno.serve(async (req) => {
   const sb = adminClient();
@@ -51,16 +51,42 @@ Deno.serve(async (req) => {
     .eq("status", "failed").gte("updated_at", since);
   if (!nqErr && (failedNotif ?? 0) >= 3) issues.push({ level: "warning", key: "notif:failed", message: `${failedNotif} emails/notifications ont échoué récemment.` });
 
+  // 6. Déménagements dont la date est dépassée sans être clôturés (1 alerte par jour)
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: expired, error: expErr } = await sb.from("quote_requests")
+    .select("id, moving_date, status, from_city, to_city")
+    .lt("moving_date", today)
+    .in("status", ["new", "assigned", "quoted", "accepted"])
+    .order("moving_date", { ascending: false });
+  if (!expErr && expired?.length) {
+    const open = expired.filter((q) => q.status !== "accepted");
+    const notDone = expired.filter((q) => q.status === "accepted");
+    const fmt = (q: { moving_date: string; from_city?: string | null; to_city?: string | null }) =>
+      `${q.moving_date}${q.from_city ? ` (${q.from_city} → ${q.to_city ?? "?"})` : ""}`;
+    if (open.length) issues.push({ level: "warning", key: `moves:expired`, noEmail: true,
+      message: `${open.length} demande(s) de déménagement ont une date dépassée sans devis accepté : ${open.map(fmt).join(", ")}.` });
+    if (notDone.length) issues.push({ level: "warning", key: `moves:not-completed`, noEmail: true,
+      message: `${notDone.length} déménagement(s) accepté(s) ont une date dépassée mais ne sont pas marqués terminés : ${notDone.map(fmt).join(", ")}.` });
+  }
+
   const status = issues.some((i) => i.level === "critical") ? "critical" : issues.length ? "warning" : "ok";
   let summary: string | null = null;
 
-  if (issues.length) {
+  // Déménagements expirés : notification admin uniquement (1 fois par jour), pas d'email.
+  for (const i of issues.filter((x) => x.noEmail)) {
+    if (await shouldSend(sb, `monitor:${i.key}`, 24)) {
+      await notifyAdminsOnly(sb, "Agent IA : déménagements à date dépassée", i.message);
+    }
+  }
+  const emailIssues = issues.filter((i) => !i.noEmail);
+
+  if (emailIssues.length) {
     summary = await aiSummary(
       "Tu es l'ingénieur d'astreinte d'une plateforme française de déménagement. Résume les problèmes détectés en 3 à 5 phrases simples pour un dirigeant non technique : impact pour les clients, urgence, première action conseillée. Pas de jargon.",
-      issues.map((i) => `[${i.level}] ${i.message}`).join("\n"),
+      emailIssues.map((i) => `[${i.level}] ${i.message}`).join("\n"),
     );
     const fresh: Issue[] = [];
-    for (const i of issues) if (await shouldSend(sb, `monitor:${i.key}`)) fresh.push(i);
+    for (const i of emailIssues) if (await shouldSend(sb, `monitor:${i.key}`)) fresh.push(i);
     if (fresh.length) {
       const list = fresh.map((i) => `<li><b>${i.level === "critical" ? "🔴 Critique" : "🟠 Attention"}</b> — ${escapeHtml(i.message)}</li>`).join("");
       await alertAdmins(sb,

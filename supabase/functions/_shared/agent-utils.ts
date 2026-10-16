@@ -52,7 +52,7 @@ export async function alertAdmins(sb: SupabaseClient, title: string, bodyHtml: s
   const { data: admins } = await sb.from("admins").select("user_id, email");
   if (admins?.length) {
     await sb.from("notifications").insert(admins.map((a) => ({
-      user_id: a.user_id, title, message: title, type: "system", read: false,
+      user_id: a.user_id, user_type: "admin", title, message: title, type: "system", read: false,
     })));
   }
   const resend = Deno.env.get("RESEND_API_KEY");
@@ -72,4 +72,14 @@ export async function alertAdmins(sb: SupabaseClient, title: string, bodyHtml: s
     }),
   });
   if (!res.ok) console.warn("Resend:", res.status, await res.text());
+}
+
+// Notification dans l'espace admin uniquement (pas d'email).
+export async function notifyAdminsOnly(sb: SupabaseClient, title: string, message: string) {
+  const { data: admins } = await sb.from("admins").select("user_id");
+  if (!admins?.length) return;
+  const { error } = await sb.from("notifications").insert(admins.map((a) => ({
+    user_id: a.user_id, user_type: "admin", title, message, type: "system", read: false,
+  })));
+  if (error) console.warn("Notification admin:", error.message);
 }
