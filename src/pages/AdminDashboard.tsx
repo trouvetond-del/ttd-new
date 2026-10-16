@@ -305,8 +305,8 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-30">
+    <div className="admin-premium min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/60 to-emerald-50/40 dark:from-gray-950 dark:via-slate-900 dark:to-gray-950">
+      <div className="fixed top-0 left-0 right-0 h-16 bg-white/75 dark:bg-gray-900/75 backdrop-blur-xl border-b border-white/60 dark:border-white/10 shadow-[0_4px_30px_-12px_rgba(30,64,175,0.25)] z-30">
         <div className="h-full px-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -316,7 +316,13 @@ export default function AdminDashboard() {
             >
               {sidebarOpen ? <X className="w-5 h-5 text-gray-600 dark:text-gray-400" /> : <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />}
             </button>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+            <div className="flex items-center gap-2.5">
+              <img src="/logo.png" alt="TrouveTonDemenageur" className="w-9 h-9 rounded-xl shadow-md ring-2 ring-white object-contain bg-white" />
+              <div className="leading-tight">
+                <h1 className="text-lg font-extrabold bg-gradient-to-r from-[#1E40AF] via-[#3B82F6] to-[#059669] bg-clip-text text-transparent">TrouveTonDemenageur</h1>
+                <span className={`inline-block text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full ${isSuperAdmin ? 'bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-900 shadow-sm shadow-amber-400/40' : 'bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-sm shadow-blue-500/40'}`}>{isSuperAdmin ? 'Super Admin' : 'Admin'}</span>
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -325,7 +331,7 @@ export default function AdminDashboard() {
               <input
                 type="text"
                 placeholder="Recherche..."
-                className="pl-10 pr-4 py-2 w-64 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="pl-10 pr-4 py-2 w-64 border border-blue-100 dark:border-gray-700 rounded-full bg-white/70 shadow-inner dark:bg-gray-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -399,13 +405,13 @@ export default function AdminDashboard() {
               }}
             />
 
-            <div className="hidden md:flex items-center gap-3 pl-3 border-l border-gray-200 dark:border-gray-700">
+            <div className="hidden md:flex items-center gap-3 pl-3 border-l border-blue-100 dark:border-gray-700">
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{getRoleLabel()}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{adminEmail || 'admin@trouveton.fr'}</p>
               </div>
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg ${isSuperAdmin ? 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-amber-500/40' : 'bg-gradient-to-br from-blue-600 to-emerald-500 shadow-blue-500/40'}`}>
+                <User className="w-5 h-5 text-white" />
               </div>
             </div>
           </div>
@@ -413,11 +419,12 @@ export default function AdminDashboard() {
       </div>
 
       <div
-        className={`fixed top-16 left-0 bottom-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-300 z-20 ${
+        className={`fixed top-16 left-0 bottom-0 w-64 bg-gradient-to-b from-[#0B1B3F] via-[#112A63] to-[#0A1633] border-r border-white/5 shadow-2xl shadow-blue-900/30 transition-transform duration-300 z-20 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="h-full overflow-y-auto p-4">
+          <p className="px-3 mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-300/60">Navigation</p>
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -433,14 +440,14 @@ export default function AdminDashboard() {
                       setSidebarOpen(false);
                     }
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      ? 'bg-gradient-to-r from-[#3B82F6] to-[#10B981] text-white shadow-lg shadow-blue-500/30 translate-x-1'
+                      : 'text-slate-300 hover:bg-white/10 hover:text-white hover:translate-x-1'
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${item.id === 'security' && securityAlert ? 'text-red-600 animate-pulse' : ''}`} />
-                  <span className={`font-medium ${item.id === 'pending_movers' ? 'text-xs' : ''} ${item.id === 'security' && securityAlert ? 'text-red-600 animate-pulse' : ''}`}>{item.label}</span>
+                  <Icon className={`w-5 h-5 shrink-0 ${item.id === 'security' && securityAlert ? 'text-red-400 animate-pulse' : isActive ? 'text-white' : 'text-blue-300 group-hover:text-emerald-300'}`} />
+                  <span className={`font-medium ${item.id === 'pending_movers' ? 'text-xs' : ''} ${item.id === 'security' && securityAlert ? 'text-red-400 animate-pulse' : ''}`}>{item.label}</span>
                   {item.id === 'security' && securityAlert && (
                     <span className="ml-auto relative flex h-3 w-3" aria-label="Alerte">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
@@ -452,7 +459,7 @@ export default function AdminDashboard() {
             })}
           </nav>
 
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 space-y-1">
+          <div className="mt-6 pt-6 border-t border-white/10 space-y-1">
             <button
               onClick={() => {
                 setActiveTab('help');
@@ -460,10 +467,10 @@ export default function AdminDashboard() {
                   setSidebarOpen(false);
                 }
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                 activeTab === 'help'
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'bg-gradient-to-r from-[#3B82F6] to-[#10B981] text-white shadow-lg shadow-blue-500/30'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
               }`}
             >
               <HelpCircle className="w-5 h-5" />
@@ -477,10 +484,10 @@ export default function AdminDashboard() {
                   setSidebarOpen(false);
                 }
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                 activeTab === 'exports'
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'bg-gradient-to-r from-[#3B82F6] to-[#10B981] text-white shadow-lg shadow-blue-500/30'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Download className="w-5 h-5" />
@@ -494,10 +501,10 @@ export default function AdminDashboard() {
                   setSidebarOpen(false);
                 }
               }}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                 activeTab === 'activity_logs'
-                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'bg-gradient-to-r from-[#3B82F6] to-[#10B981] text-white shadow-lg shadow-blue-500/30'
+                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Activity className="w-5 h-5" />
@@ -506,7 +513,7 @@ export default function AdminDashboard() {
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-300 hover:bg-red-500/15 hover:text-red-200 transition-colors"
             >
               <LogOut className="w-5 h-5" />
               <span className="font-medium">Déconnexion</span>
@@ -520,14 +527,14 @@ export default function AdminDashboard() {
           sidebarOpen ? 'lg:pl-64' : 'pl-0'
         }`}
       >
-        <div className="p-3 sm:p-6">
+        <div className="admin-content p-3 sm:p-6 lg:p-8 animate-[fadeInUp_0.4s_ease-out]">
           {renderContent()}
         </div>
       </div>
 
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-10 lg:hidden"
+          className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-10 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
