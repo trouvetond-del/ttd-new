@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall } from 'lucide-react';
+import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall, Archive } from 'lucide-react';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import { showToast } from '../../utils/toast';
 
@@ -63,6 +63,14 @@ function getMissingFieldLabels(q: QuoteRequest): string[] {
   return missing;
 }
 
+// Date de déménagement passée et demande pas encore clôturée.
+export function isMoveExpired(q: { moving_date?: string | null; status: string }): boolean {
+  if (!q.moving_date) return false;
+  if (['completed', 'cancelled'].includes(q.status)) return false;
+  const today = new Date().toISOString().slice(0, 10);
+  return q.moving_date.slice(0, 10) < today;
+}
+
 export default function AdminRecentQuoteRequests() {
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,7 +91,7 @@ export default function AdminRecentQuoteRequests() {
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (statusFilter !== 'all') {
+      if (statusFilter !== 'all' && statusFilter !== 'expired') {
         query = query.eq('status', statusFilter);
       }
 
@@ -159,6 +167,26 @@ export default function AdminRecentQuoteRequests() {
       showToast('Erreur lors de la suppression de la demande', 'error');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const [archivingId, setArchivingId] = useState<string | null>(null);
+  const handleArchive = async (id: string, clientName?: string) => {
+    const confirmed = window.confirm(
+      `Archiver la demande de "${clientName || 'ce client'}" ? Elle sera marquée terminée, l'alerte disparaîtra et le contact sera conservé.`
+    );
+    if (!confirmed) return;
+    setArchivingId(id);
+    try {
+      const { error } = await supabase.from('quote_requests').update({ status: 'completed' }).eq('id', id);
+      if (error) throw error;
+      setQuoteRequests((prev) => prev.map((q) => (q.id === id ? { ...q, status: 'completed' } : q)));
+      showToast('Demande archivée, contact conservé', 'success');
+    } catch (error) {
+      console.error('Error archiving quote request:', error);
+      showToast("Erreur lors de l'archivage", 'error');
+    } finally {
+      setArchivingId(null);
     }
   };
 
@@ -287,6 +315,12 @@ export default function AdminRecentQuoteRequests() {
             <CheckCircle className="w-3 h-3" /> Accepté
           </span>
         );
+      case 'completed':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full border border-gray-300">
+            <Archive className="w-3 h-3" /> Archivé
+          </span>
+        );
       case 'cancelled':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-700 text-xs font-medium rounded-full border border-red-200">
@@ -303,6 +337,7 @@ export default function AdminRecentQuoteRequests() {
   };
 
   const filteredRequests = quoteRequests.filter((q) => {
+    if (statusFilter === 'expired' && !isMoveExpired(q)) return false;
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
@@ -352,6 +387,8 @@ export default function AdminRecentQuoteRequests() {
           className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">Tous les statuts</option>
+          <option value="expired">Date dépassée</option>
+          <option value="completed">Archivés (leads)</option>
           <option value="pending">En attente</option>
           <option value="quoted">Devis reçus</option>
           <option value="accepted">Accepté</option>
@@ -426,7 +463,14 @@ export default function AdminRecentQuoteRequests() {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                      {q.moving_date ? new Date(q.moving_date).toLocaleDateString('fr-FR') : '—'}
+                      {q.moving_date ? (
+                        isMoveExpired(q) ? (
+                          <span className="font-bold text-red-600 animate-pulse" style={{ color: '#ff1744', textShadow: '0 0 6px rgba(255,23,68,0.6)' }} title="Date dépassée : contacter le client">
+                            {new Date(q.moving_date).toLocaleDateString('fr-FR')}
+                            <span className="block text-[10px] uppercase tracking-wide">Expiré</span>
+                          </span>
+                        ) : new Date(q.moving_date).toLocaleDateString('fr-FR')
+                      ) : '—'}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
                       {q.volume_m3 ? `${q.volume_m3} m³` : '—'}
@@ -505,6 +549,17 @@ export default function AdminRecentQuoteRequests() {
 
                           return null;
                         })()}
+                        {isMoveExpired(q) && (
+                          <button
+                            onClick={() => handleArchive(q.id, q.client_name)}
+                            disabled={archivingId === q.id}
+                            title="Déménagement fait : archiver pour garder le contact"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-gray-50 text-gray-700 text-xs rounded-lg border border-gray-300 hover:bg-gray-700 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <Archive className="w-3 h-3" />
+                            {archivingId === q.id ? '...' : 'Archiver'}
+                          </button>
+                        )}
                         <button
                           onClick={() => handleDelete(q.id, q.client_name)}
                           disabled={deletingId === q.id}
