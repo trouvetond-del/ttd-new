@@ -1,0 +1,42 @@
+name: Agent marketing (articles + vidéos Instagram/Facebook)
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+    inputs:
+      force_kind:
+        description: "Forcer un type (article_client, article_mover, video_client, video_mover) — vide = planning normal"
+        required: false
+        default: ""
+
+concurrency:
+  group: marketing-agent
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Préparer la base (idempotent)
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client ffmpeg
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/marketing-agent.sql
+      - name: Lancer l'agent
+        working-directory: scripts/marketing-agent
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FORCE_KIND: ${{ github.event.inputs.force_kind }}
+        run: |
+          npm install --no-audit --no-fund @supabase/supabase-js@2
+          node run.mjs
