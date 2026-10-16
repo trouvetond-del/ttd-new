@@ -15,7 +15,7 @@ const GRAPH = "https://graph.facebook.com/v21.0";
 const TEXT_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const env = (k) => { const v = process.env[k]; if (!v) throw new Error(`Secret manquant : ${k}`); return v; };
 
-const sb = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), { auth: { persistSession: false } });
+const sb = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), { auth: { persistSession: false }, realtime: { transport: class NoRealtime {} } });
 
 // Fonctionnalités vérifiées dans le code du site — seules affirmations autorisées.
 const FEATURES = `
