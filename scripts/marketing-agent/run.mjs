@@ -74,7 +74,7 @@ async function writeArticle(audience, notes) {
     properties: {
       topic: { type: "string", description: "Sujet en 6 mots max" },
       title: { type: "string" },
-      article: { type: "string", description: "Post Facebook/Instagram, 1200-1800 caractères" },
+      article: { type: "string", description: "Post Facebook/Instagram court, 400 à 600 caractères maximum" },
       image_prompt: { type: "string", description: "Description en anglais d'une photo réaliste, sans texte ni logo" },
     },
   };
@@ -84,7 +84,7 @@ async function writeArticle(audience, notes) {
       { role: "system", content: `Tu es le rédacteur de TrouveTonDemenageur, plateforme qui met en relation clients (particuliers et pros) et déménageurs vérifiés partout en France.\nFonctionnalités réelles :\n${FEATURES}\n${RULES}` },
       { role: "user", content: `Public : ${audience === "client" ? "CLIENTS qui vont déménager" : "DÉMÉNAGEURS professionnels (recrutement de partenaires)"}.
 Problème repéré sur les forums :\n${notes}\n
-Écris un article de type post réseaux sociaux : accroche qui décrit le problème avec empathie, explication de pourquoi ça arrive, puis la solution concrète avec les fonctionnalités de la plateforme (si c'est pertinent, explique clairement comment fonctionne l'arbitrage par photos avant/après), conseils pratiques, appel à l'action ${audience === "client" ? "pour créer son compte et décrire son déménagement" : "pour rejoindre le réseau de déménageurs"}, puis la ligne « 👉 ${SITE} », puis 5 à 8 hashtags.` },
+Écris un post réseaux sociaux COURT (400 à 600 caractères maximum, les gens lisent peu) : 1 phrase d'accroche sur le problème, 1 à 2 phrases sur la solution avec UNE fonctionnalité de la plateforme (si pertinent, l'arbitrage par photos avant/après en une phrase simple), phrases courtes, pas de liste longue, puis un appel à l'action ${audience === "client" ? "pour créer son compte et décrire son déménagement" : "pour rejoindre le réseau de déménageurs"}, puis la ligne « 👉 ${SITE} », puis 3 à 5 hashtags.` },
     ],
     text: { format: { type: "json_schema", name: "article", strict: true, schema } },
   });
