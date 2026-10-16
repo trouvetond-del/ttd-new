@@ -116,6 +116,20 @@ export default function AdminDashboard() {
     fetchAdminRole();
   }, [user]);
 
+  // Clignotement de « Sécurité & Agents IA » quand le dernier passage de l'agent a des alertes
+  const [securityAlert, setSecurityAlert] = useState(false);
+  useEffect(() => {
+    if (!user) return;
+    const check = async () => {
+      const { data } = await supabase.from('system_health_checks').select('status')
+        .order('checked_at', { ascending: false }).limit(1).maybeSingle();
+      setSecurityAlert(!!data && data.status !== 'ok');
+    };
+    check();
+    const id = setInterval(check, 60_000);
+    return () => clearInterval(id);
+  }, [user]);
+
   const isSuperAdmin = adminRole === 'super_admin';
   const isAdminAgent = adminRole === 'admin_agent';
 
@@ -369,6 +383,8 @@ export default function AdminDashboard() {
                   }
                 } else if (notification.type === 'new_invited_client') {
                   navigate('/admin/dashboard/users');
+                } else if (notification.type === 'system' && notification.title?.startsWith('Agent IA')) {
+                  setActiveTab('security');
                 } else if (notification.type === 'mover_registration' || notification.type === 'new_mover' || notification.type === 'system') {
                   setActiveTab('pending_movers');
                 } else if (notification.type === 'mission_started' || notification.type === 'mission_completed') {
@@ -423,8 +439,14 @@ export default function AdminDashboard() {
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className={`font-medium ${item.id === 'pending_movers' ? 'text-xs' : ''}`}>{item.label}</span>
+                  <Icon className={`w-5 h-5 ${item.id === 'security' && securityAlert ? 'text-red-600 animate-pulse' : ''}`} />
+                  <span className={`font-medium ${item.id === 'pending_movers' ? 'text-xs' : ''} ${item.id === 'security' && securityAlert ? 'text-red-600 animate-pulse' : ''}`}>{item.label}</span>
+                  {item.id === 'security' && securityAlert && (
+                    <span className="ml-auto relative flex h-3 w-3" aria-label="Alerte">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600" />
+                    </span>
+                  )}
                 </button>
               );
             })}
