@@ -1,0 +1,52 @@
+name: Déménagements disponibles + modération commentaires
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "posts, moderation ou vide (les deux)"
+        required: false
+        default: ""
+
+concurrency:
+  group: social-opportunities
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+      FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Préparer la base (idempotent)
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client fonts-dejavu-core
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/social-opportunities.sql
+      - name: Installer
+        working-directory: scripts/marketing-agent
+        run: npm install --no-audit --no-fund @supabase/supabase-js@2 sharp@0.33
+      - name: Modérer les commentaires
+        if: github.event.inputs.only != 'posts'
+        working-directory: scripts/marketing-agent
+        run: node moderate-comments.mjs
+      - name: Publier les déménagements disponibles (toutes les 2 h, 8h-20h Paris)
+        working-directory: scripts/marketing-agent
+        run: |
+          H=$(TZ=Europe/Paris date +%H); M=$(date +%M)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.only }}" != "moderation" ] || { [ $((10#$H % 2)) -eq 0 ] && [ $((10#$H)) -ge 8 ] && [ $((10#$H)) -le 20 ] && [ $((10#$M)) -lt 30 ]; }; then
+            node opportunities.mjs
+          else
+            echo "Pas de créneau de publication maintenant."
+          fi
