@@ -5,7 +5,7 @@
 import { createClient } from "@supabase/supabase-js";
 import sharp from "sharp";
 
-const SITE = "www.trouvetondemenageur.fr";
+const SITE = "https://www.trouvetondemenageur.fr";
 const GRAPH = "https://graph.facebook.com/v21.0";
 const TEXT_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const MAX_PER_RUN = Number(process.env.MAX_PER_RUN || 3);
@@ -123,7 +123,7 @@ async function writePost(f) {
     text: { format: { type: "json_schema", name: "post", strict: true, schema } },
   });
   let t = JSON.parse(outputText(j)).text.trim();
-  if (!t.includes(SITE)) t += `\n\nInscription gratuite 👉 ${SITE}`;
+  if (!t.includes("trouvetondemenageur.fr")) t += `\n\nInscription gratuite 👉 ${SITE}`;
   return t;
 }
 
@@ -136,7 +136,7 @@ async function graph(path, params) {
 }
 async function publish(imageUrl, message) {
   const fb = await graph(`/${env("FB_PAGE_ID")}/photos`, { url: imageUrl, message });
-  const c = await graph(`/${env("IG_USER_ID")}/media`, { image_url: imageUrl, caption: message.slice(0, 2200) });
+  const c = await graph(`/${env("IG_USER_ID")}/media`, { image_url: imageUrl, caption: message.replace(/(?<!https:\/\/)www\.trouvetondemenageur\.fr/g, "https://www.trouvetondemenageur.fr").slice(0, 2200) });
   for (let i = 0; i < 30; i++) {
     const s = await (await fetch(`${GRAPH}/${c.id}?fields=status_code&access_token=${env("META_PAGE_TOKEN")}`)).json();
     if (s.status_code === "FINISHED") break;

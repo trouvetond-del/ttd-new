@@ -7,7 +7,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { buildVideo, loadVoiceConfig } from "./media.mjs";
 
-const SITE = "www.trouvetondemenageur.fr";
+const SITE = "https://www.trouvetondemenageur.fr";
 const GRAPH = "https://graph.facebook.com/v21.0";
 const TEXT_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
 const env = (k) => { const v = process.env[k]; if (!v) throw new Error(`Secret manquant : ${k}`); return v; };
@@ -144,7 +144,7 @@ async function waitIgReady(id) {
 }
 async function publishImage(imageUrl, message) {
   const fb = await graph(`/${env("FB_PAGE_ID")}/photos`, { url: imageUrl, message });
-  const c = await graph(`/${env("IG_USER_ID")}/media`, { image_url: imageUrl, caption: message.slice(0, 2200) });
+  const c = await graph(`/${env("IG_USER_ID")}/media`, { image_url: imageUrl, caption: message.replace(/(?<!https:\/\/)www\.trouvetondemenageur\.fr/g, "https://www.trouvetondemenageur.fr").slice(0, 2200) });
   await waitIgReady(c.id);
   const ig = await graph(`/${env("IG_USER_ID")}/media_publish`, { creation_id: c.id });
   return { fb: fb.post_id ?? fb.id, ig: ig.id };
@@ -194,7 +194,7 @@ async function doArticle(slot, kind, audience) {
   const { data: past } = await sb.from("marketing_posts").select("topic").eq("audience", audience).not("topic", "is", null).order("created_at", { ascending: false }).limit(30);
   const r = await research(audience, (past ?? []).map((p) => p.topic));
   const a = await writeArticle(audience, r.notes);
-  if (!a.article.includes(SITE)) a.article += `\n\n👉 ${SITE}`;
+  if (!a.article.includes("trouvetondemenageur.fr")) a.article += `\n\n👉 ${SITE}`;
   const url = await upload(`${slot}/${kind}.png`, await image(a.image_prompt, "1024x1024"), "image/png");
   await sb.from("marketing_posts").update({ topic: a.topic, title: a.title, body: a.article, sources: r.sources, image_urls: [url] }).eq("id", id);
   const message = `${a.title}\n\n${a.article}`;
@@ -208,7 +208,7 @@ async function doVideo(slot, kind, audience) {
   if (!src) { console.log(`Pas encore d'article ${audience} publié : vidéo reportée.`); return; }
   const id = await claim(slot, kind, audience); if (!id) return;
   const s = await writeVideoScript(src);
-  let caption = s.caption.includes(SITE) ? s.caption : `${s.caption}\n\n👉 ${SITE}`;
+  let caption = s.caption.includes("trouvetondemenageur.fr") ? s.caption : `${s.caption}\n\n👉 ${SITE}`;
   const v = await makeVideo(slot, kind, s.scenes);
   const url = await upload(`${slot}/${kind}.mp4`, v.buf, "video/mp4");
   await sb.from("marketing_posts").update({ title: src.title, body: caption, video_script: s.scenes.map((x) => x.voiceover).join("\n"), video_scenes: v.scenes, video_url: url, source_post_id: src.id }).eq("id", id);

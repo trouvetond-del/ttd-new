@@ -49,9 +49,10 @@ async function waitIg(id) {
 async function loadTarget(table, id) {
   const { data, error } = await sb.from(table).select("*").eq("id", id).single();
   if (error) throw new Error(`Post introuvable : ${error.message}`);
-  if (table === "marketing_opportunity_posts") return { row: data, message: data.body ?? "", image: data.image_url, video: null };
+  const fix = (m) => (m ?? "").replace(/(?<!https:\/\/)www\.trouvetondemenageur\.fr/g, "https://www.trouvetondemenageur.fr");
+  if (table === "marketing_opportunity_posts") return { row: data, message: fix(data.body), image: data.image_url, video: null };
   const isArticle = data.kind.startsWith("article_");
-  return { row: data, message: isArticle && data.title ? `${data.title}\n\n${data.body ?? ""}` : (data.body ?? ""), image: data.image_urls?.[0] ?? null, video: data.video_url };
+  return { row: data, message: fix(isArticle && data.title ? `${data.title}\n\n${data.body ?? ""}` : data.body), image: data.image_urls?.[0] ?? null, video: data.video_url };
 }
 
 async function recordPub(table, id, platform, media_type, external_id) {

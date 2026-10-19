@@ -298,7 +298,8 @@ function TextModal({ post, onClose, onSaved }: { post: Post; onClose: () => void
     <Modal title="Modifier le texte" onClose={onClose}>
       {post.kind.startsWith('article') && <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Titre" className="mb-3 w-full rounded-xl border border-slate-200 p-3" />}
       <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={10} className="w-full rounded-xl border border-slate-200 p-3 text-sm" />
-      <p className="mt-1 text-xs text-slate-500">{body.length} caractères · pensez à garder « www.trouvetondemenageur.fr ».</p>
+      <p className="mt-1 text-xs text-slate-500">{body.length} caractères · pensez à garder « https://www.trouvetondemenageur.fr ».</p>
+      <LinkPreview text={body} />
       <p className="mt-3 rounded-lg bg-blue-50 p-3 text-xs text-blue-800">Le post Facebook déjà publié sera corrigé automatiquement. Instagram ne permet pas de modifier une légende : cochez Instagram ci‑dessous pour le republier avec le nouveau texte.</p>
       <div className="mt-3"><PlatformPick value={republish} onChange={setRepublish} label="Republier aussi sur :" /></div>
       <div className="mt-5 flex justify-end gap-2">
@@ -338,7 +339,7 @@ function VoiceModal({ post, onClose, onSubmit }: { post: Post; onClose: () => vo
 
 function ImportPanel({ onDone, queue }: { onDone: () => void; queue: (a: string, p: Post | null, pl?: string[]) => Promise<boolean> }) {
   const [file, setFile] = useState<File | null>(null);
-  const [body, setBody] = useState('\n\n👉 www.trouvetondemenageur.fr');
+  const [body, setBody] = useState('\n\n👉 https://www.trouvetondemenageur.fr');
   const [audience, setAudience] = useState<'client' | 'mover' | 'all'>('all');
   const [platforms, setPlatforms] = useState<string[]>(['facebook', 'instagram']);
   const [busy, setBusy] = useState(false);
@@ -427,6 +428,7 @@ function ImportPanel({ onDone, queue }: { onDone: () => void; queue: (a: string,
         </div>
         <label className="text-sm font-medium text-slate-700">Texte du post
           <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={8} className="mt-1 w-full rounded-xl border border-slate-200 p-3 text-sm font-normal" />
+          <LinkPreview text={body} />
         </label>
         <label className="text-sm font-medium text-slate-700">Public
           <select value={audience} onChange={(e) => setAudience(e.target.value as any)} className="mt-1 w-full rounded-xl border border-slate-200 p-2 font-normal">
@@ -550,6 +552,19 @@ function VoicePanel() {
         </label>
         <button onClick={saveVoice} className="mt-4 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white">Enregistrer</button>
       </div>
+    </div>
+  );
+}
+
+function LinkPreview({ text }: { text: string }) {
+  const fixed = text.replace(/(?<!https:\/\/)www\.trouvetondemenageur\.fr/g, 'https://www.trouvetondemenageur.fr');
+  const parts = fixed.split(/(https?:\/\/[^\s]+)/g);
+  return (
+    <div className="mt-2 rounded-xl border border-slate-100 bg-slate-50 p-3 text-sm font-normal text-slate-700">
+      <div className="mb-1 text-xs font-semibold text-slate-500">Aperçu du post (le lien sera cliquable sur Facebook)</div>
+      <div className="whitespace-pre-wrap">{parts.map((p, i) => /^https?:\/\//.test(p)
+        ? <a key={i} href={p} target="_blank" rel="noreferrer" className="font-medium text-blue-600 underline">{p.replace(/^https:\/\//, '')}</a>
+        : <span key={i}>{p}</span>)}</div>
     </div>
   );
 }

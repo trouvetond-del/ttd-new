@@ -6,7 +6,7 @@ const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-const SITE = "www.trouvetondemenageur.fr";
+const SITE = "https://www.trouvetondemenageur.fr";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
@@ -48,6 +48,7 @@ Réponds uniquement avec le texte du post.`;
   if (!r.ok) return json({ error: d?.error?.message ?? `Erreur IA ${r.status}` }, r.status === 429 ? 429 : 502);
   let text: string = (d.choices?.[0]?.message?.content ?? "").trim();
   if (!text) return json({ error: "L'IA n'a pas renvoyé de texte" }, 502);
-  if (!text.includes(SITE)) text += `\n\n👉 ${SITE}`;
+  if (!text.includes("trouvetondemenageur.fr")) text += `\n\n👉 ${SITE}`;
+  text = text.replace(/(?<!https:\/\/)www\.trouvetondemenageur\.fr/g, "https://www.trouvetondemenageur.fr");
   return json({ text });
 });
