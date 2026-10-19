@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Clapperboard, Image as ImageIcon, Video, Facebook, Instagram, Pencil, Mic, Trash2, Upload, BarChart3,
   RefreshCw, Loader, ExternalLink, Eye, MousePointerClick, Heart, MessageCircle, Share2, Clock, CheckCircle2,
-  XCircle, Plus, BookA, X,
+  XCircle, Plus, BookA, X, Sparkles, Archive,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
@@ -27,7 +27,7 @@ const KIND_LABEL: Record<string, string> = {
 const STATUS: Record<string, { label: string; cls: string }> = {
   published: { label: 'Publié', cls: 'bg-emerald-100 text-emerald-700' },
   pending: { label: 'En préparation', cls: 'bg-amber-100 text-amber-700' },
-  draft: { label: 'Brouillon', cls: 'bg-slate-100 text-slate-700' },
+  draft: { label: 'À publier plus tard', cls: 'bg-slate-100 text-slate-700' },
   failed: { label: 'Échec', cls: 'bg-red-100 text-red-700' },
   archived: { label: 'Archivé', cls: 'bg-slate-200 text-slate-500' },
 };
@@ -346,7 +346,47 @@ function ImportPanel({ onDone, queue }: { onDone: () => void; queue: (a: string,
   const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
   const isVideo = file?.type.startsWith('video/');
 
-  const submit = async () => {
+  const [hint, setHint] = useState('');
+  const [writing, setWriting] = useState(false);
+
+  const grabFrames = async (): Promise<string[]> => {
+    if (!file || !preview) return [];
+    const draw = (src: CanvasImageSource, w: number, h: number) => {
+      const scale = Math.min(1, 768 / Math.max(w, h));
+      const c = document.createElement('canvas'); c.width = Math.round(w * scale); c.height = Math.round(h * scale);
+      c.getContext('2d')!.drawImage(src, 0, 0, c.width, c.height);
+      return c.toDataURL('image/jpeg', 0.75);
+    };
+    if (!isVideo) {
+      const img = new Image(); img.src = preview; await img.decode();
+      return [draw(img, img.naturalWidth, img.naturalHeight)];
+    }
+    const v = document.createElement('video'); v.src = preview; v.muted = true; v.preload = 'auto';
+    await new Promise((ok, ko) => { v.onloadeddata = ok; v.onerror = ko; });
+    const out: string[] = [];
+    for (const f of [0.1, 0.35, 0.6, 0.85]) {
+      await new Promise((ok) => { v.onseeked = ok; v.currentTime = (v.duration || 1) * f; });
+      out.push(draw(v, v.videoWidth, v.videoHeight));
+    }
+    return out;
+  };
+
+  const writeWithAI = async () => {
+    if (!file) return showToast('Importez d’abord une photo ou une vidéo.', 'error');
+    setWriting(true);
+    try {
+      const images = await grabFrames();
+      const { data, error } = await supabase.functions.invoke('studio-caption', { body: { images, audience, isVideo, hint } });
+      if (error || !data?.text) {
+        let msg = data?.error || error?.message || 'Erreur inconnue';
+        try { msg = (await (error as any)?.context?.json())?.error ?? msg; } catch { /* ignore */ }
+        showToast(`Texte non créé : ${msg}`, 'error');
+      } else { setBody(data.text); showToast('Texte créé — relisez-le avant de publier.', 'success'); }
+    } catch { showToast('Impossible de lire ce fichier.', 'error'); }
+    setWriting(false);
+  };
+
+  const submit = async (publish: boolean) => {
     if (!file) return showToast('Choisissez une photo ou une vidéo.', 'error');
     if (isVideo && file.type !== 'video/mp4' && file.type !== 'video/quicktime') return showToast('Vidéo au format MP4 ou MOV uniquement.', 'error');
     if (file.size > 100 * 1024 * 1024) return showToast('Fichier trop lourd (100 Mo maximum).', 'error');
@@ -361,8 +401,9 @@ function ImportPanel({ onDone, queue }: { onDone: () => void; queue: (a: string,
       image_urls: isVideo ? [] : [url], video_url: isVideo ? url : null,
     }).select('id').single();
     if (error || !data) { setBusy(false); return showToast(`Erreur : ${error?.message}`, 'error'); }
-    if (platforms.length) await queue('publish', { id: data.id, table: 'marketing_posts' } as Post, platforms);
-    else showToast('Enregistré en brouillon.', 'success');
+    if (publish && platforms.length) await queue('publish', { id: data.id, table: 'marketing_posts' } as Post, platforms);
+    else showToast('Post archivé : publiez-le quand vous voulez depuis « Tous les posts ».', 'success');
+    setFile(null);
     setBusy(false);
     onDone();
   };
@@ -378,6 +419,12 @@ function ImportPanel({ onDone, queue }: { onDone: () => void; queue: (a: string,
         {file && <p className="mt-2 flex items-center gap-1 text-xs text-slate-500">{isVideo ? <Video className="h-3 w-3" /> : <ImageIcon className="h-3 w-3" />}{file.name}</p>}
       </div>
       <div className="flex flex-col gap-4">
+        <div className="rounded-xl border border-violet-200 bg-violet-50 p-3">
+          <input value={hint} onChange={(e) => setHint(e.target.value)} placeholder="Indication pour l’IA (facultatif) : ex. promo rentrée, présentation du site…" className="w-full rounded-lg border border-violet-200 bg-white p-2 text-sm" />
+          <button onClick={writeWithAI} disabled={writing || !file} className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-violet-600 px-3 py-2 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50">
+            {writing ? <Loader className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}{writing ? 'L’IA regarde votre fichier…' : `Créer le texte à partir de ${isVideo ? 'la vidéo' : 'la photo'}`}
+          </button>
+        </div>
         <label className="text-sm font-medium text-slate-700">Texte du post
           <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={8} className="mt-1 w-full rounded-xl border border-slate-200 p-3 text-sm font-normal" />
         </label>
@@ -387,10 +434,15 @@ function ImportPanel({ onDone, queue }: { onDone: () => void; queue: (a: string,
           </select>
         </label>
         <PlatformPick value={platforms} onChange={setPlatforms} label="Publier sur :" />
-        <p className="text-xs text-slate-500">Sans réseau coché, le post reste en brouillon : vous pourrez le partager plus tard depuis « Tous les posts ».</p>
-        <button onClick={submit} disabled={busy} className="mt-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-3 font-semibold text-white disabled:opacity-50">
-          {busy ? <Loader className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}{platforms.length ? 'Importer et publier' : 'Enregistrer en brouillon'}
-        </button>
+        <p className="text-xs text-slate-500">« Archiver » garde le post de côté : publiez-le plus tard depuis « Tous les posts ».</p>
+        <div className="mt-auto grid grid-cols-2 gap-2">
+          <button onClick={() => submit(false)} disabled={busy} className="flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+            <Archive className="h-4 w-4" />Archiver pour plus tard
+          </button>
+          <button onClick={() => submit(true)} disabled={busy || !platforms.length} className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-3 font-semibold text-white disabled:opacity-50">
+            {busy ? <Loader className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}Publier maintenant
+          </button>
+        </div>
       </div>
     </div>
   );
