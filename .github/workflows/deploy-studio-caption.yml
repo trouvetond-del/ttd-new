@@ -1,0 +1,17 @@
+name: Déployer studio-caption
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ['supabase/functions/studio-caption/**']
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy studio-caption --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
