@@ -5,10 +5,7 @@
 // Chaque article part d'un vrai problème lu sur des forums/avis, et propose la solution
 // avec les fonctionnalités RÉELLES du site. Aucun chiffre, avis ou témoignage inventé.
 import { createClient } from "@supabase/supabase-js";
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, writeFileSync, readFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { buildVideo, loadVoiceConfig } from "./media.mjs";
 
 const SITE = "www.trouvetondemenageur.fr";
 const GRAPH = "https://graph.facebook.com/v21.0";
@@ -161,29 +158,17 @@ async function publishReel(videoUrl, caption) {
 }
 
 // ---------- Vidéo (diaporama + voix off) ----------
-async function buildVideo(scenes) {
-  const dir = mkdtempSync(join(tmpdir(), "reel-"));
-  const parts = [];
+// Les images de chaque scène sont gardées : l'admin peut corriger la voix off dans le Studio et remonter la vidéo.
+async function makeVideo(slot, kind, scenes) {
+  const voice = await loadVoiceConfig(sb);
+  const saved = [];
   for (let i = 0; i < scenes.length; i++) {
-    const s = scenes[i];
-    const img = join(dir, `s${i}.png`), mp3 = join(dir, `s${i}.mp3`), mp4 = join(dir, `s${i}.mp4`);
-    writeFileSync(img, await image(s.image_prompt, "1024x1536"));
-    writeFileSync(mp3, await openai("/audio/speech", {
-      model: "gpt-4o-mini-tts", voice: "nova", input: s.voiceover, response_format: "mp3",
-      instructions: "Voix française chaleureuse, rassurante et dynamique, rythme naturel de Reel.",
-    }, true));
-    const dur = parseFloat(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", mp3]).toString()) + 0.4;
-    const frames = Math.ceil(dur * 30);
-    execFileSync("ffmpeg", ["-y", "-loop", "1", "-i", img, "-i", mp3,
-      "-vf", `scale=1215:2160:force_original_aspect_ratio=increase,crop=1215:2160,zoompan=z='min(zoom+0.0006,1.10)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=${frames}:s=1080x1920:fps=30,format=yuv420p`,
-      "-t", dur.toFixed(2), "-c:v", "libx264", "-preset", "veryfast", "-c:a", "aac", "-ar", "44100", "-ac", "2", "-shortest", mp4], { stdio: "ignore" });
-    parts.push(mp4);
+    const img = await image(scenes[i].image_prompt, "1024x1536");
+    const image_url = await upload(`${slot}/${kind}-s${i}.png`, img, "image/png");
+    saved.push({ voiceover: scenes[i].voiceover, image_prompt: scenes[i].image_prompt, image_url, image: img });
   }
-  const list = join(dir, "list.txt");
-  writeFileSync(list, parts.map((p) => `file '${p}'`).join("\n"));
-  const out = join(dir, "reel.mp4");
-  execFileSync("ffmpeg", ["-y", "-f", "concat", "-safe", "0", "-i", list, "-c:v", "libx264", "-preset", "veryfast", "-crf", "22", "-c:a", "aac", "-movflags", "+faststart", out], { stdio: "ignore" });
-  return readFileSync(out);
+  const buf = await buildVideo(saved, { openaiRaw: (p, b) => openai(p, b, true), voice });
+  return { buf, scenes: saved.map(({ image, ...rest }) => rest) };
 }
 
 // ---------- Alerte admin ----------
@@ -224,8 +209,9 @@ async function doVideo(slot, kind, audience) {
   const id = await claim(slot, kind, audience); if (!id) return;
   const s = await writeVideoScript(src);
   let caption = s.caption.includes(SITE) ? s.caption : `${s.caption}\n\n👉 ${SITE}`;
-  const url = await upload(`${slot}/${kind}.mp4`, await buildVideo(s.scenes), "video/mp4");
-  await sb.from("marketing_posts").update({ title: src.title, body: caption, video_script: s.scenes.map((x) => x.voiceover).join("\n"), video_url: url, source_post_id: src.id }).eq("id", id);
+  const v = await makeVideo(slot, kind, s.scenes);
+  const url = await upload(`${slot}/${kind}.mp4`, v.buf, "video/mp4");
+  await sb.from("marketing_posts").update({ title: src.title, body: caption, video_script: s.scenes.map((x) => x.voiceover).join("\n"), video_scenes: v.scenes, video_url: url, source_post_id: src.id }).eq("id", id);
   const p = await publishReel(url, caption);
   await sb.from("marketing_posts").update({ status: "published", fb_post_id: p.fb, ig_media_id: p.ig, published_at: new Date().toISOString(), error: null }).eq("id", id);
   console.log(`Reel publié à partir de : ${src.title}`);
