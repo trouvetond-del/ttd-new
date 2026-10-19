@@ -343,6 +343,14 @@ export default function AdminDashboard() {
 
             <NotificationBell
               userRole="admin"
+              category="ai"
+              onNotificationClick={(n) => {
+                setActiveTab(/Studio|Agent marketing|Modération|Commentaire|Déménagements disponibles/i.test(n.title) ? 'social_studio' : 'security');
+              }}
+            />
+            <NotificationBell
+              userRole="admin"
+              category="regular"
               onNotificationClick={async (notification) => {
                 // For 'new_quote' type from DB trigger, related_id is a quote ID, not quote_request_id
                 // We need to resolve it to a quote_request_id

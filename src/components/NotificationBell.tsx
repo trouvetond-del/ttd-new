@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, X, Check } from 'lucide-react';
+import { Bell, Bot, X, Check } from 'lucide-react';
+
+/** Alertes envoyées par les agents IA (surveillance, anti-fraude, marketing, modération, studio). */
+export function isAgentNotification(n: { type?: string; title?: string }) {
+  if (n.type === 'ai_agent') return true;
+  const t = (n.title || '').trim();
+  return /^(🔴|🟠|🛡️|⚠️)/u.test(t)
+    || /^(Agent|Modération|Commentaire supprimé|Studio)/i.test(t)
+    || /Problème détecté sur trouvetondemenageur|alerte\(s\) fraude/i.test(t);
+}
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -20,9 +29,11 @@ interface NotificationBellProps {
   onNotificationClick?: (notification: Notification) => void;
   /** 'client' | 'mover' | 'admin' - determines redirect routes */
   userRole?: 'client' | 'mover' | 'admin';
+  /** 'ai' = uniquement les alertes des agents IA ; 'regular' = tout sauf les agents IA */
+  category?: 'all' | 'ai' | 'regular';
 }
 
-export function NotificationBell({ onNotificationClick, userRole }: NotificationBellProps) {
+export function NotificationBell({ onNotificationClick, userRole, category = 'all' }: NotificationBellProps) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -36,7 +47,7 @@ export function NotificationBell({ onNotificationClick, userRole }: Notification
     loadNotifications();
 
     const subscription = supabase
-      .channel('notifications')
+      .channel(`notifications-${category}`)
       .on(
         'postgres_changes',
         {
@@ -65,12 +76,15 @@ export function NotificationBell({ onNotificationClick, userRole }: Notification
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
-        .limit(20);
+        .limit(category === 'all' ? 20 : 150);
 
       if (error) throw error;
 
-      setNotifications(data || []);
-      setUnreadCount(data?.filter(n => !n.read).length || 0);
+      const list = (data || []).filter(n =>
+        category === 'all' ? true : category === 'ai' ? isAgentNotification(n) : !isAgentNotification(n)
+      ).slice(0, 30);
+      setNotifications(list);
+      setUnreadCount(list.filter(n => !n.read).length);
     } catch (error) {
       console.error('Error loading notifications:', error);
     } finally {
@@ -267,12 +281,13 @@ export function NotificationBell({ onNotificationClick, userRole }: Notification
     <div className="relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-        aria-label="Notifications"
+        className={`relative p-2 rounded-lg transition-colors ${category === 'ai' ? 'text-violet-600 hover:text-violet-800 hover:bg-violet-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'}`}
+        aria-label={category === 'ai' ? 'Notifications des agents IA' : 'Notifications'}
+        title={category === 'ai' ? 'Agents IA' : 'Notifications'}
       >
-        <Bell className="h-6 w-6" />
+        {category === 'ai' ? <Bot className="h-6 w-6" /> : <Bell className="h-6 w-6" />}
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+          <span className={`absolute top-0 right-0 h-5 w-5 ${category === 'ai' ? 'bg-violet-600' : 'bg-red-500'} text-white text-xs font-bold rounded-full flex items-center justify-center`}>
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -287,7 +302,7 @@ export function NotificationBell({ onNotificationClick, userRole }: Notification
           <div className="absolute right-0 mt-2 w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-20 max-h-[600px] flex flex-col">
             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">
-                Notifications
+                {category === 'ai' ? 'Alertes des agents IA' : 'Notifications'}
               </h3>
               <div className="flex items-center gap-2">
                 {unreadCount > 0 && (
@@ -310,8 +325,8 @@ export function NotificationBell({ onNotificationClick, userRole }: Notification
             <div className="overflow-y-auto flex-1">
               {notifications.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">
-                  <Bell className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                  <p>Aucune notification</p>
+                  {category === 'ai' ? <Bot className="h-12 w-12 mx-auto mb-3 text-gray-300" /> : <Bell className="h-12 w-12 mx-auto mb-3 text-gray-300" />}
+                  <p>{category === 'ai' ? 'Aucune alerte des agents IA' : 'Aucune notification'}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100">
@@ -325,7 +340,7 @@ export function NotificationBell({ onNotificationClick, userRole }: Notification
                     >
                       <div className="flex items-start gap-3">
                         <div className="text-2xl flex-shrink-0">
-                          {getNotificationIcon(notification.type)}
+                          {category === 'ai' || isAgentNotification(notification) ? '🤖' : getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
