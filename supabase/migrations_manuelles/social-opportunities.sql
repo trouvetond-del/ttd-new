@@ -31,3 +31,4 @@ ALTER TABLE public.social_comment_checks ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "admins read comment checks" ON public.social_comment_checks;
 CREATE POLICY "admins read comment checks" ON public.social_comment_checks FOR SELECT TO authenticated
   USING (EXISTS (SELECT 1 FROM public.admins a WHERE a.user_id = auth.uid()));
+\ir social-studio.sql

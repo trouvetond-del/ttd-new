@@ -79,3 +79,6 @@ for (const c of comments) {
   await sb.from("social_comment_checks").upsert({ comment_id: c.id, platform: c.platform, author: c.author, text: c.text.slice(0, 2000), verdict: reason, action, error }, { onConflict: "comment_id" });
 }
 console.log(`${comments.length} commentaire(s) lu(s), ${removed} supprimé(s).`);
+
+// Studio Social Media : actions demandées par l'admin + statistiques
+try { await import("./studio.mjs"); } catch (e) { console.error("Studio :", e.message); }
