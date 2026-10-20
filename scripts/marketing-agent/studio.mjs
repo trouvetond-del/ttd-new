@@ -191,6 +191,7 @@ async function refreshStats(force) {
 }
 
 // ---------- Boucle ----------
+await import("./import-share-pack.mjs").catch((e) => console.error("Import À partager :", e.message));
 await backfill().catch((e) => console.error("Backfill :", e.message));
 const { data: jobs } = await sb.from("social_jobs").select("*").eq("status", "queued").order("created_at").limit(10);
 let forceStats = false;
