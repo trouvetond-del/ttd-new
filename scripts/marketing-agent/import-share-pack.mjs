@@ -1,16 +1,16 @@
 // Importe les vidéos publicitaires du dossier marketing/a-partager dans l'onglet « À partager » du Studio.
 // Idempotent : une vidéo déjà importée (même titre) est ignorée.
 import { createClient } from "@supabase/supabase-js";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 const sb = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
 const dir = join(process.cwd(), "..", "..", "marketing", "a-partager");
-const items = JSON.parse(readFileSync(join(dir, "manifest.json"), "utf8"));
+const items = existsSync(join(dir, "manifest.json")) ? JSON.parse(readFileSync(join(dir, "manifest.json"), "utf8")) : [];
 
 for (const it of items) {
-  const { data: ex } = await sb.from("marketing_posts").select("id").eq("topic", "a_partager").eq("title", it.title).maybeSingle();
-  if (ex) { console.log("Déjà importée :", it.title); continue; }
+  const { data: ex } = await sb.from("marketing_posts").select("id").limit(1).eq("topic", "a_partager").eq("title", it.title);
+  if (ex?.length) { console.log("Déjà importée :", it.title); continue; }
   const path = `studio/a-partager/${it.file}`;
   const up = await sb.storage.from("marketing-media").upload(path, readFileSync(join(dir, it.file)), { contentType: "video/mp4", upsert: true });
   if (up.error) throw new Error(`${it.file} : ${up.error.message}`);
