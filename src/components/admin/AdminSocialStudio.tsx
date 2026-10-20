@@ -17,7 +17,7 @@ type Pub = {
 type Job = { id: string; action: string; target_table: Table | null; target_id: string | null; platforms: string[]; status: string; result: string | null; error: string | null; created_at: string; done_at: string | null };
 type Post = {
   id: string; table: Table; kind: string; audience: string; status: string; title: string | null; body: string;
-  image: string | null; video: string | null; scenes: Scene[] | null; created_at: string; published_at: string | null; error: string | null;
+  image: string | null; video: string | null; scenes: Scene[] | null; created_at: string; published_at: string | null; error: string | null; topic?: string | null;
 };
 
 const KIND_LABEL: Record<string, string> = {
@@ -40,7 +40,7 @@ const sum = (pubs: Pub[], k: keyof Pub) => pubs.reduce((a, p) => a + (typeof p[k
 const fmtDate = (d: string | null) => (d ? new Date(d).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—');
 
 export default function AdminSocialStudio() {
-  const [tab, setTab] = useState<'posts' | 'import' | 'stats' | 'voice' | 'queue'>('posts');
+  const [tab, setTab] = useState<'posts' | 'share' | 'import' | 'stats' | 'voice' | 'queue'>('posts');
   const [posts, setPosts] = useState<Post[]>([]);
   const [pubs, setPubs] = useState<Pub[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -60,7 +60,7 @@ export default function AdminSocialStudio() {
     const list: Post[] = [
       ...((m.data ?? []) as any[]).map((r) => ({
         id: r.id, table: 'marketing_posts' as Table, kind: r.kind, audience: r.audience, status: r.status, title: r.title,
-        body: r.body ?? '', image: r.image_urls?.[0] ?? null, video: r.video_url, created_at: r.created_at, published_at: r.published_at, error: r.error,
+        body: r.body ?? '', image: r.image_urls?.[0] ?? null, video: r.video_url, topic: r.topic, created_at: r.created_at, published_at: r.published_at, error: r.error,
         scenes: r.video_scenes ?? (r.video_script ? String(r.video_script).split('\n').filter(Boolean).map((v: string) => ({ voiceover: v })) : null),
       })),
       ...((o.data ?? []) as any[]).map((r) => ({
@@ -126,7 +126,7 @@ export default function AdminSocialStudio() {
 
       <div className="flex flex-wrap gap-2">
         {([
-          ['posts', 'Tous les posts', ImageIcon], ['import', 'Importer', Upload], ['stats', 'Statistiques', BarChart3],
+          ['posts', 'Tous les posts', ImageIcon], ['share', 'À partager', Share2], ['import', 'Importer', Upload], ['stats', 'Statistiques', BarChart3],
           ['voice', 'Voix off & prononciation', Mic], ['queue', `Actions en cours${queued ? ` (${queued})` : ''}`, Clock],
         ] as const).map(([id, label, I]) => (
           <button key={id} onClick={() => setTab(id)}
@@ -211,6 +211,8 @@ export default function AdminSocialStudio() {
             })}
           </div>
         </>
+      ) : tab === 'share' ? (
+        <SharePanel posts={posts.filter((p) => p.topic === 'a_partager')} pubs={pubs} jobs={jobs} queue={queue} />
       ) : tab === 'import' ? (
         <ImportPanel onDone={() => { setTab('posts'); load(); }} queue={queue} />
       ) : tab === 'stats' ? (
@@ -565,6 +567,50 @@ function LinkPreview({ text }: { text: string }) {
       <div className="whitespace-pre-wrap">{parts.map((p, i) => /^https?:\/\//.test(p)
         ? <a key={i} href={p} target="_blank" rel="noreferrer" className="font-medium text-blue-600 underline">{p.replace(/^https:\/\//, '')}</a>
         : <span key={i}>{p}</span>)}</div>
+    </div>
+  );
+}
+
+const COOLDOWN_MS = 48 * 3600 * 1000;
+function lastShareAt(p: Post, pubs: Pub[], jobs: Job[]): number {
+  const t = [
+    ...pubs.filter((x) => x.target_id === p.id).map((x) => Date.parse(x.published_at)),
+    ...jobs.filter((j) => j.target_id === p.id && j.action === 'publish' && j.status !== 'failed').map((j) => Date.parse(j.created_at)),
+  ];
+  return t.length ? Math.max(...t) : 0;
+}
+function SharePanel({ posts, pubs, jobs, queue }: { posts: Post[]; pubs: Pub[]; jobs: Job[]; queue: (a: string, p: Post | null, pl?: string[]) => Promise<boolean> }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(id); }, []);
+  if (!posts.length) return <p className="rounded-2xl bg-white p-8 text-center text-slate-500 shadow-sm">Aucune vidéo à partager pour l'instant.</p>;
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-slate-600">Vidéos publicitaires prêtes. Après une publication, la vidéo devient grise pendant 48 h, puis vous pouvez la republier.</p>
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {posts.map((p) => {
+          const last = lastShareAt(p, pubs, jobs);
+          const wait = last ? last + COOLDOWN_MS - now : 0;
+          const locked = wait > 0;
+          const h = Math.floor(wait / 3600000), m = Math.ceil((wait % 3600000) / 60000);
+          return (
+            <div key={p.id} className={`flex flex-col overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-100 transition ${locked ? 'opacity-50 grayscale' : ''}`}>
+              <div className="relative aspect-[9/16] max-h-[420px] bg-black">
+                {p.video && <video src={p.video} controls className="h-full w-full bg-black object-contain" />}
+                <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-slate-800">{p.audience === 'mover' ? 'Déménageurs' : 'Clients'}</span>
+              </div>
+              <div className="flex flex-1 flex-col gap-3 p-4">
+                {p.title && <h3 className="font-semibold text-slate-900">{p.title}</h3>}
+                <p className="line-clamp-4 whitespace-pre-line text-sm text-slate-600">{p.body}</p>
+                {last > 0 && <p className="text-xs text-slate-500">Dernier partage : {fmtDate(new Date(last).toISOString())}</p>}
+                <button disabled={locked} onClick={() => queue('publish', p, ['facebook', 'instagram'])}
+                  className="mt-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow disabled:cursor-not-allowed disabled:from-slate-400 disabled:to-slate-400">
+                  <Share2 className="h-4 w-4" />{locked ? `Republiable dans ${h} h ${m} min` : 'Publier sur Facebook et Instagram'}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
