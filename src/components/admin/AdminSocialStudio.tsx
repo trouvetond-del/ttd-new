@@ -152,7 +152,7 @@ export default function AdminSocialStudio() {
               return (
                 <div key={`${p.table}-${p.id}`} className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-100">
                   <div className="relative aspect-square bg-slate-100">
-                    {p.video ? <video src={p.video} controls className="h-full w-full object-cover" />
+                    {p.video ? <video src={p.video} controls className="h-full w-full bg-black object-contain" />
                       : p.image ? <img src={p.image} alt="" className="h-full w-full object-cover" loading="lazy" />
                       : <div className="flex h-full items-center justify-center text-slate-400">Pas encore de média</div>}
                     <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2 py-0.5 text-xs font-semibold text-slate-800">{KIND_LABEL[p.kind] ?? p.kind}</span>
@@ -413,7 +413,7 @@ function ImportPanel({ onDone, queue }: { onDone: () => void; queue: (a: string,
     <div className="grid gap-6 rounded-2xl bg-white p-6 shadow-md md:grid-cols-2">
       <div>
         <button onClick={() => input.current?.click()} className="flex aspect-square w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 text-slate-500 hover:border-blue-400">
-          {preview ? (isVideo ? <video src={preview} controls className="h-full w-full object-cover" /> : <img src={preview} alt="" className="h-full w-full object-cover" />)
+          {preview ? (isVideo ? <video src={preview} controls className="h-full w-full bg-black object-contain" /> : <img src={preview} alt="" className="h-full w-full object-cover" />)
             : <><Upload className="h-10 w-10" /><span className="font-medium">Importer une photo ou une vidéo</span><span className="text-xs">JPG, PNG, MP4 · vidéo verticale conseillée pour les Reels</span></>}
         </button>
         <input ref={input} type="file" accept="image/jpeg,image/png,video/mp4,video/quicktime" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
