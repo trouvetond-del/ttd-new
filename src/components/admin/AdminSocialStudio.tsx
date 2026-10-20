@@ -390,12 +390,12 @@ function ImportPanel({ onDone, queue }: { onDone: () => void; queue: (a: string,
   const submit = async (publish: boolean) => {
     if (!file) return showToast('Choisissez une photo ou une vidéo.', 'error');
     if (isVideo && file.type !== 'video/mp4' && file.type !== 'video/quicktime') return showToast('Vidéo au format MP4 ou MOV uniquement.', 'error');
-    if (file.size > 100 * 1024 * 1024) return showToast('Fichier trop lourd (100 Mo maximum).', 'error');
+    if (file.size > 50 * 1024 * 1024) return showToast(`Fichier trop lourd (${Math.round(file.size/1048576)} Mo). Maximum 50 Mo : compressez la vidéo (ex. HandBrake, réglage « Fast 1080p30 ») puis réimportez-la.`, 'error');
     setBusy(true);
     const ext = file.name.split('.').pop()?.toLowerCase() || (isVideo ? 'mp4' : 'jpg');
     const path = `studio/uploads/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const up = await supabase.storage.from('marketing-media').upload(path, file, { contentType: file.type });
-    if (up.error) { setBusy(false); return showToast(`Envoi impossible : ${up.error.message}`, 'error'); }
+    if (up.error) { setBusy(false); return showToast(/exceeded|size/i.test(up.error.message) ? 'Fichier trop lourd : 50 Mo maximum. Compressez la vidéo puis réimportez-la.' : `Envoi impossible : ${up.error.message}`, 'error'); }
     const url = supabase.storage.from('marketing-media').getPublicUrl(path).data.publicUrl;
     const { data, error } = await supabase.from('marketing_posts').insert({
       kind: isVideo ? 'manual_video' : 'manual_image', audience, status: 'draft', body,
