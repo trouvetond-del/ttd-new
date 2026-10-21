@@ -11,6 +11,15 @@ interface CityPageData {
   zones_desservies: string[];
 }
 
+function cityFaq(n: string): [string, string][] {
+  return [
+    [`Combien coûte un déménagement à ${n} ?`, `Le prix dépend du volume à transporter, des étages, de l'accès (ascenseur, stationnement) et de la distance. En décrivant précisément votre logement, vous recevez des devis comparables de déménageurs vérifiés, gratuits et sans engagement.`],
+    [`Comment trouver un déménageur pas cher à ${n} ?`, `Comparez plusieurs devis, choisissez si possible une date en semaine ou hors fin de mois, et indiquez si vos dates sont flexibles : certains déménageurs proposent des tarifs réduits sur leurs trajets retour.`],
+    [`Les déménageurs à ${n} sont-ils vérifiés ?`, `Oui. Chaque déménageur inscrit sur TrouveTonDéménageur est contrôlé : KBIS, assurance RC Pro et attestation URSSAF.`],
+    [`Que se passe-t-il en cas de casse pendant mon déménagement ?`, `Des photos sont prises avant et après le déménagement. En cas de litige, elles servent de preuve pour un arbitrage neutre.`],
+  ];
+}
+
 interface MoverCounts {
   local: number;
   regional: number;
@@ -23,6 +32,7 @@ export default function CityPage() {
   const [counts, setCounts] = useState<MoverCounts | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [otherCities, setOtherCities] = useState<{ slug: string; nom_ville: string }[]>([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -45,6 +55,9 @@ export default function CityPage() {
       return;
     }
     setCity(data);
+    document.title = `Déménagement à ${data.nom_ville} — Devis gratuit de déménageurs vérifiés | TrouveTonDéménageur`;
+    supabase.from('city_pages').select('slug, nom_ville').eq('statut', 'published').order('nom_ville')
+      .then(({ data: list }) => setOtherCities((list || []).filter((c) => c.slug !== citySlug)));
 
     // Comptage dynamique, jamais un chiffre fixe : nombre de déménageurs
     // vérifiés+actifs réellement basés dans la ville (comptage "local"),
@@ -178,6 +191,39 @@ export default function CityPage() {
               ))}
             </div>
           </div>
+        )}
+        <section className="border-t border-gray-100 pt-10 mt-10">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Comment trouver votre déménageur à {city.nom_ville}</h2>
+          <ol className="list-decimal pl-6 space-y-2 text-gray-700">
+            <li>Créez votre compte et décrivez votre déménagement : adresses, étages, volume.</li>
+            <li>Recevez des devis de déménageurs vérifiés de votre région.</li>
+            <li>Comparez, réservez : acompte sécurisé et contrat signé en ligne.</li>
+          </ol>
+        </section>
+
+        <section className="border-t border-gray-100 pt-10 mt-10">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Questions fréquentes sur le déménagement à {city.nom_ville}</h2>
+          <div className="space-y-5">
+            {cityFaq(city.nom_ville).map(([q, a]) => (
+              <div key={q}>
+                <h3 className="font-semibold text-gray-900 mb-1">{q}</h3>
+                <p className="text-gray-600 leading-relaxed">{a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {otherCities.length > 0 && (
+          <section className="border-t border-gray-100 pt-10 mt-10">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Déménageurs dans d'autres villes</h2>
+            <div className="flex flex-wrap gap-2">
+              {otherCities.map((c) => (
+                <a key={c.slug} href={`/demenagement/${c.slug}`} className="bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-700 hover:border-blue-400 hover:text-blue-700">
+                  Déménageur {c.nom_ville}
+                </a>
+              ))}
+            </div>
+          </section>
         )}
       </main>
     </div>
