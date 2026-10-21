@@ -36,8 +36,17 @@ export async function loadVoiceConfig(sb) {
 }
 
 // scenes : [{ voiceover, image: Buffer }]  →  Buffer MP4 1080x1920
+// Règle : toute voix off se termine par « Rendez-vous sur trouvetondemenageur point FR ».
+export const CTA_VOICE = "Rendez-vous sur trouvetondemenageur point FR.";
+export function withCta(scenes) {
+  if (!scenes?.length || scenes.some((s) => /point\s*FR/i.test(s.voiceover ?? ""))) return scenes;
+  const last = scenes[scenes.length - 1];
+  return [...scenes.slice(0, -1), { ...last, voiceover: `${(last.voiceover ?? "").trim()} ${CTA_VOICE}`.trim() }];
+}
+
 export async function buildVideo(scenes, { openaiRaw, voice }) {
   ensureFfmpeg();
+  scenes = withCta(scenes);
   const dir = mkdtempSync(join(tmpdir(), "reel-"));
   const parts = [];
   for (let i = 0; i < scenes.length; i++) {

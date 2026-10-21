@@ -80,7 +80,7 @@ export default function AdminSocialStudio() {
       action, target_table: post?.table ?? null, target_id: post?.id ?? null, platforms, payload,
     });
     if (error) { showToast(`Impossible : ${error.message}`, 'error'); return false; }
-    showToast("C'est noté : l'agent s'en occupe dans les 30 minutes maximum.", 'success');
+    showToast("C'est noté : l'agent s'en occupe dans 1 à 2 minutes.", 'success');
     load();
     return true;
   };
@@ -242,7 +242,7 @@ export default function AdminSocialStudio() {
               {!jobs.length && <tr><td colSpan={5} className="p-8 text-center text-slate-500">Aucune action demandée.</td></tr>}
             </tbody>
           </table>
-          <p className="border-t border-slate-100 p-3 text-xs text-slate-500">L'agent passe toutes les 30 minutes et exécute les actions dans l'ordre.</p>
+          <p className="border-t border-slate-100 p-3 text-xs text-slate-500">L'agent surveille en continu : chaque action démarre en moins d'une minute.</p>
         </div>
       )}
 
