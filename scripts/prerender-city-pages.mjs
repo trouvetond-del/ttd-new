@@ -51,7 +51,16 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
-function buildHtml(city, counts) {
+function cityFaq(n) {
+  return [
+    [`Combien coûte un déménagement à ${n} ?`, `Le prix dépend du volume à transporter, des étages, de l'accès (ascenseur, stationnement) et de la distance. En décrivant précisément votre logement, vous recevez des devis comparables de déménageurs vérifiés, gratuits et sans engagement.`],
+    [`Comment trouver un déménageur pas cher à ${n} ?`, `Comparez plusieurs devis, choisissez si possible une date en semaine ou hors fin de mois, et indiquez si vos dates sont flexibles : certains déménageurs proposent des tarifs réduits sur leurs trajets retour.`],
+    [`Les déménageurs à ${n} sont-ils vérifiés ?`, `Oui. Chaque déménageur inscrit sur TrouveTonDéménageur est contrôlé : KBIS, assurance RC Pro et attestation URSSAF.`],
+    [`Que se passe-t-il en cas de casse pendant mon déménagement ?`, `Des photos sont prises avant et après le déménagement. En cas de litige, elles servent de preuve pour un arbitrage neutre.`],
+  ];
+}
+
+function buildHtml(city, counts, allCities = []) {
   const title = `Déménagement à ${city.nom_ville} — Devis gratuit de déménageurs vérifiés | TrouveTonDéménageur`;
   const description = `Trouvez un déménageur vérifié à ${city.nom_ville}. ${city.intro_locale.split('.')[0]}. Devis gratuit et sans engagement en 2 minutes.`;
   const url = `${SITE_URL}/demenagement/${city.slug}`;
@@ -78,6 +87,16 @@ function buildHtml(city, counts) {
     },
     description: city.intro_locale,
   };
+  const faq = cityFaq(city.nom_ville);
+  const faqLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+  };
+  const faqHtml = `<div><h2>Questions fréquentes sur le déménagement à ${escapeHtml(city.nom_ville)}</h2>${faq.map(([q, a]) => `<h3>${escapeHtml(q)}</h3><p>${escapeHtml(a)}</p>`).join('')}</div>`;
+  const stepsHtml = `<div><h2>Comment trouver votre déménageur à ${escapeHtml(city.nom_ville)}</h2><ol><li>Créez votre compte et décrivez votre déménagement : adresses, étages, volume.</li><li>Recevez des devis de déménageurs vérifiés de votre région.</li><li>Comparez, réservez : acompte sécurisé et contrat signé en ligne.</li></ol></div>`;
+  const others = allCities.filter((c) => c.slug !== city.slug);
+  const linksHtml = others.length ? `<div><h2>Déménageurs dans d'autres villes</h2><ul>${others.map((c) => `<li><a href="/demenagement/${c.slug}">Déménageur ${escapeHtml(c.nom_ville)}</a></li>`).join('')}</ul></div>` : '';
 
   const zonesHtml = (city.zones_desservies || []).length > 0
     ? `<div><h2>Zones desservies près de ${escapeHtml(city.nom_ville)}</h2><ul>${city.zones_desservies.map((z) => `<li>${escapeHtml(z)}</li>`).join('')}</ul></div>`
@@ -93,7 +112,10 @@ function buildHtml(city, counts) {
         <p style="font-size:1.125rem;color:#4B5563;line-height:1.7;max-width:48rem;margin-bottom:2rem;">${escapeHtml(city.intro_locale)}</p>
         <p style="font-weight:600;color:#1F2937;margin-bottom:2rem;">${availability}</p>
         <a href="/client/quote" style="display:inline-block;background:#2563EB;color:white;padding:1rem 2rem;border-radius:1rem;font-weight:700;text-decoration:none;">Obtenir mon devis pour ${escapeHtml(city.nom_ville)}</a>
+        ${stepsHtml}
         ${zonesHtml}
+        ${faqHtml}
+        ${linksHtml}
       </div>
     </div>`;
 
@@ -111,7 +133,7 @@ function buildHtml(city, counts) {
   html = html.replace(/<meta property="og:description" content="[^"]*"\s*\/>/, `<meta property="og:description" content="${escapeHtml(description)}" />`);
 
   // JSON-LD ajouté juste avant </head>
-  html = html.replace('</head>', `  <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n  </head>`);
+  html = html.replace('</head>', `  <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>\n  <script type="application/ld+json">${JSON.stringify(faqLd)}</script>\n  </head>`);
 
   // Contenu statique : remplace le <div id="root"></div> vide
   html = html.replace('<div id="root"></div>', staticContent);
@@ -151,7 +173,7 @@ async function main() {
         (Array.isArray(m.activity_departments) && city.departement && m.activity_departments.includes(city.departement))
     ).length;
 
-    const html = buildHtml(city, { local, regional });
+    const html = buildHtml(city, { local, regional }, cities);
     const outDir = path.join(DIST_DIR, 'demenagement', city.slug);
     fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(path.join(outDir, 'index.html'), html, 'utf-8');
