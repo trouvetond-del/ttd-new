@@ -31,6 +31,7 @@ import AdminDamageReports from '../components/AdminDamageReports';
 import AdminHelpSupport from '../components/admin/AdminHelpSupport';
 import AdminSecurityAgents from '../components/admin/AdminSecurityAgents';
 import AdminSocialStudio from '../components/admin/AdminSocialStudio';
+import AdminSeoReport from '../components/admin/AdminSeoReport';
 import AdminExports from '../components/admin/AdminExports';
 import AdminActivityLogs from '../components/admin/AdminActivityLogs';
 import AdminMissions from '../components/admin/AdminMissions';
@@ -65,7 +66,8 @@ type ActiveTab =
   | 'recent_quotes'
   | 'promo_codes'
   | 'security'
-  | 'social_studio';
+  | 'social_studio'
+  | 'seo_report';
 
 interface NavItem {
   id: ActiveTab;
@@ -77,7 +79,7 @@ interface NavItem {
 export default function AdminDashboard() {
   const { tab: urlTab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
-  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio'];
+  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report'];
   const initialTab = (urlTab && validTabs.includes(urlTab as ActiveTab)) ? urlTab as ActiveTab : 'overview';
   const [activeTab, setActiveTabState] = useState<ActiveTab>(initialTab);
   const setActiveTab = (tab: ActiveTab) => { setActiveTabState(tab); navigate(`/admin/dashboard/${tab}`, { replace: true }); };
@@ -151,6 +153,7 @@ export default function AdminDashboard() {
     { id: 'analytics', label: 'Analytiques', icon: BarChart3, color: 'text-orange-600' },
     { id: 'disputes', label: 'Litiges', icon: AlertTriangle, color: 'text-yellow-600' },
     { id: 'social_studio', label: 'Studio Social Media', icon: Clapperboard, color: 'text-pink-600' },
+    { id: 'seo_report', label: 'Rapport SEO', icon: Search, color: 'text-blue-600' },
     { id: 'security', label: 'Sécurité & Agents IA', icon: Shield, color: 'text-red-600' },
     { id: 'settings', label: 'Paramètres', icon: Settings, color: 'text-gray-600' },
   ];
@@ -278,6 +281,8 @@ export default function AdminDashboard() {
         />;
       case 'social_studio':
         return <AdminSocialStudio />;
+      case 'seo_report':
+        return <AdminSeoReport />;
       case 'security':
         return <AdminSecurityAgents />;
       case 'settings':
