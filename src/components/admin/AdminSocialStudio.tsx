@@ -2,10 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Clapperboard, Image as ImageIcon, Video, Facebook, Instagram, Pencil, Mic, Trash2, Upload, BarChart3,
   RefreshCw, Loader, ExternalLink, Eye, MousePointerClick, Heart, MessageCircle, Share2, Clock, CheckCircle2,
-  XCircle, Plus, BookA, X, Sparkles, Archive,
+  XCircle, Plus, BookA, X, Sparkles, Archive, Bot,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
+import StudioAgentChat from './StudioAgentChat';
 
 type Table = 'marketing_posts' | 'marketing_opportunity_posts';
 type Scene = { voiceover: string; image_url?: string | null; image_prompt?: string | null };
@@ -40,7 +41,7 @@ const sum = (pubs: Pub[], k: keyof Pub) => pubs.reduce((a, p) => a + (typeof p[k
 const fmtDate = (d: string | null) => (d ? new Date(d).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—');
 
 export default function AdminSocialStudio() {
-  const [tab, setTab] = useState<'posts' | 'share' | 'import' | 'stats' | 'voice' | 'queue'>('posts');
+  const [tab, setTab] = useState<'posts' | 'agent' | 'share' | 'import' | 'stats' | 'voice' | 'queue'>('posts');
   const [posts, setPosts] = useState<Post[]>([]);
   const [pubs, setPubs] = useState<Pub[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -126,7 +127,7 @@ export default function AdminSocialStudio() {
 
       <div className="flex flex-wrap gap-2">
         {([
-          ['posts', 'Tous les posts', ImageIcon], ['share', 'À partager', Share2], ['import', 'Importer', Upload], ['stats', 'Statistiques', BarChart3],
+          ['posts', 'Tous les posts', ImageIcon], ['agent', "Parler à l'agent", Bot], ['share', 'À partager', Share2], ['import', 'Importer', Upload], ['stats', 'Statistiques', BarChart3],
           ['voice', 'Voix off & prononciation', Mic], ['queue', `Actions en cours${queued ? ` (${queued})` : ''}`, Clock],
         ] as const).map(([id, label, I]) => (
           <button key={id} onClick={() => setTab(id)}
@@ -136,7 +137,7 @@ export default function AdminSocialStudio() {
         ))}
       </div>
 
-      {loading && !posts.length ? (
+      {loading && !posts.length && tab !== 'agent' ? (
         <div className="flex justify-center py-16"><Loader className="h-8 w-8 animate-spin text-blue-600" /></div>
       ) : tab === 'posts' ? (
         <>
@@ -211,6 +212,8 @@ export default function AdminSocialStudio() {
             })}
           </div>
         </>
+      ) : tab === 'agent' ? (
+        <StudioAgentChat onChanged={load} />
       ) : tab === 'share' ? (
         <SharePanel posts={posts.filter((p) => p.topic === 'a_partager')} pubs={pubs} jobs={jobs} queue={queue} />
       ) : tab === 'import' ? (
