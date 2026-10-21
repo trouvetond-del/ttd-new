@@ -4,6 +4,8 @@ import { Logo } from '../components/Logo';
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const CITY_LINKS: [string, string][] = [['paris','Paris'],['lyon','Lyon'],['saint-etienne','Saint-Étienne'],['lille','Lille'],['marseille','Marseille'],['nantes','Nantes'],['bordeaux','Bordeaux'],['toulouse','Toulouse'],['nice','Nice'],['montpellier','Montpellier'],['strasbourg','Strasbourg'],['rennes','Rennes'],['reims','Reims'],['le-havre','Le Havre'],['toulon','Toulon'],['grenoble','Grenoble'],['dijon','Dijon'],['angers','Angers'],['nimes','Nîmes'],['villeurbanne','Villeurbanne'],['clermont-ferrand','Clermont-Ferrand'],['aix-en-provence','Aix-en-Provence'],['le-mans','Le Mans'],['brest','Brest'],['tours','Tours'],['amiens','Amiens'],['limoges','Limoges'],['annecy','Annecy'],['perpignan','Perpignan'],['boulogne-billancourt','Boulogne-Billancourt'],['metz','Metz'],['besancon','Besançon'],['orleans','Orléans'],['rouen','Rouen'],['mulhouse','Mulhouse'],['caen','Caen'],['nancy','Nancy'],['argenteuil','Argenteuil'],['montreuil','Montreuil'],['saint-denis','Saint-Denis'],['avignon','Avignon'],['poitiers','Poitiers'],['la-rochelle','La Rochelle'],['pau','Pau'],['bayonne','Bayonne'],['versailles','Versailles'],['nanterre','Nanterre'],['cannes','Cannes'],['valence','Valence'],['troyes','Troyes']];
+
 export function LandingPage() {
   const [showSupportChat, setShowSupportChat] = useState(false);
   const navigate = useNavigate();
@@ -575,6 +577,16 @@ export function LandingPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="pt-12 pb-8 border-b border-gray-800">
+            <h3 className="text-white font-bold text-lg mb-4">Trouver un déménageur par ville</h3>
+            <ul className="flex flex-wrap gap-x-4 gap-y-2">
+              {CITY_LINKS.map(([slug, nom]) => (
+                <li key={slug}>
+                  <a href={`/demenagement/${slug}`} className="text-gray-400 hover:text-white transition-colors text-sm">Déménageur {nom}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="py-16 border-b border-gray-800">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
               <div className="lg:col-span-2">
