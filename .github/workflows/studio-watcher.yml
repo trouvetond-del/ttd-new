@@ -1,0 +1,38 @@
+name: Studio en continu (actions immédiates)
+
+on:
+  schedule:
+    - cron: "0 */5 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/studio-watcher.yml", "scripts/marketing-agent/watch.mjs"]
+
+concurrency:
+  group: studio-watcher
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      META_PAGE_TOKEN: ${{ secrets.META_PAGE_TOKEN }}
+      FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Installer
+        working-directory: scripts/marketing-agent
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y ffmpeg fonts-dejavu-core
+          npm install --no-audit --no-fund @supabase/supabase-js@2 sharp@0.33
+      - name: Surveiller et exécuter les actions du Studio
+        working-directory: scripts/marketing-agent
+        run: node watch.mjs
