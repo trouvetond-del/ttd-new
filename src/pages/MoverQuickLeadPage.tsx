@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Phone, Mail, Building, User, CheckCircle, ArrowRight, Shield, Star, Hash } from 'lucide-react';
 import { Logo } from '../components/Logo';
+import { trackAdEvent } from '../lib/ads';
 import { validateSiret } from '../utils/validation';
 
 export function MoverQuickLeadPage() {
@@ -92,8 +93,8 @@ export function MoverQuickLeadPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.details ? `${json.error} (${json.details})` : (json.error || 'Une erreur est survenue.'));
 
-      if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Lead');
-      if (typeof (window as any).fbq === 'function') (window as any).fbq('trackCustom', 'MoverLead', { source });
+      trackAdEvent('Lead');
+      trackAdEvent('MoverLead', { source });
       if (typeof (window as any).gtag === 'function') (window as any).gtag('event', 'generate_lead_mover', { source });
 
       setSubmitted(true);

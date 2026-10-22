@@ -33,8 +33,9 @@ export default function CookiesPage() {
               <p className="text-sm"><strong>Note :</strong> Sans ces cookies, aucune transaction sécurisée ne peut être effectuée sur la plateforme.</p>
             </div>
             <div className="bg-purple-50 rounded-xl p-4">
-              <p className="font-semibold text-purple-900 mb-1">Cookies de Mesure d&apos;Audience</p>
-              <p className="text-sm"><strong>Finalité :</strong> Analyser le parcours utilisateur pour améliorer l&apos;ergonomie du site (pages les plus vues, temps de réponse).</p>
+              <p className="font-semibold text-purple-900 mb-1">Cookies de Mesure d&apos;Audience et de Publicité</p>
+              <p className="text-sm mb-1"><strong>Finalité :</strong> Analyser le parcours utilisateur pour améliorer l&apos;ergonomie du site, et mesurer l&apos;efficacité de nos publicités (par exemple savoir si une annonce a conduit à une demande de devis).</p>
+              <p className="text-sm"><strong>Destinataire :</strong> Meta Platforms Ireland (Facebook/Instagram), via son pixel et son cookie _fbp. Déposés uniquement après votre consentement.</p>
             </div>
           </div>
         </>
@@ -59,7 +60,13 @@ export default function CookiesPage() {
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
             <strong>Attention :</strong> Le refus des cookies techniques ou des cookies de paiement Stripe peut rendre l&apos;utilisation de la plateforme impossible ou empêcher la validation de votre réservation de déménagement.
           </div>
-          <p className="mt-3 text-sm text-gray-600">Les cookies de mesure d&apos;audience et autres cookies non essentiels ne sont déposés qu&apos;après obtention du consentement explicite de l&apos;utilisateur.</p>
+          <p className="mt-3 text-sm text-gray-600">Les cookies de mesure d&apos;audience et de publicité et autres cookies non essentiels ne sont déposés qu&apos;après obtention du consentement explicite de l&apos;utilisateur.</p>
+          <button
+            onClick={() => { try { localStorage.removeItem('ttd_ad_consent'); } catch (e) {} window.location.reload(); }}
+            className="mt-3 rounded-xl border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50"
+          >
+            Refaire mon choix de consentement
+          </button>
         </>
       ),
     },

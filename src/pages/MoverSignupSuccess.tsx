@@ -1,6 +1,7 @@
 import { CheckCircle, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
+import { trackAdEvent } from '../lib/ads';
 
 export function MoverSignupSuccess() {
   const navigate = useNavigate();
@@ -10,10 +11,8 @@ export function MoverSignupSuccess() {
     if (trackedRef.current) return;
     trackedRef.current = true;
 
-    if (typeof (window as any).fbq === 'function') {
-      (window as any).fbq('track', 'Lead');
-      (window as any).fbq('trackCustom', 'MoverSignupComplete', { source: 'full_signup' });
-    }
+    trackAdEvent('Lead');
+    trackAdEvent('MoverSignupComplete', { source: 'full_signup' });
     if (typeof (window as any).gtag === 'function') {
       (window as any).gtag('event', 'conversion', {
         send_to: 'AW-18014813834/GE-YCM2J_98cEIr9kI5D',

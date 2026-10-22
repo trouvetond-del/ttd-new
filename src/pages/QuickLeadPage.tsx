@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Phone, Mail, Calendar, CheckCircle, Shield, Star, ArrowRight, User } from 'lucide-react';
 import { Logo } from '../components/Logo';
+import { trackAdEvent } from '../lib/ads';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 
 type AddressValue = {
@@ -177,7 +178,7 @@ export function QuickLeadPage() {
       if (!res.ok) throw new Error(json.error || 'Une erreur est survenue.');
 
       // Événements de conversion
-      if (typeof (window as any).fbq === 'function') (window as any).fbq('track', 'Lead');
+      trackAdEvent('Lead');
       if (typeof (window as any).gtag === 'function') (window as any).gtag('event', 'generate_lead', { source });
 
       // L'email de vérification (code + bouton "Créer mon mot de passe")

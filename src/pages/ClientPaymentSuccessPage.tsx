@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { ClientLayout } from '../components/ClientLayout';
 import { supabase } from '../lib/supabase';
+import { trackAdEvent } from '../lib/ads';
 
 interface ClientPaymentSuccessPageProps {
   onContinue?: () => void;
@@ -37,11 +38,9 @@ export default function ClientPaymentSuccessPage({onContinue }: ClientPaymentSuc
         }
       }
 
-      if (typeof (window as any).fbq === 'function') {
-        const eventData: Record<string, unknown> = { currency: 'EUR' };
-        if (depositValue !== undefined) eventData.value = depositValue;
-        (window as any).fbq('track', 'Purchase', eventData);
-      }
+      const eventData: Record<string, unknown> = { currency: 'EUR' };
+      if (depositValue !== undefined) eventData.value = depositValue;
+      trackAdEvent('Purchase', eventData);
       if (typeof (window as any).gtag === 'function') {
         (window as any).gtag('event', 'conversion', {
           send_to: 'AW-18014813834/srcoCJjJkOAcEIr9kI5D',

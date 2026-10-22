@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { ArrowLeft, ArrowRight, MapPin, Home, Package, CheckCircle, Calculator, User, Shield, AlertCircle, Clock, Navigation } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { trackAdEvent } from '../lib/ads';
 import { useAuth } from '../contexts/AuthContext';
 import { VolumeCalculator, type FurnitureInventory } from '../components/VolumeCalculator';
 import AddressAutocomplete from '../components/AddressAutocomplete';
@@ -733,6 +734,9 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
           }]);
 
         if (submitError) throw submitError;
+
+        // Conversion : demande de devis complète envoyée (compte + formulaire complet)
+        trackAdEvent('Lead', { content_name: 'full_quote_request' });
 
         try {
           await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-notification`, {

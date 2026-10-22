@@ -205,26 +205,35 @@
       gtag('config', 'G-RNNMS1MTBF');
     </script>
 
-    <!-- Meta Pixel Code -->
-    <!-- ⚠️ Remplace VOTRE_PIXEL_ID_ICI par le vrai ID récupéré dans Meta Events Manager -->
+    <!-- Meta Pixel Code (chargé uniquement après consentement publicitaire) -->
     <script>
-      !function(f,b,e,v,n,t,s)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '4023483651287945');
-      fbq('track', 'PageView');
+      window.ttdPixelId = '1803009294228849';
+      window.ttdHasAdConsent = function () {
+        try {
+          var raw = localStorage.getItem('ttd_ad_consent');
+          if (!raw) return false;
+          var c = JSON.parse(raw);
+          if (c.choice !== 'granted') return false;
+          if (Date.now() - Number(c.ts) > 1000 * 60 * 60 * 24 * 180) return false;
+          return true;
+        } catch (e) { return false; }
+      };
+      if (window.ttdHasAdConsent()) {
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', window.ttdPixelId, {}, { agent: 'lovable' });
+        fbq('track', 'PageView');
+      }
     </script>
     <!-- End Meta Pixel Code -->
   </head>
   <body>
-    <noscript>
-      <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=4023483651287945&ev=PageView&noscript=1" />
-    </noscript>
     <!-- Noscript fallback for SEO crawlers -->
     <noscript>
       <div style="padding:40px;text-align:center;font-family:sans-serif;">
