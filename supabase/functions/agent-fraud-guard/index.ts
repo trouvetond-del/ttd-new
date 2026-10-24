@@ -51,9 +51,10 @@ Deno.serve(async (req) => {
     .select("id, user_id, company_name, siret, email, phone, manager_phone, created_at").limit(5000);
   const phoneMap = new Map<string, typeof movers>();
   for (const m of movers ?? []) {
-    if (m.created_at >= d1 && !isValidSiret(m.siret)) {
+    // SIRET « PENDING-… » = inscription non terminée (déjà relancée par send-mover-profile-reminder), pas une fraude.
+    if (m.created_at >= d1 && !String(m.siret ?? "").startsWith("PENDING-") && !isValidSiret(m.siret)) {
       signals.push({ key: `mover-siret:${m.id}`, user_id: m.user_id, mover_id: m.id, alert_type: "fake_mover", severity: "high",
-        reason: `SIRET invalide pour « ${m.company_name} » (${m.siret}).`, details: { siret: m.siret } });
+        reason: `Le SIRET déclaré par « ${m.company_name || m.email} » (${m.siret}) n'est pas un numéro valide.`, details: { siret: m.siret } });
     }
     if (DISPOSABLE.has(domainOf(m.email))) {
       signals.push({ key: `mover-disposable:${m.id}`, user_id: m.user_id, mover_id: m.id, alert_type: "disposable_email", severity: "critical",

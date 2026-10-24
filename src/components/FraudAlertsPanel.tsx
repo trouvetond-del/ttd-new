@@ -27,6 +27,48 @@ const ALERT_TYPE_LABELS: Record<string, string> = {
   disposable_email: 'Email jetable',
 };
 
+
+const STATUS_LABELS: Record<string, string> = {
+  new: 'Nouvelle', investigating: 'En vérification', resolved: 'Résolue', false_positive: 'Fausse alerte',
+};
+const SEVERITY_LABELS: Record<string, string> = {
+  low: 'Faible', medium: 'Moyenne', high: 'Élevée', critical: 'Critique',
+};
+
+// Explication en français simple : ce qui s'est passé et quoi faire.
+export function explainAlert(a: { alert_type: string; details: any }): { cause: string; action: string } {
+  const d = a.details ?? {};
+  const siret = String(d.siret ?? '');
+  if (a.alert_type === 'fake_mover' && siret.startsWith('PENDING-')) {
+    return {
+      cause: "Ce n'est pas une fraude : ce déménageur a commencé son inscription mais n'a pas encore saisi son numéro SIRET (inscription non terminée).",
+      action: "Aucune action urgente. Il reçoit déjà des relances automatiques pour terminer son profil. Vous pouvez classer en « Faux positif ».",
+    };
+  }
+  switch (a.alert_type) {
+    case 'fake_mover':
+      return { cause: `Le numéro SIRET déclaré${siret ? ` (${siret})` : ''} n'est pas un numéro valide : il ne correspond à aucune entreprise possible.`,
+        action: "Vérifiez le SIRET sur annuaire-entreprises.data.gouv.fr et comparez avec le KBIS. Si c'est une faute de frappe, demandez une correction au déménageur." };
+    case 'disposable_email':
+      return { cause: `Le compte a été créé avec une adresse email temporaire${d.email ? ` (${d.email})` : ''}, souvent utilisée pour les faux comptes. Le compte a été bloqué automatiquement.`,
+        action: "Si la personne est réelle, débloquez le compte et demandez-lui une vraie adresse email." };
+    case 'multiple_accounts':
+      return { cause: `Plusieurs comptes utilisent le même numéro de téléphone${d.phone ? ` (${d.phone})` : ''}.`,
+        action: "Vérifiez s'il s'agit de la même entreprise inscrite plusieurs fois ou d'un doublon volontaire." };
+    case 'fake_client':
+      return { cause: `Un même compte a créé un nombre anormal de demandes de devis en peu de temps${d.count ? ` (${d.count} en 1 heure)` : ''}.`,
+        action: "Regardez les demandes : si ce sont des doublons ou des fausses demandes, supprimez-les." };
+    case 'payment_fraud':
+      return { cause: d.failed ? `${d.failed} paiements refusés en 24 h pour le même client : possible test de cartes volées.` : "Nombre anormal de remboursements pour le même client.",
+        action: "Vérifiez l'historique de paiement du client avant d'accepter de nouvelles réservations." };
+    case 'site_attack':
+      return { cause: `Beaucoup de comptes créés depuis la même connexion internet${d.signups ? ` (${d.signups} en 1 heure)` : ''} : probablement un robot.`,
+        action: "Vérifiez les comptes créés récemment et supprimez les faux." };
+    default:
+      return { cause: d.reason || d.message || "Activité inhabituelle détectée.", action: "Vérifiez le compte concerné." };
+  }
+}
+
 const SEVERITY_COLORS = {
   low: 'bg-yellow-100 border-yellow-300 text-yellow-800',
   medium: 'bg-orange-100 border-orange-300 text-orange-800',
@@ -219,14 +261,14 @@ export function FraudAlertsPanel() {
                           STATUS_COLORS[alert.status]
                         }`}
                       >
-                        {alert.status}
+                        {STATUS_LABELS[alert.status] || alert.status}
                       </span>
                       <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">
-                        {alert.severity}
+                        {SEVERITY_LABELS[alert.severity] || alert.severity}
                       </span>
                     </div>
                     <p className="text-sm text-gray-700 mb-2">
-                      {alert.details?.message || 'Aucun détail disponible'}
+                      {explainAlert(alert).cause}
                     </p>
                     <p className="text-xs text-gray-500">
                       {new Date(alert.created_at).toLocaleString('fr-FR')}
@@ -262,10 +304,10 @@ export function FraudAlertsPanel() {
                       STATUS_COLORS[selectedAlert.status]
                     }`}
                   >
-                    {selectedAlert.status}
+                    {STATUS_LABELS[selectedAlert.status] || selectedAlert.status}
                   </span>
                   <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700">
-                    Sévérité: {selectedAlert.severity}
+                    Gravité : {SEVERITY_LABELS[selectedAlert.severity] || selectedAlert.severity}
                   </span>
                 </div>
               </div>
@@ -285,12 +327,16 @@ export function FraudAlertsPanel() {
             </div>
 
             <div className="mb-6">
-              <h4 className="font-semibold text-gray-900 mb-2">Détails</h4>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+              <h4 className="font-semibold text-gray-900 mb-2">Que se passe-t-il ?</h4>
+              <p className="text-gray-800 mb-4">{explainAlert(selectedAlert).cause}</p>
+              <h4 className="font-semibold text-gray-900 mb-2">Que faire ?</h4>
+              <p className="text-gray-800 mb-4">{explainAlert(selectedAlert).action}</p>
+              <details className="bg-gray-50 p-3 rounded-lg">
+                <summary className="text-xs text-gray-500 cursor-pointer">Détails techniques</summary>
+                <pre className="text-xs text-gray-600 whitespace-pre-wrap mt-2">
                   {JSON.stringify(selectedAlert.details, null, 2)}
                 </pre>
-              </div>
+              </details>
             </div>
 
             <div className="mb-6">

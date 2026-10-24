@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import QuotesListModal from './QuotesListModal';
+import { AdminFollowupModal } from './AdminFollowupModal';
 
 interface ClientDetailModalProps {
   clientId: string;
@@ -57,6 +58,7 @@ export default function ClientDetailModal({ clientId, onClose, onUpdate, adminRo
   const [clientInfo, setClientInfo] = useState<ClientInfo | null>(null);
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showFollowup, setShowFollowup] = useState(false);
   const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
   const [selectedQuoteRequestForQuotes, setSelectedQuoteRequestForQuotes] = useState<string | null>(null);
   const [distances, setDistances] = useState<{ [key: string]: number }>({});
@@ -297,6 +299,14 @@ export default function ClientDetailModal({ clientId, onClose, onUpdate, adminRo
             Fiche Client Complète
           </h2>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowFollowup(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+              title="Demander une information manquante (email rédigé par l'IA + relance quotidienne)"
+            >
+              <Mail className="w-4 h-4" />
+              Demander une mise à jour
+            </button>
             <button
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -634,6 +644,9 @@ export default function ClientDetailModal({ clientId, onClose, onUpdate, adminRo
           onClose={() => setSelectedQuoteRequestForQuotes(null)}
           adminRole={adminRole}
         />
+      )}
+      {showFollowup && (
+        <AdminFollowupModal targetType="client" userId={clientId} onClose={() => setShowFollowup(false)} />
       )}
     </div>
   );

@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
 import { MoverEditModal } from './MoverEditModal';
 import { isMoverQualified } from '../../lib/moverQualification';
+import { AdminFollowupModal } from './AdminFollowupModal';
 
 interface PendingMoverDetailModalProps {
   moverId: string;
@@ -86,6 +87,7 @@ export function PendingMoverDetailModal({ moverId, onClose, onStatusUpdate }: Pe
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showFollowup, setShowFollowup] = useState(false);
 
   useEffect(() => {
     loadMoverDetails();
@@ -1047,6 +1049,15 @@ export function PendingMoverDetailModal({ moverId, onClose, onStatusUpdate }: Pe
             </button>
             <div className="flex gap-4">
               <button
+                onClick={() => setShowFollowup(true)}
+                disabled={processingAction || sendingContract}
+                className="px-6 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition font-semibold disabled:opacity-50 flex items-center gap-2"
+                title="Demander un document ou une information manquante (email rédigé par l'IA + relance quotidienne)"
+              >
+                <Mail className="w-5 h-5" />
+                Demander une mise à jour
+              </button>
+              <button
                 onClick={() => setShowRejectionModal(true)}
                 disabled={processingAction || sendingContract}
                 className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold disabled:opacity-50 flex items-center gap-2"
@@ -1106,6 +1117,10 @@ export function PendingMoverDetailModal({ moverId, onClose, onStatusUpdate }: Pe
             </div>
           </div>
         </div>
+      )}
+
+      {showFollowup && (
+        <AdminFollowupModal targetType="mover" moverId={moverId} onClose={() => setShowFollowup(false)} />
       )}
 
       {showEditModal && (
