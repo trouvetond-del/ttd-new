@@ -97,7 +97,7 @@ export default function AdminSocialStudio() {
   const pubsOf = (p: Post) => pubs.filter((x) => x.target_id === p.id && !x.deleted_at);
   const pendingOf = (p: Post) => jobs.filter((j) => j.target_id === p.id && (j.status === 'queued' || j.status === 'running'));
 
-  const filtered = useMemo(() => posts.filter((p) =>
+  const filtered = useMemo(() => posts.filter((p) => p.status !== 'archived').filter((p) =>
     filter === 'all' ? true : filter === 'article' ? p.kind.startsWith('article') : filter === 'video' ? !!p.video
       : filter === 'manual' ? p.kind.startsWith('manual') : p.kind === 'opportunity'), [posts, filter]);
 
@@ -213,12 +213,12 @@ export default function AdminSocialStudio() {
                           <Mic className="h-4 w-4" />Voix off
                         </button>
                       ) : (
-                        <button onClick={() => { if (confirm('Supprimer ce post de Facebook et l’archiver ?')) queue('delete', p); }} className="flex items-center justify-center gap-1 rounded-xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100">
+                        <button onClick={() => { if (confirm('Supprimer définitivement ce post ?')) queue('delete', p); }} className="flex items-center justify-center gap-1 rounded-xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100">
                           <Trash2 className="h-4 w-4" />Supprimer
                         </button>
                       )}
                       {p.video && p.table === 'marketing_posts' && (
-                        <button onClick={() => { if (confirm('Supprimer ce post de Facebook et l’archiver ?')) queue('delete', p); }} className="col-span-2 flex items-center justify-center gap-1 rounded-xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100">
+                        <button onClick={() => { if (confirm('Supprimer définitivement ce post ?')) queue('delete', p); }} className="col-span-2 flex items-center justify-center gap-1 rounded-xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100">
                           <Trash2 className="h-4 w-4" />Supprimer
                         </button>
                       )}

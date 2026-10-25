@@ -128,8 +128,11 @@ async function remove(job) {
     if (p.platform === "facebook") { await meta("DELETE", `/${p.external_id}`); await sb.from("social_publications").update({ deleted_at: new Date().toISOString() }).eq("id", p.id); notes.push("Facebook supprimé"); }
     else notes.push("Instagram : à supprimer depuis l'appli Instagram (Meta ne le permet pas automatiquement)");
   }
-  await sb.from(job.target_table).update({ status: "archived" }).eq("id", job.target_id);
-  return notes.length ? notes.join(" · ") : "Post archivé.";
+  // Supprime vraiment la carte du Studio (les publications restent tracées à part).
+  const { error } = await sb.from(job.target_table).delete().eq("id", job.target_id);
+  if (error) { await sb.from(job.target_table).update({ status: "archived" }).eq("id", job.target_id); notes.push("Post masqué"); }
+  else notes.push("Post supprimé du Studio");
+  return notes.join(" · ");
 }
 
 // ---------- Statistiques ----------

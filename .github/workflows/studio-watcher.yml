@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: [".github/workflows/studio-watcher.yml", "scripts/marketing-agent/watch.mjs"]
+    paths: [".github/workflows/studio-watcher.yml", "scripts/marketing-agent/**"]
 
 concurrency:
   group: studio-watcher
