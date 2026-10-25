@@ -406,6 +406,8 @@ export default function AdminDashboard() {
                   if (notification.related_id) {
                     setDisputeQuoteRequestId(notification.related_id);
                   }
+                } else if (notification.type === 'client_registration' || notification.type === 'new_client') {
+                  setActiveTab('users');
                 } else if (notification.type === 'new_invited_client') {
                   navigate('/admin/dashboard/users');
                 } else if (notification.type === 'system' && notification.title?.startsWith('Agent IA')) {
