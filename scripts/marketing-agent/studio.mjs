@@ -3,6 +3,7 @@
 // Lancé toutes les 30 min, à la suite de la modération des commentaires.
 import { createClient } from "@supabase/supabase-js";
 import { buildVideo, loadVoiceConfig } from "./media.mjs";
+import { generateImage } from "./openai-image.mjs";
 
 const GRAPH = "https://graph.facebook.com/v21.0";
 const env = (k) => { const v = process.env[k]; if (!v) throw new Error(`Secret manquant : ${k}`); return v; };
@@ -27,8 +28,7 @@ async function openaiRaw(path, body) {
   return Buffer.from(await r.arrayBuffer());
 }
 async function genImage(prompt) {
-  const j = JSON.parse((await openaiRaw("/images/generations", { model: "gpt-image-1", prompt: `${prompt}. Realistic photo, vertical, no text, no logo.`, size: "1024x1536" })).toString());
-  return Buffer.from(j.data[0].b64_json, "base64");
+  return generateImage(`${prompt}. Realistic photo, vertical, no text, no logo.`, "1024x1536");
 }
 async function upload(path, buf, contentType) {
   const { error } = await sb.storage.from("marketing-media").upload(path, buf, { contentType, upsert: true });

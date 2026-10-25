@@ -4,6 +4,7 @@
 // sont utilisés. Jamais de nom, téléphone, email, adresse ni commentaire du client.
 import { createClient } from "@supabase/supabase-js";
 import sharp from "sharp";
+import { generateImage } from "./openai-image.mjs";
 
 const SITE = "https://www.trouvetondemenageur.fr";
 const GRAPH = "https://graph.facebook.com/v21.0";
@@ -103,9 +104,7 @@ const PHOTO_SCENES = [
   "a moving truck parked in front of a French apartment building, early morning",
 ];
 async function photoImage(o, seed) {
-  const j = await openai("/images/generations", { model: "gpt-image-1", size: "1024x1024", quality: "medium",
-    prompt: `${PHOTO_SCENES[seed % PHOTO_SCENES.length]}. Realistic photo, natural light. Leave the bottom third calm and simple. Absolutely no text, letters, logos or watermarks.` });
-  const bg = await sharp(Buffer.from(j.data[0].b64_json, "base64")).resize(W, H).toBuffer();
+  const bg = await sharp(await generateImage(`${PHOTO_SCENES[seed % PHOTO_SCENES.length]}. Realistic photo, natural light. Leave the bottom third calm and simple. Absolutely no text, letters, logos or watermarks.`, "1024x1024")).resize(W, H).toBuffer();
   const overlay = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">${bannerSvg(o)}</svg>`);
   return sharp(bg).composite([{ input: overlay }]).jpeg({ quality: 90 }).toBuffer();
 }

@@ -6,6 +6,7 @@
 // avec les fonctionnalités RÉELLES du site. Aucun chiffre, avis ou témoignage inventé.
 import { createClient } from "@supabase/supabase-js";
 import { buildVideo, loadVoiceConfig } from "./media.mjs";
+import { generateImage } from "./openai-image.mjs";
 
 const SITE = "https://www.trouvetondemenageur.fr";
 const GRAPH = "https://graph.facebook.com/v21.0";
@@ -111,11 +112,7 @@ async function writeVideoScript(article) {
 }
 
 async function image(prompt, size) {
-  const j = await openai("/images/generations", {
-    model: "gpt-image-1", size, quality: "medium",
-    prompt: `${prompt}. Realistic photo, natural light, French setting, moving context. Brand accent colors blue #3B82F6 and green #10B981 subtly present (e.g. clothing). Absolutely no text, letters, logos or watermarks.`,
-  });
-  return Buffer.from(j.data[0].b64_json, "base64");
+  return generateImage(`${prompt}. Realistic photo, natural light, French setting, moving context. Brand accent colors blue #3B82F6 and green #10B981 subtly present (e.g. clothing). Absolutely no text, letters, logos or watermarks.`, size);
 }
 
 // ---------- Stockage public ----------

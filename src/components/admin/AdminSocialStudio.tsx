@@ -21,6 +21,14 @@ type Post = {
   image: string | null; video: string | null; scenes: Scene[] | null; created_at: string; published_at: string | null; error: string | null; topic?: string | null;
 };
 
+// Traduit les erreurs techniques de l'agent en phrase compréhensible pour l'admin.
+function friendlyError(raw: string): string {
+  if (/images\/generations|gpt-image|dall-e|Création d'image/i.test(raw)) return "Les photos n'ont pas pu être créées (service d'images indisponible). Le problème est corrigé : cliquez sur « Créer la vidéo » ou attendez la prochaine tentative de l'agent.";
+  if (/session|expired|OAuthException|token/i.test(raw)) return "Facebook/Instagram a refusé la connexion (accès expiré). Prévenez le support technique pour renouveler l'accès.";
+  if (/exceeded|size|trop lourd/i.test(raw)) return 'Fichier trop lourd pour Facebook/Instagram. Compressez-le puis réimportez-le.';
+  if (/quota|rate limit|429/i.test(raw)) return "Trop de demandes en même temps. L'agent réessaiera plus tard.";
+  return `L'agent n'a pas pu terminer : ${raw.replace(/\{[\s\S]*\}/, '').slice(0, 140)}`;
+}
 const KIND_LABEL: Record<string, string> = {
   article_client: 'Article client', article_mover: 'Article déménageur', video_client: 'Reel client', video_mover: 'Reel déménageur',
   manual_image: 'Photo importée', manual_video: 'Vidéo importée', opportunity: 'Déménagement dispo',
@@ -163,7 +171,16 @@ export default function AdminSocialStudio() {
                     {p.title && <h3 className="font-semibold text-slate-900">{p.title}</h3>}
                     <p className="line-clamp-4 whitespace-pre-line text-sm text-slate-600">{p.body || '—'}</p>
                     <div className="text-xs text-slate-400">Créé le {fmtDate(p.created_at)}{p.published_at ? ` · publié le ${fmtDate(p.published_at)}` : ''}</div>
-                    {p.error && p.status === 'failed' && <p className="rounded-lg bg-red-50 p-2 text-xs text-red-700">{p.error.slice(0, 200)}</p>}
+                    {(() => {
+                      const lastFail = jobs.find((j) => j.target_id === p.id && j.status === 'failed');
+                      const raw = (p.status === 'failed' && p.error) || (!p.video && !p.image && pend.length === 0 && lastFail?.error) || null;
+                      return raw ? <p className="rounded-lg bg-red-50 p-2 text-xs text-red-700" title={raw}>{friendlyError(raw)}</p> : null;
+                    })()}
+                    {!p.video && !p.image && p.scenes && p.scenes.length > 0 && pend.length === 0 && (
+                      <button onClick={() => queue('rerender_video', p, [], { scenes: p.scenes })} className="flex items-center justify-center gap-1 rounded-xl bg-amber-500 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-600">
+                        <Loader className="h-3.5 w-3.5" /> Créer la vidéo
+                      </button>
+                    )}
                     {ps.length > 0 && (
                       <div className="space-y-1">
                         {ps.map((x) => (

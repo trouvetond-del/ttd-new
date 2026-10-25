@@ -75,11 +75,17 @@ Deno.serve(async (req) => {
         top: [...rows].sort((x: any, y: any) => (y.views ?? 0) - (x.views ?? 0)).slice(0, 5) };
     }
     if (name === "create_post") {
-      const r = await fetch("https://api.openai.com/v1/images/generations", { method: "POST",
-        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "gpt-image-1", prompt: `${a.image_prompt}. Realistic photo, no text, no logo.`, size: "1024x1024" }) });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok || !d?.data?.[0]?.b64_json) return { error: `Image impossible : ${d?.error?.message ?? r.status}` };
+      let d: any = {}; let lastErr = "";
+      for (const m of [{ model: "gpt-image-1", size: "1024x1024" }, { model: "gpt-image-1-mini", size: "1024x1024" }, { model: "dall-e-3", size: "1024x1024", response_format: "b64_json" }]) {
+        const r = await fetch("https://api.openai.com/v1/images/generations", { method: "POST",
+          headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ ...m, prompt: `${a.image_prompt}. Realistic photo, no text, no logo.` }) });
+        d = await r.json().catch(() => ({}));
+        if (r.ok && d?.data?.[0]?.b64_json) break;
+        lastErr = d?.error?.message ?? String(r.status); d = {};
+        if (![400, 403, 404].includes(r.status)) break;
+      }
+      if (!d?.data?.[0]?.b64_json) return { error: `Image impossible : ${lastErr}` };
       const bytes = Uint8Array.from(atob(d.data[0].b64_json), (c) => c.charCodeAt(0));
       const path = `studio/agent/${Date.now()}.png`;
       const up = await sb.storage.from("marketing-media").upload(path, bytes, { contentType: "image/png" });
