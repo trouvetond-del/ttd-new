@@ -476,7 +476,7 @@ export default function AdminUserManagement({
     if (user.role === 'mover' && user.verification_status === 'pending') return 'En attente';
     if (user.role === 'mover' && user.verification_status === 'contract_sent') return 'Signature en attente';
     if (user.role === 'mover' && user.verification_status === 'documents_verified') return 'Documents vérifiés';
-    if (user.is_active === false) return 'Inactif';
+    if (user.is_active === false) return user.role === 'client' ? 'Profil incomplet' : 'Inactif';
     return 'Actif';
   };
 
@@ -527,7 +527,7 @@ export default function AdminUserManagement({
       return <span className="px-2 py-1 bg-cyan-100 text-cyan-800 text-xs rounded-full">Documents vérifiés</span>;
     }
     if (user.is_active === false) {
-      return <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">Inactif</span>;
+      return <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full">{user.role === 'client' ? 'Profil incomplet' : 'Inactif'}</span>;
     }
     return <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Actif</span>;
   };
@@ -600,7 +600,7 @@ export default function AdminUserManagement({
             >
               <option value="all">Tous les statuts</option>
               <option value="active">Actifs</option>
-              <option value="inactive">Inactifs</option>
+              <option value="inactive">Inactifs / profil incomplet</option>
               <option value="suspended">Suspendus</option>
               <option value="banned">Bannis</option>
             </select>

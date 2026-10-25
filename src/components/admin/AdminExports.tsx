@@ -58,16 +58,17 @@ export default function AdminExports({ adminRole = '' }: AdminExportsProps) {
     setLoading('users');
     try {
       const { data: allUsers } = await supabase.rpc('get_all_users');
-      const { data: clients } = await supabase.from('clients').select('user_id, first_name, last_name, phone');
+      const { data: clients } = await supabase.from('clients').select('user_id, first_name, last_name, phone, profile_completed');
       const { data: movers } = await supabase.from('movers').select('*');
       const { data: quoteRequestClients } = await supabase.from('quote_requests').select('client_user_id');
 
-      const clientPhoneMap = new Map<string, { firstName?: string; lastName?: string; phone?: string }>();
+      const clientPhoneMap = new Map<string, { firstName?: string; lastName?: string; phone?: string; profileCompleted?: boolean }>();
       (clients || []).forEach((c: any) => {
         clientPhoneMap.set(c.user_id, {
           firstName: c.first_name,
           lastName: c.last_name,
           phone: c.phone,
+          profileCompleted: c.profile_completed === true,
         });
       });
 
@@ -103,7 +104,7 @@ export default function AdminExports({ adminRole = '' }: AdminExportsProps) {
           'Téléphone / Mobile': phone || '-',
           'Type': isMover ? 'Déménageur' : isClient ? 'Client' : 'Inconnu',
           'SIRET': isMover && mover ? (mover.siret || '-') : '-',
-          'Statut': isMover && mover ? (mover.is_active ? 'Actif' : 'Inactif') : 'Actif',
+          'Statut': isMover && mover ? (mover.is_active ? 'Actif' : 'Inactif') : (clientInfo && clientInfo.profileCompleted === false ? 'Profil incomplet' : 'Actif'),
           'Date Inscription': new Date(user.created_at).toLocaleDateString('fr-FR'),
           'Dernière Connexion': user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('fr-FR') : 'Jamais',
         };
