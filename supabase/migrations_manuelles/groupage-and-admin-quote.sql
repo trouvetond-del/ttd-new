@@ -1,6 +1,7 @@
 -- Groupage (déménagements proches < 200 km, ≤ 3 jours d'écart) + devis déposé par l'admin. Idempotent.
 
 ALTER TABLE quotes ADD COLUMN IF NOT EXISTS added_by_admin boolean NOT NULL DEFAULT false;
+ALTER TABLE quotes ADD COLUMN IF NOT EXISTS mover_email_sent_at timestamptz;
 
 CREATE TABLE IF NOT EXISTS public.groupage_alerts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -26,6 +27,8 @@ DROP POLICY IF EXISTS "Admins update groupage" ON public.groupage_alerts;
 CREATE POLICY "Admins update groupage" ON public.groupage_alerts FOR UPDATE TO authenticated
   USING (EXISTS (SELECT 1 FROM admins WHERE admins.user_id = auth.uid()));
 
+ALTER TABLE public.groupage_alerts ADD COLUMN IF NOT EXISTS emails_sent_at timestamptz;
+
 -- Prévient tous les déménageurs vérifiés d'un groupage
 CREATE OR REPLACE FUNCTION public.groupage_alert_movers(p_alert uuid)
 RETURNS integer LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
@@ -45,7 +48,7 @@ BEGIN
     VALUES (m.user_id, 'mover', 'info', '🚚 Groupage disponible', msg, g.request_a);
     n := n + 1;
   END LOOP;
-  UPDATE groupage_alerts SET movers_alerted_at = now(), movers_alerted_count = n WHERE id = p_alert;
+  UPDATE groupage_alerts SET movers_alerted_at = now(), movers_alerted_count = n, emails_sent_at = NULL WHERE id = p_alert;
   RETURN n;
 END $$;
 
@@ -137,3 +140,12 @@ GRANT EXECUTE ON FUNCTION public.admin_add_quote_for_mover(uuid, uuid, numeric, 
 DO $$ BEGIN PERFORM cron.unschedule('detect-groupages'); EXCEPTION WHEN others THEN NULL; END $$;
 SELECT cron.schedule('detect-groupages', '15 * * * *', $$ SELECT public.detect_groupages(); $$);
 SELECT public.detect_groupages();
+
+DO $$ BEGIN PERFORM cron.unschedule('send-groupage-emails'); EXCEPTION WHEN others THEN NULL; END $$;
+SELECT cron.schedule('send-groupage-emails', '7,22,37,52 * * * *', $c$
+  SELECT net.http_post(
+    url := 'https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/send-groupage-emails',
+    headers := jsonb_build_object('Content-Type','application/json',
+      'x-agent-secret', (SELECT secret FROM public.agent_secrets WHERE name = 'cron'))
+  );
+$c$);
