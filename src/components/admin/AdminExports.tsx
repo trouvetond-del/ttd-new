@@ -62,13 +62,14 @@ export default function AdminExports({ adminRole = '' }: AdminExportsProps) {
       const { data: movers } = await supabase.from('movers').select('*');
       const { data: quoteRequestClients } = await supabase.from('quote_requests').select('client_user_id');
 
+      const qrIds = new Set((quoteRequestClients || []).map((q: any) => q.client_user_id).filter(Boolean));
       const clientPhoneMap = new Map<string, { firstName?: string; lastName?: string; phone?: string; profileCompleted?: boolean }>();
       (clients || []).forEach((c: any) => {
         clientPhoneMap.set(c.user_id, {
           firstName: c.first_name,
           lastName: c.last_name,
           phone: c.phone,
-          profileCompleted: c.profile_completed === true,
+          profileCompleted: c.profile_completed === true || (qrIds.has(c.user_id) && !!c.phone && !!c.first_name),
         });
       });
 
