@@ -8,6 +8,7 @@ interface Props { quoteRequestId: string; route: string; onClose: () => void; on
 export default function AdminAssignQuoteModal({ quoteRequestId, route, onClose, onDone }: Props) {
   const [movers, setMovers] = useState<{ id: string; company_name: string; city?: string | null }[]>([]);
   const [moverId, setMoverId] = useState('');
+  const [moverSearch, setMoverSearch] = useState('');
   const [price, setPrice] = useState('');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
@@ -38,9 +39,10 @@ export default function AdminAssignQuoteModal({ quoteRequestId, route, onClose, 
         </div>
         <p className="text-sm text-gray-600 mb-4">{route}</p>
         <label className="block text-sm font-medium mb-1">Déménageur (vérifiés uniquement)</label>
+        <input value={moverSearch} onChange={(e) => setMoverSearch(e.target.value)} placeholder="Rechercher un nom d'entreprise ou une ville..." className="w-full border rounded-lg px-3 py-2 mb-2" autoFocus />
         <select value={moverId} onChange={(e) => setMoverId(e.target.value)} className="w-full border rounded-lg px-3 py-2 mb-3">
           <option value="">— Choisir —</option>
-          {movers.map((m) => <option key={m.id} value={m.id}>{m.company_name}{m.city ? ` (${m.city})` : ''}</option>)}
+          {movers.filter((m) => { const t = moverSearch.trim().toLowerCase(); return !t || m.id === moverId || `${m.company_name} ${m.city || ''}`.toLowerCase().includes(t); }).map((m) => <option key={m.id} value={m.id}>{m.company_name}{m.city ? ` (${m.city})` : ''}</option>)}
         </select>
         <label className="block text-sm font-medium mb-1">Prix du déménageur (€, sans la commission)</label>
         <input value={price} onChange={(e) => setPrice(e.target.value)} inputMode="decimal" className="w-full border rounded-lg px-3 py-2 mb-1" placeholder="ex. 650" />
