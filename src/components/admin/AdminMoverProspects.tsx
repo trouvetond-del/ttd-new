@@ -43,7 +43,7 @@ interface MoverProspect {
 }
 
 type CallStatus = 'not_called' | 'called_interested' | 'called_not_interested' | 'called_no_answer' | 'callback_later';
-type TabFilter = 'all' | 'to_call' | 'to_call_not_called' | 'to_call_no_answer' | 'to_call_callback_later' | 'not_interested' | 'interested' | 'invited' | 'signed_up' | 'no_phone';
+type TabFilter = 'all' | 'to_call' | 'to_call_not_called' | 'to_call_no_answer' | 'to_call_callback_later' | 'not_interested' | 'interested' | 'invited' | 'signed_up' | 'no_phone' | 'lovable';
 
 const CALL_STATUS_CONFIG: Record<CallStatus, { label: string; color: string; icon: any; bg: string }> = {
   not_called: { label: 'Pas appelé', color: 'text-gray-600', icon: Phone, bg: 'bg-gray-100' },
@@ -113,6 +113,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
       invited: all.filter(p => p.invitation_status === 'invited').length,
       signedUp: all.filter(p => p.invitation_status === 'signed_up').length,
       noPhone: all.filter(p => !p.has_phone).length,
+      lovable: all.filter(p => p.raw_data?.source === 'lovable').length,
     };
   }, [prospects]);
 
@@ -128,6 +129,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
       case 'invited': f = f.filter(p => p.invitation_status === 'invited'); break;
       case 'signed_up': f = f.filter(p => p.invitation_status === 'signed_up'); break;
       case 'no_phone': f = f.filter(p => !p.has_phone); break;
+      case 'lovable': f = f.filter(p => p.raw_data?.source === 'lovable'); break;
     }
     if (searchTerm) {
       const l = searchTerm.toLowerCase();
@@ -321,6 +323,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
     { id: 'invited', label: 'Invités', count: stats.invited },
     { id: 'signed_up', label: 'Inscrits', count: stats.signedUp },
     { id: 'no_phone', label: 'Sans téléphone', count: stats.noPhone, icon: Globe },
+    { id: 'lovable', label: 'Lovable', count: stats.lovable },
   ];
 
   const toCallSubTabs: { id: TabFilter; label: string; count: number }[] = [

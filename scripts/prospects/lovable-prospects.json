@@ -1,0 +1,882 @@
+[
+ {
+  "company_name": "Day Déménagement",
+  "city": "Lyon",
+  "postal_code": "",
+  "phone": "06 17 90 29 09",
+  "email": "contact@daydemenagement.com",
+  "website": "https://daydemenagement.com/",
+  "siret": "",
+  "source_url": "https://daydemenagement.com/"
+ },
+ {
+  "company_name": "Omnidem",
+  "city": "Lyon",
+  "postal_code": "69006",
+  "phone": "04 78 52 20 36",
+  "email": "admin@omnidem.com",
+  "website": "https://omnidem.com/",
+  "siret": "43349862300027",
+  "source_url": "https://omnidem.com/"
+ },
+ {
+  "company_name": "Lively Déménagement",
+  "city": "Lyon",
+  "postal_code": "",
+  "phone": "06 03 39 21 66",
+  "email": "",
+  "website": "https://www.livelydemenagement.com/",
+  "siret": "",
+  "source_url": "https://www.livelydemenagement.com/"
+ },
+ {
+  "company_name": "MerciProdem",
+  "city": "Lyon",
+  "postal_code": "",
+  "phone": "06 49 54 76 01",
+  "email": "contact@merciprodem.fr",
+  "website": "https://www.merciprodem.fr/",
+  "siret": "82049772500011",
+  "source_url": "https://www.merciprodem.fr/demenagement-lyon"
+ },
+ {
+  "company_name": "Alphadem",
+  "city": "Saint-Priest",
+  "postal_code": "69800",
+  "phone": "06 81 71 54 34",
+  "email": "contactalphadem69@gmail.com",
+  "website": "https://www.demenagement-alphadem.com/",
+  "siret": "93315100450001",
+  "source_url": "https://www.demenagement-alphadem.com/devis-gratuit"
+ },
+ {
+  "company_name": "SIET Déménagement",
+  "city": "Lyon",
+  "postal_code": "69003",
+  "phone": "04 72 35 09 72",
+  "email": "contact@sietdem.fr",
+  "website": "https://www.siet-france-demenagement.fr/",
+  "siret": "38501117600034",
+  "source_url": "https://www.siet-france-demenagement.fr/"
+ },
+ {
+  "company_name": "SB Transport Lyon",
+  "city": "Lyon",
+  "postal_code": "",
+  "phone": "06 02 49 48 97",
+  "email": "contact@sbtransportlyon.fr",
+  "website": "https://sbtransportlyon.fr/",
+  "siret": "92507292800011",
+  "source_url": "https://sbtransportlyon.fr/demenagement-lyon"
+ },
+ {
+  "company_name": "Pro-du-Dem",
+  "city": "Marseille",
+  "postal_code": "13010",
+  "phone": "",
+  "email": "contact@produdem.fr",
+  "website": "https://www.produdem.fr/",
+  "siret": "49865802000025",
+  "source_url": "https://www.produdem.fr/"
+ },
+ {
+  "company_name": "Déménagement Cardi",
+  "city": "Aubagne",
+  "postal_code": "13400",
+  "phone": "04 91 22 64 64",
+  "email": "contact@demenagement-cardi.com",
+  "website": "https://demenagement-cardi.fr/",
+  "siret": "42476141900045",
+  "source_url": "https://demenagement-cardi.fr/"
+ },
+ {
+  "company_name": "Dem Sud Provence",
+  "city": "Marseille",
+  "postal_code": "13013",
+  "phone": "06 01 83 66 55",
+  "email": "",
+  "website": "https://demsud-provence.fr/",
+  "siret": "",
+  "source_url": "https://demsud-provence.fr/"
+ },
+ {
+  "company_name": "CDGV Déménagements",
+  "city": "Aix-en-Provence",
+  "postal_code": "",
+  "phone": "04 42 59 01 61",
+  "email": "",
+  "website": "https://www.demenageur-aix-en-provence.com/",
+  "siret": "",
+  "source_url": "https://www.demenageur-aix-en-provence.com/demenagement/marseille/"
+ },
+ {
+  "company_name": "Siam Compagnie",
+  "city": "Toulouse",
+  "postal_code": "31000",
+  "phone": "",
+  "email": "hello@siam-compagnie.fr",
+  "website": "https://siam-compagnie.fr/",
+  "siret": "",
+  "source_url": "https://siam-compagnie.fr/"
+ },
+ {
+  "company_name": "Hendi Déménagements",
+  "city": "Toulouse",
+  "postal_code": "",
+  "phone": "06 85 91 40 53",
+  "email": "hendi-dem@wanadoo.fr",
+  "website": "https://www.hendi-demenagements.com/",
+  "siret": "",
+  "source_url": "https://www.hendi-demenagements.com/"
+ },
+ {
+  "company_name": "Juilia Déménagements",
+  "city": "Toulouse",
+  "postal_code": "",
+  "phone": "05 61 21 08 30",
+  "email": "",
+  "website": "https://www.juilia-demenagements.fr/",
+  "siret": "57080527500015",
+  "source_url": "https://www.juilia-demenagements.fr/"
+ },
+ {
+  "company_name": "Capitole Déménagement",
+  "city": "Toulouse",
+  "postal_code": "31100",
+  "phone": "",
+  "email": "contact@mouvandlog.com",
+  "website": "https://www.capitoledemenagement.com/",
+  "siret": "",
+  "source_url": "https://www.capitoledemenagement.com/"
+ },
+ {
+  "company_name": "AML Transport et Déménagement",
+  "city": "Nantes",
+  "postal_code": "",
+  "phone": "07 71 13 71 70",
+  "email": "",
+  "website": "https://amltransportetdemenagement.fr/",
+  "siret": "",
+  "source_url": "https://amltransportetdemenagement.fr/"
+ },
+ {
+  "company_name": "Transport Breyton",
+  "city": "Nantes",
+  "postal_code": "44100",
+  "phone": "",
+  "email": "contact@transportbreyton.com",
+  "website": "https://www.transportbreyton.com/",
+  "siret": "",
+  "source_url": "https://www.transportbreyton.com/"
+ },
+ {
+  "company_name": "Gangloff M. et Fils",
+  "city": "Strasbourg",
+  "postal_code": "67100",
+  "phone": "03 88 34 52 75",
+  "email": "demenagement@gangloffetfils.com",
+  "website": "https://gangloffetfils.com/",
+  "siret": "",
+  "source_url": "https://gangloffetfils.com/"
+ },
+ {
+  "company_name": "Demexpert",
+  "city": "Illkirch-Graffenstaden",
+  "postal_code": "",
+  "phone": "03 88 95 78 00",
+  "email": "aarth@wsiconseil.fr",
+  "website": "https://www.demexpert.fr/",
+  "siret": "",
+  "source_url": "https://www.demexpert.fr/"
+ },
+ {
+  "company_name": "DLDA Transports",
+  "city": "Strasbourg",
+  "postal_code": "67000",
+  "phone": "06 28 22 16 49",
+  "email": "dlda.transports@hotmail.com",
+  "website": "https://dldatransports.fr/",
+  "siret": "90469559000011",
+  "source_url": "https://dldatransports.fr/"
+ },
+ {
+  "company_name": "TDL & Frères Déménagement",
+  "city": "Strasbourg",
+  "postal_code": "",
+  "phone": "03 88 61 45 28",
+  "email": "demenagement.tdl@wanadoo.fr",
+  "website": "https://demenagements-tdl.fr/",
+  "siret": "",
+  "source_url": "https://demenagements-tdl.fr/"
+ },
+ {
+  "company_name": "Samdemenage",
+  "city": "Bordeaux",
+  "postal_code": "33100",
+  "phone": "05 54 54 03 08",
+  "email": "contact@samdemenage.fr",
+  "website": "https://www.samdemenage.fr/",
+  "siret": "92890392100015",
+  "source_url": "https://www.samdemenage.fr/"
+ },
+ {
+  "company_name": "A à Z Service",
+  "city": "Bordeaux",
+  "postal_code": "",
+  "phone": "06 14 20 77 03",
+  "email": "",
+  "website": "https://www.aazservice.com/",
+  "siret": "",
+  "source_url": "https://www.aazservice.com/"
+ },
+ {
+  "company_name": "Hontas Déménagement",
+  "city": "Bordeaux",
+  "postal_code": "",
+  "phone": "05 57 26 25 25",
+  "email": "t.riou@demenagementhontas.com",
+  "website": "https://www.demenagements-hontas.fr/",
+  "siret": "53427121800016",
+  "source_url": "https://www.demenagements-hontas.fr/"
+ },
+ {
+  "company_name": "Bordeaux Service Déménagement",
+  "city": "Bordeaux",
+  "postal_code": "",
+  "phone": "06 15 69 08 52",
+  "email": "",
+  "website": "https://demenageur-bordeaux.com/",
+  "siret": "39277608400023",
+  "source_url": "https://demenageur-bordeaux.com/"
+ },
+ {
+  "company_name": "Nice Déménagements",
+  "city": "Carros",
+  "postal_code": "06510",
+  "phone": "",
+  "email": "nd@nice-demenagements.fr",
+  "website": "https://www.nice-demenagements.fr/",
+  "siret": "",
+  "source_url": "https://www.nice-demenagements.fr/"
+ },
+ {
+  "company_name": "LBC Déménagement",
+  "city": "Nice",
+  "postal_code": "06000",
+  "phone": "06 15 97 65 77",
+  "email": "contact@lbcdemenagement.com",
+  "website": "https://lbcdemenagement.com/",
+  "siret": "10678986000017",
+  "source_url": "https://lbcdemenagement.com/"
+ },
+ {
+  "company_name": "SMD Déménagement",
+  "city": "Nice",
+  "postal_code": "06200",
+  "phone": "06 95 86 93 80",
+  "email": "smd06910@hotmail.com",
+  "website": "https://smd-demenagement.fr/",
+  "siret": "97853012900011",
+  "source_url": "https://smd-demenagement.fr/"
+ },
+ {
+  "company_name": "Rapid'Déménagement",
+  "city": "Montpellier",
+  "postal_code": "34070",
+  "phone": "04 67 47 33 23",
+  "email": "rapiddemenagement@gmail.com",
+  "website": "https://www.rapiddemenagement.com/",
+  "siret": "38325964500026",
+  "source_url": "https://www.rapiddemenagement.com/"
+ },
+ {
+  "company_name": "Les Déménagements Cullell",
+  "city": "Mudaison",
+  "postal_code": "",
+  "phone": "09 70 35 90 08",
+  "email": "demenagementscullell@gmail.com",
+  "website": "https://www.demenagementmontpellier.com/",
+  "siret": "",
+  "source_url": "https://www.demenagementmontpellier.com/"
+ },
+ {
+  "company_name": "Genesis Déménagement",
+  "city": "Montpellier",
+  "postal_code": "34070",
+  "phone": "04 11 91 86 63",
+  "email": "contact@genesis-demenagement.fr",
+  "website": "https://genesis-demenagement.fr/",
+  "siret": "",
+  "source_url": "https://genesis-demenagement.fr/"
+ },
+ {
+  "company_name": "AC Coursing",
+  "city": "Montpellier",
+  "postal_code": "34070",
+  "phone": "07 51 24 90 26",
+  "email": "contact@ac-coursing.fr",
+  "website": "https://ac-coursing.fr/",
+  "siret": "",
+  "source_url": "https://ac-coursing.fr/"
+ },
+ {
+  "company_name": "NC Déménagement",
+  "city": "Lomme",
+  "postal_code": "",
+  "phone": "03 20 50 20 89",
+  "email": "contact@nc-demenagement.fr",
+  "website": "https://www.nc-demenagement.fr/",
+  "siret": "39223726900015",
+  "source_url": "https://www.nc-demenagement.fr/"
+ },
+ {
+  "company_name": "Artdem",
+  "city": "Lille",
+  "postal_code": "59000",
+  "phone": "03 20 57 57 11",
+  "email": "info@artdem.fr",
+  "website": "https://www.artdem.fr/",
+  "siret": "",
+  "source_url": "https://www.artdem.fr/demenagement-nord/demenagement-lille/"
+ },
+ {
+  "company_name": "TDS Déménagement Lille",
+  "city": "Lille",
+  "postal_code": "",
+  "phone": "03 20 09 00 37",
+  "email": "",
+  "website": "https://tds-demenagement.com/",
+  "siret": "",
+  "source_url": "https://tds-demenagement.com/"
+ },
+ {
+  "company_name": "ABP Josse Déménagements",
+  "city": "Noyal-Châtillon-sur-Seiche",
+  "postal_code": "35230",
+  "phone": "07 83 77 83 77",
+  "email": "rennesdemenagement@gmail.com",
+  "website": "https://demenageurs-rennes.fr/",
+  "siret": "",
+  "source_url": "https://demenageurs-rennes.fr/"
+ },
+ {
+  "company_name": "Alex Déménagement Reims",
+  "city": "Reims",
+  "postal_code": "51100",
+  "phone": "07 67 02 74 73",
+  "email": "contact@alex-demenagement.com",
+  "website": "https://alex-demenagement.com/",
+  "siret": "10593324600016",
+  "source_url": "https://alex-demenagement.com/"
+ },
+ {
+  "company_name": "Déménagements Christophe",
+  "city": "Saint-Brice-Courcelles",
+  "postal_code": "51370",
+  "phone": "03 26 85 16 18",
+  "email": "info@nc-consult.com",
+  "website": "https://www.christophe-demenagements.com/",
+  "siret": "38203838800031",
+  "source_url": "https://www.christophe-demenagements.com/"
+ },
+ {
+  "company_name": "Adem & Management",
+  "city": "Toulon",
+  "postal_code": "83000",
+  "phone": "05 26 91 69 45",
+  "email": "contact@ademetmanagement.fr",
+  "website": "https://www.ademetmanagement.fr/",
+  "siret": "52989199600025",
+  "source_url": "https://www.ademetmanagement.fr/"
+ },
+ {
+  "company_name": "Aux Déménageurs Méditerranéens",
+  "city": "La Garde",
+  "postal_code": "",
+  "phone": "04 94 21 17 27",
+  "email": "",
+  "website": "https://www.demenageurs-mediterraneens.com/",
+  "siret": "",
+  "source_url": "https://www.demenageurs-mediterraneens.com/"
+ },
+ {
+  "company_name": "Ins Déménagement",
+  "city": "Toulon",
+  "postal_code": "",
+  "phone": "",
+  "email": "insdemenagementtoulon@gmail.com",
+  "website": "https://insdemenagement.com/",
+  "siret": "",
+  "source_url": "https://insdemenagement.com/"
+ },
+ {
+  "company_name": "L'As du Déménagement",
+  "city": "La Seyne-sur-Mer",
+  "postal_code": "83500",
+  "phone": "07 49 66 05 61",
+  "email": "contact@lasdudemenagement.com",
+  "website": "https://lasdudemenagement.com/",
+  "siret": "",
+  "source_url": "https://lasdudemenagement.com/"
+ },
+ {
+  "company_name": "Millot Déménagements",
+  "city": "Toulon",
+  "postal_code": "",
+  "phone": "04 94 89 42 72",
+  "email": "millot@groupeflippe.fr",
+  "website": "https://www.demenagementsmillot.fr/",
+  "siret": "",
+  "source_url": "https://www.demenagementsmillot.fr/"
+ },
+ {
+  "company_name": "Deliverhome",
+  "city": "Saint-Égrève",
+  "postal_code": "38120",
+  "phone": "04 56 59 34 40",
+  "email": "",
+  "website": "https://www.deliverhome.fr/",
+  "siret": "",
+  "source_url": "https://www.deliverhome.fr/demenagement-grenoble/"
+ },
+ {
+  "company_name": "ARTE Déménagement",
+  "city": "Grenoble",
+  "postal_code": "",
+  "phone": "06 59 37 46 88",
+  "email": "arte.demenagement@gmail.com",
+  "website": "https://www.arte-demenagement.fr/",
+  "siret": "92996901200012",
+  "source_url": "https://www.arte-demenagement.fr/demenageurs-grenoble/"
+ },
+ {
+  "company_name": "VBT Déménagement",
+  "city": "Grenoble",
+  "postal_code": "",
+  "phone": "05 78 81 43 83",
+  "email": "contact@vbt-demenagement.com",
+  "website": "https://www.vbt-demenagement.fr/",
+  "siret": "",
+  "source_url": "https://www.vbt-demenagement.fr/"
+ },
+ {
+  "company_name": "Alain Gesbert Déménagements",
+  "city": "Angers",
+  "postal_code": "49100",
+  "phone": "02 41 43 93 20",
+  "email": "alaingesbertdemenagements@gmail.com",
+  "website": "https://www.alaingesbertdemenagements.com/",
+  "siret": "44224505600027",
+  "source_url": "https://www.alaingesbertdemenagements.com/"
+ },
+ {
+  "company_name": "Chanteau Déménagements",
+  "city": "Angers",
+  "postal_code": "",
+  "phone": "02 41 39 50 51",
+  "email": "",
+  "website": "https://www.a-chanteau.fr/",
+  "siret": "",
+  "source_url": "https://www.a-chanteau.fr/"
+ },
+ {
+  "company_name": "Déménagements Gaby",
+  "city": "Nîmes",
+  "postal_code": "30900",
+  "phone": "04 66 04 01 83",
+  "email": "gabydem@orange.fr",
+  "website": "https://www.demenagements-gaby.fr/",
+  "siret": "75075425100049",
+  "source_url": "https://www.demenagements-gaby.fr/nimes"
+ },
+ {
+  "company_name": "Ferto-Dem",
+  "city": "Nîmes",
+  "postal_code": "30000",
+  "phone": "06 68 25 00 55",
+  "email": "contact@ferto-demenagement.fr",
+  "website": "https://www.ferto-demenagement.fr/",
+  "siret": "91025890400010",
+  "source_url": "https://www.ferto-demenagement.fr/"
+ },
+ {
+  "company_name": "Déménagement Franoux",
+  "city": "Nîmes",
+  "postal_code": "30000",
+  "phone": "04 66 68 20 51",
+  "email": "",
+  "website": "https://www.demenagementfranoux.com/",
+  "siret": "34512473900078",
+  "source_url": "https://www.demenagementfranoux.com/"
+ },
+ {
+  "company_name": "Déménagements Fleys et Fils",
+  "city": "Clermont-Ferrand",
+  "postal_code": "",
+  "phone": "04 73 68 12 41",
+  "email": "contact@fleys-fils.com",
+  "website": "https://www.fleys-fils.fr/",
+  "siret": "39527229700031",
+  "source_url": "https://www.fleys-fils.fr/"
+ },
+ {
+  "company_name": "Déménageurs 63",
+  "city": "Clermont-Ferrand",
+  "postal_code": "",
+  "phone": "06 62 90 51 68",
+  "email": "demenageurs63000@gmail.com",
+  "website": "https://www.demenageurs63.com/",
+  "siret": "89142570400022",
+  "source_url": "https://www.demenageurs63.com/"
+ },
+ {
+  "company_name": "Art Trans",
+  "city": "Clermont-Ferrand",
+  "postal_code": "",
+  "phone": "04 73 16 31 63",
+  "email": "contact@art-trans.fr",
+  "website": "https://art-trans.fr/",
+  "siret": "",
+  "source_url": "https://art-trans.fr/"
+ },
+ {
+  "company_name": "TDN Déménagements",
+  "city": "Le Havre",
+  "postal_code": "76580",
+  "phone": "02 35 21 40 50",
+  "email": "",
+  "website": "https://tdn.fr/",
+  "siret": "32193545400041",
+  "source_url": "https://tdn.fr/demenagement-seine-maritime/demenagement-le-havre/"
+ },
+ {
+  "company_name": "EuroDem",
+  "city": "Le Havre",
+  "postal_code": "76600",
+  "phone": "09 78 45 21 82",
+  "email": "contact@eurodem.fr",
+  "website": "https://www.eurodem.fr/",
+  "siret": "",
+  "source_url": "https://www.eurodem.fr/"
+ },
+ {
+  "company_name": "Déménagements Montigné",
+  "city": "Le Havre",
+  "postal_code": "76600",
+  "phone": "02 35 42 53 72",
+  "email": "",
+  "website": "https://www.demenagementsmontigne.com/",
+  "siret": "33320380000011",
+  "source_url": "https://www.demenagementsmontigne.com/"
+ },
+ {
+  "company_name": "Déménagements Dupra",
+  "city": "Bléré",
+  "postal_code": "37150",
+  "phone": "",
+  "email": "ddumoulin@demenagementsdupra.com",
+  "website": "https://www.demenagementsdupra.fr/",
+  "siret": "",
+  "source_url": "https://www.demenagementsdupra.fr/"
+ },
+ {
+  "company_name": "Fraisseix Déménagements",
+  "city": "Limoges",
+  "postal_code": "87000",
+  "phone": "05 55 33 31 43",
+  "email": "contact@fraisseix.fr",
+  "website": "https://www.fraisseix.fr/",
+  "siret": "",
+  "source_url": "https://www.fraisseix.fr/"
+ },
+ {
+  "company_name": "Bardon Déménagements",
+  "city": "Limoges",
+  "postal_code": "87000",
+  "phone": "05 55 38 19 26",
+  "email": "contact@bardon-demenagements.fr",
+  "website": "https://bardon-demenagements.fr/",
+  "siret": "89217023400017",
+  "source_url": "https://bardon-demenagements.fr/"
+ },
+ {
+  "company_name": "Les Déménageurs Limousins",
+  "city": "Limoges",
+  "postal_code": "87000",
+  "phone": "",
+  "email": "contact@lesdemenageurslimousins.fr",
+  "website": "https://lesdemenageurslimousins.fr/",
+  "siret": "90762253400010",
+  "source_url": "https://lesdemenageurslimousins.fr/"
+ },
+ {
+  "company_name": "SOS Déménagement Limoges",
+  "city": "Limoges",
+  "postal_code": "",
+  "phone": "07 61 24 73 65",
+  "email": "contact@sosdemenagement.fr",
+  "website": "https://sosdemenagement.fr/",
+  "siret": "",
+  "source_url": "https://sosdemenagement.fr/"
+ },
+ {
+  "company_name": "AMC Transports",
+  "city": "Montreuil",
+  "postal_code": "93100",
+  "phone": "01 80 88 14 28",
+  "email": "contact@ledemenageurparis.fr",
+  "website": "https://ledemenageurparis.fr/",
+  "siret": "91061146600012",
+  "source_url": "https://ledemenageurparis.fr/"
+ },
+ {
+  "company_name": "Big Déménagement",
+  "city": "Paris",
+  "postal_code": "",
+  "phone": "01 85 11 72 79",
+  "email": "",
+  "website": "https://bigdemenagement.fr/",
+  "siret": "",
+  "source_url": "https://bigdemenagement.fr/presentation"
+ },
+ {
+  "company_name": "Le Petit Déménageur",
+  "city": "Drancy",
+  "postal_code": "",
+  "phone": "07 67 54 60 78",
+  "email": "contact@lepetitdemenageur.fr",
+  "website": "https://lepetitdemenageur.fr/",
+  "siret": "",
+  "source_url": "https://lepetitdemenageur.fr/apropos.php"
+ },
+ {
+  "company_name": "Déménagements du Poteau",
+  "city": "Paris",
+  "postal_code": "75018",
+  "phone": "01 42 58 26 26",
+  "email": "demdupoteau@gmail.com",
+  "website": "https://www.demenagements-du-poteau.fr/",
+  "siret": "87999258400018",
+  "source_url": "https://www.demenagements-du-poteau.fr/a-propos"
+ },
+ {
+  "company_name": "ECORELAY",
+  "city": "Amiens",
+  "postal_code": "80080",
+  "phone": "06 98 68 52 71",
+  "email": "ecorelay.contact@gmail.com",
+  "website": "https://demenageuramiens.com/",
+  "siret": "92066322600016",
+  "source_url": "https://demenageuramiens.com/"
+ },
+ {
+  "company_name": "AG Transdem Express",
+  "city": "Amiens",
+  "postal_code": "80080",
+  "phone": "",
+  "email": "contact@ag-transdem-express.com",
+  "website": "https://ag-transdem-express.com/",
+  "siret": "81293165700025",
+  "source_url": "https://ag-transdem-express.com/"
+ },
+ {
+  "company_name": "Atlas Déménagements",
+  "city": "Perpignan",
+  "postal_code": "66000",
+  "phone": "04 68 61 17 07",
+  "email": "contact@demenagements-atlas.com",
+  "website": "https://demenagements-atlas.fr/",
+  "siret": "68420093400025",
+  "source_url": "https://demenagements-atlas.fr/"
+ },
+ {
+  "company_name": "Déméclair",
+  "city": "Perpignan",
+  "postal_code": "",
+  "phone": "",
+  "email": "contact@demeclair.com",
+  "website": "https://www.demenagement-demeclair.com/",
+  "siret": "95233670900011",
+  "source_url": "https://www.demenagement-demeclair.com/"
+ },
+ {
+  "company_name": "CST",
+  "city": "Perpignan",
+  "postal_code": "66000",
+  "phone": "06 84 78 23 28",
+  "email": "sas.cst66@gmail.com",
+  "website": "https://cst-perpignan.fr/",
+  "siret": "",
+  "source_url": "https://cst-perpignan.fr/"
+ },
+ {
+  "company_name": "Déménagement Gascon",
+  "city": "Perpignan",
+  "postal_code": "66000",
+  "phone": "",
+  "email": "contact@demenagementgascon.com",
+  "website": "https://demenagementgascon.com/",
+  "siret": "",
+  "source_url": "https://demenagementgascon.com/"
+ },
+ {
+  "company_name": "AS Déménagement & Transports",
+  "city": "Metz",
+  "postal_code": "",
+  "phone": "06 22 03 96 11",
+  "email": "metz.demenagement@orange.fr",
+  "website": "https://www.metz-demenagement.fr/",
+  "siret": "92486053900015",
+  "source_url": "https://www.metz-demenagement.fr/"
+ },
+ {
+  "company_name": "HelloDem",
+  "city": "Metz",
+  "postal_code": "",
+  "phone": "03 74 47 06 33",
+  "email": "",
+  "website": "https://www.hello-dem.com/",
+  "siret": "",
+  "source_url": "https://www.hello-dem.com/"
+ },
+ {
+  "company_name": "Aaction Dem",
+  "city": "Metz",
+  "postal_code": "57000",
+  "phone": "03 82 85 49 43",
+  "email": "",
+  "website": "https://www.aaction-dem.com/",
+  "siret": "",
+  "source_url": "https://www.aaction-dem.com/demenagement-metz"
+ },
+ {
+  "company_name": "JPL Services",
+  "city": "Besançon",
+  "postal_code": "",
+  "phone": "",
+  "email": "contact.jpld@jplservices.fr",
+  "website": "https://www.jplservices.fr/",
+  "siret": "49326329700035",
+  "source_url": "https://www.jplservices.fr/"
+ },
+ {
+  "company_name": "AMC Déménagement",
+  "city": "Besançon",
+  "postal_code": "25000",
+  "phone": "06 26 15 61 16",
+  "email": "demenagement.amc@gmail.com",
+  "website": "https://www.amc-demenagement.fr/",
+  "siret": "89780556000025",
+  "source_url": "https://www.amc-demenagement.fr/"
+ },
+ {
+  "company_name": "Déménagements Jumeau",
+  "city": "Orléans",
+  "postal_code": "",
+  "phone": "02 37 90 31 31",
+  "email": "jedemenage@demenagements-jumeau.fr",
+  "website": "https://demenagements-jumeau.com/",
+  "siret": "",
+  "source_url": "https://demenagements-jumeau.com/agence-demenagement-orleans/"
+ },
+ {
+  "company_name": "Blot Déménagements",
+  "city": "Rouen",
+  "postal_code": "",
+  "phone": "",
+  "email": "demenagement.blot@gmail.com",
+  "website": "https://blot-demenagements.fr/",
+  "siret": "92907502600013",
+  "source_url": "https://blot-demenagements.fr/"
+ },
+ {
+  "company_name": "Déménagements Postel",
+  "city": "Rouen",
+  "postal_code": "76100",
+  "phone": "02 35 72 41 51",
+  "email": "",
+  "website": "https://www.postel-demenagement.fr/",
+  "siret": "31266933600090",
+  "source_url": "https://www.postel-demenagement.fr/"
+ },
+ {
+  "company_name": "SATN Déménagements",
+  "city": "Rouen",
+  "postal_code": "",
+  "phone": "02 78 26 03 06",
+  "email": "contact@satn76.fr",
+  "website": "https://www.satn76.fr/",
+  "siret": "",
+  "source_url": "https://www.satn76.fr/"
+ },
+ {
+  "company_name": "LM Déménagements",
+  "city": "Caen",
+  "postal_code": "14000",
+  "phone": "01 43 40 13 13",
+  "email": "contact@lm-demenagements.fr",
+  "website": "https://www.lm-demenagements.fr/",
+  "siret": "",
+  "source_url": "https://www.lm-demenagements.fr/"
+ },
+ {
+  "company_name": "Nouet Déménagements",
+  "city": "Caen",
+  "postal_code": "14760",
+  "phone": "02 31 73 68 68",
+  "email": "nouet@orange.fr",
+  "website": "https://nouetdemenagements.fr/",
+  "siret": "",
+  "source_url": "https://nouetdemenagements.fr/"
+ },
+ {
+  "company_name": "Déménagement Richou",
+  "city": "Caen",
+  "postal_code": "",
+  "phone": "02 31 89 65 02",
+  "email": "contact@demenagement-richou.fr",
+  "website": "https://demenagement-richou.fr/",
+  "siret": "88833755700027",
+  "source_url": "https://demenagement-richou.fr/"
+ },
+ {
+  "company_name": "ABCDem",
+  "city": "Vandœuvre-lès-Nancy",
+  "postal_code": "",
+  "phone": "03 83 97 30 47",
+  "email": "contact@abcdem.fr",
+  "website": "https://abcdem.fr/",
+  "siret": "81130780000037",
+  "source_url": "https://abcdem.fr/"
+ },
+ {
+  "company_name": "Déménagement L'Herrou",
+  "city": "Brest",
+  "postal_code": "29200",
+  "phone": "02 98 45 17 08",
+  "email": "contact@demenagementlherrou.com",
+  "website": "https://www.demenagementlherrou.com/",
+  "siret": "51817495800042",
+  "source_url": "https://www.demenagementlherrou.com/"
+ },
+ {
+  "company_name": "Fab's Déménagement",
+  "city": "Pau",
+  "postal_code": "",
+  "phone": "05 58 06 43 43",
+  "email": "fabsdemenagements@orange.fr",
+  "website": "https://fabsdemenagements.fr/",
+  "siret": "39489535300024",
+  "source_url": "https://fabsdemenagements.fr/"
+ },
+ {
+  "company_name": "Déménagements Palois",
+  "city": "Pau",
+  "postal_code": "64000",
+  "phone": "05 47 92 60 33",
+  "email": "contact@demenagement-palois.fr",
+  "website": "https://www.demenagement-palois.fr/",
+  "siret": "74998175900014",
+  "source_url": "https://www.demenagement-palois.fr/"
+ }
+]

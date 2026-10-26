@@ -1,0 +1,23 @@
+name: Importer les prospects déménageurs Lovable
+
+on:
+  push:
+    branches: [main]
+    paths: ["scripts/prospects/lovable-prospects.json", ".github/workflows/import-lovable-prospects.yml"]
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - working-directory: scripts/prospects
+        env:
+          SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          npm init -y >/dev/null && npm install --no-audit --no-fund @supabase/supabase-js@2
+          node import-lovable.mjs
