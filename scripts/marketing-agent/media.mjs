@@ -44,6 +44,8 @@ export function withCta(scenes) {
   return [...scenes.slice(0, -1), { ...last, voiceover: `${(last.voiceover ?? "").trim()} ${CTA_VOICE}`.trim() }];
 }
 
+const VOICE_SPEED = 1.25;
+
 export async function buildVideo(scenes, { openaiRaw, voice }) {
   ensureFfmpeg();
   scenes = withCta(scenes);
@@ -53,10 +55,13 @@ export async function buildVideo(scenes, { openaiRaw, voice }) {
     const s = scenes[i];
     const img = join(dir, `s${i}.png`), mp3 = join(dir, `s${i}.mp3`), mp4 = join(dir, `s${i}.mp4`);
     writeFileSync(img, s.image);
-    writeFileSync(mp3, await openaiRaw("/audio/speech", {
+    const raw = join(dir, `s${i}-raw.mp3`);
+    writeFileSync(raw, await openaiRaw("/audio/speech", {
       model: "gpt-4o-mini-tts", voice: voice.voice, input: applyPronunciations(s.voiceover, voice.dict),
       response_format: "mp3", instructions: voice.instructions,
     }));
+    // Voix off accélérée (×1,25) sans changer la hauteur de la voix
+    execFileSync("ffmpeg", ["-y", "-i", raw, "-filter:a", `atempo=${VOICE_SPEED}`, mp3], { stdio: "ignore" });
     const dur = parseFloat(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", mp3]).toString()) + 0.4;
     const frames = Math.ceil(dur * 30);
     execFileSync("ffmpeg", ["-y", "-loop", "1", "-i", img, "-i", mp3,
