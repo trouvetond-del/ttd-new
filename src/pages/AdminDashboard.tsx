@@ -32,6 +32,7 @@ import AdminHelpSupport from '../components/admin/AdminHelpSupport';
 import AdminSecurityAgents from '../components/admin/AdminSecurityAgents';
 import AdminSocialStudio from '../components/admin/AdminSocialStudio';
 import AdminSeoReport from '../components/admin/AdminSeoReport';
+import AdminGroupage from '../components/admin/AdminGroupage';
 import AdminExports from '../components/admin/AdminExports';
 import AdminActivityLogs from '../components/admin/AdminActivityLogs';
 import AdminMissions from '../components/admin/AdminMissions';
@@ -67,7 +68,8 @@ type ActiveTab =
   | 'promo_codes'
   | 'security'
   | 'social_studio'
-  | 'seo_report';
+  | 'seo_report'
+  | 'groupage';
 
 interface NavItem {
   id: ActiveTab;
@@ -79,7 +81,7 @@ interface NavItem {
 export default function AdminDashboard() {
   const { tab: urlTab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
-  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report'];
+  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report','groupage'];
   const initialTab = (urlTab && validTabs.includes(urlTab as ActiveTab)) ? urlTab as ActiveTab : 'overview';
   const [activeTab, setActiveTabState] = useState<ActiveTab>(initialTab);
   const setActiveTab = (tab: ActiveTab) => { setActiveTabState(tab); navigate(`/admin/dashboard/${tab}`, { replace: true }); };
@@ -148,6 +150,7 @@ export default function AdminDashboard() {
     { id: 'recent_quotes', label: 'Demandes de Devis Récentes', icon: FileText, color: 'text-sky-600' },
     { id: 'contracts', label: 'Contrats Dropbox Sign', icon: FileText, color: 'text-cyan-600' },
     { id: 'missions', label: 'Missions', icon: Truck, color: 'text-indigo-600' },
+    { id: 'groupage', label: 'Groupage', icon: Truck, color: 'text-orange-600' },
     { id: 'financial', label: 'Finances', icon: DollarSign, color: 'text-green-600' },
     { id: 'promo_codes', label: 'Codes Promo', icon: Tag, color: 'text-purple-600' },
     { id: 'analytics', label: 'Analytiques', icon: BarChart3, color: 'text-orange-600' },
@@ -283,6 +286,8 @@ export default function AdminDashboard() {
         return <AdminSocialStudio />;
       case 'seo_report':
         return <AdminSeoReport />;
+      case 'groupage':
+        return <AdminGroupage />;
       case 'security':
         return <AdminSecurityAgents />;
       case 'settings':
