@@ -102,12 +102,15 @@ export default function AdminUserManagement({
           { data: movers },
           { data: clients },
           allUsersResult,
+          qrResult,
         ] = await Promise.all([
           supabase.from('admins').select('user_id'),
           supabase.from('movers').select('user_id'),
           supabase.from('clients').select('user_id, first_name, last_name, phone, profile_completed'),
           supabase.rpc('get_all_users'),
+          supabase.from('quote_requests').select('client_user_id'),
         ]);
+        const qrUserIds = new Set(((qrResult as any)?.data || []).map((q: any) => q.client_user_id).filter(Boolean));
 
         const adminUserIds = new Set(admins?.map((a: any) => a.user_id) || []);
         const moverUserIds = new Set(movers?.map((m: any) => m.user_id) || []);
@@ -120,7 +123,7 @@ export default function AdminUserManagement({
             clientDataMap.set(client.user_id, {
               name: `${client.first_name || ''} ${client.last_name || ''}`.trim() || 'Non renseigné',
               phone: client.phone || 'Non renseigné',
-              profileCompleted: client.profile_completed === true,
+              profileCompleted: client.profile_completed === true || (qrUserIds.has(client.user_id) && !!client.phone && !!client.first_name),
             });
           }
         });
@@ -154,12 +157,15 @@ export default function AdminUserManagement({
           { data: moversData },
           { data: clients },
           allUsersResult,
+          qrResult,
         ] = await Promise.all([
           supabase.from('admins').select('user_id'),
           supabase.from('movers').select('*'),
           supabase.from('clients').select('user_id, first_name, last_name, phone, profile_completed'),
           supabase.rpc('get_all_users'),
+          supabase.from('quote_requests').select('client_user_id'),
         ]);
+        const qrUserIds = new Set(((qrResult as any)?.data || []).map((q: any) => q.client_user_id).filter(Boolean));
 
         const adminUserIds = new Set(admins?.map((a: any) => a.user_id) || []);
         const moverUserIds = new Set(moversData?.map((m: any) => m.user_id) || []);
@@ -172,7 +178,7 @@ export default function AdminUserManagement({
             clientDataMap.set(client.user_id, {
               name: `${client.first_name || ''} ${client.last_name || ''}`.trim() || 'Non renseigné',
               phone: client.phone || 'Non renseigné',
-              profileCompleted: client.profile_completed === true,
+              profileCompleted: client.profile_completed === true || (qrUserIds.has(client.user_id) && !!client.phone && !!client.first_name),
             });
           }
         });
