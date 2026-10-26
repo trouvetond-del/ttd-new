@@ -338,12 +338,14 @@ export default function AdminRecentQuoteRequests() {
     }
   };
 
+  const refOf = (q: QuoteRequest) => q.reference || `TTD-${q.id.substring(0, 8).toUpperCase()}`;
+
   const filteredRequests = quoteRequests.filter((q) => {
     if (statusFilter === 'expired' && !isMoveExpired(q)) return false;
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
-      (q.reference || '').toLowerCase().includes(term) ||
+      refOf(q).toLowerCase().includes(term) ||
       (q.client_name || '').toLowerCase().includes(term) ||
       (q.client_email || '').toLowerCase().includes(term) ||
       (q.from_address || '').toLowerCase().includes(term) ||
@@ -379,7 +381,7 @@ export default function AdminRecentQuoteRequests() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Rechercher par nom, email, ville..."
+            placeholder="Rechercher par référence, nom, email, ville..."
             className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -414,6 +416,7 @@ export default function AdminRecentQuoteRequests() {
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Date</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Référence</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Client</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Canal</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Départ → Arrivée</th>
@@ -430,10 +433,10 @@ export default function AdminRecentQuoteRequests() {
                     <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
                       {new Date(q.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                     </td>
+                    <td className="px-4 py-3 text-xs font-mono text-gray-700 dark:text-gray-300 whitespace-nowrap">{refOf(q)}</td>
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
                         {q.client_name || 'Non renseigné'}
-                        {q.reference && <span className="ml-2 text-[10px] font-mono text-gray-400">{q.reference}</span>}
                       </p>
                       {q.client_email && <p className="text-xs text-gray-500">{q.client_email}</p>}
                       {q.lead_source && q.lead_source !== 'direct' && (
