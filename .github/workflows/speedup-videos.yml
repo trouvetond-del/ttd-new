@@ -1,0 +1,25 @@
+name: Accélérer la voix off des vidéos non publiées (x1,25)
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/speedup-videos.yml", "scripts/marketing-agent/speedup-unpublished.mjs"]
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: sudo apt-get update -y && sudo apt-get install -y ffmpeg
+      - working-directory: scripts/marketing-agent
+        env:
+          SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          npm install --no-audit --no-fund @supabase/supabase-js@2
+          node speedup-unpublished.mjs
