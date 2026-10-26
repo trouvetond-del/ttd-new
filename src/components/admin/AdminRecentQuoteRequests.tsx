@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall, Archive } from 'lucide-react';
+import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall, Archive, UserCheck } from 'lucide-react';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
+import AdminAssignQuoteModal from './AdminAssignQuoteModal';
 import { showToast } from '../../utils/toast';
 
 interface QuoteRequest {
@@ -75,6 +76,7 @@ export default function AdminRecentQuoteRequests() {
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [assignFor, setAssignFor] = useState<{ id: string; route: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -490,6 +492,16 @@ export default function AdminRecentQuoteRequests() {
                           <Eye className="w-3 h-3" />
                           Voir
                         </button>
+                        {!q.is_draft && ['new', 'assigned', 'quoted'].includes(q.status) && !isMoveExpired(q) && (
+                          <button
+                            onClick={() => setAssignFor({ id: q.id, route: `${q.client_name} · ${q.from_city} → ${q.to_city} · ${new Date(q.moving_date).toLocaleDateString('fr-FR')}` })}
+                            title="Choisir un déménageur et déposer son devis à sa place"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs rounded-lg border border-indigo-200 hover:bg-indigo-600 hover:text-white transition"
+                          >
+                            <UserCheck className="w-3 h-3" />
+                            Attribuer
+                          </button>
+                        )}
                         {(() => {
                           // Ordre de priorité : pas de compte d'abord (rien
                           // d'autre n'est possible sans compte), puis
@@ -576,6 +588,15 @@ export default function AdminRecentQuoteRequests() {
             </table>
           </div>
         </div>
+      )}
+
+      {assignFor && (
+        <AdminAssignQuoteModal
+          quoteRequestId={assignFor.id}
+          route={assignFor.route}
+          onClose={() => setAssignFor(null)}
+          onDone={loadQuoteRequests}
+        />
       )}
 
       {selectedRequestId && (
