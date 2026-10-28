@@ -398,7 +398,7 @@ export function LandingPage() {
           </button>
 
           <p className="mt-6 text-sm text-blue-200/80 animate-fadeInUp" style={{ animationDelay: '0.6s' }}>
-            Gratuit -- Réponse sous 24h -- 100% sécurisé
+            Gratuit · Réponse sous 24 h · 100 % sécurisé
           </p>
         </div>
       </section>
