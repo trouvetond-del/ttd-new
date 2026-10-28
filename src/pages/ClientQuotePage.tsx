@@ -13,7 +13,6 @@ import { showToast } from '../utils/toast';
 import { calculateRealDistance } from '../utils/distanceCalculator';
 import { calculateMarketPrice } from '../utils/marketPriceCalculation';
 import { ClientLayout } from '../components/ClientLayout';
-import { ClientQuoteStep0 } from '../components/ClientQuoteStep0';
 
 type ClientQuotePageProps = {
   editingQuoteRequestId?: string | null;
@@ -32,7 +31,7 @@ const services = [
 ];
 
 export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequestId }: ClientQuotePageProps) {
-  const { user } = useAuth();
+  const { user, signIn } = useAuth();
   const { quoteRequestId } = useParams<{ quoteRequestId: string }>();
   const navigate = useNavigate();
   const editingQuoteRequestId = propEditingQuoteRequestId || quoteRequestId || null;
@@ -519,11 +518,45 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
     setLoading(true);
 
     try {
-      if (editingQuoteRequestId) {
+      // Compte créé À LA FIN : le visiteur remplit tout le formulaire
+      // (adresses, étages, cubage...) puis, à l'envoi, on crée son compte
+      // client et on rattache la demande à ce compte. Le compte reste
+      // obligatoire -- il est juste demandé après la saisie, pas avant.
+      let targetQuoteRequestId = editingQuoteRequestId;
+      const isAnonymousSubmission = !user && !editingQuoteRequestId;
+      if (isAnonymousSubmission) {
+        const parts = formData.client_name.trim().split(/\s+/);
+        const firstName = parts.shift() || formData.client_name.trim();
+        const lastName = parts.join(' ') || firstName;
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-draft-quote-account`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.client_email.trim().toLowerCase(),
+            phone: formData.client_phone.trim(),
+            firstName,
+            lastName,
+            marketingConsent: false,
+            smsConsent: false,
+          }),
+        });
+        const json = await res.json();
+        if (!res.ok) {
+          if (json.alreadyExists) {
+            showToast('Un compte existe déjà avec cet email. Connectez-vous pour envoyer votre demande.', 'error');
+            setError('Un compte existe déjà avec cet email. Connectez-vous (bouton « Se connecter ») puis renvoyez votre demande.');
+            return;
+          }
+          throw new Error(json.error || 'Erreur lors de la création de votre compte');
+        }
+        await signIn(json.email, json.tempPassword);
+        targetQuoteRequestId = json.quoteRequestId;
+      }
+      if (targetQuoteRequestId) {
         const { data: currentRequest } = await supabase
           .from('quote_requests')
           .select('status, accepted_quote_id, is_draft')
-          .eq('id', editingQuoteRequestId)
+          .eq('id', targetQuoteRequestId)
           .single();
 
         // Bug critique corrigé : une demande créée en brouillon (quick-lead,
@@ -556,7 +589,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
         const { error: updateError } = await supabase
           .from('quote_requests')
           .update(updateData)
-          .eq('id', editingQuoteRequestId);
+          .eq('id', targetQuoteRequestId);
 
         if (updateError) throw updateError;
 
@@ -564,14 +597,14 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
         const { data: quotesToExpire } = await supabase
           .from('quotes')
           .select('id')
-          .eq('quote_request_id', editingQuoteRequestId)
+          .eq('quote_request_id', targetQuoteRequestId)
           .in('status', ['pending', 'accepted']);
 
         if (quotesToExpire && quotesToExpire.length > 0) {
           const { error: expireError } = await supabase
             .from('quotes')
             .update({ status: 'expired' })
-            .eq('quote_request_id', editingQuoteRequestId)
+            .eq('quote_request_id', targetQuoteRequestId)
             .in('status', ['pending', 'accepted']);
 
           if (expireError) {
@@ -644,7 +677,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
         const { data: quotesData } = await supabase
           .from('quotes')
           .select('id, mover_id, price, status')
-          .eq('quote_request_id', editingQuoteRequestId);
+          .eq('quote_request_id', targetQuoteRequestId);
 
         if (quotesData && quotesData.length > 0) {
           // Get unique mover IDs
@@ -662,7 +695,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
               title: 'Demande de déménagement modifiée',
               message: `Le client a modifié sa demande de déménagement ${formData.from_city} → ${formData.to_city}. Veuillez vérifier et ajuster votre devis si nécessaire.`,
               type: 'quote_update',
-              related_id: editingQuoteRequestId,
+              related_id: targetQuoteRequestId,
               read: false,
               created_at: new Date().toISOString()
             }));
@@ -713,7 +746,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
             title: 'Client a modifié sa demande',
             message: `Le client a modifié sa demande de déménagement de ${formData.from_city} vers ${formData.to_city} du ${new Date(formData.moving_date).toLocaleDateString('fr-FR')}.`,
             type: 'quote_update',
-            related_id: editingQuoteRequestId,
+            related_id: targetQuoteRequestId,
             read: false,
             created_at: new Date().toISOString()
           }));
@@ -721,7 +754,12 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
           await supabase.from('notifications').insert(adminNotifications);
         }
 
-        showToast('Demande modifiée avec succès', 'success');
+        if (isAnonymousSubmission) {
+          trackAdEvent('Lead', { content_name: 'full_quote_request' });
+          showToast('Demande envoyée avec succès', 'success');
+        } else {
+          showToast('Demande modifiée avec succès', 'success');
+        }
       } else {
         const { error: submitError } = await supabase
           .from('quote_requests')
@@ -878,9 +916,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
   // existant (editingQuoteRequestId présent, donc déjà passé par le
   // step 0 ou par un autre parcours de connexion), continue sur le
   // wizard existant inchangé ci-dessous.
-  if (!editingQuoteRequestId && !user) {
-    return <ClientQuoteStep0 />;
-  }
+
 
   if (loadingExistingData) {
     return (
@@ -1820,6 +1856,11 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
                   >
                     {loading ? 'Envoi en cours...' : 'Recevoir mes devis gratuits'}
                   </button>
+                  {!user && !editingQuoteRequestId && (
+                    <p className="text-xs text-gray-500 mt-2 max-w-xs">
+                      En envoyant, votre compte client gratuit est créé avec l'email indiqué pour suivre vos devis.
+                    </p>
+                  )}
                 </div>
               </div>
             )}
