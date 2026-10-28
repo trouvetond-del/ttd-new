@@ -18,7 +18,7 @@ export default function NotFoundPage() {
       <p className="mb-6 text-gray-600">Cette page n'existe pas ou a été déplacée.</p>
       <div className="flex gap-4">
         <Link to="/" className="underline">Accueil</Link>
-        <Link to="/client/auth-choice" className="font-semibold text-blue-600">Obtenir mon devis gratuit</Link>
+        <Link to="/client/quote" className="font-semibold text-blue-600">Obtenir mon devis gratuit</Link>
       </div>
     </div>
   );
