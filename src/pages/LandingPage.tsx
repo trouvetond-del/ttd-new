@@ -1,4 +1,4 @@
-import { Truck, LogIn, Shield, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, Sparkles, Star, Award, Zap, Phone, Mail, MessageCircle, Facebook, Twitter, Linkedin, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb } from 'lucide-react';
+import { Truck, LogIn, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, Star, Zap, Phone, Mail, MessageCircle, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb } from 'lucide-react';
 import { SupportChat } from '../components/SupportChat';
 import { Logo } from '../components/Logo';
 import { useState, useRef } from 'react';
@@ -228,131 +228,48 @@ export function LandingPage() {
 
       <section className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-100/30 rounded-full blur-3xl"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-20 animate-fadeInUp">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl mb-6 shadow-xl animate-float">
-              <Shield className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-              Trois preuves. <span className="gradient-text">Zéro doute.</span>
+          <div className="text-center mb-14 animate-fadeInUp">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+              Pourquoi nous faire <span className="gradient-text">confiance</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-light">
-              Un protocole photo en trois étapes qui protège équitablement le client et le professionnel.
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
+              Gratuit, sans engagement.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-20">
-            <div className="group bg-white rounded-3xl p-8 hover-lift shadow-xl border border-gray-100/50 hover:border-blue-200 transition-all duration-300 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Camera className="w-8 h-8 text-white" />
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp text-center" style={{ animationDelay: '0.1s' }}>
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
+                <ShieldCheck className="w-7 h-7 text-white" />
               </div>
-              <div className="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full mb-4">
-                ÉTAPE 1
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Avant le départ</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Vous photographiez vos biens. L'IA enregistre leur état d'origine.
-              </p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Déménageurs vérifiés</h3>
+              <p className="text-gray-600 leading-relaxed">KBIS, assurance et URSSAF contrôlés.</p>
             </div>
 
-            <div className="group bg-white rounded-3xl p-8 hover-lift shadow-xl border border-gray-100/50 hover:border-green-200 transition-all duration-300 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Camera className="w-8 h-8 text-white" />
+            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp text-center" style={{ animationDelay: '0.2s' }}>
+              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
+                <FileCheck className="w-7 h-7 text-white" />
               </div>
-              <div className="inline-block px-3 py-1 bg-green-50 text-green-700 text-xs font-bold rounded-full mb-4">
-                ÉTAPE 2
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Au chargement</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Le déménageur documente la prise en charge. Chaque bien est tracé.
-              </p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Jusqu'à 3 devis sous 24 h</h3>
+              <p className="text-gray-600 leading-relaxed">Vous comparez, vous choisissez.</p>
             </div>
 
-            <div className="group bg-white rounded-3xl p-8 hover-lift shadow-xl border border-gray-100/50 hover:border-orange-200 transition-all duration-300 animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <Camera className="w-8 h-8 text-white" />
+            <a
+              href="https://fr.trustpilot.com/review/trouvetondemenageur.fr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp text-center"
+              style={{ animationDelay: '0.3s' }}
+            >
+              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
+                <Star className="w-7 h-7 text-white" />
               </div>
-              <div className="inline-block px-3 py-1 bg-orange-50 text-orange-700 text-xs font-bold rounded-full mb-4">
-                ÉTAPE 3
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">A l'arrivée</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Vous vérifiez, l'IA compare. En cas de dommage, le verdict est instantané.
-              </p>
-            </div>
-          </div>
-
-          <div
-            className="relative rounded-3xl overflow-hidden shadow-premium animate-fadeInUp bg-gradient-to-br from-slate-900 via-gray-900 to-blue-900"
-            style={{ animationDelay: '0.4s' }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-gray-900/90 to-blue-900/85"></div>
-            <div className="relative p-10 md:p-16">
-              <div className="max-w-5xl mx-auto text-center">
-                <div className="flex items-center justify-center space-x-4 mb-6">
-                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 p-4 rounded-2xl shadow-xl animate-float">
-                    <Sparkles className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <div className="inline-block px-4 py-1.5 bg-blue-500/20 text-blue-300 text-xs font-bold rounded-full mb-4 tracking-wider">
-                  TECHNOLOGIE PROPRIÉTAIRE
-                </div>
-                <h3 className="text-3xl md:text-4xl font-extrabold text-white mb-6">
-                  Une IA qui tranche, pas qui devine.
-                </h3>
-                <p className="text-lg md:text-xl text-gray-200 mb-12 leading-relaxed font-light max-w-3xl mx-auto">
-                  Comparaison photo par photo, verdict objectif, traçabilité totale. Ni le client ni le pro ne peuvent contester les faits.
-                </p>
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div className="glass-effect p-6 rounded-2xl border border-white/10 text-left">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                        <Camera className="w-6 h-6 text-white" />
-                      </div>
-                    </div>
-                    <p className="text-white font-bold text-lg mb-1">Détection en temps réel</p>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      Chaque rayure, chaque impact identifié automatiquement sur les photos
-                    </p>
-                  </div>
-                  <div className="glass-effect p-6 rounded-2xl border border-white/10 text-left">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                        <Shield className="w-6 h-6 text-white" />
-                      </div>
-                    </div>
-                    <p className="text-white font-bold text-lg mb-1">Verdict impartial</p>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      Décision fondée sur les preuves, pas sur les déclarations
-                    </p>
-                  </div>
-                  <div className="glass-effect p-6 rounded-2xl border border-white/10 text-left">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg">
-                        <FileCheck className="w-6 h-6 text-white" />
-                      </div>
-                    </div>
-                    <p className="text-white font-bold text-lg mb-1">Traçabilité certifiée</p>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      Date, heure, géolocalisation. Chaque photo a valeur de preuve.
-                    </p>
-                  </div>
-                  <div className="glass-effect p-6 rounded-2xl border border-white/10 text-left">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-                        <Shield className="w-6 h-6 text-white" />
-                      </div>
-                    </div>
-                    <p className="text-white font-bold text-lg mb-1">Litiges désamorcés</p>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      Les faits parlent, les conflits disparaissent.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Avis sur Trustpilot</h3>
+              <p className="text-gray-600 leading-relaxed">Les retours de nos clients, vérifiés par Trustpilot.</p>
+              <span className="inline-block mt-3 text-sm font-semibold text-blue-600 group-hover:underline">Voir notre page</span>
+            </a>
           </div>
         </div>
       </section>
@@ -360,113 +277,38 @@ export function LandingPage() {
       <section className="py-24 bg-white relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-blue-50 to-cyan-50 rounded-full blur-3xl opacity-40"></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-20 animate-fadeInUp">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-              Ce qui fait la <span className="gradient-text">différence</span>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-14 animate-fadeInUp">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+              Vos biens protégés <span className="gradient-text">en 3 photos</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
-              Une exigence de qualité à chaque étape, sans exception.
+              Client et déménageur sont protégés de la même façon.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center group animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-              <div className="relative inline-block mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform duration-300">
-                  <Shield className="w-10 h-10 text-white" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Assurance vérifiée</h3>
-              <p className="text-gray-600 leading-relaxed">Chaque professionnel est couvert. Nous le vérifions avant toute mise en relation.</p>
+          <div className="grid sm:grid-cols-3 gap-4 items-stretch mb-8">
+            <div className="bg-slate-50 rounded-2xl p-6 text-center border border-gray-100 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+              <Camera className="w-7 h-7 text-blue-600 mx-auto mb-3" />
+              <p className="font-bold text-gray-900">1. Au départ</p>
+              <p className="text-sm text-gray-600">Vous photographiez</p>
             </div>
-
-            <div className="text-center group animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-              <div className="relative inline-block mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform duration-300">
-                  <FileCheck className="w-10 h-10 text-white" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                  <Star className="w-5 h-5 text-white fill-white" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Pros triés sur le volet</h3>
-              <p className="text-gray-600 leading-relaxed">Documents, avis, antécédents : rien n'est laissé au hasard.</p>
+            <div className="bg-slate-50 rounded-2xl p-6 text-center border border-gray-100 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+              <Truck className="w-7 h-7 text-green-600 mx-auto mb-3" />
+              <p className="font-bold text-gray-900">2. Au chargement</p>
+              <p className="text-sm text-gray-600">Le pro photographie</p>
             </div>
-
-            <div className="text-center group animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-              <div className="relative inline-block mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform duration-300">
-                  <Zap className="w-10 h-10 text-white" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">IA propriétaire</h3>
-              <p className="text-gray-600 leading-relaxed">Une technologie exclusive qui protège vos biens et vos droits.</p>
-            </div>
-
-            <div className="text-center group animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
-              <div className="relative inline-block mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform duration-300">
-                  <Award className="w-10 h-10 text-white" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Gratuit, sans engagement</h3>
-              <p className="text-gray-600 leading-relaxed">Recevez vos devis librement. Vous choisissez, sans pression.</p>
+            <div className="bg-slate-50 rounded-2xl p-6 text-center border border-gray-100 animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
+              <CheckCircle className="w-7 h-7 text-emerald-600 mx-auto mb-3" />
+              <p className="font-bold text-gray-900">3. A l'arrivée</p>
+              <p className="text-sm text-gray-600">Vous vérifiez</p>
             </div>
           </div>
-        </div>
-      </section>
 
-      <section className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20 animate-fadeInUp">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-              La confiance, <span className="gradient-text">ça se prouve.</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
-              Plateforme lancée en 2026 — voici comment on la construit, sans rien inventer.
+          <div className="bg-blue-50 border border-blue-100 rounded-2xl px-6 py-5 text-center animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
+            <p className="text-blue-900 leading-relaxed">
+              Un dégât ? Notre IA compare les photos et tranche sur des preuves, pas sur des paroles.
             </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
-                <ShieldCheck className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Déménageurs vérifiés</h3>
-              <p className="text-gray-700 leading-relaxed">
-                KBIS, assurance RC Pro et immatriculation URSSAF contrôlés avant validation de chaque professionnel. Pas d'exception.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
-                <Camera className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Arbitrage IA impartial</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Photos avant/après horodatées en cas de litige. Notre IA compare objectivement, sans parti pris pour le client ou le déménageur.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
-                <Star className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Les premiers avis arrivent</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Chaque déménagement terminé déclenche une demande d'avis vérifié. On préfère commencer à zéro plutôt qu'afficher de faux avis.
-              </p>
-            </div>
           </div>
         </div>
       </section>
