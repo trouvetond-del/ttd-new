@@ -314,7 +314,7 @@ export default function Blog() {
             Comparez gratuitement les devis de déménageurs professionnels vérifiés en quelques minutes.
           </p>
           <Link
-            to="/client/auth-choice"
+            to="/client/quote"
             className="inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-8 py-3.5 rounded-full hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/20"
           >
             Obtenir mon devis gratuit
