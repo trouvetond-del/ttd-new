@@ -751,6 +751,21 @@ export default function AdminUserManagement({
                           <Eye className="w-4 h-4" />
                           Détails
                         </button>
+                        {user.role === 'client' && user.is_active === false && (
+                          <button
+                            onClick={async () => {
+                              if (!window.confirm(`Passer "${user.company_name !== 'Non renseigné' ? user.company_name : user.email}" en Actif ?`)) return;
+                              const { data, error } = await supabase.functions.invoke('admin-client-actions', { body: { action: 'activate', clientUserId: user.id } });
+                              if (error || data?.error) { showToast(data?.error || "Impossible d'activer ce client", 'error'); return; }
+                              showToast('Client passé en Actif', 'success');
+                              loadUsers();
+                            }}
+                            className="inline-flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+                            title="Passer ce client en Actif"
+                          >
+                            Activer
+                          </button>
+                        )}
                         {user.role === 'mover' && user.verification_status === 'verified' && user.is_active && (
                           <button
                             onClick={async () => {

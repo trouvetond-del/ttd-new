@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Download, User, Mail, Phone, Calendar, MapPin, Package, FileText, Edit, Navigation } from 'lucide-react';
+import { X, Download, User, Mail, Phone, Calendar, MapPin, Package, FileText, Edit, Navigation, Send } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
@@ -59,6 +59,21 @@ export default function ClientDetailModal({ clientId, onClose, onUpdate, adminRo
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showFollowup, setShowFollowup] = useState(false);
+  const [sendingReminder, setSendingReminder] = useState(false);
+
+  const handleProfileReminder = async () => {
+    if (!window.confirm("Envoyer à ce client l'email de relance pour finir son profil ?")) return;
+    setSendingReminder(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-client-actions', { body: { action: 'profile_reminder', clientUserId: clientId } });
+      if (error || data?.error) throw new Error(data?.error || "Envoi impossible");
+      showToast(`Email de relance envoyé à ${data?.email || 'ce client'}`, 'success');
+    } catch (e: any) {
+      showToast(e.message || "Envoi impossible", 'error');
+    } finally {
+      setSendingReminder(false);
+    }
+  };
   const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
   const [selectedQuoteRequestForQuotes, setSelectedQuoteRequestForQuotes] = useState<string | null>(null);
   const [distances, setDistances] = useState<{ [key: string]: number }>({});
@@ -307,6 +322,17 @@ export default function ClientDetailModal({ clientId, onClose, onUpdate, adminRo
               <Mail className="w-4 h-4" />
               Demander une mise à jour
             </button>
+            {quoteRequests.length === 0 && (
+              <button
+                onClick={handleProfileReminder}
+                disabled={sendingReminder}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-60"
+                title="Envoyer l'email de relance pour finir son profil"
+              >
+                <Send className="w-4 h-4" />
+                {sendingReminder ? 'Envoi...' : 'Relancer'}
+              </button>
+            )}
             <button
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
