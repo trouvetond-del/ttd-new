@@ -93,7 +93,7 @@ export function LandingPage() {
 
             <div className="flex justify-center mb-12 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
               <button
-                onClick={() => navigate('/client/auth-choice')}
+                onClick={() => navigate('/client/quote')}
                 className="group relative overflow-hidden bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 text-white px-14 py-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center space-x-3 shadow-2xl hover:shadow-emerald-500/50"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-600 to-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -216,7 +216,7 @@ export function LandingPage() {
 
           <div className="text-center animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
             <button
-              onClick={() => navigate('/client/auth-choice')}
+              onClick={() => navigate('/client/quote')}
               className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               Estimer mon déménagement
@@ -556,7 +556,7 @@ export function LandingPage() {
           </p>
 
           <button
-            onClick={() => navigate('/client/auth-choice')}
+            onClick={() => navigate('/client/quote')}
             className="group bg-white text-blue-600 px-12 py-6 rounded-2xl font-bold text-xl hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 inline-flex items-center space-x-3 shadow-premium animate-fadeInUp"
             style={{ animationDelay: '0.4s' }}
           >
