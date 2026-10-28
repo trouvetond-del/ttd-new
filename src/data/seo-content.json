@@ -1,0 +1,101 @@
+{
+  "prix": {
+    "note": "Fourchettes indicatives observées sur le marché français en 2026 pour un déménagement local (moins de 50 km), hors options. Elles ne remplacent pas un devis : le prix réel dépend du volume, des étages, de l'accès et de la date.",
+    "lignes": [
+      { "logement": "Studio / T1", "volume": "10 à 20 m³", "eco": "400 à 700 €", "standard": "600 à 1 000 €" },
+      { "logement": "T2", "volume": "20 à 30 m³", "eco": "700 à 1 100 €", "standard": "1 000 à 1 500 €" },
+      { "logement": "T3", "volume": "30 à 45 m³", "eco": "1 000 à 1 600 €", "standard": "1 500 à 2 300 €" },
+      { "logement": "T4 / maison", "volume": "45 à 70 m³", "eco": "1 600 à 2 500 €", "standard": "2 300 à 3 500 €" }
+    ],
+    "facteurs": [
+      "Le volume (m³) : c'est le critère principal. Faites l'inventaire pièce par pièce.",
+      "Les étages sans ascenseur et la distance entre le camion et la porte (portage).",
+      "La distance : au-delà de 100 km, comptez souvent 1,5 à 2 fois plus.",
+      "La formule : économique (vous emballez), standard (le déménageur emballe le fragile), confort (tout est pris en charge).",
+      "La date : fins de mois, week-ends et juillet-août sont plus chers. Une date flexible aide à payer moins.",
+      "Le monte-meubles, le démontage de meubles et l'autorisation de stationnement."
+    ]
+  },
+  "villes": {
+    "paris": {
+      "quartiers": ["Le Marais", "Montmartre", "Batignolles", "Belleville", "Bastille", "Montparnasse", "Quartier latin", "Passy"],
+      "conseils": [
+        "Rues étroites et immeubles anciens souvent sans ascenseur : prévoyez un monte-meubles pour les étages élevés.",
+        "Une autorisation de stationnement pour le camion se demande auprès de la Ville de Paris plusieurs jours à l'avance.",
+        "Évitez les fins de mois : la demande est très forte et les prix montent."
+      ]
+    },
+    "marseille": {
+      "quartiers": ["Le Panier", "Vieux-Port", "La Joliette", "Castellane", "Le Prado", "Les Chartreux", "Endoume", "La Belle de Mai"],
+      "conseils": [
+        "Certaines rues en pente et ruelles du centre limitent l'accès des gros camions : précisez-le dans votre demande.",
+        "En été, préférez un départ tôt le matin à cause de la chaleur.",
+        "Demandez l'autorisation de stationnement à la mairie à l'avance."
+      ]
+    },
+    "lyon": {
+      "quartiers": ["Presqu'île", "Croix-Rousse", "Vieux Lyon", "Part-Dieu", "Confluence", "Brotteaux", "Guillotière", "Monplaisir"],
+      "conseils": [
+        "Les pentes de la Croix-Rousse et les traboules compliquent le portage : signalez-le pour un devis juste.",
+        "Le centre a beaucoup d'immeubles anciens sans ascenseur.",
+        "Réservez le stationnement du camion auprès de la mairie."
+      ]
+    },
+    "toulouse": {
+      "quartiers": ["Capitole", "Carmes", "Saint-Cyprien", "Les Chalets", "Compans-Caffarelli", "Rangueil", "Minimes", "Saint-Michel"],
+      "conseils": [
+        "Les rues piétonnes du centre demandent souvent du portage : indiquez la distance camion-porte.",
+        "Septembre est chargé avec la rentrée étudiante : réservez tôt.",
+        "Pensez à l'autorisation de stationnement auprès de la mairie."
+      ]
+    },
+    "nice": {
+      "quartiers": ["Vieux-Nice", "Port", "Cimiez", "Libération", "Mont Boron", "Carré d'Or", "Fabron", "Saint-Roch"],
+      "conseils": [
+        "Les ruelles du Vieux-Nice ne permettent pas l'accès des camions : prévoyez du portage.",
+        "Les collines (Cimiez, Mont Boron) ont des accès en pente : précisez-le.",
+        "La saison touristique rend la circulation et le stationnement plus difficiles."
+      ]
+    },
+    "nantes": {
+      "quartiers": ["Bouffay", "Graslin", "Île de Nantes", "Chantenay", "Doulon", "Saint-Félix", "Zola", "Malakoff"],
+      "conseils": [
+        "Le centre a de nombreuses zones piétonnes : vérifiez l'accès pour le camion.",
+        "Demandez l'autorisation de stationnement à la mairie à l'avance.",
+        "Juin à septembre est la période la plus demandée."
+      ]
+    },
+    "montpellier": {
+      "quartiers": ["Écusson", "Antigone", "Port Marianne", "Beaux-Arts", "Boutonnet", "Les Arceaux", "Croix d'Argent", "Hôpitaux-Facultés"],
+      "conseils": [
+        "L'Écusson est en grande partie piéton : le portage à pied est souvent nécessaire.",
+        "La rentrée universitaire rend septembre très chargé.",
+        "En été, privilégiez les créneaux du matin."
+      ]
+    },
+    "strasbourg": {
+      "quartiers": ["Grande Île", "Petite France", "Krutenau", "Neudorf", "Robertsau", "Esplanade", "Orangerie", "Koenigshoffen"],
+      "conseils": [
+        "La Grande Île a un accès réglementé pour les véhicules : une autorisation est nécessaire.",
+        "Les immeubles alsaciens anciens ont des escaliers étroits : prévoyez le démontage des gros meubles.",
+        "En hiver, prévoyez une marge en cas de neige ou de verglas."
+      ]
+    },
+    "bordeaux": {
+      "quartiers": ["Chartrons", "Saint-Pierre", "Saint-Michel", "Bastide", "Caudéran", "Saint-Seurin", "Bacalan", "Nansouty"],
+      "conseils": [
+        "Les échoppes bordelaises sont de plain-pied mais les rues sont étroites : précisez l'accès.",
+        "Le centre historique est en grande partie piéton.",
+        "Faites la demande de stationnement auprès de la mairie à l'avance."
+      ]
+    },
+    "lille": {
+      "quartiers": ["Vieux-Lille", "Wazemmes", "Vauban", "Fives", "Moulins", "Saint-Maurice", "Euralille", "Lille-Centre"],
+      "conseils": [
+        "Les maisons de ville lilloises ont des escaliers étroits : le monte-meubles est souvent utile.",
+        "Les rues pavées du Vieux-Lille compliquent le portage.",
+        "Pensez à l'autorisation de stationnement auprès de la mairie."
+      ]
+    }
+  }
+}
