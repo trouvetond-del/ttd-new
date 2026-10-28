@@ -99,6 +99,25 @@ export function AboutUsPage() {
               </div>
             </div>
 
+            {/* Identité de l'entreprise (données publiques registre) */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-12">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Qui sommes-nous ?</h2>
+              <p className="text-gray-700 leading-relaxed mb-6">
+                TrouveTonDéménageur est une plateforme française de mise en relation entre particuliers, entreprises et déménageurs professionnels indépendants. Nous ne réalisons pas les déménagements nous-mêmes : nous vérifions les déménageurs inscrits et vous aidons à comparer leurs devis.
+              </p>
+              <dl className="grid sm:grid-cols-2 gap-4 text-sm">
+                <div><dt className="text-gray-500">Raison sociale</dt><dd className="font-semibold text-gray-900">TROUVE TON DEMENAGEUR (SAS)</dd></div>
+                <div><dt className="text-gray-500">Président</dt><dd className="font-semibold text-gray-900">Heikel Nachi</dd></div>
+                <div><dt className="text-gray-500">SIREN</dt><dd className="font-semibold text-gray-900">101 378 248</dd></div>
+                <div><dt className="text-gray-500">SIRET (siège)</dt><dd className="font-semibold text-gray-900">101 378 248 00013</dd></div>
+                <div><dt className="text-gray-500">TVA intracommunautaire</dt><dd className="font-semibold text-gray-900">FR83101378248</dd></div>
+                <div><dt className="text-gray-500">Siège social</dt><dd className="font-semibold text-gray-900">60 rue François Ier, 75008 Paris</dd></div>
+              </dl>
+              <a href="https://www.societe.com/societe/trouve-ton-demenageur-101378248.html" target="_blank" rel="noopener noreferrer" className="inline-block mt-6 text-blue-600 font-semibold hover:underline">
+                Vérifier nos informations sur societe.com →
+              </a>
+            </div>
+
             {/* Contact CTA */}
             <div className="mt-16 bg-gradient-to-br from-blue-900 to-slate-900 rounded-3xl p-12 text-white text-center">
               <h2 className="text-3xl font-bold mb-4">Prêt à déménager en toute sérénité ?</h2>
