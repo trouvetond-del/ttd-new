@@ -41,6 +41,7 @@ if (!fs.existsSync(path.join(DIST_DIR, 'index.html'))) {
 }
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const seoContent = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/data/seo-content.json'), 'utf-8'));
 const baseTemplate = fs.readFileSync(path.join(DIST_DIR, 'index.html'), 'utf-8');
 
 function escapeHtml(str) {
@@ -98,6 +99,8 @@ function buildHtml(city, counts, allCities = []) {
   const others = allCities.filter((c) => c.slug !== city.slug);
   const linksHtml = others.length ? `<div><h2>Déménageurs dans d'autres villes</h2><ul>${others.map((c) => `<li><a href="/demenagement/${c.slug}">Déménageur ${escapeHtml(c.nom_ville)}</a></li>`).join('')}</ul></div>` : '';
 
+  const guide = seoContent.villes[city.slug];
+  const guideHtml = guide ? `<div><h2>Prix indicatifs d'un déménagement à ${escapeHtml(city.nom_ville)}</h2><table><thead><tr><th>Logement</th><th>Volume</th><th>Formule économique</th><th>Formule standard</th></tr></thead><tbody>${seoContent.prix.lignes.map((l) => `<tr><td>${escapeHtml(l.logement)}</td><td>${escapeHtml(l.volume)}</td><td>${escapeHtml(l.eco)}</td><td>${escapeHtml(l.standard)}</td></tr>`).join('')}</tbody></table><p>${escapeHtml(seoContent.prix.note)} <a href="/tarifs-demenagement-2026">Voir tous les tarifs 2026</a></p><h2>Quartiers où nous trouvons votre déménageur à ${escapeHtml(city.nom_ville)}</h2><ul>${guide.quartiers.map((q) => `<li>${escapeHtml(q)}</li>`).join('')}</ul><h3>Conseils pour déménager à ${escapeHtml(city.nom_ville)}</h3><ul>${guide.conseils.map((c) => `<li>${escapeHtml(c)}</li>`).join('')}</ul></div>` : '';
   const zonesHtml = (city.zones_desservies || []).length > 0
     ? `<div><h2>Zones desservies près de ${escapeHtml(city.nom_ville)}</h2><ul>${city.zones_desservies.map((z) => `<li>${escapeHtml(z)}</li>`).join('')}</ul></div>`
     : '';
@@ -112,6 +115,7 @@ function buildHtml(city, counts, allCities = []) {
         <p style="font-size:1.125rem;color:#4B5563;line-height:1.7;max-width:48rem;margin-bottom:2rem;">${escapeHtml(city.intro_locale)}</p>
         <p style="font-weight:600;color:#1F2937;margin-bottom:2rem;">${availability}</p>
         <a href="/client/quote" style="display:inline-block;background:#2563EB;color:white;padding:1rem 2rem;border-radius:1rem;font-weight:700;text-decoration:none;">Obtenir mon devis pour ${escapeHtml(city.nom_ville)}</a>
+        ${guideHtml}
         ${stepsHtml}
         ${zonesHtml}
         ${faqHtml}

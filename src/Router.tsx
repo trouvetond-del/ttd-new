@@ -55,6 +55,7 @@ import { HelpCenterPage } from './pages/HelpCenterPage';
 import { MovingGuidePage } from './pages/MovingGuidePage';
 import Blog from './pages/Blog';
 import CityPage from './pages/CityPage';
+import TarifsPage from './pages/TarifsPage';
 import BlogArticle from './pages/BlogArticle';
 import { EmailVerificationPage } from './pages/EmailVerificationPage';
 import { CheckEmailPage } from './pages/CheckEmailPage';
@@ -458,6 +459,8 @@ export function AppRouter() {
           <Route path="/guide" element={<MovingGuidePage />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/demenagement/:slug" element={<CityPage />} />
+          <Route path="/tarifs-demenagement-2026" element={<TarifsPage />} />
+          <Route path="/guide-demenagement" element={<MovingGuidePage />} />
           <Route path="/blog/:slug" element={<BlogArticle />} />
           {/* Legal Routes */}
           <Route path="/legal/mentions" element={<LegalMentionsPage />} />

@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowRight, MapPin, Shield, Star, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import seoContent from '../data/seo-content.json';
+
+type CityGuide = { quartiers: string[]; conseils: string[] };
+const cityGuides = seoContent.villes as Record<string, CityGuide>;
 
 interface CityPageData {
   slug: string;
@@ -179,6 +183,39 @@ export default function CityPage() {
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
+
+        {cityGuides[city.slug] && (
+          <>
+            <section className="border-t border-gray-100 pt-10">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Prix indicatifs d'un déménagement à {city.nom_ville}</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left border border-gray-200 bg-white rounded-xl">
+                  <thead className="bg-gray-50 text-gray-700">
+                    <tr><th className="p-3">Logement</th><th className="p-3">Volume</th><th className="p-3">Formule économique</th><th className="p-3">Formule standard</th></tr>
+                  </thead>
+                  <tbody>
+                    {seoContent.prix.lignes.map((l) => (
+                      <tr key={l.logement} className="border-t border-gray-100"><td className="p-3 font-medium">{l.logement}</td><td className="p-3">{l.volume}</td><td className="p-3">{l.eco}</td><td className="p-3">{l.standard}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">{seoContent.prix.note} <a href="/tarifs-demenagement-2026" className="text-blue-600 underline">Voir tous les tarifs 2026</a></p>
+            </section>
+            <section className="border-t border-gray-100 pt-10 mt-10 mb-10">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Quartiers où nous trouvons votre déménageur à {city.nom_ville}</h2>
+              <div className="flex flex-wrap gap-2 mb-6">
+                {cityGuides[city.slug].quartiers.map((q) => (
+                  <span key={q} className="bg-blue-50 text-blue-800 rounded-full px-4 py-2 text-sm">{q}</span>
+                ))}
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Conseils pour déménager à {city.nom_ville}</h3>
+              <ul className="list-disc pl-6 space-y-1 text-gray-700">
+                {cityGuides[city.slug].conseils.map((c) => <li key={c}>{c}</li>)}
+              </ul>
+            </section>
+          </>
+        )}
 
         {city.zones_desservies.length > 0 && (
           <div className="border-t border-gray-100 pt-10">
