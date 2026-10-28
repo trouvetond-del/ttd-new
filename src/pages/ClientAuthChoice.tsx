@@ -88,7 +88,7 @@ export function ClientAuthChoice() {
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-blue-50">
                   <CheckCircle className="w-4 h-4 text-white" />
-                  <span>Devis instantané</span>
+                  <span>Jusqu'à 3 devis sous 24 h</span>
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-blue-50">
                   <CheckCircle className="w-4 h-4 text-white" />
