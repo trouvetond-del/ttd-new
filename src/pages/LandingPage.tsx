@@ -300,7 +300,7 @@ export function LandingPage() {
             </div>
             <div className="bg-slate-50 rounded-2xl p-6 text-center border border-gray-100 animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
               <CheckCircle className="w-7 h-7 text-emerald-600 mx-auto mb-3" />
-              <p className="font-bold text-gray-900">3. A l'arrivée</p>
+              <p className="font-bold text-gray-900">3. À l'arrivée</p>
               <p className="text-sm text-gray-600">Vous vérifiez</p>
             </div>
           </div>
