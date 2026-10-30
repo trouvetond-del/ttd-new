@@ -15,12 +15,21 @@ const CLIENT_TOPICS = [
   "déménager un piano", "déménagement en hiver", "meilleure période pour déménager",
   "déménagement d'entreprise", "garde-meuble pendant un déménagement", "arnaque déménageur comment l'éviter",
   "monte-meuble déménagement prix", "déménagement sans ascenseur",
+  // Plan de contenu mois 4 à 6 (ajouté le 2026-10-30)
+  "déménagement Paris pas cher", "déménagement Lille devis", "déménagement Lyon prix", "déménagement Marseille devis",
+  "déménagement Toulouse pas cher", "déménagement Bordeaux prix", "combien coûte un déménagement de T2",
+  "combien coûte un déménagement de T3", "déménagement maison prix", "cartons de déménagement où les trouver",
+  "résilier ses contrats avant de déménager", "changement d'adresse démarches", "déménagement avec des enfants",
+  "déménager avec un chat ou un chien",
 ];
 const MOVER_TOPICS = [
   "trouver des clients déménagement", "éviter les retours à vide", "développer son entreprise de déménagement",
   "devis déménagement comment le calculer", "plateforme pour déménageurs professionnels", "acompte déménagement sécurisé",
   "litige client déménagement", "assurance RC Pro déménageur", "rentabilité d'un camion de déménagement",
   "trouver des chantiers de déménagement", "fidéliser ses clients déménagement", "avis clients déménageur",
+  // Plan de contenu mois 4 à 6
+  "groupage déménagement rentabilité", "prix d'un déménageur à l'heure", "obtenir sa capacité de transport",
+  "recruter des déménageurs", "assurance marchandises transportées", "basse saison déménagement trouver du travail",
 ];
 
 async function gpt(messages, json = true) {
@@ -46,8 +55,7 @@ export async function writeArticle(audience) {
 
   const system = `Tu es rédacteur SEO pour www.trouvetondemenageur.fr, plateforme française qui met en relation clients (particuliers et pros) et déménageurs professionnels vérifiés (KBIS, RC Pro, URSSAF).
 Fonctionnement réel (n'invente rien d'autre) : le client crée un compte et décrit son déménagement (adresses, étages, volume, date) ; des déménageurs vérifiés envoient leurs devis ; acompte sécurisé ; contrat signé en ligne ; photos avant/après et arbitrage neutre en cas de casse. Inscription gratuite pour les déménageurs.
-Règles : français simple, aucun chiffre inventé (pas de statistiques, pas de faux avis, pas de prix précis : donne des fourchettes seulement si elles sont prudentes et présentées comme indicatives), pas de promesse de résultat.
-Style humain (obligatoire) : écris comme un professionnel du déménagement qui parle à un ami. Phrases de longueur variée, quelques phrases courtes. Exemples concrets du quotidien (cartons, escalier sans ascenseur, place de stationnement, clés à rendre). Tutoiement interdit, vouvoiement naturel. Bannis ces tournures typiques d'IA : « Dans cet article », « En conclusion », « Il est important de noter », « N'hésitez pas », « plongeons », « incontournable », « en somme », « que vous soyez… ou… ». Pas de listes à rallonge : maximum 2 listes dans l'article. Pas d'emojis.`;
+Règles : français simple, aucun chiffre inventé (pas de statistiques, pas de faux avis, pas de prix précis : donne des fourchettes seulement si elles sont prudentes et présentées comme indicatives), pas de promesse de résultat.`;
   const user = `Écris un article de blog de 900 à 1300 mots ciblant la recherche Google « ${topic} » (public : ${audience === "mover" ? "déménageurs professionnels" : "particuliers et entreprises qui déménagent"}).
 Structure HTML (uniquement ces balises : h2, h3, p, ul, li, strong, a) : introduction qui répond directement à la question, 4 à 6 sections h2, une section « Questions fréquentes » avec 3 h3, une conclusion avec un lien <a href="${audience === "mover" ? "/mover/signup" : "/client/quote"}">${audience === "mover" ? "inscription gratuite déménageur" : "demander vos devis gratuits"}</a>.
 Ajoute 2 ou 3 liens internes pertinents vers des pages ville parmi : ${cityLinks}.
