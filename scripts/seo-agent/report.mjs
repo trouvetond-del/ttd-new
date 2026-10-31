@@ -1,6 +1,7 @@
 // Agent SEO — rapport hebdomadaire (table `seo_reports`, affiché dans l'admin « Rapport SEO »).
 // Vérifie chaque page du plan du site telle que Google la reçoit (HTML brut, sans JavaScript).
 import { createClient } from "@supabase/supabase-js";
+import { googleRankings, chatgptVisibility } from "./tracking.mjs";
 
 const env = (k) => { const v = process.env[k]; if (!v) throw new Error(`${k} manquant`); return v; };
 const sb = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), { auth: { persistSession: false } });
@@ -39,6 +40,7 @@ export async function weeklyReport(newArticles = []) {
     sb.from("articles").select("titre, slug").eq("statut", "publie").gte("created_at", weekAgo),
   ]);
 
+  const [rankings, chatgpt] = await Promise.all([googleRankings(), chatgptVisibility()]);
   const withProblems = pages.filter((p) => p.problems.length);
   const summary = {
     total_pages: urls.length,
@@ -47,11 +49,18 @@ export async function weeklyReport(newArticles = []) {
     pages_ok: pages.length - withProblems.length,
     pages_with_problems: withProblems.length,
     new_city_pages: newCities || 0,
+    rankings,
+    chatgpt,
     new_articles: (weekArticles || []).map((a) => ({ titre: a.titre, url: `/blog/${a.slug}` })),
   };
   const recommendations = [];
   if (withProblems.length) recommendations.push(`${withProblems.length} page(s) à corriger (voir la liste).`);
   if ((weekArticles || []).length < 2) recommendations.push("Moins de 2 nouveaux articles cette semaine : relancer l'agent SEO.");
+  if (rankings && !rankings.error) {
+    const near = (rankings.top || []).filter((r) => r.position > 10 && r.position <= 20).slice(0, 3).map((r) => `« ${r.query} »`);
+    if (near.length) recommendations.push(`Presque en 1re page Google (positions 11-20) : ${near.join(", ")}. Écrire un article dédié pour passer devant.`);
+  }
+  if (chatgpt && !chatgpt.error && chatgpt.cited_count === 0) recommendations.push("ChatGPT ne cite pas encore le site : obtenir des liens depuis les sites que ChatGPT cite (voir la liste).");
   recommendations.push("Partager les nouveaux articles sur Facebook et Instagram pour accélérer leur découverte par Google.");
   recommendations.push("Demander à chaque client satisfait un avis Trustpilot : les avis renforcent la confiance de Google.");
 
