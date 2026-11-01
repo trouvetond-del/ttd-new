@@ -49,7 +49,8 @@ export default function TarifsPage() {
             </tbody>
           </table>
         </div>
-        <p className="text-xs text-gray-500 mb-10">{prix.note}</p>
+        <p className="text-xs text-gray-500 mb-4">{prix.note}</p>
+        <p className="text-gray-700 mb-10">Envie d'une estimation pour votre logement ? <a href="/calculateur-prix-demenagement" className="text-blue-600 underline font-semibold">Utilisez notre calculateur de prix</a>.</p>
 
         <section className="border-t border-gray-100 pt-10">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Ce qui fait varier le prix</h2>
