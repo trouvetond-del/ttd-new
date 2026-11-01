@@ -2,8 +2,7 @@ name: Agent SEO (pages ville, articles de blog, rapport hebdo)
 
 on:
   schedule:
-    - cron: "0 6 * * 1"   # lundi : article client + rapport
-    - cron: "0 6 * * 4"   # jeudi : article déménageur
+    - cron: "0 5 * * *"   # tous les jours 6 h Paris (hiver) : article + rapport SEO/GEO
   workflow_dispatch:
     inputs:
       audience:
@@ -59,8 +58,7 @@ jobs:
           git push
       - name: Attendre la mise en ligne
         run: sleep 240
-      - name: Rapport SEO hebdomadaire
-        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '0 6 * * 1'
+      - name: Rapport SEO/GEO (7 derniers jours glissants)
         working-directory: scripts/seo-agent
         env:
           SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
