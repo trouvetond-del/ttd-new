@@ -1,4 +1,4 @@
-name: Agent SEA — suivi quotidien et propositions
+name: Agent SEA — pilote automatique quotidien
 on:
   schedule:
     - cron: '30 7 * * *'  # 8 h 30 Paris : chiffres de la veille complets
@@ -18,17 +18,24 @@ jobs:
         with:
           node-version: 22
       - name: Tester les règles SEA
-        run: node --test scripts/sea-agent/rules.test.mjs
+        run: node --test scripts/sea-agent/rules.test.mjs scripts/sea-agent/autopilot.test.mjs
       - name: Préparer les rapports et validations admin
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           sudo apt-get update -y && sudo apt-get install -y postgresql-client
-          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/sea-reports.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/sea-reports.sql -f supabase/migrations_manuelles/sea-actions.sql
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Déployer l'email quotidien SEA
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: bash scripts/sea-agent/edge/install.sh
       - name: Installer le client des rapports
         working-directory: scripts/sea-agent
         run: npm install --no-audit --no-fund --no-save @supabase/supabase-js@2
-      - name: Lire les campagnes et enregistrer les propositions
+      - name: Piloter les campagnes seul (plafond 300 €/mois) et envoyer l'email
         working-directory: scripts/sea-agent
         env:
           SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
@@ -38,4 +45,5 @@ jobs:
           GOOGLE_ADS_CUSTOMER_ID: '1037374421'
           GOOGLE_ADS_API_KEY: ${{ secrets.GOOGLE_ADS_API_KEY }}
           LOVABLE_API_KEY: ${{ secrets.LOVABLE_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: node run.mjs
