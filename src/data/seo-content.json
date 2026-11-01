@@ -2,10 +2,30 @@
   "prix": {
     "note": "Fourchettes indicatives observées sur le marché français en 2026 pour un déménagement local (moins de 50 km), hors options. Elles ne remplacent pas un devis : le prix réel dépend du volume, des étages, de l'accès et de la date.",
     "lignes": [
-      { "logement": "Studio / T1", "volume": "10 à 20 m³", "eco": "400 à 700 €", "standard": "600 à 1 000 €" },
-      { "logement": "T2", "volume": "20 à 30 m³", "eco": "700 à 1 100 €", "standard": "1 000 à 1 500 €" },
-      { "logement": "T3", "volume": "30 à 45 m³", "eco": "1 000 à 1 600 €", "standard": "1 500 à 2 300 €" },
-      { "logement": "T4 / maison", "volume": "45 à 70 m³", "eco": "1 600 à 2 500 €", "standard": "2 300 à 3 500 €" }
+      {
+        "logement": "Studio / T1",
+        "volume": "10 à 20 m³",
+        "eco": "400 à 700 €",
+        "standard": "600 à 1 000 €"
+      },
+      {
+        "logement": "T2",
+        "volume": "20 à 30 m³",
+        "eco": "700 à 1 100 €",
+        "standard": "1 000 à 1 500 €"
+      },
+      {
+        "logement": "T3",
+        "volume": "30 à 45 m³",
+        "eco": "1 000 à 1 600 €",
+        "standard": "1 500 à 2 300 €"
+      },
+      {
+        "logement": "T4 / maison",
+        "volume": "45 à 70 m³",
+        "eco": "1 600 à 2 500 €",
+        "standard": "2 300 à 3 500 €"
+      }
     ],
     "facteurs": [
       "Le volume (m³) : c'est le critère principal. Faites l'inventaire pièce par pièce.",
@@ -18,7 +38,16 @@
   },
   "villes": {
     "paris": {
-      "quartiers": ["Le Marais", "Montmartre", "Batignolles", "Belleville", "Bastille", "Montparnasse", "Quartier latin", "Passy"],
+      "quartiers": [
+        "Le Marais",
+        "Montmartre",
+        "Batignolles",
+        "Belleville",
+        "Bastille",
+        "Montparnasse",
+        "Quartier latin",
+        "Passy"
+      ],
       "conseils": [
         "Rues étroites et immeubles anciens souvent sans ascenseur : prévoyez un monte-meubles pour les étages élevés.",
         "Une autorisation de stationnement pour le camion se demande auprès de la Ville de Paris plusieurs jours à l'avance.",
@@ -26,7 +55,16 @@
       ]
     },
     "marseille": {
-      "quartiers": ["Le Panier", "Vieux-Port", "La Joliette", "Castellane", "Le Prado", "Les Chartreux", "Endoume", "La Belle de Mai"],
+      "quartiers": [
+        "Le Panier",
+        "Vieux-Port",
+        "La Joliette",
+        "Castellane",
+        "Le Prado",
+        "Les Chartreux",
+        "Endoume",
+        "La Belle de Mai"
+      ],
       "conseils": [
         "Certaines rues en pente et ruelles du centre limitent l'accès des gros camions : précisez-le dans votre demande.",
         "En été, préférez un départ tôt le matin à cause de la chaleur.",
@@ -34,7 +72,16 @@
       ]
     },
     "lyon": {
-      "quartiers": ["Presqu'île", "Croix-Rousse", "Vieux Lyon", "Part-Dieu", "Confluence", "Brotteaux", "Guillotière", "Monplaisir"],
+      "quartiers": [
+        "Presqu'île",
+        "Croix-Rousse",
+        "Vieux Lyon",
+        "Part-Dieu",
+        "Confluence",
+        "Brotteaux",
+        "Guillotière",
+        "Monplaisir"
+      ],
       "conseils": [
         "Les pentes de la Croix-Rousse et les traboules compliquent le portage : signalez-le pour un devis juste.",
         "Le centre a beaucoup d'immeubles anciens sans ascenseur.",
@@ -42,7 +89,16 @@
       ]
     },
     "toulouse": {
-      "quartiers": ["Capitole", "Carmes", "Saint-Cyprien", "Les Chalets", "Compans-Caffarelli", "Rangueil", "Minimes", "Saint-Michel"],
+      "quartiers": [
+        "Capitole",
+        "Carmes",
+        "Saint-Cyprien",
+        "Les Chalets",
+        "Compans-Caffarelli",
+        "Rangueil",
+        "Minimes",
+        "Saint-Michel"
+      ],
       "conseils": [
         "Les rues piétonnes du centre demandent souvent du portage : indiquez la distance camion-porte.",
         "Septembre est chargé avec la rentrée étudiante : réservez tôt.",
@@ -50,7 +106,16 @@
       ]
     },
     "nice": {
-      "quartiers": ["Vieux-Nice", "Port", "Cimiez", "Libération", "Mont Boron", "Carré d'Or", "Fabron", "Saint-Roch"],
+      "quartiers": [
+        "Vieux-Nice",
+        "Port",
+        "Cimiez",
+        "Libération",
+        "Mont Boron",
+        "Carré d'Or",
+        "Fabron",
+        "Saint-Roch"
+      ],
       "conseils": [
         "Les ruelles du Vieux-Nice ne permettent pas l'accès des camions : prévoyez du portage.",
         "Les collines (Cimiez, Mont Boron) ont des accès en pente : précisez-le.",
@@ -58,7 +123,16 @@
       ]
     },
     "nantes": {
-      "quartiers": ["Bouffay", "Graslin", "Île de Nantes", "Chantenay", "Doulon", "Saint-Félix", "Zola", "Malakoff"],
+      "quartiers": [
+        "Bouffay",
+        "Graslin",
+        "Île de Nantes",
+        "Chantenay",
+        "Doulon",
+        "Saint-Félix",
+        "Zola",
+        "Malakoff"
+      ],
       "conseils": [
         "Le centre a de nombreuses zones piétonnes : vérifiez l'accès pour le camion.",
         "Demandez l'autorisation de stationnement à la mairie à l'avance.",
@@ -66,7 +140,16 @@
       ]
     },
     "montpellier": {
-      "quartiers": ["Écusson", "Antigone", "Port Marianne", "Beaux-Arts", "Boutonnet", "Les Arceaux", "Croix d'Argent", "Hôpitaux-Facultés"],
+      "quartiers": [
+        "Écusson",
+        "Antigone",
+        "Port Marianne",
+        "Beaux-Arts",
+        "Boutonnet",
+        "Les Arceaux",
+        "Croix d'Argent",
+        "Hôpitaux-Facultés"
+      ],
       "conseils": [
         "L'Écusson est en grande partie piéton : le portage à pied est souvent nécessaire.",
         "La rentrée universitaire rend septembre très chargé.",
@@ -74,7 +157,16 @@
       ]
     },
     "strasbourg": {
-      "quartiers": ["Grande Île", "Petite France", "Krutenau", "Neudorf", "Robertsau", "Esplanade", "Orangerie", "Koenigshoffen"],
+      "quartiers": [
+        "Grande Île",
+        "Petite France",
+        "Krutenau",
+        "Neudorf",
+        "Robertsau",
+        "Esplanade",
+        "Orangerie",
+        "Koenigshoffen"
+      ],
       "conseils": [
         "La Grande Île a un accès réglementé pour les véhicules : une autorisation est nécessaire.",
         "Les immeubles alsaciens anciens ont des escaliers étroits : prévoyez le démontage des gros meubles.",
@@ -82,7 +174,16 @@
       ]
     },
     "bordeaux": {
-      "quartiers": ["Chartrons", "Saint-Pierre", "Saint-Michel", "Bastide", "Caudéran", "Saint-Seurin", "Bacalan", "Nansouty"],
+      "quartiers": [
+        "Chartrons",
+        "Saint-Pierre",
+        "Saint-Michel",
+        "Bastide",
+        "Caudéran",
+        "Saint-Seurin",
+        "Bacalan",
+        "Nansouty"
+      ],
       "conseils": [
         "Les échoppes bordelaises sont de plain-pied mais les rues sont étroites : précisez l'accès.",
         "Le centre historique est en grande partie piéton.",
@@ -90,11 +191,698 @@
       ]
     },
     "lille": {
-      "quartiers": ["Vieux-Lille", "Wazemmes", "Vauban", "Fives", "Moulins", "Saint-Maurice", "Euralille", "Lille-Centre"],
+      "quartiers": [
+        "Vieux-Lille",
+        "Wazemmes",
+        "Vauban",
+        "Fives",
+        "Moulins",
+        "Saint-Maurice",
+        "Euralille",
+        "Lille-Centre"
+      ],
       "conseils": [
         "Les maisons de ville lilloises ont des escaliers étroits : le monte-meubles est souvent utile.",
         "Les rues pavées du Vieux-Lille compliquent le portage.",
         "Pensez à l'autorisation de stationnement auprès de la mairie."
+      ]
+    },
+    "saint-etienne": {
+      "quartiers": [
+        "Centre-ville",
+        "Jacquard",
+        "Bellevue",
+        "Carnot",
+        "Fauriel",
+        "Montreynaud",
+        "Châteaucreux",
+        "Saint-Victor-sur-Loire"
+      ],
+      "conseils": [
+        "La ville est très vallonnée : signalez les rues en pente et les escaliers d'accès.",
+        "Beaucoup d'immeubles anciens sans ascenseur dans le centre : précisez l'étage exact.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "rennes": {
+      "quartiers": [
+        "Centre historique",
+        "Thabor",
+        "Sainte-Thérèse",
+        "Villejean",
+        "Beaulieu",
+        "Cleunay",
+        "Bourg-l'Évêque",
+        "Le Blosne"
+      ],
+      "conseils": [
+        "Le centre historique a des rues piétonnes et des maisons à pans de bois aux escaliers étroits.",
+        "Septembre est très chargé avec la rentrée étudiante : réservez tôt.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "reims": {
+      "quartiers": [
+        "Centre-ville",
+        "Saint-Remi",
+        "Clairmarais",
+        "Courlancy",
+        "Jean-Jaurès",
+        "Croix-Rouge",
+        "Laon-Zola",
+        "Cernay"
+      ],
+      "conseils": [
+        "Le centre a de nombreuses zones à stationnement réglementé : anticipez la place du camion.",
+        "Les maisons rémoises ont souvent des escaliers étroits : listez les meubles volumineux.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "le-havre": {
+      "quartiers": [
+        "Centre reconstruit",
+        "Saint-François",
+        "Sainte-Adresse",
+        "Sanvic",
+        "Graville",
+        "Danton",
+        "Rond-Point",
+        "Les Docks"
+      ],
+      "conseils": [
+        "Les immeubles Perret du centre ont souvent un ascenseur : vérifiez ses dimensions.",
+        "Les quartiers de la ville haute sont accessibles par des côtes : précisez l'accès.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "toulon": {
+      "quartiers": [
+        "Haute-Ville",
+        "Le Mourillon",
+        "Saint-Jean-du-Var",
+        "Le Pont-du-Las",
+        "La Rode",
+        "Cap Brun",
+        "Siblas",
+        "Besagne"
+      ],
+      "conseils": [
+        "Les ruelles de la Haute-Ville limitent l'accès des camions : prévoyez du portage.",
+        "En été, préférez un départ tôt le matin pour éviter la chaleur et la circulation.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "grenoble": {
+      "quartiers": [
+        "Hyper-centre",
+        "Île Verte",
+        "Championnet",
+        "Berriat",
+        "Europole",
+        "Saint-Bruno",
+        "Les Eaux-Claires",
+        "Villeneuve"
+      ],
+      "conseils": [
+        "Le centre a beaucoup de voies réservées aux bus et tram : vérifiez l'accès du camion.",
+        "La rentrée universitaire rend septembre très demandé.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "dijon": {
+      "quartiers": [
+        "Centre historique",
+        "Montchapet",
+        "Port du Canal",
+        "Maladière",
+        "Fontaine d'Ouche",
+        "Grésilles",
+        "Université",
+        "Toison d'Or"
+      ],
+      "conseils": [
+        "Le secteur sauvegardé a des rues piétonnes : indiquez la distance camion-porte.",
+        "Les hôtels particuliers et immeubles anciens ont souvent des escaliers étroits.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "angers": {
+      "quartiers": [
+        "Centre-ville",
+        "La Doutre",
+        "Saint-Serge",
+        "Justices",
+        "Belle-Beille",
+        "Monplaisir",
+        "Lac de Maine",
+        "Madeleine"
+      ],
+      "conseils": [
+        "Les rues étroites de la Doutre compliquent l'accès des gros camions.",
+        "Septembre est chargé avec la rentrée étudiante.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "nimes": {
+      "quartiers": [
+        "Écusson",
+        "Jean-Jaurès",
+        "Gare",
+        "Courbessac",
+        "Mas de Mingue",
+        "Pissevin",
+        "Castanet",
+        "Route d'Uzès"
+      ],
+      "conseils": [
+        "L'Écusson est en grande partie piéton : le portage est souvent nécessaire.",
+        "En été, les fortes chaleurs justifient un départ tôt le matin.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "villeurbanne": {
+      "quartiers": [
+        "Gratte-Ciel",
+        "Charpennes",
+        "Cusset",
+        "Croix-Luizet",
+        "Grandclément",
+        "Les Brosses",
+        "La Doua",
+        "Perralière"
+      ],
+      "conseils": [
+        "La proximité de Lyon rend la circulation dense : évitez les heures de pointe.",
+        "Le campus de La Doua rend septembre très demandé.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "clermont-ferrand": {
+      "quartiers": [
+        "Centre-ville",
+        "Jaude",
+        "Montferrand",
+        "Les Salins",
+        "Saint-Jacques",
+        "La Pradelle",
+        "Croix-de-Neyrat",
+        "Fontgiève"
+      ],
+      "conseils": [
+        "Le centre est en pente autour de la butte : précisez les accès en côte.",
+        "Les immeubles en pierre de Volvic ont souvent des escaliers sans ascenseur.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "aix-en-provence": {
+      "quartiers": [
+        "Centre historique",
+        "Mazarin",
+        "Jas de Bouffan",
+        "Pont de l'Arc",
+        "Encagnane",
+        "Les Milles",
+        "Puyricard",
+        "Luynes"
+      ],
+      "conseils": [
+        "Le centre historique est largement piéton : prévoyez du portage.",
+        "Les rues du quartier Mazarin sont étroites : un petit camion peut être nécessaire.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "le-mans": {
+      "quartiers": [
+        "Cité Plantagenêt",
+        "Centre-ville",
+        "Jaurès",
+        "Pontlieue",
+        "Les Sablons",
+        "Saint-Pavin",
+        "Bellevue",
+        "Université"
+      ],
+      "conseils": [
+        "Les ruelles pavées de la Cité Plantagenêt limitent l'accès des camions.",
+        "Les grands événements (24 Heures) saturent la ville : évitez ces dates.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "brest": {
+      "quartiers": [
+        "Siam",
+        "Recouvrance",
+        "Saint-Martin",
+        "Saint-Marc",
+        "Bellevue",
+        "Lambézellec",
+        "Saint-Pierre",
+        "Kérinou"
+      ],
+      "conseils": [
+        "Les quartiers en pente et les escaliers sont fréquents : signalez-les.",
+        "La météo change vite : protégez bien les meubles contre la pluie.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "tours": {
+      "quartiers": [
+        "Vieux-Tours",
+        "Prébendes",
+        "Cathédrale",
+        "Velpeau",
+        "Sanitas",
+        "Tours-Nord",
+        "Deux-Lions",
+        "Beaujardin"
+      ],
+      "conseils": [
+        "Le Vieux-Tours a des rues piétonnes et pavées : indiquez la distance de portage.",
+        "Septembre est chargé avec la rentrée universitaire.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "amiens": {
+      "quartiers": [
+        "Saint-Leu",
+        "Centre-ville",
+        "Henriville",
+        "Saint-Acheul",
+        "Saint-Maurice",
+        "Étouvie",
+        "Pierre Rollin",
+        "Montières"
+      ],
+      "conseils": [
+        "Les ruelles de Saint-Leu, au bord des canaux, limitent l'accès des camions.",
+        "Les maisons de ville en briques ont des escaliers étroits : listez les meubles volumineux.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "limoges": {
+      "quartiers": [
+        "Centre-ville",
+        "Cité",
+        "Carnot",
+        "Émailleurs",
+        "Beaubreuil",
+        "Le Vigenal",
+        "Landouge",
+        "La Bastide"
+      ],
+      "conseils": [
+        "Le centre a des rues en pente autour de la Cité : précisez l'accès.",
+        "Beaucoup de maisons de ville sans ascenseur : listez les meubles lourds.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "annecy": {
+      "quartiers": [
+        "Vieille Ville",
+        "Centre",
+        "Les Fins",
+        "Novel",
+        "Annecy-le-Vieux",
+        "Seynod",
+        "Cran-Gevrier",
+        "Meythet"
+      ],
+      "conseils": [
+        "La Vieille Ville est piétonne : le portage à pied est souvent nécessaire.",
+        "L'été et les vacances d'hiver saturent la circulation : évitez ces périodes.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "perpignan": {
+      "quartiers": [
+        "Centre historique",
+        "Saint-Jacques",
+        "Saint-Mathieu",
+        "Le Vernet",
+        "Moulin à Vent",
+        "Saint-Gaudérique",
+        "Las Cobas",
+        "Mailloles"
+      ],
+      "conseils": [
+        "Les ruelles du centre historique ne permettent pas toujours l'accès des camions.",
+        "En été, préférez un départ tôt le matin à cause de la chaleur.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "boulogne-billancourt": {
+      "quartiers": [
+        "Centre-ville",
+        "Les Princes-Marmottan",
+        "Silly-Gallieni",
+        "Billancourt-Rives de Seine",
+        "République-Point du Jour",
+        "Parchamp-Albert Kahn",
+        "Trapèze"
+      ],
+      "conseils": [
+        "Le stationnement est très réglementé : l'autorisation est indispensable.",
+        "Les immeubles récents du Trapèze ont des ascenseurs : réservez-le auprès du syndic.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "metz": {
+      "quartiers": [
+        "Centre-ville",
+        "Outre-Seille",
+        "Sablon",
+        "Queuleu",
+        "Plantières",
+        "Devant-les-Ponts",
+        "Borny",
+        "Grigy"
+      ],
+      "conseils": [
+        "Le centre a de nombreuses rues piétonnes : indiquez la distance camion-porte.",
+        "Les immeubles anciens en pierre de Jaumont ont souvent des escaliers étroits.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "besancon": {
+      "quartiers": [
+        "Boucle",
+        "Battant",
+        "Chaprais",
+        "Saint-Ferjeux",
+        "Planoise",
+        "Montrapon",
+        "Velotte",
+        "Bregille"
+      ],
+      "conseils": [
+        "La Boucle a des rues étroites et piétonnes : prévoyez du portage.",
+        "Les quartiers sur les collines ont des accès en pente : précisez-le.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "orleans": {
+      "quartiers": [
+        "Centre-ville",
+        "Bourgogne",
+        "Dunois",
+        "Madeleine",
+        "Saint-Marceau",
+        "La Source",
+        "Argonne",
+        "Blossières"
+      ],
+      "conseils": [
+        "Les rues anciennes du quartier Bourgogne sont étroites.",
+        "La Source, quartier universitaire, est très demandée en septembre.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "rouen": {
+      "quartiers": [
+        "Vieux-Rouen",
+        "Saint-Marc",
+        "Jouvenet",
+        "Mont-Riboudet",
+        "Rive gauche",
+        "Saint-Sever",
+        "Grieu",
+        "Sapins"
+      ],
+      "conseils": [
+        "Les maisons à colombages du centre ont des escaliers très étroits : le monte-meubles aide.",
+        "Les hauteurs de la rive droite ont des rues en pente.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "mulhouse": {
+      "quartiers": [
+        "Centre historique",
+        "Rebberg",
+        "Dornach",
+        "Bourtzwiller",
+        "Coteaux",
+        "Fonderie",
+        "Europe",
+        "Brustlein"
+      ],
+      "conseils": [
+        "Le Rebberg est sur une colline : précisez les accès en pente.",
+        "Les rues piétonnes du centre demandent souvent du portage.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "caen": {
+      "quartiers": [
+        "Centre-ville",
+        "Vaucelles",
+        "Saint-Jean",
+        "Folie-Couvrechef",
+        "Grâce de Dieu",
+        "Chemin Vert",
+        "Beaulieu",
+        "Rives de l'Orne"
+      ],
+      "conseils": [
+        "Les immeubles de la Reconstruction ont souvent des ascenseurs étroits.",
+        "Septembre est chargé avec la rentrée universitaire.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "nancy": {
+      "quartiers": [
+        "Vieille Ville",
+        "Centre",
+        "Saurupt",
+        "Haussonville",
+        "Boudonville",
+        "Trois-Maisons",
+        "Plateau de Haye",
+        "Rives de Meurthe"
+      ],
+      "conseils": [
+        "Les immeubles anciens de la Vieille Ville ont des escaliers étroits.",
+        "La place Stanislas et ses abords sont piétons : vérifiez l'accès.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "argenteuil": {
+      "quartiers": [
+        "Centre-ville",
+        "Val-Notre-Dame",
+        "Orgemont",
+        "Les Coteaux",
+        "Val d'Argent",
+        "Joliot-Curie",
+        "Mazagran",
+        "Volembert"
+      ],
+      "conseils": [
+        "Le quartier des Coteaux a des rues en pente : signalez-le.",
+        "La circulation vers Paris est dense : évitez les heures de pointe.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "montreuil": {
+      "quartiers": [
+        "Croix-de-Chavaux",
+        "Bas-Montreuil",
+        "Mairie",
+        "Villiers-Barbusse",
+        "Ramenas",
+        "Bel-Air",
+        "Signac",
+        "Murs-à-Pêches"
+      ],
+      "conseils": [
+        "Le Bas-Montreuil a beaucoup d'anciens ateliers et de petites rues.",
+        "Le stationnement est réglementé : l'autorisation est indispensable.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "saint-denis": {
+      "quartiers": [
+        "Centre-ville",
+        "Plaine Saint-Denis",
+        "Pleyel",
+        "Basilique",
+        "Franc-Moisin",
+        "Floréal",
+        "La Mutualité",
+        "Cosmonautes"
+      ],
+      "conseils": [
+        "Les jours de match au Stade de France, la circulation est bloquée : évitez ces dates.",
+        "La Plaine a de nombreux immeubles récents avec ascenseur : réservez-le.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "avignon": {
+      "quartiers": [
+        "Intra-muros",
+        "Monclar",
+        "Saint-Ruf",
+        "Montfavet",
+        "Champfleury",
+        "Saint-Chamand",
+        "Croix-Rouge",
+        "Saint-Jean"
+      ],
+      "conseils": [
+        "L'intra-muros a un accès réglementé et des ruelles étroites : prévoyez du portage.",
+        "En juillet, le Festival sature la ville : évitez cette période.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "poitiers": {
+      "quartiers": [
+        "Centre-ville",
+        "Trois-Cités",
+        "Saint-Éloi",
+        "Couronneries",
+        "Beaulieu",
+        "Montbernage",
+        "Pont-Neuf",
+        "Gibauderie"
+      ],
+      "conseils": [
+        "Le centre est sur un plateau en pente : précisez les accès.",
+        "Septembre est très demandé avec la rentrée universitaire.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "la-rochelle": {
+      "quartiers": [
+        "Vieux-Port",
+        "Centre-ville",
+        "Minimes",
+        "Tasdon",
+        "Fétilly",
+        "Lafond",
+        "Mireuil",
+        "Laleu"
+      ],
+      "conseils": [
+        "Le centre a des rues piétonnes et à arcades : le portage est souvent nécessaire.",
+        "L'été attire beaucoup de touristes : réservez tôt et évitez les week-ends.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "pau": {
+      "quartiers": [
+        "Centre-ville",
+        "Hédas",
+        "Trespoey",
+        "Le Hameau",
+        "Saragosse",
+        "Ousse-des-Bois",
+        "Université",
+        "Dufau-Tourasse"
+      ],
+      "conseils": [
+        "Le centre est sur un coteau : certaines rues sont en pente.",
+        "Les immeubles anciens du centre ont souvent des escaliers étroits.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "bayonne": {
+      "quartiers": [
+        "Grand Bayonne",
+        "Petit Bayonne",
+        "Saint-Esprit",
+        "Marracq",
+        "Saint-Léon",
+        "Sainte-Croix",
+        "Arènes",
+        "Lachepaillet"
+      ],
+      "conseils": [
+        "Les ruelles du Grand et du Petit Bayonne limitent l'accès des camions.",
+        "Pendant les Fêtes de Bayonne, fin juillet, évitez de déménager.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "versailles": {
+      "quartiers": [
+        "Notre-Dame",
+        "Saint-Louis",
+        "Montreuil",
+        "Porchefontaine",
+        "Clagny-Glatigny",
+        "Chantiers",
+        "Jussieu",
+        "Satory"
+      ],
+      "conseils": [
+        "Le stationnement autour des quartiers historiques est très réglementé.",
+        "Les immeubles anciens ont des escaliers en bois étroits : listez les meubles volumineux.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "nanterre": {
+      "quartiers": [
+        "Centre",
+        "Université",
+        "Parc Sud",
+        "Chemin de l'Île",
+        "Plateau",
+        "Mont-Valérien",
+        "Petit-Nanterre",
+        "Boule"
+      ],
+      "conseils": [
+        "La proximité de La Défense rend la circulation dense en semaine.",
+        "Le quartier Université est très demandé à la rentrée.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "cannes": {
+      "quartiers": [
+        "Le Suquet",
+        "Croisette",
+        "Californie",
+        "Carnot",
+        "La Bocca",
+        "Prado-République",
+        "Croix-des-Gardes"
+      ],
+      "conseils": [
+        "Les ruelles du Suquet ne permettent pas l'accès des camions : prévoyez du portage.",
+        "Pendant le Festival en mai, évitez de déménager près de la Croisette.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "valence": {
+      "quartiers": [
+        "Centre-ville",
+        "Vieux-Valence",
+        "Fontbarlettes",
+        "Le Plan",
+        "Polygone",
+        "Chamberlière",
+        "Briffaut",
+        "Les Baumes"
+      ],
+      "conseils": [
+        "Les rues étroites du Vieux-Valence compliquent l'accès des camions.",
+        "Le vent et la chaleur d'été : protégez bien les meubles et partez tôt.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
+      ]
+    },
+    "troyes": {
+      "quartiers": [
+        "Bouchon de Champagne",
+        "Saint-Jean",
+        "Vauluisant",
+        "Les Chartreux",
+        "Jules Guesde",
+        "Point du Jour",
+        "Sénardes",
+        "Saint-Martin"
+      ],
+      "conseils": [
+        "Le Bouchon de Champagne a des rues pavées et des maisons à pans de bois aux escaliers étroits.",
+        "Les rues piétonnes du centre demandent souvent du portage.",
+        "Demandez l'autorisation de stationnement à la mairie au moins 10 jours avant le jour J."
       ]
     }
   }

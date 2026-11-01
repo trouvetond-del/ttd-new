@@ -56,6 +56,27 @@ fs.writeFileSync(path.join(DIST, 'tarifs-demenagement-2026', 'index.html'), with
 }));
 console.log('[prerender-static-pages] Généré: /tarifs-demenagement-2026');
 
+// --- Calculateur ---
+{
+  const curl = `${SITE_URL}/calculateur-prix-demenagement`;
+  const root = `<div style="max-width:48rem;margin:0 auto;padding:3rem 1.5rem;font-family:system-ui,sans-serif;">
+<h1>Calculateur de prix de déménagement</h1>
+<p>Estimez en 30 secondes le volume et le budget de votre déménagement, puis recevez jusqu'à 3 devis de déménageurs vérifiés sous 24 h.</p>
+<table><thead><tr><th>Logement</th><th>Volume</th><th>Formule économique</th><th>Formule standard</th></tr></thead><tbody>${seo.prix.lignes.map((l) => `<tr><td>${esc(l.logement)}</td><td>${esc(l.volume)}</td><td>${esc(l.eco)}</td><td>${esc(l.standard)}</td></tr>`).join('')}</tbody></table>
+<p>${esc(seo.prix.note)}</p>
+<h2>Comment est calculée cette estimation ?</h2><ul>${seo.prix.facteurs.map((f) => `<li>${esc(f)}</li>`).join('')}</ul>
+<p><a href="/client/quote">Recevoir mes devis gratuits</a> · <a href="/tarifs-demenagement-2026">Tarifs déménagement 2026</a></p>
+</div>`;
+  fs.mkdirSync(path.join(DIST, 'calculateur-prix-demenagement'), { recursive: true });
+  fs.writeFileSync(path.join(DIST, 'calculateur-prix-demenagement', 'index.html'), withHead(base, {
+    title: 'Calculateur prix déménagement 2026 : estimation gratuite | TrouveTonDéménageur',
+    description: 'Calculez gratuitement le prix de votre déménagement : volume estimé et fourchette de prix selon logement, formule et distance. Puis jusqu’à 3 devis sous 24 h.',
+    url: curl,
+    root,
+  }));
+  console.log('[prerender-static-pages] Généré: /calculateur-prix-demenagement');
+}
+
 // --- 404 ---
 fs.writeFileSync(path.join(DIST, '404.html'), withHead(base, {
   title: 'Page introuvable | TrouveTonDéménageur',

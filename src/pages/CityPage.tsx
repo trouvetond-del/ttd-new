@@ -200,7 +200,7 @@ export default function CityPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-xs text-gray-500 mt-2">{seoContent.prix.note} <a href="/tarifs-demenagement-2026" className="text-blue-600 underline">Voir tous les tarifs 2026</a></p>
+              <p className="text-xs text-gray-500 mt-2">{seoContent.prix.note} <a href="/tarifs-demenagement-2026" className="text-blue-600 underline">Voir tous les tarifs 2026</a> · <a href="/calculateur-prix-demenagement" className="text-blue-600 underline">Calculer mon prix</a></p>
             </section>
             <section className="border-t border-gray-100 pt-10 mt-10 mb-10">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Quartiers où nous trouvons votre déménageur à {city.nom_ville}</h2>
