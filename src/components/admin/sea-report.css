@@ -1,0 +1,17 @@
+.sea-report { --sea-surface: #ffffff; --sea-ink: #172027; --sea-muted: #596772; --sea-line: #dce3e7; --sea-primary: #176a58; --sea-warning: #a34421; color: var(--sea-ink); }
+.sea-report header { display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+.sea-report h2 { font-size:24px; font-weight:700; }
+.sea-report h3 { font-size:18px; font-weight:600; }
+.sea-report p { margin:8px 0; }
+.sea-report select { border:1px solid var(--sea-line); padding:8px; background:var(--sea-surface); max-width:100%; }
+.sea-report section { padding:20px 0; border-bottom:1px solid var(--sea-line); }
+.sea-report .sea-muted { color:var(--sea-muted); }
+.sea-report .sea-warning { color:var(--sea-warning); }
+.sea-report .sea-table { overflow-x:auto; }
+.sea-report table { width:100%; font-size:14px; border-collapse:collapse; }
+.sea-report th,.sea-report td { padding:10px; text-align:left; border-bottom:1px solid var(--sea-line); }
+.sea-report article { padding:14px; border:1px solid var(--sea-line); border-radius:8px; margin:12px 0; }
+.sea-report .sea-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.sea-report .sea-button { display:inline-flex; gap:8px; align-items:center; border:1px solid var(--sea-line); padding:8px 12px; border-radius:6px; background:var(--sea-surface); color:var(--sea-primary); font-weight:600; }
+.sea-report .sea-button:disabled { opacity:0.5; }
+.sea-report .sea-button:focus-visible { outline:2px solid var(--sea-primary); outline-offset:2px; }
