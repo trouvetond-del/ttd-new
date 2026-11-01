@@ -55,7 +55,7 @@ export async function weeklyReport(newArticles = []) {
   };
   const recommendations = [];
   if (withProblems.length) recommendations.push(`${withProblems.length} page(s) à corriger (voir la liste).`);
-  if ((weekArticles || []).length < 2) recommendations.push("Moins de 2 nouveaux articles cette semaine : relancer l'agent SEO.");
+  if ((weekArticles || []).length < 5) recommendations.push("Moins de 5 nouveaux articles cette semaine (objectif : 7) : relancer l'agent SEO.");
   if (rankings && !rankings.error) {
     const near = (rankings.top || []).filter((r) => r.position > 10 && r.position <= 20).slice(0, 3).map((r) => `« ${r.query} »`);
     if (near.length) recommendations.push(`Presque en 1re page Google (positions 11-20) : ${near.join(", ")}. Écrire un article dédié pour passer devant.`);

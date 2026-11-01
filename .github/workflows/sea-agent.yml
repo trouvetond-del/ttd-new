@@ -1,7 +1,7 @@
 name: Agent SEA — suivi quotidien et propositions
 on:
   schedule:
-    - cron: '20 6 * * *'
+    - cron: '30 7 * * *'  # 8 h 30 Paris : chiffres de la veille complets
   workflow_dispatch:
 permissions:
   contents: read

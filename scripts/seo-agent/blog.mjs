@@ -1,5 +1,5 @@
 // Agent SEO — articles de blog longs pour Google (table `articles`, visible sur /blog).
-// Lancé par .github/workflows/seo-agent.yml. 2 articles / semaine (lundi : client, jeudi : déménageur).
+// Lancé par .github/workflows/seo-agent.yml. 1 article / jour (mar, jeu, sam : déménageur ; autres jours : client).
 // Le sujet vient d'une liste de recherches Google réelles, en évitant ceux déjà traités.
 import { createClient } from "@supabase/supabase-js";
 
@@ -47,10 +47,12 @@ const slugify = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowe
 export async function writeArticle(audience) {
   const { data: existing } = await sb.from("articles").select("mot_cle, titre");
   const done = new Set((existing || []).map((a) => (a.mot_cle || "").toLowerCase()));
-  const pool = audience === "mover" ? MOVER_TOPICS : CLIENT_TOPICS;
-  const topic = pool.find((t) => !done.has(t)) || pool[Math.floor(Math.random() * pool.length)];
-
   const { data: cities } = await sb.from("city_pages").select("slug, nom_ville").eq("statut", "published");
+  // Rythme quotidien : une fois la liste épuisée, on passe à des sujets locaux (1 par ville) pour ne jamais republier le même sujet.
+  const local = (cities || []).map((c) => audience === "mover" ? `trouver des clients déménagement ${c.nom_ville}` : `déménageur pas cher ${c.nom_ville}`);
+  const pool = [...(audience === "mover" ? MOVER_TOPICS : CLIENT_TOPICS), ...local];
+  const topic = pool.find((t) => !done.has(t.toLowerCase())) || pool[Math.floor(Math.random() * pool.length)];
+
   const cityLinks = (cities || []).slice(0, 50).map((c) => `${c.nom_ville}: /demenagement/${c.slug}`).join(", ");
 
   const system = `Tu es rédacteur SEO pour www.trouvetondemenageur.fr, plateforme française qui met en relation clients (particuliers et pros) et déménageurs professionnels vérifiés (KBIS, RC Pro, URSSAF).
@@ -80,7 +82,7 @@ Réponds en JSON : {"titre": "titre de 50 à 65 caractères contenant le mot-cl�
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const day = new Date().getUTCDay(); // 1 = lundi, 4 = jeudi
-  const audience = process.env.FORCE_AUDIENCE || (day === 4 ? "mover" : "client");
+  const day = new Date().getUTCDay(); // 0 = dimanche
+  const audience = process.env.FORCE_AUDIENCE || ([2, 4, 6].includes(day) ? "mover" : "client");
   writeArticle(audience).catch((e) => { console.error(e); process.exit(1); });
 }
