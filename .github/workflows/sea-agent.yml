@@ -1,0 +1,41 @@
+name: Agent SEA — suivi quotidien et propositions
+on:
+  schedule:
+    - cron: '20 6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sea-agent
+  cancel-in-progress: false
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tester les règles SEA
+        run: node --test scripts/sea-agent/rules.test.mjs
+      - name: Préparer les rapports et validations admin
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/sea-reports.sql
+      - name: Installer le client des rapports
+        working-directory: scripts/sea-agent
+        run: npm install --no-audit --no-fund --no-save @supabase/supabase-js@2
+      - name: Lire les campagnes et enregistrer les propositions
+        working-directory: scripts/sea-agent
+        env:
+          SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          META_ADS_TOKEN: ${{ secrets.META_ADS_TOKEN }}
+          META_ADS_ACCOUNT_ID: '4033030426839553'
+          GOOGLE_ADS_CUSTOMER_ID: '1037374421'
+          GOOGLE_ADS_API_KEY: ${{ secrets.GOOGLE_ADS_API_KEY }}
+          LOVABLE_API_KEY: ${{ secrets.LOVABLE_API_KEY }}
+        run: node run.mjs
