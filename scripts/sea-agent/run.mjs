@@ -1,6 +1,8 @@
-// Read-only ads collection. Provider writes are deliberately absent.
+// Agent SEA autonome : lit Google Ads + Meta, applique seul les actions (plafond dur 300 €/mois), envoie un email quotidien.
 import { createClient } from '@supabase/supabase-js';
 import { budgetState, proposalsFor } from './rules.mjs';
+import { planActions } from './autopilot.mjs';
+import { execute, readBudgets } from './execute.mjs';
 const required = name => { if (!process.env[name]) throw new Error(`Configuration manquante : ${name}`); return process.env[name]; };
 const sb=createClient(required('SUPABASE_URL'),required('SUPABASE_SERVICE_ROLE_KEY'),{auth:{persistSession:false}});
 const day=new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'});
@@ -75,6 +77,48 @@ async function main() {
  const rows=proposals.map(p=>({report_id:report.id,proposal_key:p.key,title:p.title,detail:p.detail}));
  const result=await sb.from('sea_proposals').upsert(rows,{onConflict:'report_id,proposal_key',ignoreDuplicates:true});
  if(result.error) throw new Error('Enregistrement des propositions impossible');
- console.log('Rapport SEA enregistré. Meta : '+(meta.ok?'accessible':'indisponible')+'. Google : '+(google.ok?'accessible':'indisponible')+'. Aucune campagne modifiée.');
+ const actions=await autopilot(meta,google,budget);
+ await sb.from('sea_reports').update({summary:{meta,google,budget,actions,measurement:'Conversions déclarées par les plateformes, pas des clients payants.',coverage:['Lecture quotidienne Google et Meta','Plafond dur 300 €/mois','Pauses, budgets et nouvelles pubs appliqués automatiquement'],pending:[]}}).eq('id',report.id);
+ await emailReport(meta,google,budget,actions);
+ console.log(`Rapport SEA enregistré. ${actions.length} action(s) automatique(s).`);
 }
-main().catch(()=>{console.error('Agent SEA : échec du rapport ; vérifier la configuration ou les tables.');process.exitCode=1;});
+async function autopilot(meta,google,budget){
+ if(!meta.ok&&!google.ok) return [];
+ let budgets; try{budgets=await readBudgets();}catch(e){console.error('Budgets illisibles',String(e).slice(0,200));return [];}
+ const {data:log}=await sb.from('sea_actions').select('provider,campaign_id,action_type,cap,created_at').order('created_at',{ascending:false}).limit(500);
+ const lastCapPause=(p,id)=>{const l=(log||[]).find(x=>x.provider===p&&x.campaign_id===id&&['pause','resume'].includes(x.action_type));return !!l&&l.action_type==='pause'&&l.cap&&l.created_at.slice(0,7)<day.slice(0,7);};
+ const campaigns=[];
+ for(const [provider,rep,b] of [['google',google,budgets.google],['meta',meta,budgets.meta]]){
+  if(!rep.ok) continue;
+  const perf=Object.fromEntries((rep.campaigns||[]).map(c=>[c.id,c]));
+  for(const [id,info] of Object.entries(b)){
+   const p=perf[id]||{};
+   campaigns.push({provider,id,name:p.name||id,status:info.status,spend7:p.spend||0,conv7:p.conversions||0,dailyBudget:info.daily,budgetRn:info.budgetRn,pausedByAgentForCap:lastCapPause(provider,id)});
+  }
+ }
+ const now=new Date(day+'T12:00:00Z'); const dim=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+1,0)).getUTCDate();
+ const plan=planActions({campaigns,budget,daysLeft:dim-now.getUTCDate()+1,isFirstDayOfMonth:now.getUTCDate()===1,weekday:now.getUTCDay()});
+ const done=[];
+ for(const a of plan){
+  let result,ok=true;
+  try{result=await execute(a);}catch(e){ok=false;result='échec : '+String(e.message||e).slice(0,200);}
+  done.push({provider:a.c.provider,campaign:a.c.name,type:a.type,reason:a.reason,result,ok});
+  await sb.from('sea_actions').insert({provider:a.c.provider,campaign_id:a.c.id,campaign_name:a.c.name,action_type:a.type,cap:!!a.cap,reason:a.reason,result,ok});
+ }
+ return done;
+}
+async function emailReport(meta,google,budget,actions){
+ try{
+  const {data:s}=await sb.from('agent_secrets').select('secret').eq('name','cron').maybeSingle();
+  const esc=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const line=(n,r)=>r.ok?`<li><b>${n}</b> : ${r.monthSpend.toFixed(2)} € ce mois-ci</li>`:`<li><b>${n}</b> : illisible aujourd'hui</li>`;
+  const camp=[...(google.campaigns||[]).map(c=>['Google',c]),...(meta.campaigns||[]).map(c=>['Meta',c])].filter(([,c])=>c.spend>0);
+  const html=`<p><b>Dépenses du mois (Google + Meta) :</b> ${budget.knownSpend.toFixed(2)} € sur 300 €${budget.complete?'':' (total incomplet : aucune hausse ni création aujourd’hui)'}</p><ul>${line('Google Ads',google)}${line('Facebook / Instagram',meta)}</ul>
+<p><b>Ce que l'agent a fait seul aujourd'hui :</b></p>${actions.length?`<ul>${actions.map(a=>`<li>${a.ok?'✅':'⚠️'} ${a.provider==='google'?'Google':'Meta'} – ${esc(a.campaign)} : ${esc(a.result)} <i>(${esc(a.reason)})</i></li>`).join('')}</ul>`:'<p>Aucun changement nécessaire.</p>'}
+<p><b>Campagnes (7 derniers jours) :</b></p><ul>${camp.map(([p,c])=>`<li>${p} – ${esc(c.name)} : ${c.spend.toFixed(2)} €, ${c.clicks} clics, ${c.conversions} conversion(s)</li>`).join('')||'<li>Aucune dépense</li>'}</ul>
+<p style="color:#666">Les conversions sont celles déclarées par Google et Meta, pas des clients payants.</p>`;
+  const r=await fetch(`${required('SUPABASE_URL')}/functions/v1/agent-sea-email`,{method:'POST',headers:{'Content-Type':'application/json','x-agent-secret':s?.secret||''},body:JSON.stringify({title:`📊 Agent SEA – ${day} : ${actions.length} action(s), ${budget.knownSpend.toFixed(0)} € / 300 €`,html})});
+  if(!r.ok) console.error('Email SEA non envoyé',r.status);
+ }catch(e){console.error('Email SEA non envoyé',String(e).slice(0,200));}
+}
+main().catch((e)=>{console.error('Agent SEA : échec',String(e?.message||e).slice(0,300));process.exitCode=1;});
