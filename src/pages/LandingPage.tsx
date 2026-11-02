@@ -2,6 +2,7 @@ import { Truck, LogIn, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, 
 import { SupportChat } from '../components/SupportChat';
 import { Logo } from '../components/Logo';
 import { useState, useRef } from 'react';
+import { HeroBackgroundVideo } from '../components/HeroBackgroundVideo';
 import { useNavigate } from 'react-router-dom';
 
 const CITY_LINKS: [string, string][] = [['paris','Paris'],['lyon','Lyon'],['saint-etienne','Saint-Étienne'],['lille','Lille'],['marseille','Marseille'],['nantes','Nantes'],['bordeaux','Bordeaux'],['toulouse','Toulouse'],['nice','Nice'],['montpellier','Montpellier'],['strasbourg','Strasbourg'],['rennes','Rennes'],['reims','Reims'],['le-havre','Le Havre'],['toulon','Toulon'],['grenoble','Grenoble'],['dijon','Dijon'],['angers','Angers'],['nimes','Nîmes'],['villeurbanne','Villeurbanne'],['clermont-ferrand','Clermont-Ferrand'],['aix-en-provence','Aix-en-Provence'],['le-mans','Le Mans'],['brest','Brest'],['tours','Tours'],['amiens','Amiens'],['limoges','Limoges'],['annecy','Annecy'],['perpignan','Perpignan'],['boulogne-billancourt','Boulogne-Billancourt'],['metz','Metz'],['besancon','Besançon'],['orleans','Orléans'],['rouen','Rouen'],['mulhouse','Mulhouse'],['caen','Caen'],['nancy','Nancy'],['argenteuil','Argenteuil'],['montreuil','Montreuil'],['saint-denis','Saint-Denis'],['avignon','Avignon'],['poitiers','Poitiers'],['la-rochelle','La Rochelle'],['pau','Pau'],['bayonne','Bayonne'],['versailles','Versailles'],['nanterre','Nanterre'],['cannes','Cannes'],['valence','Valence'],['troyes','Troyes']];
@@ -63,20 +64,9 @@ export function LandingPage() {
         </div>
       </header>
 
-      <section
-        className="relative min-h-screen flex items-center overflow-hidden pt-20"
-        style={{
-          backgroundImage: "url(/Capture_d'écran_2026-03-31_à_20.09.20.png)",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center 30%',
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/75 via-blue-900/70 to-slate-800/75"></div>
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-cyan-400/25 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-blue-400/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-        </div>
+      <section className="hero-motion relative min-h-screen flex items-center overflow-hidden pt-20">
+        <HeroBackgroundVideo />
+        <div className="hero-motion-shade absolute inset-0 pointer-events-none" aria-hidden="true" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="max-w-4xl mx-auto text-center">
