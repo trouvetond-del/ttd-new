@@ -6,7 +6,7 @@
     },
     {
       "source": "/",
-      "destination": "/index.html"
+      "destination": "/home.html"
     },
     {
       "source": "/(about|admin|blog|calculateur-prix-demenagement|change-password|check-email|client|contact|demenagement|devis-rapide|faq|for-clients|for-movers|forgot-password|guide|guide-demenagement|help|inscription-demenageur|legal|mission|mover|mover-info|partners|press|pricing|resend-verification|reset-password|reset-password-code|tarifs-demenagement-2026|technology|verify-email|verify-email-code)(/.*)?",

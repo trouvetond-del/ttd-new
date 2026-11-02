@@ -365,7 +365,7 @@ export default function AdminDashboard() {
               userRole="admin"
               category="ai"
               onNotificationClick={(n) => {
-                setActiveTab(/Studio|Agent marketing|Modération|Commentaire|Déménagements disponibles/i.test(n.title) ? 'social_studio' : 'security');
+                setActiveTab(/Agent SEA/i.test(n.title) ? 'sea_report' : /Agent SEO|Rapport SEO/i.test(n.title) ? 'seo_report' : /Studio|Agent marketing|Modération|Commentaire|Déménagements disponibles/i.test(n.title) ? 'social_studio' : 'security');
               }}
             />
             <NotificationBell
