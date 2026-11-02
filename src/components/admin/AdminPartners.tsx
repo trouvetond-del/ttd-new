@@ -72,7 +72,7 @@ export default function AdminPartners() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Partenaires box de stockage</h2>
-          <p className="text-sm text-gray-600">L'agent envoie chaque matin jusqu'à 20 premiers mails, relance une fois à J+4 sans réponse, puis passe la fiche en « À appeler ».</p>
+          <p className="text-sm text-gray-600">Chaque lundi, l'agent ajoute 10 nouveaux box trouvés partout en France (hors liste). Il envoie chaque matin jusqu'à 20 premiers mails, relance une fois à J+4 sans réponse, puis passe la fiche en « À appeler ».</p>
         </div>
         <button onClick={() => void load()} className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm hover:bg-gray-50"><RefreshCw size={16} />Actualiser</button>
       </div>
@@ -122,7 +122,7 @@ export default function AdminPartners() {
                   <button disabled={!p.email || busy === p.id || p.status === 'refuse'} onClick={() => void relancer(p)}
                     title={p.email ? 'Envoyer le mail de demande de partenariat' : "Pas d'email : à appeler"}
                     className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 disabled:opacity-40">
-                    <Send size={14} />{busy === p.id ? 'Envoi…' : p.emails_sent ? 'Relancer' : 'Envoyer'}
+                    <Send size={14} />{busy === p.id ? 'Envoi…' : (p.emails_sent > 0 || p.last_email_at || ['contacte', 'relance', 'a_repondu', 'a_appeler'].includes(p.status)) ? 'Relancer' : 'Envoyer'}
                   </button>
                 </td>
               </tr>
