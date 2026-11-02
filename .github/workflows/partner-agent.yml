@@ -8,6 +8,7 @@ on:
     paths:
       - 'supabase/functions/partner-outreach/**'
       - 'supabase/migrations_manuelles/storage-partners.sql'
+      - 'scripts/partner-agent/**'
       - '.github/workflows/partner-agent.yml'
 permissions:
   contents: read
@@ -38,6 +39,15 @@ jobs:
         run: |
           supabase secrets set --project-ref bvvbkaluajgdurxnnqqu LOVABLE_API_KEY="$LOVABLE_API_KEY" GOOGLE_MAIL_API_KEY="$GOOGLE_MAIL_API_KEY" PARTNER_AGENT_SECRET="$PARTNER_AGENT_SECRET"
           supabase functions deploy partner-outreach --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+      - name: Lundi — chercher 10 nouveaux box en France (hors liste)
+        if: github.event_name != 'push'
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "$(TZ=Europe/Paris date +%u)" != "1" ]; then echo "Pas lundi : pas de recherche"; exit 0; fi
+          psql "$DATABASE_URL" -At -c "select coalesce(json_agg(json_build_object('name',name,'city',city,'email',email,'code',code)),'[]') from public.storage_partners" > existing.json
+          node scripts/partner-agent/discover.mjs existing.json
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f new-partners.sql
       - name: Envoyer les mails du jour
         if: github.event_name != 'push'
         env:
