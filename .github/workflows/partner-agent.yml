@@ -1,0 +1,47 @@
+name: Agent Partenaires box — mails de partenariat
+on:
+  schedule:
+    - cron: '23 8 * * 1-5'  # 9 h 23 Paris, du lundi au vendredi
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/partner-outreach/**'
+      - 'supabase/migrations_manuelles/storage-partners.sql'
+      - '.github/workflows/partner-agent.yml'
+permissions:
+  contents: read
+concurrency:
+  group: partner-agent
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Préparer la base (box, codes QR, remboursements)
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/storage-partners.sql
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Déployer l'agent
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          LOVABLE_API_KEY: ${{ secrets.LOVABLE_API_KEY }}
+          GOOGLE_MAIL_API_KEY: ${{ secrets.GOOGLE_MAIL_API_KEY }}
+          PARTNER_AGENT_SECRET: ${{ secrets.PARTNER_AGENT_SECRET }}
+        run: |
+          supabase secrets set --project-ref bvvbkaluajgdurxnnqqu LOVABLE_API_KEY="$LOVABLE_API_KEY" GOOGLE_MAIL_API_KEY="$GOOGLE_MAIL_API_KEY" PARTNER_AGENT_SECRET="$PARTNER_AGENT_SECRET"
+          supabase functions deploy partner-outreach --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+      - name: Envoyer les mails du jour
+        if: github.event_name != 'push'
+        env:
+          PARTNER_AGENT_SECRET: ${{ secrets.PARTNER_AGENT_SECRET }}
+        run: |
+          curl -sS --fail-with-body -X POST https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/partner-outreach \
+            -H "x-agent-secret: $PARTNER_AGENT_SECRET" -H "Content-Type: application/json" -d '{}'
