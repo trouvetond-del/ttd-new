@@ -38,7 +38,7 @@ jobs:
           PARTNER_AGENT_SECRET: ${{ secrets.PARTNER_AGENT_SECRET }}
         run: |
           supabase secrets set --yes --project-ref bvvbkaluajgdurxnnqqu LOVABLE_API_KEY="$LOVABLE_API_KEY" GOOGLE_MAIL_API_KEY="$GOOGLE_MAIL_API_KEY" PARTNER_AGENT_SECRET="$PARTNER_AGENT_SECRET"
-          supabase functions deploy partner-outreach --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+          supabase functions deploy partner-outreach --yes --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
       - name: Lundi — chercher 10 nouveaux box en France (hors liste)
         if: github.event_name != 'push'
         env:
