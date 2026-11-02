@@ -1,4 +1,5 @@
 # Architecture rules
+- Move-request references are allocated and reserved permanently by a database trigger with atomic unique claims; UI must read the stored reference, never derive one from UUIDs, to keep search/display consistent and prevent concurrent duplicates.
 - Paid-ad automation lives in scripts/sea-agent and its dedicated daily GitHub workflow; provider calls are read-only so campaigns cannot change without a separate explicit human action.
 - SEA reports and decisions use separate admin-protected tables and a dedicated dashboard tab; database policies validate the admin identity and record decisions independently of client UI.
 - SEA budget totals require successful reports from both providers in the same currency; missing provider data must remain unknown rather than count as zero.

@@ -4,6 +4,7 @@ import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import AdminAssignQuoteModal from './AdminAssignQuoteModal';
 import { showToast } from '../../utils/toast';
+import { getMoveReference } from '../../utils/moveReference';
 
 interface QuoteRequest {
   id: string;
@@ -111,6 +112,7 @@ export default function AdminRecentQuoteRequests() {
 
           return {
             id: q.id,
+            reference: q.reference,
             created_at: q.created_at,
             from_address: q.from_address || q.departure_address || '',
             to_address: q.to_address || q.arrival_address || '',
@@ -338,7 +340,7 @@ export default function AdminRecentQuoteRequests() {
     }
   };
 
-  const refOf = (q: QuoteRequest) => q.reference || `TTD-${q.id.substring(0, 8).toUpperCase()}`;
+  const refOf = getMoveReference;
 
   const filteredRequests = quoteRequests.filter((q) => {
     if (statusFilter === 'expired' && !isMoveExpired(q)) return false;
