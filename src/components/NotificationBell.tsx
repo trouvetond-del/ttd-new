@@ -7,7 +7,7 @@ export function isAgentNotification(n: { type?: string; title?: string }) {
   if (n.type === 'ai_agent') return true;
   const t = (n.title || '').trim();
   return /^(🔴|🟠|🛡️|⚠️)/u.test(t)
-    || /^(Agent|Modération|Commentaire supprimé|Studio)/i.test(t)
+    || /^[^\p{L}\p{N}]*(Agent|Modération|Commentaire supprimé|Studio|Rapport SEO)/iu.test(t)
     || /Problème détecté sur trouvetondemenageur|alerte\(s\) fraude/i.test(t);
 }
 import { supabase } from '../lib/supabase';

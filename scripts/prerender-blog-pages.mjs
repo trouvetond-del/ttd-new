@@ -16,7 +16,7 @@ const supabase = createClient(url_, key_);
 const tpl = fs.readFileSync(path.join(DIST_DIR, 'index.html'), 'utf-8');
 const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const clean = (t) => String(t || '').replace(/^#+\s*/, '').replace(/\*\*/g, '').trim();
-const isValidSlug = (s) => typeof s === 'string' && s.trim() !== '' && s !== 'null' && s !== 'undefined';
+const isValidSlug = (s) => typeof s === 'string' && /^[a-z0-9-]+$/.test(s) && s !== 'null' && s !== 'none' && s !== 'undefined';
 
 function build(a) {
   const title = `${clean(a.titre)} | TrouveTonDéménageur`;
@@ -41,7 +41,7 @@ function build(a) {
 }
 
 async function main() {
-  const { data, error } = await supabase.from('articles').select('slug, titre, contenu, created_at, updated_at').eq('statut', 'publie');
+  const { data, error } = await supabase.from('articles').select('slug, titre, contenu, created_at').eq('statut', 'publie');
   if (error) { console.error('[prerender-blog]', error.message); return; }
   let n = 0;
   for (const a of data || []) {
