@@ -3,8 +3,9 @@
 // (accueil, devis rapide, blog, guide, FAQ, tarifs, à propos, contact,
 // technologie, inscription déménageur) un vrai texte lisible sans JavaScript,
 // avec leur propre titre, description et adresse canonique.
-// L'accueil est écrit dans dist/home.html (servi pour « / » via vercel.json)
-// pour ne pas modifier dist/index.html, qui sert de base à toutes les autres pages.
+// L'accueil remplace dist/index.html (Vercel le sert en priorité pour « / »).
+// La base vide est copiée dans dist/app.html, que vercel.json sert pour les
+// autres pages de l'application.
 import { createClient } from '@supabase/supabase-js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -12,6 +13,7 @@ import path from 'node:path';
 const SITE = 'https://www.trouvetondemenageur.fr';
 const DIST = path.resolve(process.cwd(), 'dist');
 const base = fs.readFileSync(path.join(DIST, 'index.html'), 'utf-8');
+fs.writeFileSync(path.join(DIST, 'app.html'), base, 'utf-8');
 const seo = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/data/seo-content.json'), 'utf-8'));
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const wrap = (inner) => `<div style="max-width:56rem;margin:0 auto;padding:3rem 1.5rem;font-family:system-ui,sans-serif;line-height:1.6;">${inner}</div>`;
@@ -29,7 +31,7 @@ function page(html, { title, description, url, root, ld }) {
 }
 
 function write(route, opts) {
-  const file = route === '/' ? path.join(DIST, 'home.html') : path.join(DIST, route.slice(1), 'index.html');
+  const file = route === '/' ? path.join(DIST, 'index.html') : path.join(DIST, route.slice(1), 'index.html');
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, page(base, { ...opts, url: `${SITE}${route === '/' ? '/' : route}` }), 'utf-8');
   console.log(`[prerender-public-pages] Généré: ${route}`);
