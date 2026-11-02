@@ -43,7 +43,7 @@ export function buildEmail(p: Partner, kind: "premier" | "relance") {
   const html = `<!doctype html><html lang="fr"><body style="margin:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#1f2937">
 <div style="max-width:600px;margin:0 auto;padding:24px">
  <p style="font-size:15px;line-height:1.6">Bonjour,</p>
- <p style="font-size:15px;line-height:1.6">Je suis Heikel Nachi, président de <a href="${SITE}" style="color:#1d4ed8">TrouveTonDéménageur</a>, la plateforme gratuite qui met les particuliers en relation avec des déménageurs vérifiés partout en France : jusqu'à 3 devis sous 24 h.</p>
+ <p style="font-size:15px;line-height:1.6">Nous sommes l'équipe de <a href="${SITE}" style="color:#1d4ed8">TrouveTonDéménageur</a>, la plateforme gratuite qui met les particuliers en relation avec des déménageurs vérifiés partout en France : jusqu'à 3 devis sous 24 h.</p>
  <p style="font-size:15px;line-height:1.6">${intro}</p>
  <table role="presentation" width="100%" style="border-collapse:collapse;margin:8px 0 18px"><tr><td style="background:#eff6ff;border-radius:10px;padding:16px;font-size:15px;line-height:1.7">
   <b>Ce que vous y gagnez :</b><br>
@@ -61,9 +61,9 @@ export function buildEmail(p: Partner, kind: "premier" | "relance") {
   </td>
   <td style="padding:16px;width:170px;text-align:center;vertical-align:middle"><img src="cid:qrcode" width="160" height="160" alt="QR code ${esc(p.code)}" style="display:block;margin:0 auto"></td>
  </tr></table>
- <p style="font-size:15px;line-height:1.6;margin-top:18px">Seriez-vous disponible pour <b>un appel de 10 minutes</b> cette semaine ? Répondez simplement à ce mail avec un créneau, ou appelez-moi au <b>01 89 70 78 81</b>.</p>
+ <p style="font-size:15px;line-height:1.6;margin-top:18px">Seriez-vous disponible pour <b>un appel de 10 minutes</b> cette semaine ? Répondez simplement à ce mail avec un créneau, ou appelez-nous au <b>01 89 70 78 81</b>.</p>
  <p style="text-align:center;margin:22px 0"><a href="mailto:trouvetond@gmail.com?subject=${encodeURIComponent("Partenariat " + p.code + " - rappel")}" style="background:#16a34a;color:#ffffff;text-decoration:none;padding:13px 22px;border-radius:8px;font-weight:bold;font-size:15px;display:inline-block">Je veux être rappelé</a></p>
- <p style="font-size:15px;line-height:1.6">Bien cordialement,<br><b>Heikel Nachi</b><br>Président – TROUVE TON DEMENAGEUR SAS<br>01 89 70 78 81 · trouvetond@gmail.com · <a href="${SITE}" style="color:#1d4ed8">www.trouvetondemenageur.fr</a></p>
+ <p style="font-size:15px;line-height:1.6">Bien cordialement,<br><b>L'équipe TrouveTonDéménageur</b><br>01 89 70 78 81 · trouvetond@gmail.com · <a href="${SITE}" style="color:#1d4ed8">www.trouvetondemenageur.fr</a></p>
  <p style="font-size:11px;color:#9ca3af;line-height:1.5">TROUVE TON DEMENAGEUR SAS – SIRET 101 378 248 00013 – 60 rue François Ier, 75008 Paris. Vous recevez ce message car votre centre de stockage est référencé publiquement. Répondez « STOP » pour ne plus être contacté. Lien de votre QR code : ${link}</p>
 </div></body></html>`;
   return { subject, html, link };
@@ -75,7 +75,7 @@ async function sendOne(sb: SupabaseClient, p: Partner, kind: "premier" | "relanc
   const png: Uint8Array = await QRCode.toBuffer(link, { width: 480, margin: 1, errorCorrectionLevel: "M" });
   const B = "ttd" + crypto.randomUUID().replace(/-/g, "");
   const raw = [
-    `From: ${hdr("Heikel – TrouveTonDéménageur")} <trouvetond@gmail.com>`,
+    `From: ${hdr("TrouveTonDéménageur")} <trouvetond@gmail.com>`,
     `To: ${p.email}`,
     `Subject: ${hdr(subject)}`,
     "MIME-Version: 1.0",
