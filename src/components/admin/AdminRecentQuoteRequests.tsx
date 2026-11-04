@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
-import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall, Archive, UserCheck } from 'lucide-react';
+import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall, Archive, UserCheck, ChevronDown, MoreHorizontal } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import AdminAssignQuoteModal from './AdminAssignQuoteModal';
+import AdminInviteMoverModal from './AdminInviteMoverModal';
 import { showToast } from '../../utils/toast';
 import { getMoveReference } from '../../utils/moveReference';
 
@@ -14,6 +16,8 @@ interface QuoteRequest {
   to_address: string;
   from_city?: string;
   to_city?: string;
+  from_postal_code?: string | null;
+  to_postal_code?: string | null;
   moving_date: string;
   volume_m3?: number;
   surface_m2?: number;
@@ -73,11 +77,67 @@ export function isMoveExpired(q: { moving_date?: string | null; status: string }
   return q.moving_date.slice(0, 10) < today;
 }
 
+interface ActionItem { label: string; icon: LucideIcon; onClick: () => void; busy?: boolean; tone?: 'danger' }
+
+// Menu « Actions » unique par ligne. Positionné en fixed pour ne pas être
+// coupé par le défilement horizontal du tableau.
+function ActionsMenu({ items }: { items: ActionItem[] }) {
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!pos) return;
+    const close = () => setPos(null);
+    window.addEventListener('scroll', close, true);
+    window.addEventListener('resize', close);
+    return () => { window.removeEventListener('scroll', close, true); window.removeEventListener('resize', close); };
+  }, [pos]);
+  const toggle = () => {
+    if (pos) { setPos(null); return; }
+    const r = btnRef.current!.getBoundingClientRect();
+    setPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
+  };
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={toggle}
+        aria-haspopup="menu"
+        aria-expanded={!!pos}
+        className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs font-medium rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+      >
+        <MoreHorizontal className="w-3.5 h-3.5" /> Actions <ChevronDown className="w-3 h-3" />
+      </button>
+      {pos && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setPos(null)} />
+          <div role="menu" style={{ top: pos.top, right: pos.right }} className="fixed z-50 min-w-[240px] py-1 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl">
+            {items.map((it, i) => (
+              <div key={it.label}>
+                {it.tone === 'danger' && it.label === 'Supprimer' && i > 0 && <div className="my-1 border-t border-gray-100 dark:border-gray-700" />}
+                <button
+                  role="menuitem"
+                  disabled={it.busy}
+                  onClick={() => { setPos(null); it.onClick(); }}
+                  className={`w-full flex items-center gap-2.5 px-3.5 py-2 text-sm text-left transition disabled:opacity-50 ${it.tone === 'danger' ? 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20' : 'text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                >
+                  <it.icon className="w-4 h-4 shrink-0" />
+                  {it.busy ? '...' : it.label}
+                </button>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
 export default function AdminRecentQuoteRequests() {
   const [quoteRequests, setQuoteRequests] = useState<QuoteRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [assignFor, setAssignFor] = useState<{ id: string; route: string } | null>(null);
+  const [inviteFor, setInviteFor] = useState<{ id: string; route: string; from?: string | null; to?: string | null } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -118,6 +178,8 @@ export default function AdminRecentQuoteRequests() {
             to_address: q.to_address || q.arrival_address || '',
             from_city: q.from_city,
             to_city: q.to_city,
+            from_postal_code: q.from_postal_code,
+            to_postal_code: q.to_postal_code,
             moving_date: q.moving_date,
             volume_m3: q.volume_m3,
             surface_m2: q.surface_m2,
@@ -489,103 +551,28 @@ export default function AdminRecentQuoteRequests() {
                       {getStatusBadge(q.status)}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setSelectedRequestId(q.id)}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition"
-                        >
-                          <Eye className="w-3 h-3" />
-                          Voir
-                        </button>
-                        {!q.is_draft && ['new', 'assigned', 'quoted'].includes(q.status) && !isMoveExpired(q) && (
-                          <button
-                            onClick={() => setAssignFor({ id: q.id, route: `${q.client_name} · ${q.from_city} → ${q.to_city} · ${new Date(q.moving_date).toLocaleDateString('fr-FR')}` })}
-                            title="Choisir un déménageur et déposer son devis à sa place"
-                            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 text-xs rounded-lg border border-indigo-200 hover:bg-indigo-600 hover:text-white transition"
-                          >
-                            <UserCheck className="w-3 h-3" />
-                            Attribuer
-                          </button>
-                        )}
-                        {(() => {
-                          // Ordre de priorité : pas de compte d'abord (rien
-                          // d'autre n'est possible sans compte), puis
-                          // brouillon jamais soumis, puis infos manquantes
-                          // sur une demande déjà soumise. Un seul bouton de
-                          // relance à la fois par ligne.
-                          if (!q.client_user_id) {
-                            const urgent = (q.total_quotes || 0) > 0;
-                            return (
-                              <button
-                                onClick={() => handleInvite(q.id, q.client_email)}
-                                disabled={invitingId === q.id}
-                                title={urgent ? "Un déménageur a déjà répondu : ce client doit créer son compte pour voir l'offre" : "Ce client n'a pas encore de compte"}
-                                className={
-                                  urgent
-                                    ? "flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-700 text-xs rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed animate-pulse"
-                                    : "flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs rounded-lg border border-emerald-200 hover:bg-emerald-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                }
-                              >
-                                <Send className="w-3 h-3" />
-                                {invitingId === q.id ? '...' : urgent ? 'Relancer (devis reçu)' : 'Inviter'}
-                              </button>
-                            );
-                          }
-
-                          if (q.is_draft) {
-                            return (
-                              <button
-                                onClick={() => handleDraftReminder(q.id, q.client_email)}
-                                disabled={remindingDraftId === q.id}
-                                title="Ce client a un compte mais n'a jamais envoyé sa demande : lui envoyer un rappel maintenant"
-                                className="flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-200 hover:bg-amber-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <BellRing className="w-3 h-3" />
-                                {remindingDraftId === q.id ? '...' : 'Relancer (brouillon non terminé)'}
-                              </button>
-                            );
-                          }
-
-                          const missing = getMissingFieldLabels(q);
-                          if (missing.length > 0) {
-                            const channel = resolveEntryChannel(q);
-                            const needsCall = channel === 'quick_lead' || channel === 'ad_lead_form';
-                            return (
-                              <button
-                                onClick={() => handleManualReminder(q.id, q.client_email)}
-                                disabled={remindingId === q.id}
-                                title={`Il manque : ${missing.join(', ')}${needsCall ? ' — un appel est recommandé en plus de l\'email' : ''}`}
-                                className="flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-200 hover:bg-amber-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                <BellRing className="w-3 h-3" />
-                                {remindingId === q.id ? '...' : 'Relancer (infos manquantes)'}
-                                {needsCall && <PhoneCall className="w-3 h-3 ml-0.5" />}
-                              </button>
-                            );
-                          }
-
-                          return null;
-                        })()}
-                        {isMoveExpired(q) && (
-                          <button
-                            onClick={() => handleArchive(q.id, q.client_name)}
-                            disabled={archivingId === q.id}
-                            title="Déménagement fait : archiver pour garder le contact"
-                            className="flex items-center gap-1 px-3 py-1.5 bg-gray-50 text-gray-700 text-xs rounded-lg border border-gray-300 hover:bg-gray-700 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <Archive className="w-3 h-3" />
-                            {archivingId === q.id ? '...' : 'Archiver'}
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDelete(q.id, q.client_name)}
-                          disabled={deletingId === q.id}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 text-xs rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                          {deletingId === q.id ? '...' : 'Supprimer'}
-                        </button>
-                      </div>
+                      {(() => {
+                        const open = !q.is_draft && ['new', 'assigned', 'quoted'].includes(q.status) && !isMoveExpired(q);
+                        const routeLabel = `${q.client_name || 'Client'} · ${q.from_city} → ${q.to_city} · ${q.moving_date ? new Date(q.moving_date).toLocaleDateString('fr-FR') : ''}`;
+                        const items: ActionItem[] = [{ label: 'Voir', icon: Eye, onClick: () => setSelectedRequestId(q.id) }];
+                        if (open) {
+                          items.push({ label: 'Inviter un déménageur', icon: Send, onClick: () => setInviteFor({ id: q.id, route: routeLabel, from: q.from_postal_code, to: q.to_postal_code }) });
+                          items.push({ label: 'Attribuer', icon: UserCheck, onClick: () => setAssignFor({ id: q.id, route: routeLabel }) });
+                        }
+                        if (!q.client_user_id) {
+                          const urgent = (q.total_quotes || 0) > 0;
+                          items.push({ label: urgent ? 'Relancer le client (devis reçu)' : 'Inviter le client', icon: Send, busy: invitingId === q.id, onClick: () => handleInvite(q.id, q.client_email), tone: urgent ? 'danger' : undefined });
+                        } else if (q.is_draft) {
+                          items.push({ label: 'Relancer (brouillon non terminé)', icon: BellRing, busy: remindingDraftId === q.id, onClick: () => handleDraftReminder(q.id, q.client_email) });
+                        } else if (getMissingFieldLabels(q).length > 0) {
+                          const channel = resolveEntryChannel(q);
+                          const needsCall = channel === 'quick_lead' || channel === 'ad_lead_form';
+                          items.push({ label: needsCall ? 'Relancer (infos manquantes) · appel conseillé' : 'Relancer (infos manquantes)', icon: needsCall ? PhoneCall : BellRing, busy: remindingId === q.id, onClick: () => handleManualReminder(q.id, q.client_email) });
+                        }
+                        if (isMoveExpired(q)) items.push({ label: 'Archiver', icon: Archive, busy: archivingId === q.id, onClick: () => handleArchive(q.id, q.client_name) });
+                        items.push({ label: 'Supprimer', icon: Trash2, busy: deletingId === q.id, onClick: () => handleDelete(q.id, q.client_name), tone: 'danger' });
+                        return <ActionsMenu items={items} />;
+                      })()}
                     </td>
                   </tr>
                 ))}
@@ -593,6 +580,16 @@ export default function AdminRecentQuoteRequests() {
             </table>
           </div>
         </div>
+      )}
+
+      {inviteFor && (
+        <AdminInviteMoverModal
+          quoteRequestId={inviteFor.id}
+          route={inviteFor.route}
+          fromPostalCode={inviteFor.from}
+          toPostalCode={inviteFor.to}
+          onClose={() => setInviteFor(null)}
+        />
       )}
 
       {assignFor && (
