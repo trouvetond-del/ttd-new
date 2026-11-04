@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { rememberAcquisitionSource } from '../utils/acquisitionSource';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Calculator } from 'lucide-react';
 import seoContent from '../data/seo-content.json';
@@ -42,7 +43,7 @@ export default function CalculateurPage() {
             <img src="/logo.png" alt="TrouveTonDéménageur" className="h-8 w-auto" />
             <span className="font-bold text-gray-900 hidden sm:inline">TrouveTonDéménageur</span>
           </button>
-          <button onClick={() => navigate('/client/quote')} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-700 transition-colors">
+          <button onClick={() => { rememberAcquisitionSource('calculateur'); navigate('/client/quote'); }} className="bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-blue-700 transition-colors">
             Obtenir un devis
           </button>
         </div>
@@ -90,7 +91,7 @@ export default function CalculateurPage() {
               {' '}Ces éléments sont chiffrés précisément dans les devis.
             </p>
           )}
-          <button onClick={() => navigate('/client/quote')} className="mt-5 inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-700 rounded-xl font-bold">
+          <button onClick={() => { rememberAcquisitionSource('calculateur'); navigate('/client/quote'); }} className="mt-5 inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-700 rounded-xl font-bold">
             Recevoir mes devis gratuits <ArrowRight className="w-5 h-5" />
           </button>
         </div>
