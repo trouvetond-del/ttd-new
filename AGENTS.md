@@ -13,3 +13,5 @@
 
 - Homepage intermediary and reassurance sections live in HomeTrust; the decorative journey loops after visibility with pause and reduced-motion support, independent of real validation and payment logic; preserve the how-it-works scroll target.
 - Decorative motion-control visibility is centralized in motion-controls.css after index.css; opacity preserves hit areas and keyboard access while non-hover devices retain visible controls.
+- The daily morning monitor lives in scripts/morning-monitor and its Actions workflow; read-only source checks distinguish missing, failed and unknown from success, with email acceptance and date-keyed provider deduplication through the existing authorized email function.
+- Footer secondary city links use native details disclosure so crawlers retain every link without a large initial list.

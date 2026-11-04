@@ -4,4 +4,4 @@ set -euo pipefail
 DIR="supabase/functions/agent-sea-email"
 mkdir -p "$DIR"
 cp scripts/sea-agent/edge/agent-sea-email.ts "$DIR/index.ts"
-supabase functions deploy agent-sea-email --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+supabase functions deploy agent-sea-email --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt --yes

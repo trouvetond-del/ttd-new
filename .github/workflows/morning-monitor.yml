@@ -1,0 +1,70 @@
+name: Agent sécurité — contrôle du matin à 9 h Paris
+on:
+  schedule:
+    - cron: '0 7 * * *'
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: morning-monitor
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sélectionner 9 h Paris selon heure été/hiver
+        id: hour
+        env:
+          EVENT: ${{ github.event_name }}
+          CRON: ${{ github.event.schedule }}
+        run: |
+          offset=$(TZ=Europe/Paris date +%z)
+          if [ "$EVENT" = workflow_dispatch ] || { [ "$offset" = +0100 ] && [ "$CRON" = '0 8 * * *' ]; } || { [ "$offset" = +0200 ] && [ "$CRON" = '0 7 * * *' ]; }; then
+            echo 'run=true' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v4
+        if: steps.hour.outputs.run == 'true'
+        with:
+          node-version: 22
+      - name: Tester les règles du rapport
+        if: steps.hour.outputs.run == 'true'
+        run: node --test scripts/morning-monitor/rules.test.mjs
+      - uses: supabase/setup-cli@v1
+        if: steps.hour.outputs.run == 'true'
+        with:
+          version: latest
+      - name: Actualiser le service email existant
+        if: steps.hour.outputs.run == 'true'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: bash scripts/sea-agent/edge/install.sh
+      - name: Installer les contrôles
+        if: steps.hour.outputs.run == 'true'
+        working-directory: scripts/morning-monitor
+        run: |
+          npm install --no-save --no-audit --no-fund @supabase/supabase-js@2 playwright
+          npx playwright install --with-deps chromium
+      - name: Contrôler l’affichage
+        if: steps.hour.outputs.run == 'true'
+        working-directory: scripts/morning-monitor
+        run: node browser.mjs
+      - name: Contrôler site et agents puis envoyer le bilan
+        if: steps.hour.outputs.run == 'true'
+        working-directory: scripts/morning-monitor
+        env:
+          SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node run.mjs
+      - name: Conserver le rapport en cas de problème d’envoi
+        if: always() && steps.hour.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-du-matin
+          path: scripts/morning-monitor/morning-report/
+          retention-days: 30
+          if-no-files-found: ignore

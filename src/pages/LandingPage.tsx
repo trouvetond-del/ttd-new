@@ -178,12 +178,20 @@ export function LandingPage() {
           <div className="pt-12 pb-8 border-b border-gray-800">
             <h3 className="text-white font-bold text-lg mb-4">Trouver un déménageur par ville</h3>
             <ul className="flex flex-wrap gap-x-4 gap-y-2">
-              {CITY_LINKS.map(([slug, nom]) => (
+              {CITY_LINKS.filter(([slug]) => ['paris', 'marseille', 'lyon', 'toulouse', 'nice', 'nantes', 'montpellier', 'strasbourg', 'bordeaux', 'lille'].includes(slug)).map(([slug, nom]) => (
                 <li key={slug}>
                   <a href={`/demenagement/${slug}`} className="text-gray-400 hover:text-white transition-colors text-sm">Déménageur {nom}</a>
                 </li>
               ))}
             </ul>
+            <details className="mt-3">
+              <summary className="cursor-pointer text-sm font-semibold w-fit">Plus de villes</summary>
+              <ul className="flex flex-wrap gap-x-4 gap-y-2 mt-3">
+                {CITY_LINKS.filter(([slug]) => !['paris', 'marseille', 'lyon', 'toulouse', 'nice', 'nantes', 'montpellier', 'strasbourg', 'bordeaux', 'lille'].includes(slug)).map(([slug, nom]) => (
+                  <li key={slug}><a href={`/demenagement/${slug}`} className="text-gray-400 hover:text-white transition-colors text-sm">Déménageur {nom}</a></li>
+                ))}
+              </ul>
+            </details>
           </div>
           <div className="py-16 border-b border-gray-800">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
