@@ -75,12 +75,12 @@ export function LandingPage() {
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] animate-fadeInUp">
               <span className="block text-white mb-3 drop-shadow-2xl">Déménagez sereinement.</span>
               <span className="block bg-gradient-to-r from-emerald-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent drop-shadow-lg">
-                Un déménageur vérifié, un humain à chaque étape
+                Des déménageurs vérifiés, une équipe à votre écoute
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl text-blue-50/95 mb-12 leading-relaxed max-w-2xl mx-auto animate-fadeInUp font-normal" style={{ animationDelay: '0.2s' }}>
-              Des déménageurs vérifiés partout en France, un vrai suivi jusqu'au dernier carton, et une protection anti-litige assistée par IA en cas de pépin.
+              Trouvez votre déménageur partout en France. Des devis à comparer, des interlocuteurs humains, un accompagnement et un arbitrage en cas de difficulté.
             </p>
 
             <div className="flex justify-center mb-12 animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
