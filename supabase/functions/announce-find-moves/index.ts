@@ -31,7 +31,10 @@ ${moves.length ? `<p style="margin:0 0 8px;font-weight:700;color:#0f172a">Des d�
 
 Deno.serve(async (req) => {
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  if (req.headers.get("Authorization") !== `Bearer ${key}`) return new Response("Forbidden", { status: 403 });
+  const token = (req.headers.get("Authorization") || "").replace("Bearer ", "");
+  // Accepte uniquement une clé de service (ancien ou nouveau format) : seule une telle clé peut lister les comptes.
+  const probe = await createClient(Deno.env.get("SUPABASE_URL")!, token, { auth: { persistSession: false } }).auth.admin.listUsers({ perPage: 1 });
+  if (!token || probe.error) return new Response("Forbidden", { status: 403 });
   const { mode, company } = await req.json().catch(() => ({}));
   const db = createClient(Deno.env.get("SUPABASE_URL")!, key);
   const resend = Deno.env.get("RESEND_API_KEY");
