@@ -75,7 +75,10 @@ export function LandingPage() {
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] animate-fadeInUp">
               <span className="block text-white mb-3 drop-shadow-2xl">Déménagez sereinement.</span>
               <span className="block text-2xl sm:text-4xl md:text-6xl leading-tight bg-gradient-to-r from-emerald-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent drop-shadow-lg">
-                Des pros vérifiés, une équipe à votre écoute
+                Des pros vérifiés,
+              </span>
+              <span className="block text-2xl sm:text-4xl md:text-6xl leading-tight bg-gradient-to-r from-emerald-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent drop-shadow-lg">
+                une équipe à votre écoute
               </span>
             </h1>
 
