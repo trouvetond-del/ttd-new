@@ -1,4 +1,5 @@
 # Architecture rules
+- Marketing origin of a quote request is stored in quote_requests.acquisition_source, set from a 7-day localStorage marker at first real submission; admin conversion stats count only non-draft requests, a "real quote" being any mover quote row.
 - Move-request references are allocated and reserved permanently by a database trigger with atomic unique claims; UI must read the stored reference, never derive one from UUIDs, to keep search/display consistent and prevent concurrent duplicates.
 - Paid-ad automation lives in scripts/sea-agent and its dedicated daily GitHub workflow; provider calls are read-only so campaigns cannot change without a separate explicit human action.
 - SEA reports and decisions use separate admin-protected tables and a dedicated dashboard tab; database policies validate the admin identity and record decisions independently of client UI.
