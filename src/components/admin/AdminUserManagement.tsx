@@ -18,6 +18,7 @@ import { showToast } from '../../utils/toast';
 import ClientDetailModal from './ClientDetailModal';
 import MoverDetailModal from './MoverDetailModal';
 import ImportUsersModal from './ImportUsersModal';
+import { regionFromPostalCode } from '../../utils/frenchRegion';
 
 type UserType = 'all' | 'movers' | 'clients';
 type UserStatus = 'all' | 'active' | 'inactive' | 'suspended' | 'banned';
@@ -30,6 +31,8 @@ interface User {
   company_name?: string;
   siret?: string;
   phone?: string;
+  region?: string | null;
+  city?: string | null;
   verification_status?: string;
   is_active?: boolean;
   is_suspended?: boolean;
@@ -86,6 +89,8 @@ export default function AdminUserManagement({
               company_name: m.company_name,
               siret: m.siret,
               phone: m.phone,
+              city: m.city,
+              region: regionFromPostalCode(m.postal_code),
               verification_status: m.verification_status,
               is_active: m.is_active,
               is_suspended: m.is_suspended || false,
@@ -664,6 +669,11 @@ export default function AdminUserManagement({
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                   Statut
                 </th>
+                {userType === 'movers' && (
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                    Région
+                  </th>
+                )}
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                   <button
                     onClick={() => setDateSortDirection(d => d === 'none' ? 'desc' : d === 'desc' ? 'asc' : 'none')}
@@ -683,7 +693,7 @@ export default function AdminUserManagement({
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center">
+                  <td colSpan={userType === 'movers' ? 7 : 6} className="px-4 py-8 text-center">
                     <RefreshCw className="w-6 h-6 animate-spin mx-auto text-blue-600" />
                   </td>
                 </tr>
@@ -733,6 +743,12 @@ export default function AdminUserManagement({
                       </div>
                     </td>
                     <td className="px-4 py-4">{getUserStatusBadge(user)}</td>
+                    {userType === 'movers' && (
+                      <td className="px-4 py-4 text-sm text-gray-700 dark:text-gray-300">
+                        {user.region || '—'}
+                        {user.city && <p className="text-xs text-gray-500 dark:text-gray-400">{user.city}</p>}
+                      </td>
+                    )}
                     <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-400">
                       {new Date(user.created_at).toLocaleDateString('fr-FR')}
                     </td>
@@ -789,7 +805,7 @@ export default function AdminUserManagement({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={userType === 'movers' ? 7 : 6} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                     Aucun utilisateur trouvé
                   </td>
                 </tr>
