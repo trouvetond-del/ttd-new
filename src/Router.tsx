@@ -31,6 +31,7 @@ import MoverInviteSignupPage from './pages/MoverInviteSignupPage';
 import ClientInviteSignupPage from './pages/ClientInviteSignupPage';
 import { MoverDashboard } from './pages/MoverDashboard';
 import MoverQuoteRequestsPage from './pages/MoverQuoteRequestsPage';
+import MoverFindMovesPage from './pages/MoverFindMovesPage';
 import MoverMyQuotesPage from './pages/MoverMyQuotesPage';
 import MoverMovingsList from './pages/MoverMovingsList';
 import MoverDamagePhotos from './pages/MoverDamagePhotos';
@@ -676,6 +677,14 @@ export function AppRouter() {
             element={
               <MoverProtectedRoute>
                 <MoverDashboard />
+              </MoverProtectedRoute>
+            }
+          />
+          <Route
+            path="/mover/find-moves"
+            element={
+              <MoverProtectedRoute>
+                <MoverFindMovesPage />
               </MoverProtectedRoute>
             }
           />
