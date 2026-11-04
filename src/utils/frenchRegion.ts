@@ -18,6 +18,8 @@ const REGIONS: Record<string, string[]> = {
 };
 for (const [region, depts] of Object.entries(REGIONS)) for (const d of depts) DEPT_TO_REGION[d] = region;
 
+export const FRENCH_REGIONS = Object.keys(REGIONS);
+
 export function departmentFromPostalCode(postalCode?: string | null): string | null {
   const cp = (postalCode || '').replace(/\s/g, '');
   if (!/^\d{5}$/.test(cp)) return null;
