@@ -1,0 +1,23 @@
+name: Déployer invitation déménageur
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/admin-invite-mover-quote/**'
+      - 'supabase/functions/send-mover-quote-reminders/**'
+      - 'supabase/functions/_shared/mover-quote-email.ts'
+      - '.github/workflows/deploy-mover-invite.yml'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase functions deploy admin-invite-mover-quote --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
+          supabase functions deploy send-mover-quote-reminders --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt
