@@ -10,8 +10,10 @@ Deno.serve(async (req) => {
     if (typeof morning_day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(morning_day)) return new Response('Bad request', {status:400});
     const key = Deno.env.get('RESEND_API_KEY');
     if (!key) return Response.json({email_accepted:false}, {status:503});
+    // Same day + same content stays deduplicated; a corrected report the same day can still be sent.
+    const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(title + html)))).slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('');
     const response = await fetch('https://api.resend.com/emails', {
-      method:'POST', headers:{Authorization:`Bearer ${key}`, 'Content-Type':'application/json', 'Idempotency-Key':`morning-report-${morning_day}`},
+      method:'POST', headers:{Authorization:`Bearer ${key}`, 'Content-Type':'application/json', 'Idempotency-Key':`morning-report-${morning_day}-${digest}`},
       body:JSON.stringify({from:'Trouve Ton Déménageur <noreply@trouvetondemenageur.fr>',to:[ALERT_EMAIL],subject:title,html:`<!DOCTYPE html><html lang="fr"><body><h2>${escapeHtml(title)}</h2>${html}</body></html>`}),
     });
     if (!response.ok) return Response.json({email_accepted:false,provider_status:response.status},{status:502});
@@ -21,3 +23,4 @@ Deno.serve(async (req) => {
   await alertAdmins(sb, title, html, "https://www.trouvetondemenageur.fr/admin");
   return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
 });
+
