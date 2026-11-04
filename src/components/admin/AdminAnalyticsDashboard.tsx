@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
+import AdminCalculatorConversion from './AdminCalculatorConversion';
 import {
   Activity,
   Target,
@@ -173,6 +174,7 @@ export default function AdminAnalyticsDashboard({ adminRole = '' }: AdminAnalyti
 
   return (
     <div className="space-y-6">
+      <AdminCalculatorConversion />
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Analytiques Avancées</h2>
         <div className="flex items-center gap-3">
