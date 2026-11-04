@@ -21,6 +21,7 @@ import {
   FileText,
   Tag,
   Clapperboard,
+  Camera,
 } from 'lucide-react';
 import AdminOverview from '../components/admin/AdminOverview';
 import AdminUserManagement from '../components/admin/AdminUserManagement';
@@ -35,6 +36,7 @@ import AdminSeoReport from '../components/admin/AdminSeoReport';
 import AdminSeaReport from '../components/admin/AdminSeaReport';
 import AdminPartners from '../components/admin/AdminPartners';
 import AdminGroupage from '../components/admin/AdminGroupage';
+import AdminMissionPhotos from '../components/admin/AdminMissionPhotos';
 import AdminExports from '../components/admin/AdminExports';
 import AdminActivityLogs from '../components/admin/AdminActivityLogs';
 import AdminMissions from '../components/admin/AdminMissions';
@@ -51,6 +53,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, useParams } from 'react-router-dom';
 
 type ActiveTab =
+  | 'mission_photos'
   | 'overview'
   | 'users'
   | 'prospects'
@@ -85,7 +88,7 @@ interface NavItem {
 export default function AdminDashboard() {
   const { tab: urlTab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
-  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report','sea_report','groupage','partners'];
+  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report','sea_report','groupage','partners','mission_photos'];
   const initialTab = (urlTab && validTabs.includes(urlTab as ActiveTab)) ? urlTab as ActiveTab : 'overview';
   const [activeTab, setActiveTabState] = useState<ActiveTab>(initialTab);
   const setActiveTab = (tab: ActiveTab) => { setActiveTabState(tab); navigate(`/admin/dashboard/${tab}`, { replace: true }); };
@@ -154,6 +157,7 @@ export default function AdminDashboard() {
     { id: 'recent_quotes', label: 'Demandes de Devis Récentes', icon: FileText, color: 'text-sky-600' },
     { id: 'contracts', label: 'Contrats Dropbox Sign', icon: FileText, color: 'text-cyan-600' },
     { id: 'missions', label: 'Missions', icon: Truck, color: 'text-indigo-600' },
+    { id: 'mission_photos', label: 'Photos de mission', icon: Camera, color: 'text-amber-600' },
     { id: 'groupage', label: 'Groupage', icon: Truck, color: 'text-orange-600' },
     { id: 'partners', label: 'Partenaires', icon: UserPlus, color: 'text-emerald-600' },
     { id: 'financial', label: 'Finances', icon: DollarSign, color: 'text-green-600' },
@@ -296,6 +300,8 @@ export default function AdminDashboard() {
         return <AdminSeoReport />;
       case 'groupage':
         return <AdminGroupage />;
+      case 'mission_photos':
+        return <AdminMissionPhotos />;
       case 'partners':
         return <AdminPartners />;
       case 'security':
