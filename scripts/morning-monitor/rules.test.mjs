@@ -19,3 +19,12 @@ test('missing and incomplete rows are never all-clear', () => {
 test('only complete recorded publications pass', () => {
   assert.equal(slotResult([{kind:'video_client',video_url:'https://example.org/v.mp4',status:'published',published_at:'2026-11-04',fb_post_id:'fb',ig_media_id:'ig'}], 'video_client').status,'ok');
 });
+import { priorities } from './rules.mjs';
+test('failed checks come first, then quote requests without any quote', () => {
+  const p = priorities({requests:5,unquoted:2,drafts:1,calcRequests:0,calcQuoted:0,articles:7,studioPublished:8,studioExpected:8},[{name:'Page /'}]).list;
+  assert.match(p[0], /Réparer/); assert.match(p[1], /^2 demande/); assert.match(p[2], /^1 demande\(s\) inachevée/);
+});
+test('missing data is listed as unknown, never invented', () => {
+  const r = priorities({requests:3,unquoted:0,drafts:0,calcRequests:0,calcQuoted:0,articles:null,studioPublished:null,studioExpected:8});
+  assert.deepEqual(r.unknown, ['articles','studioPublished']);
+});
