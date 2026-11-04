@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { parisDate, expectedKinds, slotResult, escapeHtml } from './rules.mjs';
+import { parisDate, expectedKinds, slotResult, escapeHtml, priorities } from './rules.mjs';
 
 const day = parisDate();
 const site = 'https://www.trouvetondemenageur.fr';
@@ -61,13 +61,28 @@ await check('Surveillance sécurité', async () => {
 });
 const problems=checks.filter(c=>['warning','unknown'].includes(c.status));
 const report={day,checked_at:new Date().toISOString(),status:problems.length?'attention':'ok',checks};
-const advice=[
-  ...(problems.length ? ['Traiter d’abord les contrôles en échec ou indisponibles avant d’augmenter la publicité.'] : []),
-  'Mesurer les demandes complètes et les devis réels par source, pas seulement les clics publicitaires.',
-  'Enrichir les pages villes avec des conseils locaux et des liens vers les articles utiles, sans chiffres ni avis inventés.',
-  'Publier des réponses concrètes aux questions de prix et de préparation ; demander des avis Trustpilot uniquement aux vrais clients.',
-];
-const html=`<p>Contrôle du ${escapeHtml(day)}, prévu à 9 h, heure de Paris.</p><p><b>${problems.length ? `${problems.length} point(s) à vérifier` : 'Aucun problème détecté dans les contrôles réalisés'}</b></p><ul>${checks.map(c=>`<li><b>${escapeHtml(c.name)} — ${escapeHtml(c.status)}</b> : ${escapeHtml(c.detail)}</li>`).join('')}</ul><h3>Propositions pour le site et sa visibilité</h3><ul>${advice.map(a=>`<li>${escapeHtml(a)}</li>`).join('')}</ul><p>Les contrôles de connexion authentifiée, paiements réels, délivrabilité des autres emails et visibilité Meta ne sont pas couverts. Aucun paiement ni achat publicitaire n’a été déclenché.</p><p>L’équipe Trouve Ton Déménageur<br>www.trouvetondemenageur.fr</p>`;
+const metrics={requests:null,unquoted:null,drafts:null,calcRequests:null,calcQuoted:null,articles:null,studioPublished:null,studioExpected:null};
+const week=new Date(Date.now()-7*86400000).toISOString(), h48=Date.now()-48*3600000;
+try {
+  const {data,error}=await sb.from('quote_requests').select('id,created_at,is_draft,acquisition_source').gte('created_at',week).limit(1000);
+  if (error) throw error;
+  const full=(data||[]).filter(r=>!r.is_draft); metrics.requests=full.length; metrics.drafts=(data||[]).length-full.length;
+  const ids=full.map(r=>r.id); const quoted=new Set();
+  for (let i=0;i<ids.length;i+=200){const {data:q,error:e}=await sb.from('quotes').select('quote_request_id').in('quote_request_id',ids.slice(i,i+200)); if(e) throw e; (q||[]).forEach(x=>quoted.add(x.quote_request_id));}
+  metrics.unquoted=full.filter(r=>!quoted.has(r.id)&&new Date(r.created_at).getTime()<h48).length;
+  const calc=full.filter(r=>r.acquisition_source==='calculateur'); metrics.calcRequests=calc.length; metrics.calcQuoted=calc.filter(r=>quoted.has(r.id)).length;
+} catch { metrics.requests=metrics.unquoted=metrics.drafts=metrics.calcRequests=metrics.calcQuoted=null; }
+try { const {count,error}=await sb.from('articles').select('slug',{count:'exact',head:true}).eq('statut','publie').gte('created_at',week); if(error) throw error; metrics.articles=count; } catch {}
+try {
+  const days=Array.from({length:7},(_,i)=>parisDate(new Date(Date.now()-i*86400000)));
+  metrics.studioExpected=days.reduce((n,d)=>n+expectedKinds(d).length,0);
+  const {count,error}=await sb.from('marketing_posts').select('kind',{count:'exact',head:true}).in('slot_date',days).eq('status','published').in('kind',['article_client','article_mover','video_client','video_mover']); if(error) throw error; metrics.studioPublished=count;
+} catch {}
+const prio=priorities(metrics,problems);
+const advice=[...prio.list, ...(prio.unknown.length?[`Données non lisibles ce matin (${prio.unknown.join(', ')}) : priorités calculées sans elles.`]:[])];
+const fmt=v=>v==null?'non mesuré':v;
+const summary=`<h3>Bilan 7 jours</h3><ul><li>Articles SEO/GEO publiés : ${fmt(metrics.articles)} / 7</li><li>Studio (articles + vidéos) publiés : ${fmt(metrics.studioPublished)} / ${fmt(metrics.studioExpected)}</li><li>Demandes complètes : ${fmt(metrics.requests)} — sans devis après 48 h : ${fmt(metrics.unquoted)} — inachevées : ${fmt(metrics.drafts)}</li><li>Calculateur : ${fmt(metrics.calcRequests)} demande(s), ${fmt(metrics.calcQuoted)} avec devis</li></ul>`;
+const html=`<p>Contrôle du ${escapeHtml(day)}, prévu à 9 h, heure de Paris.</p><p><b>${problems.length ? `${problems.length} point(s) à vérifier` : 'Aucun problème détecté dans les contrôles réalisés'}</b></p><ul>${checks.map(c=>`<li><b>${escapeHtml(c.name)} — ${escapeHtml(c.status)}</b> : ${escapeHtml(c.detail)}</li>`).join('')}</ul>${summary}<h3>Vos 3 priorités du jour</h3><ol>${advice.map(a=>`<li>${escapeHtml(a)}</li>`).join('')}</ol><p>Les contrôles de connexion authentifiée, paiements réels, délivrabilité des autres emails et visibilité Meta ne sont pas couverts. Aucun paiement ni achat publicitaire n’a été déclenché.</p><p>L’équipe Trouve Ton Déménageur<br>www.trouvetondemenageur.fr</p>`;
 await mkdir('morning-report',{recursive:true});
 await writeFile('morning-report/report.json',JSON.stringify(report,null,2));
 await writeFile('morning-report/report.html',html);
