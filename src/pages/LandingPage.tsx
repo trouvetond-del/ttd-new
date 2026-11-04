@@ -4,6 +4,7 @@ import { Logo } from '../components/Logo';
 import { useState, useRef } from 'react';
 import { HeroBackgroundVideo } from '../components/HeroBackgroundVideo';
 import { HomeFAQ, HomePartners, HomePhotoProtection } from '../components/home/HomeSections';
+import { HomeTrustBridge, HomeTrustReasons } from '../components/home/HomeTrust';
 import { useNavigate } from 'react-router-dom';
 
 const CITY_LINKS: [string, string][] = [['paris','Paris'],['lyon','Lyon'],['saint-etienne','Saint-Étienne'],['lille','Lille'],['marseille','Marseille'],['nantes','Nantes'],['bordeaux','Bordeaux'],['toulouse','Toulouse'],['nice','Nice'],['montpellier','Montpellier'],['strasbourg','Strasbourg'],['rennes','Rennes'],['reims','Reims'],['le-havre','Le Havre'],['toulon','Toulon'],['grenoble','Grenoble'],['dijon','Dijon'],['angers','Angers'],['nimes','Nîmes'],['villeurbanne','Villeurbanne'],['clermont-ferrand','Clermont-Ferrand'],['aix-en-provence','Aix-en-Provence'],['le-mans','Le Mans'],['brest','Brest'],['tours','Tours'],['amiens','Amiens'],['limoges','Limoges'],['annecy','Annecy'],['perpignan','Perpignan'],['boulogne-billancourt','Boulogne-Billancourt'],['metz','Metz'],['besancon','Besançon'],['orleans','Orléans'],['rouen','Rouen'],['mulhouse','Mulhouse'],['caen','Caen'],['nancy','Nancy'],['argenteuil','Argenteuil'],['montreuil','Montreuil'],['saint-denis','Saint-Denis'],['avignon','Avignon'],['poitiers','Poitiers'],['la-rochelle','La Rochelle'],['pau','Pau'],['bayonne','Bayonne'],['versailles','Versailles'],['nanterre','Nanterre'],['cannes','Cannes'],['valence','Valence'],['troyes','Troyes']];
@@ -122,139 +123,10 @@ export function LandingPage() {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-50 to-transparent"></div>
       </section>
 
-      <section ref={howItWorksRef} className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-100/20 rounded-full blur-3xl"></div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mb-12">
-            <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
-              <ShieldCheck className="w-4 h-4 text-blue-600" />
-              <span>KBIS vérifié</span>
-            </div>
-            <div className="w-px h-4 bg-gray-200 hidden sm:block"></div>
-            <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
-              <ShieldCheck className="w-4 h-4 text-blue-600" />
-              <span>Assurance RC Pro vérifiée</span>
-            </div>
-            <div className="w-px h-4 bg-gray-200 hidden sm:block"></div>
-            <div className="flex items-center gap-2 text-sm text-gray-700 font-medium">
-              <ShieldCheck className="w-4 h-4 text-blue-600" />
-              <span>URSSAF vérifiée</span>
-            </div>
-          </div>
-
-          <div className="text-center mb-16 animate-fadeInUp">
-            <div className="inline-flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full mb-6">
-              <Zap className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-bold text-blue-700 tracking-wide">CONFIANCE GARANTIE</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-              Un tiers de confiance<br />
-              <span className="gradient-text">entre vous et votre déménageur</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
-              Nous sélectionnons, vérifions et encadrons chaque professionnel. Vous déménagez, nous sécurisons.
-            </p>
-          </div>
-
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-4 mb-16 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-            <div className="flex flex-col items-center text-center bg-white rounded-3xl p-8 shadow-xl border border-gray-100 w-full md:w-80 hover-lift transition-all duration-300">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
-                <Users className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Vous</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">Décrivez votre projet en quelques clics. Volume, adresses, date : c'est tout.</p>
-            </div>
-
-            <div className="hidden md:flex items-center">
-              <div className="w-16 h-0.5 bg-gradient-to-r from-blue-300 to-cyan-400"></div>
-              <ChevronRight className="w-6 h-6 text-cyan-500 -mx-1" />
-            </div>
-            <div className="md:hidden flex flex-col items-center">
-              <div className="w-0.5 h-8 bg-gradient-to-b from-blue-300 to-cyan-400"></div>
-              <ChevronRight className="w-6 h-6 text-cyan-500 rotate-90 -my-1" />
-            </div>
-
-            <div className="flex flex-col items-center text-center bg-gradient-to-br from-slate-900 to-blue-900 rounded-3xl p-8 shadow-2xl border border-blue-800 w-full md:w-80 hover-lift transition-all duration-300 relative">
-              <div className="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">Certifié</div>
-              <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-full flex items-center justify-center mb-5 shadow-lg">
-                <span className="text-white font-black text-lg">TTD</span>
-                <span className="text-white/80 text-xs">.fr</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">TrouveTonDemenageur</h3>
-              <p className="text-blue-200 text-sm leading-relaxed">Vérifie, accompagne et arbitre. Avant, pendant et après votre déménagement.</p>
-              <p className="text-blue-300/80 text-xs mt-3 leading-relaxed">30% à la réservation, sécurisés sur la plateforme — le solde se règle directement avec votre déménageur le jour J.</p>
-            </div>
-
-            <div className="hidden md:flex items-center">
-              <div className="w-16 h-0.5 bg-gradient-to-r from-cyan-400 to-green-400"></div>
-              <ChevronRight className="w-6 h-6 text-green-500 -mx-1" />
-            </div>
-            <div className="md:hidden flex flex-col items-center">
-              <div className="w-0.5 h-8 bg-gradient-to-b from-cyan-400 to-green-400"></div>
-              <ChevronRight className="w-6 h-6 text-green-500 rotate-90 -my-1" />
-            </div>
-
-            <div className="flex flex-col items-center text-center bg-white rounded-3xl p-8 shadow-xl border border-gray-100 w-full md:w-80 hover-lift transition-all duration-300">
-              <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-5 shadow-lg">
-                <Building2 className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Votre déménageur</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">Certifié, assuré et noté. Il vous envoie un devis sur-mesure.</p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <section className="py-24 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl"></div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-14 animate-fadeInUp">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-              Pourquoi nous faire <span className="gradient-text">confiance</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
-              Gratuit, sans engagement.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp text-center" style={{ animationDelay: '0.1s' }}>
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
-                <ShieldCheck className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Déménageurs vérifiés</h3>
-              <p className="text-gray-600 leading-relaxed">KBIS, assurance et URSSAF contrôlés.</p>
-            </div>
-
-            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp text-center" style={{ animationDelay: '0.2s' }}>
-              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
-                <FileCheck className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Jusqu'à 3 devis sous 24 h</h3>
-              <p className="text-gray-600 leading-relaxed">Vous comparez, vous choisissez.</p>
-            </div>
-
-            <a
-              href="https://fr.trustpilot.com/review/trouvetondemenageur.fr"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover-lift animate-fadeInUp text-center"
-              style={{ animationDelay: '0.3s' }}
-            >
-              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
-                <Star className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Avis sur Trustpilot</h3>
-              <p className="text-gray-600 leading-relaxed">Les retours de nos clients, vérifiés par Trustpilot.</p>
-              <span className="inline-block mt-3 text-sm font-semibold text-blue-600 group-hover:underline">Voir notre page</span>
-            </a>
-          </div>
-        </div>
-      </section>
+      <div ref={howItWorksRef}>
+        <HomeTrustBridge />
+      </div>
+      <HomeTrustReasons />
 
       <HomePartners />
       <HomeFAQ />
