@@ -102,7 +102,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 // Route protégée pour les clients uniquement
-function ClientProtectedRoute({ children }: { children: React.ReactNode }) {
+function ClientProtectedRoute({ children, allowGuest = false }: { children: React.ReactNode; allowGuest?: boolean }) {
   const { user, loading } = useAuth();
   const location = useLocation();
   const [checking, setChecking] = useState(true);
@@ -173,6 +173,8 @@ function ClientProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!user) {
+    // Visiteur non connecté : autorisé seulement sur le formulaire public de devis
+    if (allowGuest) return <>{children}</>;
     return <Navigate to="/client/login" replace />;
   }
 
@@ -519,9 +521,20 @@ export function AppRouter() {
           />
           <Route
             path="/client/quote"
-            element={<ClientQuotePage />}
+            element={
+              <ClientProtectedRoute allowGuest>
+                <ClientQuotePage />
+              </ClientProtectedRoute>
+            }
           />
-          <Route path="/client/quote/reprendre" element={<ClientQuoteResumePage />} />
+          <Route
+            path="/client/quote/reprendre"
+            element={
+              <ClientProtectedRoute allowGuest>
+                <ClientQuoteResumePage />
+              </ClientProtectedRoute>
+            }
+          />
           <Route
             path="/client/quote/:quoteRequestId/edit"
             element={
