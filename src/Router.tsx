@@ -32,6 +32,9 @@ import ClientInviteSignupPage from './pages/ClientInviteSignupPage';
 import { MoverDashboard } from './pages/MoverDashboard';
 import MoverQuoteRequestsPage from './pages/MoverQuoteRequestsPage';
 import MoverFindMovesPage from './pages/MoverFindMovesPage';
+import MoverDriversPage from './pages/MoverDriversPage';
+import DriverPage from './pages/DriverPage';
+import DriverLoginPage from './pages/DriverLoginPage';
 import MoverMyQuotesPage from './pages/MoverMyQuotesPage';
 import MoverMovingsList from './pages/MoverMovingsList';
 import MoverDamagePhotos from './pages/MoverDamagePhotos';
@@ -677,6 +680,17 @@ export function AppRouter() {
             element={
               <MoverProtectedRoute>
                 <MoverDashboard />
+              </MoverProtectedRoute>
+            }
+          />
+          <Route path="/driver" element={<DriverPage />} />
+          <Route path="/driver/login" element={<DriverLoginPage />} />
+          <Route path="/driver/set-password" element={<DriverLoginPage />} />
+          <Route
+            path="/mover/drivers"
+            element={
+              <MoverProtectedRoute>
+                <MoverDriversPage />
               </MoverProtectedRoute>
             }
           />
