@@ -26,6 +26,30 @@ await check('Contrôle navigateur', async () => {
   const browser = JSON.parse(await readFile('morning-browser.json','utf8'));
   for (const item of browser) add(item.name,item.status,item.detail);
 });
+// GitHub delays scheduled agents by hours; dispatch any agent missing today and wait so the 9 h report reflects real output.
+const gh=(p,o={})=>fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/${p}`,{...o,headers:{Authorization:`Bearer ${process.env.GITHUB_TOKEN}`,Accept:'application/vnd.github+json'},signal:AbortSignal.timeout(15000)});
+const catchUp=[];
+if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPOSITORY) {
+  for (const w of ['seo-agent.yml','marketing-agent.yml','sea-agent.yml']) {
+    try {
+      const {workflow_runs:runs=[]}=await (await gh(`actions/workflows/${w}/runs?per_page=10&branch=main`)).json();
+      if (runs.some(r=>parisDate(new Date(r.created_at))===day)) continue;
+      const d=await gh(`actions/workflows/${w}/dispatches`,{method:'POST',body:JSON.stringify({ref:'main'})});
+      catchUp.push(`${w} : ${d.ok?'lancé en rattrapage':'rattrapage refusé ('+d.status+')'}`);
+    } catch { catchUp.push(`${w} : rattrapage indisponible`); }
+  }
+  if (catchUp.length) {
+    const deadline=Date.now()+35*60000;
+    while (Date.now()<deadline) {
+      await new Promise(r=>setTimeout(r,30000));
+      let pending=false;
+      for (const w of ['seo-agent.yml','marketing-agent.yml','sea-agent.yml']) {
+        try { const {workflow_runs:runs=[]}=await (await gh(`actions/workflows/${w}/runs?per_page=5&branch=main`)).json(); const t=runs.find(r=>parisDate(new Date(r.created_at))===day); if (!t || t.status!=='completed') pending=true; } catch {}
+      }
+      if (!pending) break;
+    }
+  }
+}
 await check('Agents GitHub', async () => {
   if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPOSITORY) throw new Error('GitHub indisponible');
   for (const workflow of ['seo-agent.yml','marketing-agent.yml','sea-agent.yml']) {
@@ -54,11 +78,20 @@ await check('Article quotidien SEO/GEO', async () => {
   add('Article quotidien SEO/GEO',response.ok && text.includes(article.slug)?'ok':'warning',`Article enregistré aujourd’hui ; page /blog/${article.slug} : HTTP ${response.status}. Qualité et citation par les IA non garanties par ce contrôle.`);
 });
 await check('Surveillance sécurité', async () => {
-  const {data,error}=await sb.from('system_health_checks').select('status,checked_at').order('checked_at',{ascending:false}).limit(1).maybeSingle();
+  const {data,error}=await sb.from('system_health_checks').select('status,checked_at,issues').order('checked_at',{ascending:false}).limit(1).maybeSingle();
   if (error) throw error;
-  const fresh=data && Date.now()-new Date(data.checked_at).getTime()<45*60000;
-  add('Surveillance sécurité',fresh && data.status==='ok'?'ok':'warning',data ? `Dernier contrôle : ${data.checked_at}, état ${data.status}${fresh?'':' — trop ancien'}. Ce résultat ne constitue pas un audit complet de cybersécurité.` : 'Aucun contrôle enregistré.');
+  if (!data) { add('Surveillance sécurité','warning','Aucun contrôle enregistré.'); return; }
+  const fresh=Date.now()-new Date(data.checked_at).getTime()<45*60000;
+  const issues=Array.isArray(data.issues)?data.issues:[];
+  const faults=issues.filter(i=>!i.noEmail);
+  const followUps=issues.filter(i=>i.noEmail);
+  const note=' Ce résultat ne constitue pas un audit complet de cybersécurité.';
+  if (!fresh) add('Surveillance sécurité','warning',`Dernier contrôle trop ancien : ${data.checked_at}.`+note);
+  else if (faults.length) add('Surveillance sécurité','warning',faults.map(i=>i.message).join(' ')+note);
+  else add('Surveillance sécurité','ok',`Aucune panne détectée à ${data.checked_at}.`+note);
+  if (followUps.length) add('Suivi des déménagements','info',followUps.map(i=>i.message).join(' '));
 });
+if (catchUp.length) add('Rattrapage des agents','info',`GitHub avait retardé les agents ; relancés automatiquement : ${catchUp.join(' ; ')}.`);
 const problems=checks.filter(c=>['warning','unknown'].includes(c.status));
 const report={day,checked_at:new Date().toISOString(),status:problems.length?'attention':'ok',checks};
 const metrics={requests:null,unquoted:null,drafts:null,calcRequests:null,calcQuoted:null,articles:null,studioPublished:null,studioExpected:null};
