@@ -7,6 +7,7 @@
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { buildMoverQuoteEmail } from "../_shared/mover-quote-email.ts";
 
 function daysUntil(dateStr: string): number {
   const today = new Date();
@@ -49,7 +50,7 @@ Deno.serve(async () => {
   // Demandes encore ouvertes à la mise en relation
   const { data: openRequests, error: qrError } = await supabaseAdmin
     .from("quote_requests")
-    .select("id, reference, from_city, to_city, moving_date, client_name, created_at")
+    .select("id, reference, from_city, to_city, moving_date, client_name, created_at, volume_m3")
     .in("status", ["new", "assigned", "quoted"])
     .eq("is_draft", false)
     .gte("moving_date", new Date().toISOString().split("T")[0])
@@ -164,31 +165,16 @@ Deno.serve(async () => {
               subject: isUrgent
                 ? `⏰ ${shortRef} — Déménagement dans ${days} jour(s), soyez le premier à répondre !`
                 : `Demande ouverte ${shortRef} — ${request.from_city} → ${request.to_city}`,
-              html: `
-                <!DOCTYPE html>
-                <html><head><meta charset="UTF-8"></head>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-                  <div style="background: ${isUrgent ? 'linear-gradient(135deg, #EF4444 0%, #F97316 100%)' : 'linear-gradient(135deg, #3B82F6 0%, #10B981 100%)'}; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                    <h1 style="margin:0; font-size: 22px;">${isUrgent ? '⏰ Réponse rapide recommandée' : '📋 Demande toujours ouverte'}</h1>
-                  </div>
-                  <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-radius: 0 0 10px 10px;">
-                    <p>Bonjour ${mover.company_name || ''},</p>
-                    ${!inZone ? `<p style="background:#fef3c7; padding:10px 14px; border-radius:6px; font-size:14px;">📍 Cette demande est en dehors de votre zone habituelle, mais reste ouverte sans devis pour l'instant -- elle vous est proposée en complément si ça vous intéresse.</p>` : ''}
-                    <p>Une demande de déménagement correspondant à votre zone est toujours ouverte :</p>
-                    <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin: 16px 0;">
-                      <p style="margin:0 0 6px;"><strong>Référence :</strong> ${shortRef}</p>
-                      <p style="margin:0 0 6px;"><strong>Trajet :</strong> ${request.from_city} → ${request.to_city}</p>
-                      <p style="margin:0;"><strong>Date :</strong> ${new Date(request.moving_date).toLocaleDateString('fr-FR')} (dans ${days} jour${days > 1 ? 's' : ''})</p>
-                    </div>
-                    <p>${isUrgent ? 'La date approche : soyez parmi les premiers à déposer votre devis pour maximiser vos chances.' : 'Cette demande accepte encore des devis.'}</p>
-                    <div style="text-align: center; margin: 30px 0;">
-                      <a href="https://www.trouvetondemenageur.fr/mover/quote-requests" style="display: inline-block; background: ${isUrgent ? '#EF4444' : '#3B82F6'}; color: white; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-                        Voir la demande et déposer un devis
-                      </a>
-                    </div>
-                  </div>
-                </body></html>
-              `,
+              html: buildMoverQuoteEmail({
+                companyName: mover.company_name,
+                reference: shortRef,
+                fromCity: request.from_city,
+                toCity: request.to_city,
+                movingDate: request.moving_date,
+                days,
+                volumeM3: request.volume_m3,
+                urgent: isUrgent,
+              }),
             }),
           });
           emailsSent++;
