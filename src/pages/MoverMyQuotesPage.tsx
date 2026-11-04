@@ -9,6 +9,7 @@ import { showToast } from '../utils/toast';
 import { generateContractPDF, buildContractPDFData } from '../utils/generateContractPDF';
 import { generateInvoicePDF, buildInvoiceData } from '../utils/generateInvoicePDF';
 import { MissionCompletionButton } from '../components/MissionCompletionButton';
+import { MissionSteps } from '../components/MissionSteps';
 import { MessagingInterface } from '../components/MessagingInterface';
 import { DistanceDisplay } from '../components/DistanceDisplay';
 import { QuoteRequestChangesDisplay } from '../components/QuoteRequestChangesDisplay';
@@ -1080,10 +1081,12 @@ export default function MoverMyQuotesPage({ notificationQuoteRequestId, onQuoteR
                           <div className="text-sm text-green-700">Le client a accepté votre proposition</div>
                         </div>
 
-                        <MissionCompletionButton
-                          quoteId={quote.id}
-                          quoteRequestId={quote.quote_request.id}
-                        />
+                        <MissionSteps quoteRequestId={quote.quote_request.id}>
+                          <MissionCompletionButton
+                            quoteId={quote.id}
+                            quoteRequestId={quote.quote_request.id}
+                          />
+                        </MissionSteps>
 
                         <button
                           onClick={async () => {
