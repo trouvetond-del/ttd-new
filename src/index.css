@@ -266,25 +266,37 @@
   .home-faq-item summary { font-size: 1rem; }
 }
 
-/* Slim bridge diagram and unframed reassurance list. */
+/* Slim animated client → platform → mover journey, with return delivery. */
 .home-trust-bridge { background: var(--home-surface); scroll-margin-top: 160px; }
 .trust-intro { max-width: 660px; margin: 1.25rem auto 0; text-align: center; color: var(--home-muted); font-size: 1.1rem; line-height: 1.6; }
-.trust-bridge-scene { position: relative; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: end; min-height: 230px; margin: 1.5rem 0 1.25rem; }
-.trust-bridge-arc { position: absolute; left: 0; top: 0; width: 100%; height: 110px; pointer-events: none; }
-.trust-arc-base { stroke: var(--home-line); stroke-width: 1.5; }
-.trust-arc-draw { stroke: var(--home-success); stroke-width: 2; stroke-linecap: round; }
-.trust-person { position: relative; text-align: center; padding: 0 12px; }
-.trust-person > svg { margin: 0 auto 12px; color: var(--home-accent); }
-.trust-mover > svg { color: var(--home-success); }
-.trust-person h3 { font-size: 1.15rem; font-weight: 700; line-height: 1.4; margin: 0 0 6px; }
-.trust-person p { color: var(--home-muted); font-size: .95rem; line-height: 1.6; margin: 0; min-height: 48px; }
-.trust-center { position: relative; align-self: start; display: flex; flex-direction: column; align-items: center; margin-top: 18px; }
-.trust-center img { object-fit: contain; width: 180px; height: 105px; background: var(--home-surface); }
-.trust-center-caption { display: flex; align-items: center; gap: 6px; font-size: .85rem; font-weight: 600; color: var(--home-success); text-align: center; }
+.trust-journey { position: relative; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding-bottom: 64px; margin: 2.75rem auto 0; max-width: 900px; }
+.trust-stop { position: relative; text-align: center; min-width: 0; z-index: 1; }
+.trust-node, .trust-logo-node { width: 100px; height: 100px; margin: 0 auto 18px; display: grid; place-items: center; border-radius: 50%; background: var(--home-surface); }
+.trust-node { color: var(--home-accent); border: 1px solid var(--home-line); }
+.trust-mover .trust-node { color: var(--home-success); }
+.trust-logo-node { position: relative; }
+.trust-logo-node img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+.trust-validation { position: absolute; right: -3px; bottom: 0; width: 30px; height: 30px; display: grid; place-items: center; background: var(--home-success); color: var(--home-surface); border: 3px solid var(--home-surface); border-radius: 50%; }
+.trust-stop h3 { margin: 0 8px 6px; font-size: 1.1rem; line-height: 1.4; font-weight: 700; }
+.trust-stop p { margin: 0 8px; color: var(--home-muted); font-size: .95rem; line-height: 1.5; }
+.trust-request-line { position: absolute; top: 50px; height: 1px; width: calc(33.333% - 112px); background: var(--home-line); }
+.trust-request-first { left: calc(16.667% + 56px); }
+.trust-request-second { left: calc(50% + 56px); }
+.trust-request-line > svg { position: absolute; right: -2px; top: -7px; color: var(--home-line); }
+.trust-request-line > span { position: absolute; top: -3px; left: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--home-accent); opacity: 0; }
+.trust-request-second > span { background: var(--home-success); }
+.trust-delivery { position: absolute; bottom: 0; left: 16.667%; right: 16.667%; height: 46px; }
+.trust-road { position: absolute; left: 0; right: 0; bottom: 8px; border-bottom: 1px dashed var(--home-line); }
+.trust-road-start, .trust-road-end { position: absolute; bottom: 4px; width: 9px; height: 9px; border-radius: 50%; background: var(--home-accent); }
+.trust-road-start { left: -4px; }
+.trust-road-end { right: -4px; background: var(--home-success); }
+.trust-moving-truck { position: absolute; bottom: 9px; left: 100%; margin-left: -20px; width: 40px; height: 36px; color: var(--home-success); background: var(--home-surface); }
+.trust-moving-truck > svg { transform: scaleX(-1); }
+.trust-delivery-caption { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 24px; font-size: .85rem; color: var(--home-muted); }
+.trust-delivery-caption svg { color: var(--home-success); }
 .trust-checks { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; padding-top: 20px; border-top: 1px solid var(--home-line); }
 .trust-checks span { display: flex; align-items: center; gap: 7px; color: var(--home-muted); font-size: .85rem; }
 .trust-checks svg { color: var(--home-success); flex-shrink: 0; }
-.trust-payment { text-align: center; color: var(--home-muted); font-size: .85rem; line-height: 1.6; margin: 16px 0 0; }
 .home-trust-reasons { background: var(--home-soft); }
 .trust-reasons-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 80px; align-items: center; }
 .home-band .trust-reasons-heading h2 { text-align: left; max-width: 400px; }
@@ -300,12 +312,16 @@
 .trust-review-link:hover { text-decoration-thickness: 2px; }
 .trust-review-link:focus-visible { outline: 3px solid var(--home-accent); outline-offset: 4px; }
 @media (prefers-reduced-motion: no-preference) {
-  .trust-arc-draw { stroke-dasharray: 1; stroke-dashoffset: 1; }
-  .trust-revealed .trust-arc-draw { animation: trust-draw-arc 1.8s ease-out forwards; }
-  .trust-person, .trust-center, .trust-reason { opacity: 0; transform: translateY(12px); transition: opacity .7s ease, transform .7s ease; }
-  .trust-revealed .trust-person, .trust-revealed .trust-center, .trust-revealed .trust-reason { opacity: 1; transform: none; }
-  .trust-center { transition-delay: .15s; }
-  .trust-mover { transition-delay: .35s; }
+  .trust-reason { opacity: 0; transform: translateY(12px); transition: opacity .7s ease, transform .7s ease; }
+  .trust-revealed .trust-reason { opacity: 1; transform: none; }
+  .trust-revealed .trust-request-first > span { animation: trust-send-request 12s ease-in-out infinite; }
+  .trust-revealed .trust-request-second > span { animation: trust-send-mover 12s ease-in-out infinite; }
+  .trust-revealed .trust-validation { animation: trust-validate 12s ease-in-out infinite; }
+  .trust-revealed .trust-platform .trust-logo-node { animation: trust-logo-confirm 12s ease-in-out infinite; }
+  .trust-revealed .trust-mover .trust-node { animation: trust-mover-confirm 12s ease-in-out infinite; }
+  .trust-revealed .trust-moving-truck { animation: trust-truck-delivery 12s ease-in-out infinite; }
+  .trust-revealed .trust-client .trust-node { animation: trust-client-arrival 12s ease-in-out infinite; }
+  .home-trust-bridge.is-paused .trust-journey * { animation-play-state: paused; }
   .trust-reason:nth-child(2) { transition-delay: .15s; }
   .trust-reason:nth-child(3) { transition-delay: .3s; }
   .trust-reason > svg :is(path,polyline,line) { stroke-dasharray: 100; stroke-dashoffset: 100; }
@@ -313,23 +329,30 @@
   .trust-reason:nth-child(2) > svg :is(path,polyline,line) { animation-delay: .15s; }
   .trust-reason:nth-child(3) > svg :is(path,polyline,line) { animation-delay: .3s; }
 }
-@keyframes trust-draw-arc { to { stroke-dashoffset: 0; } }
+@keyframes trust-send-request { 0%, 4% { left: 0; opacity: 0; } 8% { opacity: 1; } 24% { left: 100%; opacity: 1; } 27%,100% { left: 100%; opacity: 0; } }
+@keyframes trust-validate { 0%,24% { transform: scale(0); opacity: 0; } 29% { transform: scale(1.2); opacity: 1; } 33%,94% { transform: scale(1); opacity: 1; } 100% { transform: scale(0); opacity: 0; } }
+@keyframes trust-logo-confirm { 0%,26%,38%,100% { transform: scale(1); } 31% { transform: scale(1.07); } }
+@keyframes trust-send-mover { 0%,35% { left: 0; opacity: 0; } 39% { opacity: 1; } 53% { left: 100%; opacity: 1; } 56%,100% { left: 100%; opacity: 0; } }
+@keyframes trust-mover-confirm { 0%,52%,67%,100% { border-color: var(--home-line); transform: scale(1); } 57%,62% { border-color: var(--home-success); transform: scale(1.05); } }
+@keyframes trust-truck-delivery { 0%,56% { left: 100%; opacity: 0; } 61% { left: 100%; opacity: 1; } 86%,93% { left: 0; opacity: 1; } 98%,100% { left: 0; opacity: 0; } }
+@keyframes trust-client-arrival { 0%,84%,100% { border-color: var(--home-line); transform: scale(1); } 89%,94% { border-color: var(--home-success); transform: scale(1.05); } }
 @keyframes trust-draw-icon { to { stroke-dashoffset: 0; } }
 @media (max-width: 640px) {
   .home-trust-bridge { scroll-margin-top: 72px; }
   .trust-intro { font-size: 1rem; }
-  .trust-bridge-scene { min-height: 205px; margin-top: 1.5rem; grid-template-columns: 1fr 1fr; column-gap: 18px; padding-top: 120px; }
-  .trust-bridge-arc { height: 115px; }
-  .trust-center { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 220px; margin: 0; }
-  .trust-center img { width: 130px; height: 78px; }
-  .trust-center-caption { font-size: .72rem; }
-  .trust-person { padding: 0; }
-  .trust-person h3 { font-size: 1rem; }
-  .trust-person p { font-size: .85rem; min-height: 44px; }
+  .trust-journey { margin-top: 2rem; padding-bottom: 66px; }
+  .trust-node, .trust-logo-node { width: 68px; height: 68px; margin-bottom: 14px; }
+  .trust-node > svg { width: 28px; height: 28px; }
+  .trust-validation { width: 25px; height: 25px; right: -4px; }
+  .trust-validation svg { width: 15px; height: 15px; }
+  .trust-stop h3 { font-size: .85rem; margin-inline: 3px; min-height: 38px; }
+  .trust-stop p { font-size: .75rem; margin-inline: 3px; }
+  .trust-request-line { top: 34px; width: calc(33.333% - 78px); }
+  .trust-request-first { left: calc(16.667% + 39px); }
+  .trust-request-second { left: calc(50% + 39px); }
   .trust-checks { gap: 12px 18px; }
   .trust-reasons-layout { grid-template-columns: 1fr; gap: 24px; }
   .home-band .trust-reasons-heading h2 { max-width: none; }
   .trust-reason { padding: 20px 0; gap: 16px; }
   .trust-reason h3 { font-size: 1.05rem; }
-  .trust-revealed .trust-center { transform: translateX(-50%); }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Building2, FileCheck, MessageCircle, ShieldCheck, Users } from 'lucide-react';
+import { ArrowUpRight, Building2, FileCheck, MessageCircle, ShieldCheck, Users, Check, Pause, Play, Truck, ArrowRight } from 'lucide-react';
 
 function useReveal() {
   const ref = useRef<HTMLElement>(null);
@@ -21,21 +21,23 @@ function useReveal() {
 
 export function HomeTrustBridge() {
   const { ref, revealed } = useReveal();
-  return <section ref={ref} className={`home-trust-bridge home-band ${revealed ? 'trust-revealed' : ''}`} aria-labelledby="trust-bridge-title">
+  const [paused, setPaused] = useState(false);
+  return <section ref={ref} className={`home-trust-bridge home-band ${revealed ? 'trust-revealed' : ''} ${paused ? 'is-paused' : ''}`} aria-labelledby="trust-bridge-title">
     <div className="home-inner">
-      <h2 id="trust-bridge-title">Un tiers de confiance<br /><span className="gradient-text">entre vous et votre déménageur</span></h2>
-      <p className="trust-intro">Nous vérifions les professionnels et vous accompagnons à chaque étape.</p>
-      <div className="trust-bridge-scene">
-        <svg className="trust-bridge-arc" viewBox="0 0 1000 200" preserveAspectRatio="none" fill="none" aria-hidden="true">
-          <path className="trust-arc-base" d="M160 180 C240 -20 760 -20 840 180" />
-          <path className="trust-arc-draw" pathLength="1" d="M160 180 C240 -20 760 -20 840 180" />
-        </svg>
-        <div className="trust-person trust-client"><Users size={34} strokeWidth={1.5} aria-hidden="true" /><h3>Vous</h3><p>Votre projet, vos besoins.</p></div>
-        <div className="trust-center"><img src="/ttd-logo.png" alt="TrouveTonDemenageur" width={180} height={100} loading="lazy" /><span className="trust-center-caption"><ShieldCheck size={18} aria-hidden="true" />Vérifie · Accompagne · Arbitre</span></div>
-        <div className="trust-person trust-mover"><Building2 size={34} strokeWidth={1.5} aria-hidden="true" /><h3>Votre déménageur</h3><p>Un professionnel vérifié,<br />un devis sur mesure.</p></div>
+      <div className="home-section-heading"><h2 id="trust-bridge-title">Un tiers de confiance<br /><span className="gradient-text">entre vous et votre déménageur</span></h2>
+        <button type="button" className="home-motion-toggle" onClick={() => setPaused(value => !value)} aria-label={paused ? 'Reprendre le parcours animé' : 'Mettre en pause le parcours animé'} title={paused ? 'Reprendre le parcours animé' : 'Mettre en pause le parcours animé'} aria-pressed={paused}>{paused ? <Play size={18} /> : <Pause size={18} />}</button>
       </div>
+      <p className="trust-intro">Nous vérifions les professionnels et vous accompagnons à chaque étape.</p>
+      <div className="trust-journey">
+        <div className="trust-request-line trust-request-first" aria-hidden="true"><span /><ArrowRight size={16} /></div>
+        <div className="trust-request-line trust-request-second" aria-hidden="true"><span /><ArrowRight size={16} /></div>
+        <div className="trust-stop trust-client"><div className="trust-node"><Users size={36} strokeWidth={1.5} aria-hidden="true" /></div><h3>Vous</h3><p>Votre demande</p></div>
+        <div className="trust-stop trust-platform"><div className="trust-logo-node"><img src="/logo.png" alt="TTD.fr — Trouve Ton Déménageur" width={100} height={100} loading="lazy" /><span className="trust-validation" aria-hidden="true"><Check size={19} strokeWidth={3} /></span></div><h3>TTD vérifie</h3><p>Et vous accompagne</p></div>
+        <div className="trust-stop trust-mover"><div className="trust-node"><Building2 size={36} strokeWidth={1.5} aria-hidden="true" /></div><h3>Votre déménageur</h3><p>Un professionnel vérifié</p></div>
+        <div className="trust-delivery" aria-hidden="true"><div className="trust-road" /><span className="trust-road-start" /><span className="trust-road-end" /><div className="trust-moving-truck"><Truck size={36} strokeWidth={1.6} /></div></div>
+      </div>
+      <p className="trust-delivery-caption"><Truck size={18} aria-hidden="true" />Le déménageur vient à vous.</p>
       <div className="trust-checks"><span><ShieldCheck size={16} aria-hidden="true" />KBIS vérifié</span><span><ShieldCheck size={16} aria-hidden="true" />Assurance RC Pro vérifiée</span><span><ShieldCheck size={16} aria-hidden="true" />URSSAF vérifiée</span></div>
-      <p className="trust-payment">30 % à la réservation sur la plateforme — le solde directement au déménageur le jour J.</p>
     </div>
   </section>;
 }

@@ -11,4 +11,4 @@
 
 - Homepage partner motion, FAQ and photo protection are isolated in HomeSections with CSS tokens, duplicated decorative tracks hidden from assistive technology, visible pause controls and reduced-motion fallbacks; this keeps animations independent from acquisition and payment flows.
 
-- Homepage intermediary and reassurance sections live in HomeTrust; visibility-triggered animations run once and honor reduced-motion, while the existing how-it-works scroll target remains intact to keep navigation stable.
+- Homepage intermediary and reassurance sections live in HomeTrust; the decorative journey loops after visibility with pause and reduced-motion support, independent of real validation and payment logic; preserve the how-it-works scroll target.
