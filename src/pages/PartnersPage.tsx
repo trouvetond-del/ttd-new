@@ -59,22 +59,7 @@ const partners = [
     initial: 'B',
     website: 'https://www.brevo.com',
   },
-  {
-    name: 'AXA Assurances',
-    category: 'Assurance partenaire',
-    description: 'Partenaire assuranciel de référence pour la couverture des déménagements professionnels. AXA accompagne nos prestataires avec des solutions d\'assurance RC Pro et Marchandises Transportées adaptées.',
-    color: 'from-blue-700 to-blue-900',
-    initial: 'AXA',
-    website: 'https://www.axa.fr',
-  },
-  {
-    name: 'La Poste',
-    category: 'Services postaux',
-    description: 'Partenaire logistique national pour le suivi de courrier et le transfert d\'adresse. Simplifiez vos démarches administratives lors de votre changement d\'adresse.',
-    color: 'from-yellow-500 to-yellow-600',
-    initial: 'LP',
-    website: 'https://www.laposte.fr',
-  },
+
 ];
 
 export function PartnersPage() {

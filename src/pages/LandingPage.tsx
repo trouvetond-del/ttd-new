@@ -3,6 +3,7 @@ import { SupportChat } from '../components/SupportChat';
 import { Logo } from '../components/Logo';
 import { useState, useRef } from 'react';
 import { HeroBackgroundVideo } from '../components/HeroBackgroundVideo';
+import { HomeFAQ, HomePartners, HomePhotoProtection } from '../components/home/HomeSections';
 import { useNavigate } from 'react-router-dom';
 
 const CITY_LINKS: [string, string][] = [['paris','Paris'],['lyon','Lyon'],['saint-etienne','Saint-Étienne'],['lille','Lille'],['marseille','Marseille'],['nantes','Nantes'],['bordeaux','Bordeaux'],['toulouse','Toulouse'],['nice','Nice'],['montpellier','Montpellier'],['strasbourg','Strasbourg'],['rennes','Rennes'],['reims','Reims'],['le-havre','Le Havre'],['toulon','Toulon'],['grenoble','Grenoble'],['dijon','Dijon'],['angers','Angers'],['nimes','Nîmes'],['villeurbanne','Villeurbanne'],['clermont-ferrand','Clermont-Ferrand'],['aix-en-provence','Aix-en-Provence'],['le-mans','Le Mans'],['brest','Brest'],['tours','Tours'],['amiens','Amiens'],['limoges','Limoges'],['annecy','Annecy'],['perpignan','Perpignan'],['boulogne-billancourt','Boulogne-Billancourt'],['metz','Metz'],['besancon','Besançon'],['orleans','Orléans'],['rouen','Rouen'],['mulhouse','Mulhouse'],['caen','Caen'],['nancy','Nancy'],['argenteuil','Argenteuil'],['montreuil','Montreuil'],['saint-denis','Saint-Denis'],['avignon','Avignon'],['poitiers','Poitiers'],['la-rochelle','La Rochelle'],['pau','Pau'],['bayonne','Bayonne'],['versailles','Versailles'],['nanterre','Nanterre'],['cannes','Cannes'],['valence','Valence'],['troyes','Troyes']];
@@ -255,107 +256,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-br from-blue-50 to-cyan-50 rounded-full blur-3xl opacity-40"></div>
-
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-14 animate-fadeInUp">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-              Vos biens protégés <span className="gradient-text">en 3 photos</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
-              Client et déménageur sont protégés de la même façon.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-3 gap-4 items-stretch mb-8">
-            <div className="bg-slate-50 rounded-2xl p-6 text-center border border-gray-100 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-              <Camera className="w-7 h-7 text-blue-600 mx-auto mb-3" />
-              <p className="font-bold text-gray-900">1. Au départ</p>
-              <p className="text-sm text-gray-600">Vous photographiez</p>
-            </div>
-            <div className="bg-slate-50 rounded-2xl p-6 text-center border border-gray-100 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-              <Truck className="w-7 h-7 text-green-600 mx-auto mb-3" />
-              <p className="font-bold text-gray-900">2. Au chargement</p>
-              <p className="text-sm text-gray-600">Le pro photographie</p>
-            </div>
-            <div className="bg-slate-50 rounded-2xl p-6 text-center border border-gray-100 animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-              <CheckCircle className="w-7 h-7 text-emerald-600 mx-auto mb-3" />
-              <p className="font-bold text-gray-900">3. À l'arrivée</p>
-              <p className="text-sm text-gray-600">Vous vérifiez</p>
-            </div>
-          </div>
-
-          <div className="bg-blue-50 border border-blue-100 rounded-2xl px-6 py-5 text-center animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
-            <p className="text-blue-900 leading-relaxed">
-              Un dégât ? Notre IA compare les photos et tranche sur des preuves, pas sur des paroles.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Nos Partenaires Section */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-16 animate-fadeInUp">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-              Nos <span className="gradient-text">partenaires</span>
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light">
-              Des leaders technologiques au service de votre sécurité.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {/* Stripe */}
-            <div className="group bg-white rounded-3xl p-8 hover-lift shadow-xl border border-gray-100/50 hover:border-blue-200 transition-all duration-300 text-center animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-              <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <span className="text-white text-2xl font-black">S</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Stripe</h3>
-              <p className="text-sm text-gray-500 mb-3">Paiements sécurisés</p>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Norme PCI-DSS. Vos paiements sont chiffrés et protégés au plus haut niveau.
-              </p>
-            </div>
-
-            {/* Dropbox Sign */}
-            <div className="group bg-white rounded-3xl p-8 hover-lift shadow-xl border border-gray-100/50 hover:border-green-200 transition-all duration-300 text-center animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <span className="text-white text-2xl font-black">D</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Dropbox Sign</h3>
-              <p className="text-sm text-gray-500 mb-3">Signature électronique</p>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Conforme eIDAS. Vos contrats signés en ligne ont pleine valeur juridique.
-              </p>
-            </div>
-
-            {/* Vercel */}
-            <div className="group bg-white rounded-3xl p-8 hover-lift shadow-xl border border-gray-100/50 hover:border-cyan-200 transition-all duration-300 text-center animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-              <div className="w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                <span className="text-white text-2xl font-black">▲</span>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Vercel</h3>
-              <p className="text-sm text-gray-500 mb-3">Hébergement sécurisé</p>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Infrastructure cloud haute disponibilité. Vos données accessibles et protégées 24h/24.
-              </p>
-            </div>
-          </div>
-
-          <div className="text-center animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
-            <button
-              onClick={() => navigate('/partners')}
-              className="inline-flex items-center gap-1.5 text-blue-600 font-semibold text-base hover:text-blue-800 hover:underline transition-colors"
-            >
-              Découvrir nos partenaires
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </section>
+      <HomePartners />
+      <HomeFAQ />
+      <HomePhotoProtection />
 
       <section
         className="relative py-32 overflow-hidden bg-gradient-to-br from-blue-900 via-slate-900 to-blue-800"
