@@ -49,31 +49,33 @@ export default function ConsentBanner() {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-[100] p-3 sm:p-4"
+      className="fixed bottom-4 left-4 right-4 z-[100] sm:right-auto sm:max-w-sm animate-[cookieIn_.5s_ease-out]"
       role="dialog"
       aria-live="polite"
       aria-label="Consentement cookies publicitaires"
     >
-      <div className="mx-auto max-w-3xl rounded-2xl bg-white shadow-xl border border-slate-200 p-4 sm:p-5">
-        <p className="text-sm text-slate-700 leading-relaxed">
-          Nous utilisons des cookies de mesure et de publicité (dont Meta / Facebook) pour savoir si
-          nos annonces apportent des clients. Vous pouvez accepter ou refuser librement — votre
-          choix reste valable 6 mois et peut être modifié à tout moment sur notre{' '}
-          <a href="/cookies" className="font-medium text-blue-700 underline">
-            page Cookies
-          </a>
-          .
-        </p>
-        <div className="mt-3 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <style>{`@keyframes cookieIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}`}</style>
+      <div className="rounded-2xl bg-white/95 backdrop-blur border border-slate-200/80 shadow-[0_12px_40px_-12px_rgba(15,23,42,.35)] p-4">
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-50 text-lg" aria-hidden>🍪</span>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-slate-900">Un petit cookie ?</p>
+            <p className="mt-0.5 text-xs leading-relaxed text-slate-600">
+              Il nous aide à mesurer nos annonces (dont Meta). Votre choix est libre, valable 6 mois.{' '}
+              <a href="/cookies" className="font-medium text-blue-600 hover:underline">En savoir plus</a>
+            </p>
+          </div>
+        </div>
+        <div className="mt-3 flex gap-2">
           <button
             onClick={() => record('refused')}
-            className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="flex-1 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition"
           >
-            Continuer sans accepter
+            Refuser
           </button>
           <button
             onClick={() => record('granted')}
-            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            className="flex-1 rounded-full bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 transition"
           >
             Accepter
           </button>
