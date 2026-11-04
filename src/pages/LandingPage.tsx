@@ -74,8 +74,16 @@ export function LandingPage() {
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] animate-fadeInUp">
               <span className="block text-white mb-3 drop-shadow-2xl">Déménagez sereinement.</span>
-              <span className="block bg-gradient-to-r from-emerald-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent drop-shadow-lg">
-                Des déménageurs vérifiés, une équipe à votre écoute
+              <span className="block text-4xl md:text-6xl leading-tight">
+                <span className="block bg-gradient-to-r from-emerald-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent drop-shadow-lg">
+                  Des déménageurs vérifiés
+                </span>
+                <span className="block bg-gradient-to-r from-emerald-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent drop-shadow-lg">
+                  par des pros vérifiés
+                </span>
+                <span className="block bg-gradient-to-r from-emerald-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent drop-shadow-lg">
+                  une équipe à votre écoute
+                </span>
               </span>
             </h1>
 
