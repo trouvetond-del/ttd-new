@@ -1,0 +1,22 @@
+/* Keep motion controls discoverable by keyboard and on touch devices. */
+@media (hover: hover) and (pointer: fine) {
+  .hero-motion-toggle,
+  .home-motion-toggle {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .hero-motion-toggle:hover,
+  .hero-motion-toggle:focus-visible,
+  .home-motion-toggle:hover,
+  .home-motion-toggle:focus-visible {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-motion-toggle,
+  .home-motion-toggle {
+    transition: none;
+  }
+}

@@ -9,6 +9,7 @@
 - Homepage decorative video lives in HeroBackgroundVideo with immutable CDN pointers, silent inline playback, a pause control and reduced-motion/data-saving poster fallback; this preserves readability and avoids heavy repository binaries.
 - Storage-box partner outreach runs in the partner-outreach edge function (Gmail connector) driven by its own daily workflow; referral codes are attached only through a security-definer RPC for brand-new client accounts, and refunds are created solely from admin-approved completed paid moves, unique per client, so nobody is paid without a real move through the site.
 
-- Homepage partner motion, FAQ and photo protection are isolated in HomeSections with CSS tokens, duplicated decorative tracks hidden from assistive technology, visible pause controls and reduced-motion fallbacks; this keeps animations independent from acquisition and payment flows.
+- Homepage partner motion, FAQ and photo protection are isolated in HomeSections with CSS tokens, duplicated decorative tracks hidden from assistive technology, accessible pause controls and reduced-motion fallbacks; this keeps animations independent from acquisition and payment flows.
 
 - Homepage intermediary and reassurance sections live in HomeTrust; the decorative journey loops after visibility with pause and reduced-motion support, independent of real validation and payment logic; preserve the how-it-works scroll target.
+- Decorative motion-control visibility is centralized in motion-controls.css after index.css; opacity preserves hit areas and keyboard access while non-hover devices retain visible controls.
