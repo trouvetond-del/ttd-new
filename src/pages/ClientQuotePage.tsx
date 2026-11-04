@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { ArrowLeft, ArrowRight, MapPin, Home, Package, CheckCircle, Calculator, User, Shield, AlertCircle, Clock, Navigation } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { readAcquisitionSource, clearAcquisitionSource } from '../utils/acquisitionSource';
 import { trackAdEvent } from '../lib/ads';
 import { useAuth } from '../contexts/AuthContext';
 import { VolumeCalculator, type FurnitureInventory } from '../components/VolumeCalculator';
@@ -579,6 +580,8 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
         if (isFirstRealSubmission) {
           updateData.is_draft = false;
           updateData.submitted_at = new Date().toISOString();
+          const source = readAcquisitionSource();
+          if (source) updateData.acquisition_source = source;
         }
 
         if (currentRequest?.status === 'accepted') {
@@ -592,6 +595,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
           .eq('id', targetQuoteRequestId);
 
         if (updateError) throw updateError;
+        if (isFirstRealSubmission) clearAcquisitionSource();
 
         // Expire any pending/accepted quotes
         const { data: quotesToExpire } = await supabase
@@ -768,10 +772,12 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
             furniture_inventory: furnitureInventory,
             furniture_photos: furniturePhotos,
             client_user_id: user?.id || null,
-            entry_channel: 'full_form'
+            entry_channel: 'full_form',
+            ...(readAcquisitionSource() ? { acquisition_source: readAcquisitionSource() } : {})
           }]);
 
         if (submitError) throw submitError;
+        clearAcquisitionSource();
 
         // Conversion : demande de devis complète envoyée (compte + formulaire complet)
         trackAdEvent('Lead', { content_name: 'full_quote_request' });
