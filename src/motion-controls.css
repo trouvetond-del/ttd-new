@@ -1,3 +1,5 @@
+@import './trust-thread.css';
+
 /* Keep motion controls discoverable by keyboard and on touch devices. */
 @media (hover: hover) and (pointer: fine) {
   .hero-motion-toggle,

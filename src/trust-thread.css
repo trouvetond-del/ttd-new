@@ -1,0 +1,70 @@
+/* A finite decorative sequence follows the three reassurance pictograms. */
+.trust-reasons-list {
+  position: relative;
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+.trust-reasons-list::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 16.667%;
+  bottom: 16.667%;
+  width: 1px;
+  background: var(--home-line);
+  pointer-events: none;
+}
+.trust-reason > svg {
+  position: relative;
+  z-index: 1;
+  background: var(--home-soft);
+  outline: 8px solid var(--home-soft);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .trust-reasons-list::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    left: 13px;
+    top: 16.667%;
+    width: 7px;
+    height: 7px;
+    margin-top: -3px;
+    border-radius: 50%;
+    background: var(--home-accent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .trust-revealed .trust-reasons-list::after {
+    animation: trust-thread-travel 4.8s ease-in-out forwards;
+  }
+  .trust-revealed .trust-reason > svg {
+    animation: trust-thread-confirm 1.2s ease-in-out .3s both;
+  }
+  .trust-revealed .trust-reason:nth-child(2) > svg {
+    animation-delay: 1.7s;
+  }
+  .trust-revealed .trust-reason:nth-child(3) > svg {
+    animation-delay: 3.1s;
+  }
+  .trust-revealed .trust-reason > svg :is(path, polyline, line) {
+    animation: trust-draw-icon 1s ease .3s forwards;
+  }
+  .trust-revealed .trust-reason:nth-child(2) > svg :is(path, polyline, line) {
+    animation-delay: 1.7s;
+  }
+  .trust-revealed .trust-reason:nth-child(3) > svg :is(path, polyline, line) {
+    animation-delay: 3.1s;
+  }
+}
+@keyframes trust-thread-travel {
+  0% { top: 16.667%; opacity: 0; }
+  8%, 22% { top: 16.667%; opacity: 1; background: var(--home-accent); }
+  42%, 51% { top: 50%; opacity: 1; background: var(--home-success); }
+  72%, 88% { top: 83.333%; opacity: 1; background: var(--home-success); }
+  100% { top: 83.333%; opacity: 0; background: var(--home-success); }
+}
+@keyframes trust-thread-confirm {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.14); }
+}
