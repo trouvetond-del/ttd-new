@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   LogOut, Package, FileText, Euro, Truck, Camera,
-  Home, Bell, Building, Image, Menu, ChevronLeft, X, Settings
+  Home, Bell, Building, Image, Menu, ChevronLeft, X, Settings, Search
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
@@ -26,6 +26,7 @@ export function MoverLayout({ children, activeSection: propActiveSection, title 
 
   const menuItems = [
     { id: 'dashboard', label: 'Tableau de bord', icon: Home, color: 'text-emerald-600', route: '/mover/dashboard' },
+    { id: 'find-moves', label: 'Trouver des déménagements', icon: Search, color: 'text-sky-600', route: '/mover/find-moves' },
     { id: 'quote-requests', label: 'Demandes de devis', icon: Package, color: 'text-blue-600', route: '/mover/quote-requests' },
     { id: 'my-quotes', label: 'Mes devis', icon: FileText, color: 'text-indigo-600', route: '/mover/my-quotes' },
     { id: 'earnings', label: 'Gains totaux', icon: Euro, color: 'text-green-600', route: '/mover/finances' },
@@ -40,6 +41,7 @@ export function MoverLayout({ children, activeSection: propActiveSection, title 
   const getActiveId = (): string => {
     if (propActiveSection) return propActiveSection;
     const path = location.pathname;
+    if (path.includes('/find-moves')) return 'find-moves';
     if (path.includes('/quote-requests')) return 'quote-requests';
     if (path.includes('/my-quotes')) return 'my-quotes';
     if (path.includes('/contracts')) return 'contracts';
