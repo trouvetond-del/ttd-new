@@ -1,0 +1,40 @@
+name: Missions, chauffeurs et conservation des photos
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations_manuelles/mission-steps-drivers.sql'
+      - 'supabase/functions/mover-driver-invite/**'
+      - 'scripts/photo-retention/**'
+      - '.github/workflows/mission-steps-drivers.yml'
+  schedule:
+    - cron: '30 2 * * *'   # purge chaque nuit
+jobs:
+  deploy:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/mission-steps-drivers.sql
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy mover-driver-invite --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt --yes
+  purge:
+    needs: [deploy]
+    if: always() && (needs.deploy.result == 'success' || needs.deploy.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - env:
+          SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/photo-retention/purge.mjs
