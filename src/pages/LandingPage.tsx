@@ -29,22 +29,22 @@ export function LandingPage() {
                 <img src="/ttd-logo.png" alt="TrouveTonDemenageur" className="hidden sm:block h-36" />
               </div>
 
-              <div className="flex items-center gap-1 sm:gap-2 animate-slideInRight">
+              <div className="flex items-center gap-0.5 sm:gap-2 animate-slideInRight">
                 {/* ✅ Fix 4: Always shows text — shortened to "C'est quoi ?" on mobile */}
                 <button
                   onClick={scrollToHowItWorks}
                   title="Comment ça marche"
-                  className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                  className="flex items-center gap-1 px-1.5 sm:px-3 py-1 sm:py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-[10px] leading-tight sm:text-sm whitespace-nowrap"
                 >
-                  <Lightbulb className="w-4 h-4 flex-shrink-0" />
-                  <span className="sm:hidden">Fonctionnement</span>
+                  <Lightbulb className="hidden sm:block w-4 h-4 flex-shrink-0" />
+                  <span className="sm:hidden">Infos</span>
                   <span className="hidden sm:inline">Comment ça marche</span>
                 </button>
 
                 {/* ✅ Fix 2: No icon on mobile, text only */}
                 <button
                   onClick={() => navigate('/client/auth-choice')}
-                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3.5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                  className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-3.5 py-1 sm:py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-[10px] leading-tight sm:text-sm whitespace-nowrap"
                 >
                   <LogIn className="hidden sm:block w-4 h-4 flex-shrink-0" />
                   <span className="sm:hidden">Client</span>
@@ -53,16 +53,16 @@ export function LandingPage() {
 
                 <button
                   onClick={() => navigate('/mover/login')}
-                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3.5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                  className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-3.5 py-1 sm:py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-[10px] leading-tight sm:text-sm whitespace-nowrap"
                 >
                   <Truck className="hidden sm:block w-4 h-4 flex-shrink-0" />
-                  <span className="sm:hidden">Déménageur</span>
+                  <span className="sm:hidden">Pro</span>
                   <span className="hidden sm:inline">Espace Déménageur</span>
                 </button>
 
                 <button
                   onClick={() => navigate('/demenagements-disponibles')}
-                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3.5 py-1.5 sm:py-2 bg-white/90 text-blue-700 border border-blue-200 rounded-lg hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                  className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-3.5 py-1 sm:py-2 bg-white/90 text-blue-700 border border-blue-200 rounded-lg hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-[10px] leading-tight sm:text-sm whitespace-nowrap"
                 >
                   <Search className="hidden sm:block w-4 h-4 flex-shrink-0" />
                   <span className="sm:hidden">Mission</span>
