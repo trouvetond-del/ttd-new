@@ -1,4 +1,4 @@
-import { Truck, LogIn, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, Star, Zap, Phone, Mail, MessageCircle, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb, Search } from 'lucide-react';
+import { Truck, LogIn, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, Star, Zap, Phone, Mail, MessageCircle, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb, Search, Menu, X } from 'lucide-react';
 import { SupportChat } from '../components/SupportChat';
 import { Logo } from '../components/Logo';
 import { useState, useRef } from 'react';
@@ -11,6 +11,7 @@ const CITY_LINKS: [string, string][] = [['paris','Paris'],['lyon','Lyon'],['sain
 
 export function LandingPage() {
   const [showSupportChat, setShowSupportChat] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const howItWorksRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +30,26 @@ export function LandingPage() {
                 <img src="/ttd-logo.png" alt="TrouveTonDemenageur" className="hidden sm:block h-36" />
               </div>
 
-              <div className="flex items-center gap-0.5 sm:gap-2 animate-slideInRight">
+              <div className="relative sm:hidden">
+                <button
+                  onClick={() => setMobileMenuOpen(o => !o)}
+                  aria-label="Menu"
+                  aria-expanded={mobileMenuOpen}
+                  className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg"
+                >
+                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                </button>
+                {mobileMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-2xl border border-slate-200 p-2 flex flex-col gap-1">
+                    <button onClick={() => { setMobileMenuOpen(false); scrollToHowItWorks(); }} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-100 text-left"><Lightbulb className="w-4 h-4 text-emerald-600" />Comment ça marche</button>
+                    <button onClick={() => { setMobileMenuOpen(false); navigate('/client/auth-choice'); }} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-100 text-left"><LogIn className="w-4 h-4 text-blue-600" />Espace Client</button>
+                    <button onClick={() => { setMobileMenuOpen(false); navigate('/mover/login'); }} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-100 text-left"><Truck className="w-4 h-4 text-blue-600" />Espace Déménageur</button>
+                    <button onClick={() => { setMobileMenuOpen(false); navigate('/demenagements-disponibles'); }} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-100 text-left"><Search className="w-4 h-4 text-blue-600" />Mission</button>
+                  </div>
+                )}
+              </div>
+
+              <div className="hidden sm:flex items-center gap-2 animate-slideInRight">
                 {/* ✅ Fix 4: Always shows text — shortened to "C'est quoi ?" on mobile */}
                 <button
                   onClick={scrollToHowItWorks}
