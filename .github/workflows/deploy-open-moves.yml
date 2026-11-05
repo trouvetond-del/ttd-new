@@ -19,5 +19,5 @@ jobs:
           q < supabase/sql/list_open_moves.sql
           echo "select count(*) as ouverts from public.list_open_moves();" | q
           echo "select status, count(*) from quote_requests where moving_date >= current_date group by status;" | q
-          echo "select reference,is_draft,submitted_at,entry_channel,acquisition_source,client_user_id is not null u from quote_requests where reference in ('TTD-496167','TTD-559644');" | q
-          echo "select tgname, pg_get_triggerdef(t.oid) from pg_trigger t where tgrelid='public.quote_requests'::regclass and not tgisinternal;" | q
+          echo "update quote_requests set is_draft=false, submitted_at=coalesce(submitted_at,now()) where is_draft=true and entry_channel='full_form' and coalesce(from_city,'')<>'' and coalesce(to_city,'')<>'' and volume_m3 is not null and moving_date>=current_date;" | q
+          echo "select count(*) as ouverts_apres from public.list_open_moves();" | q
