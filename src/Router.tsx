@@ -51,6 +51,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import { AboutUsPage } from './pages/AboutUsPage';
 import { MissionPage } from './pages/MissionPage';
 import { FAQPage } from './pages/FAQPage';
+import PublicMovesPage from './pages/PublicMovesPage';
 import { ContactPage } from './pages/ContactPage';
 import { TechnologyPage } from './pages/TechnologyPage';
 import { PricingPage } from './pages/PricingPage';
@@ -455,6 +456,7 @@ export function AppRouter() {
           <Route path="/about" element={<AboutUsPage />} />
           <Route path="/mission" element={<MissionPage />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/demenagements-disponibles" element={<PublicMovesPage />} />
           <Route path="/for-clients" element={<ForClientPage />} />
           <Route path="/for-movers" element={<ForMoverPage />} />
           <Route path="/partners" element={<PartnersPage />} />
