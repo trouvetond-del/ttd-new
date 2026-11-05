@@ -19,3 +19,4 @@ jobs:
           q < supabase/sql/list_open_moves.sql
           echo "select count(*) as ouverts from public.list_open_moves();" | q
           echo "select status, count(*) from quote_requests where moving_date >= current_date group by status;" | q
+          echo "select reference, status, is_draft, moving_date, from_city from quote_requests order by created_at desc limit 5;" | q
