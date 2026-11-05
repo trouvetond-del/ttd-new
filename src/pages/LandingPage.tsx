@@ -1,4 +1,4 @@
-import { Truck, LogIn, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, Star, Zap, Phone, Mail, MessageCircle, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb } from 'lucide-react';
+import { Truck, LogIn, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, Star, Zap, Phone, Mail, MessageCircle, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb, Search } from 'lucide-react';
 import { SupportChat } from '../components/SupportChat';
 import { Logo } from '../components/Logo';
 import { useState, useRef } from 'react';
@@ -49,6 +49,15 @@ export function LandingPage() {
                   <LogIn className="hidden sm:block w-4 h-4 flex-shrink-0" />
                   <span className="sm:hidden">Client</span>
                   <span className="hidden sm:inline">Espace Client</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/demenagements-disponibles')}
+                  className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 bg-white/90 text-blue-700 border border-blue-200 rounded-xl hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                >
+                  <Search className="hidden sm:block w-4 h-4 flex-shrink-0" />
+                  <span className="sm:hidden">Missions</span>
+                  <span className="hidden sm:inline">Trouver des déménagements</span>
                 </button>
 
                 {/* ✅ Fix 2 & 3: No icon on mobile, "Déménageur" instead of "Pro" */}
