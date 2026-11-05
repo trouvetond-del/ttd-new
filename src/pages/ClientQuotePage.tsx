@@ -773,6 +773,10 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
             furniture_photos: furniturePhotos,
             client_user_id: user?.id || null,
             entry_channel: 'full_form',
+            // La colonne is_draft vaut true par défaut : sans ceci, une demande
+            // complète d'un client déjà connecté restait invisible des déménageurs.
+            is_draft: false,
+            submitted_at: new Date().toISOString(),
             ...(readAcquisitionSource() ? { acquisition_source: readAcquisitionSource() } : {})
           }]);
 
@@ -1876,3 +1880,4 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
     </ClientLayout>
   );
 }
+
