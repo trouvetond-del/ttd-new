@@ -46,17 +46,7 @@ export default function MoverFindMovesPage() {
       const { data: mine } = await supabase.from('quotes').select('quote_request_id').eq('mover_id', mover.id);
       setQuoted(new Set((mine || []).map((q: any) => q.quote_request_id)));
     }
-    const today = new Date().toISOString().slice(0, 10);
-    const { data } = await supabase
-      .from('quote_requests_with_privacy')
-      .select(COLUMNS)
-      .in('status', ['new', 'quoted'])
-      .eq('is_draft', false)
-      .gte('moving_date', today)
-      .not('from_home_size', 'is', null)
-      .not('volume_m3', 'is', null)
-      .gt('volume_m3', 0)
-      .order('moving_date', { ascending: true });
+    const { data } = await supabase.rpc('list_open_moves');
     const list = data || [];
     setRequests(list);
     setLoading(false);
@@ -65,6 +55,12 @@ export default function MoverFindMovesPage() {
   };
 
   useEffect(() => { load(); }, [user]);
+
+  // Détails complets (masqués selon les règles de confidentialité) seulement au moment de déposer un devis
+  const openBid = async (r: any) => {
+    const { data } = await supabase.from('quote_requests_with_privacy').select(COLUMNS).eq('id', r.id).maybeSingle();
+    setBidRequest(data || r);
+  };
 
   useEffect(() => {
     const t = setTimeout(async () => setCitySuggestions(await searchCities(cityQuery)), 250);
@@ -173,7 +169,7 @@ export default function MoverFindMovesPage() {
                   {quoted.has(r.id) ? (
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-4 py-2 text-sm font-medium text-green-700"><CheckCircle2 className="h-4 w-4" />Devis déposé</span>
                   ) : (
-                    <button onClick={() => setBidRequest(r)}
+                    <button onClick={() => openBid(r)}
                       className="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition">Déposer mon devis →</button>
                   )}
                 </div>
