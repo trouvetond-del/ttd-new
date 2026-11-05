@@ -34,7 +34,7 @@ export function LandingPage() {
                 <button
                   onClick={scrollToHowItWorks}
                   title="Comment ça marche"
-                  className="flex items-center gap-1 px-2.5 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-xl hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                  className="flex items-center gap-1 px-2 sm:px-3 py-1.5 sm:py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
                 >
                   <Lightbulb className="w-4 h-4 flex-shrink-0" />
                   <span className="sm:hidden">Fonctionnement</span>
@@ -44,7 +44,7 @@ export function LandingPage() {
                 {/* ✅ Fix 2: No icon on mobile, text only */}
                 <button
                   onClick={() => navigate('/client/auth-choice')}
-                  className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3.5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
                 >
                   <LogIn className="hidden sm:block w-4 h-4 flex-shrink-0" />
                   <span className="sm:hidden">Client</span>
@@ -52,22 +52,21 @@ export function LandingPage() {
                 </button>
 
                 <button
-                  onClick={() => navigate('/demenagements-disponibles')}
-                  className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 bg-white/90 text-blue-700 border border-blue-200 rounded-xl hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
-                >
-                  <Search className="hidden sm:block w-4 h-4 flex-shrink-0" />
-                  <span className="sm:hidden">Missions</span>
-                  <span className="hidden sm:inline">Trouver des déménagements</span>
-                </button>
-
-                {/* ✅ Fix 2 & 3: No icon on mobile, "Déménageur" instead of "Pro" */}
-                <button
                   onClick={() => navigate('/mover/login')}
-                  className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3.5 py-1.5 sm:py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
                 >
                   <Truck className="hidden sm:block w-4 h-4 flex-shrink-0" />
                   <span className="sm:hidden">Déménageur</span>
                   <span className="hidden sm:inline">Espace Déménageur</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/demenagements-disponibles')}
+                  className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3.5 py-1.5 sm:py-2 bg-white/90 text-blue-700 border border-blue-200 rounded-lg hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-medium text-xs sm:text-sm whitespace-nowrap"
+                >
+                  <Search className="hidden sm:block w-4 h-4 flex-shrink-0" />
+                  <span className="sm:hidden">Mission</span>
+                  <span className="hidden sm:inline">Mission</span>
                 </button>
               </div>
             </div>
