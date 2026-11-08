@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
-import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall, Archive, UserCheck, ChevronDown, MoreHorizontal } from 'lucide-react';
+import { FileText, MapPin, Calendar, Package, Eye, RefreshCw, Clock, CheckCircle, XCircle, Search, Trash2, Send, BellRing, PhoneCall, Archive, UserCheck, ChevronDown, MoreHorizontal, RotateCcw } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import AdminAssignQuoteModal from './AdminAssignQuoteModal';
@@ -38,6 +38,7 @@ interface QuoteRequest {
   is_draft?: boolean;
   entry_channel?: string | null;
   additional_info?: string | null;
+  deleted_at?: string | null;
 }
 
 // entry_channel n'est fiabilisé côté code que pour /devis-rapide
@@ -93,7 +94,9 @@ function ActionsMenu({ items }: { items: ActionItem[] }) {
   }, [pos]);
   const toggle = () => {
     if (pos) { setPos(null); return; }
-    const r = btnRef.current!.getBoundingClientRect();
+    const button = btnRef.current;
+    if (!button) return;
+    const r = button.getBoundingClientRect();
     setPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
   };
   return (
@@ -138,6 +141,8 @@ export default function AdminRecentQuoteRequests() {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [assignFor, setAssignFor] = useState<{ id: string; route: string } | null>(null);
   const [inviteFor, setInviteFor] = useState<{ id: string; route: string; from?: string | null; to?: string | null } | null>(null);
+  const [showTrash, setShowTrash] = useState(false);
+  const [restoringId, setRestoringId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -154,7 +159,10 @@ export default function AdminRecentQuoteRequests() {
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (statusFilter !== 'all' && statusFilter !== 'expired') {
+      query = showTrash ? query.not('deleted_at', 'is', null) : query.is('deleted_at', null);
+      if (showTrash) query = query.order('deleted_at', { ascending: false });
+
+      if (!showTrash && statusFilter !== 'all' && statusFilter !== 'expired') {
         query = query.eq('status', statusFilter);
       }
 
@@ -198,6 +206,7 @@ export default function AdminRecentQuoteRequests() {
             is_draft: q.is_draft,
             entry_channel: q.entry_channel,
             additional_info: q.additional_info,
+            deleted_at: q.deleted_at,
           };
         })
       );
@@ -213,26 +222,41 @@ export default function AdminRecentQuoteRequests() {
 
   useEffect(() => {
     loadQuoteRequests();
-  }, [statusFilter]);
+  }, [statusFilter, showTrash]);
 
   const handleDelete = async (id: string, clientName?: string) => {
     const confirmed = window.confirm(
-      `Supprimer définitivement la demande de devis de "${clientName || 'ce client'}" ? Cette action est irréversible.`
+      `Mettre la demande de "${clientName || 'ce client'}" à la corbeille ? Vous pourrez la restaurer.`
     );
     if (!confirmed) return;
 
     setDeletingId(id);
     try {
-      const { error } = await supabase.from('quote_requests').delete().eq('id', id);
+      const { error } = await supabase.rpc('admin_trash_quote_request', { request_id: id });
       if (error) throw error;
 
       setQuoteRequests((prev) => prev.filter((q) => q.id !== id));
-      showToast('Demande de devis supprimée', 'success');
+      showToast('Demande déplacée dans la corbeille', 'success');
     } catch (error) {
       console.error('Error deleting quote request:', error);
       showToast('Erreur lors de la suppression de la demande', 'error');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleRestore = async (id: string) => {
+    setRestoringId(id);
+    try {
+      const { error } = await supabase.rpc('admin_restore_quote_request', { request_id: id });
+      if (error) throw error;
+      setQuoteRequests((previous) => previous.filter((request) => request.id !== id));
+      showToast('Demande restaurée', 'success');
+    } catch (error) {
+      console.error('Error restoring quote request:', error);
+      showToast('La demande n’a pas pu être restaurée', 'error');
+    } finally {
+      setRestoringId(null);
     }
   };
 
@@ -405,7 +429,7 @@ export default function AdminRecentQuoteRequests() {
   const refOf = getMoveReference;
 
   const filteredRequests = quoteRequests.filter((q) => {
-    if (statusFilter === 'expired' && !isMoveExpired(q)) return false;
+    if (!showTrash && statusFilter === 'expired' && !isMoveExpired(q)) return false;
     if (!searchTerm) return true;
     const term = searchTerm.toLowerCase();
     return (
@@ -421,9 +445,9 @@ export default function AdminRecentQuoteRequests() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Demandes de Devis Récentes</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{showTrash ? 'Corbeille des demandes' : 'Demandes de Devis Récentes'}</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {quoteRequests.length} demande{quoteRequests.length > 1 ? 's' : ''} au total
           </p>
@@ -434,6 +458,15 @@ export default function AdminRecentQuoteRequests() {
         >
           <RefreshCw className="w-4 h-4" />
           Actualiser
+        </button>
+      </div>
+
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Liste des demandes">
+        <button type="button" aria-pressed={!showTrash} onClick={() => setShowTrash(false)} className="flex items-center gap-2 px-3 py-2 border rounded-lg text-sm">
+          <FileText className="w-4 h-4" /> Demandes
+        </button>
+        <button type="button" aria-pressed={showTrash} onClick={() => setShowTrash(true)} className="flex items-center gap-2 px-3 py-2 border rounded-lg text-sm">
+          <Trash2 className="w-4 h-4" /> Corbeille
         </button>
       </div>
 
@@ -449,7 +482,7 @@ export default function AdminRecentQuoteRequests() {
             className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
           />
         </div>
-        <select
+        {!showTrash && <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
@@ -461,7 +494,7 @@ export default function AdminRecentQuoteRequests() {
           <option value="quoted">Devis reçus</option>
           <option value="accepted">Accepté</option>
           <option value="cancelled">Annulé</option>
-        </select>
+        </select>}
       </div>
 
       {loading ? (
@@ -471,7 +504,7 @@ export default function AdminRecentQuoteRequests() {
       ) : filteredRequests.length === 0 ? (
         <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
           <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-          <p className="text-gray-500 dark:text-gray-400">Aucune demande de devis trouvée</p>
+          <p className="text-gray-500 dark:text-gray-400">{showTrash ? 'La corbeille est vide' : 'Aucune demande de devis trouvée'}</p>
         </div>
       ) : (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -479,7 +512,7 @@ export default function AdminRecentQuoteRequests() {
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Date</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">{showTrash ? 'Supprimée le' : 'Date'}</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Référence</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Client</th>
                   <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Canal</th>
@@ -495,7 +528,7 @@ export default function AdminRecentQuoteRequests() {
                 {filteredRequests.map((q) => (
                   <tr key={q.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition">
                     <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">
-                      {new Date(q.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                      {new Date(showTrash && q.deleted_at ? q.deleted_at : q.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                     </td>
                     <td className="px-4 py-3 text-xs font-mono text-gray-700 dark:text-gray-300 whitespace-nowrap">{refOf(q)}</td>
                     <td className="px-4 py-3">
@@ -552,6 +585,7 @@ export default function AdminRecentQuoteRequests() {
                     </td>
                     <td className="px-4 py-3">
                       {(() => {
+                        if (showTrash) return <ActionsMenu items={[{ label: 'Restaurer', icon: RotateCcw, busy: restoringId === q.id, onClick: () => handleRestore(q.id) }]} />;
                         const open = !q.is_draft && ['new', 'assigned', 'quoted'].includes(q.status) && !isMoveExpired(q);
                         const routeLabel = `${q.client_name || 'Client'} · ${q.from_city} → ${q.to_city} · ${q.moving_date ? new Date(q.moving_date).toLocaleDateString('fr-FR') : ''}`;
                         const items: ActionItem[] = [{ label: 'Voir', icon: Eye, onClick: () => setSelectedRequestId(q.id) }];
@@ -570,7 +604,7 @@ export default function AdminRecentQuoteRequests() {
                           items.push({ label: needsCall ? 'Relancer (infos manquantes) · appel conseillé' : 'Relancer (infos manquantes)', icon: needsCall ? PhoneCall : BellRing, busy: remindingId === q.id, onClick: () => handleManualReminder(q.id, q.client_email) });
                         }
                         if (isMoveExpired(q)) items.push({ label: 'Archiver', icon: Archive, busy: archivingId === q.id, onClick: () => handleArchive(q.id, q.client_name) });
-                        items.push({ label: 'Supprimer', icon: Trash2, busy: deletingId === q.id, onClick: () => handleDelete(q.id, q.client_name), tone: 'danger' });
+                        items.push({ label: 'Mettre à la corbeille', icon: Trash2, busy: deletingId === q.id, onClick: () => handleDelete(q.id, q.client_name), tone: 'danger' });
                         return <ActionsMenu items={items} />;
                       })()}
                     </td>

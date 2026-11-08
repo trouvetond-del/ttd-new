@@ -49,7 +49,7 @@ Deno.serve(async (req) => {
 
   const today = new Date().toISOString().slice(0, 10);
   const { data: moves } = await db.from("quote_requests")
-    .select("reference, from_city, from_postal_code, to_city, moving_date, volume_m3, distance_km")
+    .select("reference, from_city, from_postal_code, to_city, moving_date, volume_m3, distance_km").is("deleted_at", null)
     .in("status", ["new", "quoted"]).eq("is_draft", false).gte("moving_date", today).gt("volume_m3", 0)
     .order("moving_date", { ascending: true }).limit(200);
 

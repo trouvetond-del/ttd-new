@@ -50,7 +50,7 @@ Deno.serve(async () => {
   // Demandes encore ouvertes à la mise en relation
   const { data: openRequests, error: qrError } = await supabaseAdmin
     .from("quote_requests")
-    .select("id, reference, from_city, to_city, moving_date, client_name, created_at, volume_m3")
+    .select("id, reference, from_city, to_city, moving_date, client_name, created_at, volume_m3").is("deleted_at", null)
     .in("status", ["new", "assigned", "quoted"])
     .eq("is_draft", false)
     .gte("moving_date", new Date().toISOString().split("T")[0])

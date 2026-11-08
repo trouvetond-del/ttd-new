@@ -70,7 +70,7 @@ Deno.serve(async (req: Request) => {
       .from("quote_requests")
       .select(
         "id, client_name, client_email, client_user_id, from_city, to_city, from_home_size, from_home_type, to_home_size, to_home_type, from_surface_m2, to_surface_m2, volume_m3, moving_date"
-      )
+      ).is("deleted_at", null)
       .eq("id", quoteRequestId)
       .maybeSingle();
 

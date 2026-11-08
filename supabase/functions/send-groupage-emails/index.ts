@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
     const { data: movers } = await sb.from("movers").select("email, company_name")
       .eq("verification_status", "verified").not("email", "is", null);
     for (const g of alerts) {
-      const { data: reqs } = await sb.from("quote_requests").select("id, from_city, to_city, moving_date, volume_m3").in("id", [g.request_a, g.request_b]);
+      const { data: reqs } = await sb.from("quote_requests").select("id, from_city, to_city, moving_date, volume_m3").is("deleted_at", null).in("id", [g.request_a, g.request_b]);
       const a = reqs?.find((r) => r.id === g.request_a), b = reqs?.find((r) => r.id === g.request_b);
       if (!a || !b) { await sb.from("groupage_alerts").update({ emails_sent_at: new Date().toISOString() }).eq("id", g.id); continue; }
       const leg = (r: typeof a) => `<li><b>${escapeHtml(r.from_city)} → ${escapeHtml(r.to_city)}</b> le ${fmt(r.moving_date)}${r.volume_m3 ? ` · ${r.volume_m3} m³` : ""}</li>`;
@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
   for (const q of quotes ?? []) {
     const [{ data: m }, { data: r }] = await Promise.all([
       sb.from("movers").select("email, company_name").eq("id", q.mover_id).maybeSingle(),
-      sb.from("quote_requests").select("from_city, to_city, moving_date").eq("id", q.quote_request_id).maybeSingle(),
+      sb.from("quote_requests").select("from_city, to_city, moving_date").is("deleted_at", null).eq("id", q.quote_request_id).maybeSingle(),
     ]);
     if (m?.email && r) {
       const title = "Mission attribuée par TrouveTonDéménageur";

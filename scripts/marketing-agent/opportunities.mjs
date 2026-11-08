@@ -158,7 +158,7 @@ const skip = new Set((done ?? []).filter((d) => d.status === "published" || d.at
 const { count: publishedCount } = await sb.from("marketing_opportunity_posts").select("id", { count: "exact", head: true }).eq("status", "published");
 
 const { data: reqs, error } = await sb.from("quote_requests")
-  .select("id,from_city,from_postal_code,to_city,to_postal_code,moving_date,volume_m3,status")
+  .select("id,from_city,from_postal_code,to_city,to_postal_code,moving_date,volume_m3,status").is("deleted_at", null)
   .in("status", ["new", "assigned", "quoted"]).gte("moving_date", today).order("moving_date", { ascending: true }).limit(200);
 if (error) throw new Error(`Base : ${error.message}`);
 

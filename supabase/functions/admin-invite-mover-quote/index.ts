@@ -32,7 +32,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: request } = await supabaseAdmin
       .from("quote_requests")
-      .select("id, reference, from_city, to_city, moving_date, volume_m3, status, is_draft")
+      .select("id, reference, from_city, to_city, moving_date, volume_m3, status, is_draft").is("deleted_at", null)
       .eq("id", quoteRequestId)
       .maybeSingle();
     if (!request) return json({ error: "Demande introuvable" }, 404);

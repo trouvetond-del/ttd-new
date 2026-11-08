@@ -24,7 +24,7 @@ Deno.serve(async () => {
 
   const { data: draftRequests, error } = await supabaseAdmin
     .from("quote_requests")
-    .select("id, client_name, client_email, from_city, to_city, resume_token, created_at")
+    .select("id, client_name, client_email, from_city, to_city, resume_token, created_at").is("deleted_at", null)
     .not("client_user_id", "is", null)
     .not("client_email", "is", null)
     .eq("is_draft", true)

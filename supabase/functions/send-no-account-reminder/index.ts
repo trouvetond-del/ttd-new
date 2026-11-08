@@ -34,7 +34,7 @@ Deno.serve(async () => {
 
   const { data: noAccountRequests, error } = await supabaseAdmin
     .from("quote_requests")
-    .select("id, client_name, client_email, from_city, to_city, created_at")
+    .select("id, client_name, client_email, from_city, to_city, created_at").is("deleted_at", null)
     .is("client_user_id", null)
     .not("client_email", "is", null)
     .lte("created_at", threeHoursAgo)

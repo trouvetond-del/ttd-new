@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
   // 6. Déménagements dont la date est dépassée sans être clôturés (1 alerte par jour)
   const today = new Date().toISOString().slice(0, 10);
   const { data: expired, error: expErr } = await sb.from("quote_requests")
-    .select("id, moving_date, status, from_city, to_city")
+    .select("id, moving_date, status, from_city, to_city").is("deleted_at", null)
     .lt("moving_date", today)
     .in("status", ["new", "assigned", "quoted", "accepted"])
     .order("moving_date", { ascending: false });

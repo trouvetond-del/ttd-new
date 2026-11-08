@@ -77,7 +77,7 @@ Deno.serve(async (req: Request) => {
 
     const { data: quoteRequest, error: qrError } = await supabaseAdmin
       .from("quote_requests")
-      .select("id, client_name, client_email, client_user_id, from_city, to_city")
+      .select("id, client_name, client_email, client_user_id, from_city, to_city").is("deleted_at", null)
       .eq("id", quoteRequestId)
       .maybeSingle();
 

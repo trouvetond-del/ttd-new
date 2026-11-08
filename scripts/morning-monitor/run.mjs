@@ -97,7 +97,7 @@ const report={day,checked_at:new Date().toISOString(),status:problems.length?'at
 const metrics={requests:null,unquoted:null,drafts:null,calcRequests:null,calcQuoted:null,articles:null,studioPublished:null,studioExpected:null};
 const week=new Date(Date.now()-7*86400000).toISOString(), h48=Date.now()-48*3600000;
 try {
-  const {data,error}=await sb.from('quote_requests').select('id,created_at,is_draft,acquisition_source').gte('created_at',week).limit(1000);
+  const {data,error}=await sb.from('quote_requests').select('id,created_at,is_draft,acquisition_source').is("deleted_at", null).gte('created_at',week).limit(1000);
   if (error) throw error;
   const full=(data||[]).filter(r=>!r.is_draft); metrics.requests=full.length; metrics.drafts=(data||[]).length-full.length;
   const ids=full.map(r=>r.id); const quoted=new Set();

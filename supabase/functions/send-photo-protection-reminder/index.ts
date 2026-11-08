@@ -22,7 +22,7 @@ Deno.serve(async () => {
 
   const { data: completeRequests, error } = await supabaseAdmin
     .from("quote_requests")
-    .select("id, client_name, client_email, from_city, to_city, moving_date, created_at")
+    .select("id, client_name, client_email, from_city, to_city, moving_date, created_at").is("deleted_at", null)
     .not("client_email", "is", null)
     .gte("created_at", sevenDaysAgo) // pas la peine de relancer sur de très vieilles demandes
     .not("from_home_size", "is", null)

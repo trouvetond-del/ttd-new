@@ -28,7 +28,7 @@ Deno.serve(async () => {
     .from("quote_requests")
     .select(
       "id, client_name, client_email, from_city, to_city, created_at, moving_date, volume_m3, from_home_size, from_home_type, to_home_size, to_home_type, from_surface_m2, to_surface_m2"
-    )
+    ).is("deleted_at", null)
     .not("client_user_id", "is", null)
     .not("client_email", "is", null)
     // Un brouillon jamais soumis (is_draft=true) reçoit un message différent

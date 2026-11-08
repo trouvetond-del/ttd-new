@@ -42,7 +42,7 @@ Deno.serve(async () => {
     if (lead.quote_request_id) {
       const { data: qr } = await supabaseAdmin
         .from("quote_requests")
-        .select("client_name")
+        .select("client_name").is("deleted_at", null)
         .eq("id", lead.quote_request_id)
         .maybeSingle();
       firstName = (qr?.client_name || "").split(" ")[0] || "";

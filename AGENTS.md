@@ -15,3 +15,5 @@
 - Decorative motion-control visibility is centralized in motion-controls.css after index.css; opacity preserves hit areas and keyboard access while non-hover devices retain visible controls.
 - The daily morning monitor lives in scripts/morning-monitor and its Actions workflow; read-only source checks distinguish missing, failed and unknown from success, with email acceptance and date-keyed provider deduplication through the existing authorized email function.
 - Footer secondary city links use native details disclosure so crawlers retain every link without a large initial list.
+
+- Quote-request deletion is metadata-only via admin-authorized trash/restore RPCs; IDs, references, statuses and related business rows stay intact, operational readers exclude trash, and financial/photo retention history remains independent.
