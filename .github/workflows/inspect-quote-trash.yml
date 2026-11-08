@@ -1,0 +1,21 @@
+name: Inspect quote trash prerequisites
+on:
+  workflow_dispatch: {}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          python3 - <<'PYCODE' > /tmp/query.json
+          import json
+          query = """select json_build_object('policies',(select json_agg(p) from (select policyname,cmd,permissive,roles,qual,with_check from pg_policies where schemaname='public' and tablename='quote_requests') p),'triggers',(select json_agg(t) from (select tgname, pg_get_triggerdef(oid) as definition, pg_get_functiondef(tgfoid) as function from pg_trigger where tgrelid='public.quote_requests'::regclass and not tgisinternal) t),'views',(select json_agg(v) from (select viewname,definition from pg_views where schemaname='public' and definition ilike '%quote_requests%') v),'functions',(select json_agg(f) from (select proname,pg_get_functiondef(oid) as definition from pg_proc where pronamespace='public'::regnamespace and prokind='f' and prosrc ilike '%quote_requests%') f));"""
+          print(json.dumps({'query':query}))
+          PYCODE
+          curl -sS -f -X POST "https://api.supabase.com/v1/projects/bvvbkaluajgdurxnnqqu/database/query" -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" --data @/tmp/query.json > /tmp/catalog.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quote-trash-catalog
+          path: /tmp/catalog.json
+          retention-days: 1
