@@ -1,0 +1,34 @@
+name: Machine d'acquisition — lot du lundi
+on:
+  schedule:
+    - cron: '0 7 * * 1'  # lundi 8 h Paris
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/acquisition-agent/**'
+      - 'supabase/migrations_manuelles/acquisition-weekly.sql'
+      - '.github/workflows/acquisition-agent.yml'
+permissions:
+  contents: read
+concurrency:
+  group: acquisition-agent
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Préparer le lot
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/acquisition-weekly.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/acquisition-agent/stats.sql > stats.json
+          node --experimental-strip-types scripts/acquisition-agent/run.mjs stats.json
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f acquisition-weekly.sql
