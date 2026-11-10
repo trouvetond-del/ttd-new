@@ -31,6 +31,7 @@ function friendlyError(raw: string): string {
 }
 const KIND_LABEL: Record<string, string> = {
   article_client: 'Article client', article_mover: 'Article déménageur', video_client: 'Reel client', video_mover: 'Reel déménageur',
+  acq_video_client: 'Reel Machine · client', acq_video_mover: 'Reel Machine · déménageur',
   manual_image: 'Photo importée', manual_video: 'Vidéo importée', opportunity: 'Déménagement dispo',
 };
 const STATUS: Record<string, { label: string; cls: string }> = {
