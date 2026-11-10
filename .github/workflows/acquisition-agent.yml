@@ -29,6 +29,6 @@ jobs:
         run: |
           sudo apt-get update -y && sudo apt-get install -y postgresql-client
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/acquisition-weekly.sql
-          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f scripts/acquisition-agent/stats.sql > stats.json
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -At -q -f scripts/acquisition-agent/stats.sql > stats.json
           node --experimental-strip-types scripts/acquisition-agent/run.mjs stats.json
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f acquisition-weekly.sql
