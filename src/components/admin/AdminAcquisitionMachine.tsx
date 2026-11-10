@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Copy, RefreshCw, Video, Lightbulb, Megaphone, LayoutTemplate, Phone } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
@@ -32,6 +32,12 @@ export default function AdminAcquisitionMachine() {
   const [seed, setSeed] = useState(0);
   const [stats, setStats] = useState<CityStats | null>(null);
   const [loadingStats, setLoadingStats] = useState(false);
+  const [weekly, setWeekly] = useState<{ week_start: string; items: any[] } | null>(null);
+  const [openCity, setOpenCity] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.from('acquisition_weekly').select('week_start, items').order('week_start', { ascending: false }).limit(1)
+      .then(({ data }) => setWeekly((data as any)?.[0] || null));
+  }, []);
 
   const script = useMemo(() => generateVideoScript(audience, city, seed), [audience, city, seed]);
   const ads = useMemo(() => generateGoogleAds(city, slug), [city, slug]);
@@ -70,6 +76,36 @@ export default function AdminAcquisitionMachine() {
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Machine d’acquisition</h2>
         <p className="text-sm text-gray-500">Scripts, annonces, pages de capture et pitchs prêts à l’emploi. Aucun chiffre inventé : les pitchs utilisent les données réelles du site.</p>
+      </div>
+
+      <div className="rounded-xl border bg-white p-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-gray-900">Préparé automatiquement chaque lundi</h3>
+          <span className="text-xs text-gray-500">{weekly ? `Lot du ${new Date(weekly.week_start).toLocaleDateString('fr-FR')}` : 'Premier lot en préparation'}</span>
+        </div>
+        <p className="text-xs text-gray-500 mb-3">2 scripts, annonces Google et pitch pour 10 grandes villes. Rien n’est publié ni envoyé sans vous.</p>
+        <div className="divide-y">
+          {(weekly?.items || []).map((it) => {
+            const fmt = (s: any) => s.rows.map((r: any) => `[${r.time}] DIT : ${r.audio}\n   MONTRE : ${r.visual}`).join('\n') + `\n\nLégende : ${s.caption}`;
+            return (
+              <div key={it.city} className="py-2">
+                <button onClick={() => setOpenCity(openCity === it.city ? null : it.city)} className="flex w-full items-center justify-between text-left text-sm">
+                  <span className="font-medium text-gray-800">{it.city}</span>
+                  <span className="text-xs text-gray-500">{it.stats.quotes90d} demande(s) sur 90 j · {it.stats.openQuotes} ouverte(s) · {it.stats.verifiedMovers} déménageur(s) vérifié(s)</span>
+                </button>
+                {openCity === it.city && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <span className="text-xs text-gray-600">Script client</span><CopyBtn text={fmt(it.scriptClient)} />
+                    <span className="text-xs text-gray-600">Script déménageur</span><CopyBtn text={fmt(it.scriptMover)} />
+                    <span className="text-xs text-gray-600">Annonces</span><CopyBtn text={[...it.ads.headlines, '', ...it.ads.descriptions].join('\n')} />
+                    <span className="text-xs text-gray-600">Pitch appel</span><CopyBtn text={it.pitch.phone} />
+                    <span className="text-xs text-gray-600">Pitch email</span><CopyBtn text={`${it.pitch.emailSubject}\n\n${it.pitch.email}`} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
