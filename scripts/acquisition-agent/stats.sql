@@ -1,5 +1,3 @@
-\pset format unaligned
-\pset tuples_only on
 with cities(city) as (values ('Lille'),('Paris'),('Lyon'),('Marseille'),('Toulouse'),('Bordeaux'),('Nantes'),('Strasbourg'),('Nice'),('Montpellier')),
 open_moves as (select from_city from public.list_open_moves())
 select json_agg(json_build_object(
