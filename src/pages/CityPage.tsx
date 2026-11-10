@@ -24,16 +24,10 @@ function cityFaq(n: string): [string, string][] {
   ];
 }
 
-interface MoverCounts {
-  local: number;
-  regional: number;
-}
-
 export default function CityPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [city, setCity] = useState<CityPageData | null>(null);
-  const [counts, setCounts] = useState<MoverCounts | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [otherCities, setOtherCities] = useState<{ slug: string; nom_ville: string }[]>([]);
@@ -63,32 +57,6 @@ export default function CityPage() {
     supabase.from('city_pages').select('slug, nom_ville').eq('statut', 'published').order('nom_ville')
       .then(({ data: list }) => setOtherCities((list || []).filter((c) => c.slug !== citySlug)));
 
-    // Comptage dynamique, jamais un chiffre fixe : nombre de déménageurs
-    // vérifiés+actifs réellement basés dans la ville (comptage "local"),
-    // séparé des déménageurs à couverture nationale (comptage "regional").
-    // Un chiffre local à 0 ne doit JAMAIS afficher "0 déménageur" ni un
-    // faux chiffre local -- uniquement basculer sur le message régional
-    // si des déménageurs all_france existent, pour ne jamais mentir sur
-    // la disponibilité locale (cf. incident des faux "2 847 déménagements"
-    // corrigé le 09/08).
-    const { data: moversData } = await supabase
-      .from('movers_with_privacy')
-      .select('city, coverage_type, activity_departments')
-      .eq('verification_status', 'verified')
-      .eq('is_active', true);
-
-    if (moversData) {
-      const local = moversData.filter(
-        (m) => (m.city || '').trim().toLowerCase() === data.nom_ville.trim().toLowerCase()
-      ).length;
-      const regional = moversData.filter(
-        (m) =>
-          m.coverage_type === 'all_france' ||
-          (Array.isArray(m.activity_departments) && data.departement && m.activity_departments.includes(data.departement))
-      ).length;
-      setCounts({ local, regional });
-    }
-
     setLoading(false);
   }
 
@@ -105,8 +73,8 @@ export default function CityPage() {
     return null;
   }
 
-  const hasLocal = (counts?.local ?? 0) > 0;
-  const hasRegional = (counts?.regional ?? 0) > 0;
+  const communeSlug = (name: string) => name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const communeLink = (name: string) => otherCities.find((c) => c.slug === communeSlug(name))?.slug;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -132,35 +100,18 @@ export default function CityPage() {
         </div>
 
         <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">
-          Déménagement à {city.nom_ville}
+          Déménageur à {city.nom_ville} : comparez des devis gratuits
         </h1>
 
         <p className="text-lg text-gray-600 leading-relaxed max-w-3xl mb-8">{city.intro_locale}</p>
 
-        {/* Comptage honnête : jamais de chiffre local inventé */}
         <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 mb-10 max-w-2xl">
-          {hasLocal ? (
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
-              <span className="text-gray-800 font-medium">
-                {counts!.local} déménageur{counts!.local > 1 ? 's' : ''} vérifié{counts!.local > 1 ? 's' : ''} basé{counts!.local > 1 ? 's' : ''} à {city.nom_ville}
-              </span>
-            </div>
-          ) : hasRegional ? (
-            <div className="flex items-center gap-3">
-              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0" />
-              <span className="text-gray-800 font-medium">
-                Déménageurs vérifiés disponibles dans votre région
-              </span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <Shield className="w-6 h-6 text-gray-400 flex-shrink-0" />
-              <span className="text-gray-600">
-                Décrivez votre demande, nous la transmettons à nos déménageurs vérifiés.
-              </span>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
+            <span className="text-gray-800 font-medium">
+              Déménageurs professionnels et vérifiés interviennent à {city.nom_ville} et sa région
+            </span>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-4 mb-12 text-sm text-gray-500">
@@ -206,7 +157,9 @@ export default function CityPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-4">Quartiers où nous trouvons votre déménageur à {city.nom_ville}</h2>
               <div className="flex flex-wrap gap-2 mb-6">
                 {cityGuides[city.slug].quartiers.map((q) => (
-                  <span key={q} className="bg-blue-50 text-blue-800 rounded-full px-4 py-2 text-sm">{q}</span>
+                  communeLink(q) ?
+                    <a key={q} href={`/demenagement/${communeLink(q)}`} className="bg-blue-50 text-blue-800 rounded-full px-4 py-2 text-sm underline">{q}</a> :
+                    <span key={q} className="bg-blue-50 text-blue-800 rounded-full px-4 py-2 text-sm">{q}</span>
                 ))}
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Conseils pour déménager à {city.nom_ville}</h3>
@@ -222,9 +175,9 @@ export default function CityPage() {
             <h2 className="text-xl font-bold text-gray-900 mb-4">Zones desservies près de {city.nom_ville}</h2>
             <div className="flex flex-wrap gap-2">
               {city.zones_desservies.map((zone) => (
-                <span key={zone} className="bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-700">
-                  {zone}
-                </span>
+                communeLink(zone) ?
+                  <a key={zone} href={`/demenagement/${communeLink(zone)}`} className="bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-700 underline">{zone}</a> :
+                  <span key={zone} className="bg-white border border-gray-200 rounded-full px-4 py-2 text-sm text-gray-700">{zone}</span>
               ))}
             </div>
           </div>

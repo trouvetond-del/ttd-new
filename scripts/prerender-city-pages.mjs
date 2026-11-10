@@ -66,11 +66,12 @@ function buildHtml(city, counts, allCities = []) {
   const description = `Trouvez un déménageur vérifié à ${city.nom_ville}. ${city.intro_locale.split('.')[0]}. Devis gratuit et sans engagement en 2 minutes.`;
   const url = `${SITE_URL}/demenagement/${city.slug}`;
 
-  const availability = counts.local > 0
-    ? `${counts.local} déménageur${counts.local > 1 ? 's' : ''} vérifié${counts.local > 1 ? 's' : ''} basé${counts.local > 1 ? 's' : ''} à ${escapeHtml(city.nom_ville)}`
-    : counts.regional > 0
-      ? 'Déménageurs vérifiés disponibles dans votre région'
-      : 'Décrivez votre demande, nous la transmettons à nos déménageurs vérifiés.';
+  const availability = `Déménageurs professionnels et vérifiés interviennent à ${escapeHtml(city.nom_ville)} et sa région`;
+  const communeSlug = (name) => String(name).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const communeHtml = (name) => {
+    const linked = allCities.find((c) => c.slug !== city.slug && c.slug === communeSlug(name));
+    return linked ? `<a href="/demenagement/${escapeHtml(linked.slug)}">${escapeHtml(name)}</a>` : escapeHtml(name);
+  };
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -100,9 +101,9 @@ function buildHtml(city, counts, allCities = []) {
   const linksHtml = others.length ? `<div><h2>Déménageurs dans d'autres villes</h2><ul>${others.map((c) => `<li><a href="/demenagement/${c.slug}">Déménageur ${escapeHtml(c.nom_ville)}</a></li>`).join('')}</ul></div>` : '';
 
   const guide = seoContent.villes[city.slug];
-  const guideHtml = guide ? `<div><h2>Prix indicatifs d'un déménagement à ${escapeHtml(city.nom_ville)}</h2><table><thead><tr><th>Logement</th><th>Volume</th><th>Formule économique</th><th>Formule standard</th></tr></thead><tbody>${seoContent.prix.lignes.map((l) => `<tr><td>${escapeHtml(l.logement)}</td><td>${escapeHtml(l.volume)}</td><td>${escapeHtml(l.eco)}</td><td>${escapeHtml(l.standard)}</td></tr>`).join('')}</tbody></table><p>${escapeHtml(seoContent.prix.note)} <a href="/tarifs-demenagement-2026">Voir tous les tarifs 2026</a> · <a href="/calculateur-prix-demenagement">Calculer mon prix</a></p><h2>Quartiers où nous trouvons votre déménageur à ${escapeHtml(city.nom_ville)}</h2><ul>${guide.quartiers.map((q) => `<li>${escapeHtml(q)}</li>`).join('')}</ul><h3>Conseils pour déménager à ${escapeHtml(city.nom_ville)}</h3><ul>${guide.conseils.map((c) => `<li>${escapeHtml(c)}</li>`).join('')}</ul></div>` : '';
+  const guideHtml = guide ? `<div><h2>Prix indicatifs d'un déménagement à ${escapeHtml(city.nom_ville)}</h2><table><thead><tr><th>Logement</th><th>Volume</th><th>Formule économique</th><th>Formule standard</th></tr></thead><tbody>${seoContent.prix.lignes.map((l) => `<tr><td>${escapeHtml(l.logement)}</td><td>${escapeHtml(l.volume)}</td><td>${escapeHtml(l.eco)}</td><td>${escapeHtml(l.standard)}</td></tr>`).join('')}</tbody></table><p>${escapeHtml(seoContent.prix.note)} <a href="/tarifs-demenagement-2026">Voir tous les tarifs 2026</a> · <a href="/calculateur-prix-demenagement">Calculer mon prix</a></p><h2>Quartiers où nous trouvons votre déménageur à ${escapeHtml(city.nom_ville)}</h2><ul>${guide.quartiers.map((q) => `<li>${communeHtml(q)}</li>`).join('')}</ul><h3>Conseils pour déménager à ${escapeHtml(city.nom_ville)}</h3><ul>${guide.conseils.map((c) => `<li>${escapeHtml(c)}</li>`).join('')}</ul></div>` : '';
   const zonesHtml = (city.zones_desservies || []).length > 0
-    ? `<div><h2>Zones desservies près de ${escapeHtml(city.nom_ville)}</h2><ul>${city.zones_desservies.map((z) => `<li>${escapeHtml(z)}</li>`).join('')}</ul></div>`
+    ? `<div><h2>Zones desservies près de ${escapeHtml(city.nom_ville)}</h2><ul>${city.zones_desservies.map((z) => `<li>${communeHtml(z)}</li>`).join('')}</ul></div>`
     : '';
 
   // Contenu statique minimal mais réel (pas juste des balises meta) :
@@ -111,7 +112,7 @@ function buildHtml(city, counts, allCities = []) {
   const staticContent = `
     <div id="root">
       <div style="max-width:56rem;margin:0 auto;padding:3rem 1.5rem;font-family:system-ui,sans-serif;">
-        <h1 style="font-size:2.5rem;font-weight:800;color:#111827;margin-bottom:1.5rem;">Déménagement à ${escapeHtml(city.nom_ville)}</h1>
+        <h1 style="font-size:2.5rem;font-weight:800;color:#111827;margin-bottom:1.5rem;">Déménageur à ${escapeHtml(city.nom_ville)} : comparez des devis gratuits</h1>
         <p style="font-size:1.125rem;color:#4B5563;line-height:1.7;max-width:48rem;margin-bottom:2rem;">${escapeHtml(city.intro_locale)}</p>
         <p style="font-weight:600;color:#1F2937;margin-bottom:2rem;">${availability}</p>
         <a href="/client/quote" style="display:inline-block;background:#2563EB;color:white;padding:1rem 2rem;border-radius:1rem;font-weight:700;text-decoration:none;">Obtenir mon devis pour ${escapeHtml(city.nom_ville)}</a>

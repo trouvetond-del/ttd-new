@@ -17,3 +17,5 @@
 - Footer secondary city links use native details disclosure so crawlers retain every link without a large initial list.
 
 - Quote-request deletion is metadata-only via admin-authorized trash/restore RPCs; IDs, references, statuses and related business rows stay intact, operational readers exclude trash, and financial/photo retention history remains independent.
+- Footer city spelling is shared through city-links.json and filtered against published city_pages in both React and prerendering; commune links also require a published page, preventing broken internal links.
+- The global noscript fallback uses a styled div instead of H1, leaving each page's React or prerendered content as its sole primary heading.

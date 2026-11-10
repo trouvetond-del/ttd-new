@@ -38,7 +38,18 @@ function write(route, opts) {
 }
 
 const prixTable = `<table><thead><tr><th>Logement</th><th>Volume</th><th>Formule économique</th><th>Formule standard</th></tr></thead><tbody>${seo.prix.lignes.map((l) => `<tr><td>${esc(l.logement)}</td><td>${esc(l.volume)}</td><td>${esc(l.eco)}</td><td>${esc(l.standard)}</td></tr>`).join('')}</tbody></table><p>${esc(seo.prix.note)}</p>`;
-const villes = `<h2>Déménageurs par ville</h2><ul>${Object.keys(seo.villes).slice(0, 20).map((s) => `<li><a href="/demenagement/${s}">Déménageur ${esc(s.replace(/-/g, ' '))}</a></li>`).join('')}</ul>`;
+const cityNames = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'src/data/city-links.json'), 'utf-8'));
+let publishedCities = [];
+if (process.env.VITE_SUPABASE_URL && process.env.VITE_SUPABASE_ANON_KEY) {
+  const { data, error } = await createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY)
+    .from('city_pages').select('slug').eq('statut', 'published');
+  if (error) throw new Error(`[prerender-public-pages] city_pages: ${error.message}`);
+  publishedCities = data || [];
+}
+const footerCities = cityNames.filter(([slug]) => publishedCities.some((c) => c.slug === slug));
+const majorCities = new Set(['paris', 'marseille', 'lyon', 'toulouse', 'nice', 'nantes', 'montpellier', 'strasbourg', 'bordeaux', 'lille']);
+const cityList = (items) => `<ul>${items.map(([slug, name]) => `<li><a href="/demenagement/${esc(slug)}">Déménageur à ${esc(name)}</a></li>`).join('')}</ul>`;
+const villes = `<h2>Déménageurs par ville</h2>${cityList(footerCities.filter(([slug]) => majorCities.has(slug)))}<details><summary>Plus de villes</summary>${cityList(footerCities.filter(([slug]) => !majorCities.has(slug)))}</details>`;
 const contact = `<p>Une question ? Appelez-nous au <a href="tel:+33189707881">01 89 70 78 81</a> ou écrivez à <a href="mailto:support@trouvetondemenageur.fr">support@trouvetondemenageur.fr</a>.</p>`;
 const verif = `<p>Chaque déménageur inscrit est contrôlé avant de pouvoir proposer un devis : extrait KBIS, assurance responsabilité civile professionnelle et attestation URSSAF à jour. Un document expiré ou non conforme bloque le compte jusqu'à sa mise à jour.</p>`;
 const etapes = `<h2>Comment ça marche ?</h2><ol>

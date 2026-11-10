@@ -1,18 +1,29 @@
 import { Truck, LogIn, ShieldCheck, Camera, FileCheck, CheckCircle, ArrowRight, Star, Zap, Phone, Mail, MessageCircle, Instagram, Youtube, Users, Building2, ChevronRight, Lightbulb, Search, Menu, X } from 'lucide-react';
 import { SupportChat } from '../components/SupportChat';
 import { Logo } from '../components/Logo';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import cityLinks from '../data/city-links.json';
+import { supabase } from '../lib/supabase';
 import { HeroBackgroundVideo } from '../components/HeroBackgroundVideo';
 import { HomeFAQ, HomePartners, HomePhotoProtection } from '../components/home/HomeSections';
 import { HomeTrustBridge, HomeTrustReasons } from '../components/home/HomeTrust';
 import { useNavigate } from 'react-router-dom';
 
-const CITY_LINKS: [string, string][] = [['paris','Paris'],['lyon','Lyon'],['saint-etienne','Saint-Étienne'],['lille','Lille'],['marseille','Marseille'],['nantes','Nantes'],['bordeaux','Bordeaux'],['toulouse','Toulouse'],['nice','Nice'],['montpellier','Montpellier'],['strasbourg','Strasbourg'],['rennes','Rennes'],['reims','Reims'],['le-havre','Le Havre'],['toulon','Toulon'],['grenoble','Grenoble'],['dijon','Dijon'],['angers','Angers'],['nimes','Nîmes'],['villeurbanne','Villeurbanne'],['clermont-ferrand','Clermont-Ferrand'],['aix-en-provence','Aix-en-Provence'],['le-mans','Le Mans'],['brest','Brest'],['tours','Tours'],['amiens','Amiens'],['limoges','Limoges'],['annecy','Annecy'],['perpignan','Perpignan'],['boulogne-billancourt','Boulogne-Billancourt'],['metz','Metz'],['besancon','Besançon'],['orleans','Orléans'],['rouen','Rouen'],['mulhouse','Mulhouse'],['caen','Caen'],['nancy','Nancy'],['argenteuil','Argenteuil'],['montreuil','Montreuil'],['saint-denis','Saint-Denis'],['avignon','Avignon'],['poitiers','Poitiers'],['la-rochelle','La Rochelle'],['pau','Pau'],['bayonne','Bayonne'],['versailles','Versailles'],['nanterre','Nanterre'],['cannes','Cannes'],['valence','Valence'],['troyes','Troyes']];
+const CITY_LINKS = cityLinks;
 
 export function LandingPage() {
   const [showSupportChat, setShowSupportChat] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [publishedCitySlugs, setPublishedCitySlugs] = useState<string[]>([]);
+  useEffect(() => {
+    let active = true;
+    supabase.from('city_pages').select('slug').eq('statut', 'published').then(({ data }) => {
+      if (active && data) setPublishedCitySlugs(data.map((c) => c.slug));
+    });
+    return () => { active = false; };
+  }, []);
+  const footerCities = CITY_LINKS.filter(([slug]) => publishedCitySlugs.includes(slug));
   const howItWorksRef = useRef<HTMLDivElement>(null);
 
   const scrollToHowItWorks = () => {
@@ -209,17 +220,17 @@ export function LandingPage() {
           <div className="pt-12 pb-8 border-b border-gray-800">
             <h3 className="text-white font-bold text-lg mb-4">Trouver un déménageur par ville</h3>
             <ul className="flex flex-wrap gap-x-4 gap-y-2">
-              {CITY_LINKS.filter(([slug]) => ['paris', 'marseille', 'lyon', 'toulouse', 'nice', 'nantes', 'montpellier', 'strasbourg', 'bordeaux', 'lille'].includes(slug)).map(([slug, nom]) => (
+              {footerCities.filter(([slug]) => ['paris', 'marseille', 'lyon', 'toulouse', 'nice', 'nantes', 'montpellier', 'strasbourg', 'bordeaux', 'lille'].includes(slug)).map(([slug, nom]) => (
                 <li key={slug}>
-                  <a href={`/demenagement/${slug}`} className="text-gray-400 hover:text-white transition-colors text-sm">Déménageur {nom}</a>
+                  <a href={`/demenagement/${slug}`} className="text-gray-400 hover:text-white transition-colors text-sm">Déménageur à {nom}</a>
                 </li>
               ))}
             </ul>
             <details className="mt-3">
               <summary className="cursor-pointer text-sm font-semibold w-fit">Plus de villes</summary>
               <ul className="flex flex-wrap gap-x-4 gap-y-2 mt-3">
-                {CITY_LINKS.filter(([slug]) => !['paris', 'marseille', 'lyon', 'toulouse', 'nice', 'nantes', 'montpellier', 'strasbourg', 'bordeaux', 'lille'].includes(slug)).map(([slug, nom]) => (
-                  <li key={slug}><a href={`/demenagement/${slug}`} className="text-gray-400 hover:text-white transition-colors text-sm">Déménageur {nom}</a></li>
+                {footerCities.filter(([slug]) => !['paris', 'marseille', 'lyon', 'toulouse', 'nice', 'nantes', 'montpellier', 'strasbourg', 'bordeaux', 'lille'].includes(slug)).map(([slug, nom]) => (
+                  <li key={slug}><a href={`/demenagement/${slug}`} className="text-gray-400 hover:text-white transition-colors text-sm">Déménageur à {nom}</a></li>
                 ))}
               </ul>
             </details>
