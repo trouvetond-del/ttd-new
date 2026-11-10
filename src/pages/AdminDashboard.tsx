@@ -36,6 +36,7 @@ import AdminSeoReport from '../components/admin/AdminSeoReport';
 import AdminSeaReport from '../components/admin/AdminSeaReport';
 import AdminPartners from '../components/admin/AdminPartners';
 import AdminGroupage from '../components/admin/AdminGroupage';
+import AdminAcquisitionMachine from '../components/admin/AdminAcquisitionMachine';
 import AdminMissionPhotos from '../components/admin/AdminMissionPhotos';
 import AdminExports from '../components/admin/AdminExports';
 import AdminActivityLogs from '../components/admin/AdminActivityLogs';
@@ -76,6 +77,7 @@ type ActiveTab =
   | 'sea_report'
   | 'seo_report'
   | 'groupage'
+  | 'acquisition'
   | 'partners';
 
 interface NavItem {
@@ -88,7 +90,7 @@ interface NavItem {
 export default function AdminDashboard() {
   const { tab: urlTab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
-  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report','sea_report','groupage','partners','mission_photos'];
+  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report','sea_report','groupage','acquisition','partners','mission_photos'];
   const initialTab = (urlTab && validTabs.includes(urlTab as ActiveTab)) ? urlTab as ActiveTab : 'overview';
   const [activeTab, setActiveTabState] = useState<ActiveTab>(initialTab);
   const setActiveTab = (tab: ActiveTab) => { setActiveTabState(tab); navigate(`/admin/dashboard/${tab}`, { replace: true }); };
@@ -165,6 +167,7 @@ export default function AdminDashboard() {
     { id: 'analytics', label: 'Analytiques', icon: BarChart3, color: 'text-orange-600' },
     { id: 'disputes', label: 'Litiges', icon: AlertTriangle, color: 'text-yellow-600' },
     { id: 'social_studio', label: 'Studio Social Media', icon: Clapperboard, color: 'text-pink-600' },
+    { id: 'acquisition', label: 'Machine d\'acquisition', icon: Clapperboard, color: 'text-blue-600' },
     { id: 'sea_report', label: 'Agent SEA', icon: BarChart3, color: 'text-green-600' },
     { id: 'seo_report', label: 'Rapport SEO', icon: Search, color: 'text-blue-600' },
     { id: 'security', label: 'Sécurité & Agents IA', icon: Shield, color: 'text-red-600' },
@@ -300,6 +303,8 @@ export default function AdminDashboard() {
         return <AdminSeoReport />;
       case 'groupage':
         return <AdminGroupage />;
+      case 'acquisition':
+        return <AdminAcquisitionMachine />;
       case 'mission_photos':
         return <AdminMissionPhotos />;
       case 'partners':
