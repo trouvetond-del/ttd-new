@@ -7,6 +7,8 @@ import { FurnitureInventoryModal } from '../FurnitureInventoryModal';
 import { DistanceDisplay } from '../DistanceDisplay';
 import { VolumeCalculator, type FurnitureInventory } from '../VolumeCalculator';
 import { QuoteRequestChangesDisplay } from '../QuoteRequestChangesDisplay';
+import QuotesListModal from './QuotesListModal';
+import ClientQuoteReminderButton from './ClientQuoteReminderButton';
 
 interface QuoteRequestDetailModalProps {
   quoteRequestId: string;
@@ -29,6 +31,7 @@ const services = [
 
 export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSave, readOnly = false }: QuoteRequestDetailModalProps) {
   const [loading, setLoading] = useState(true);
+  const [showQuotes, setShowQuotes] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<any>({});
   const [showInventoryModal, setShowInventoryModal] = useState(false);
@@ -349,14 +352,16 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto my-8">
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
-          <div className="flex items-center space-x-4 flex-1">
+          <div className="flex items-start gap-3 flex-1 flex-wrap">
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-900">Détails de la demande</h2>
               <p className="text-sm text-gray-500 mt-1">
                 Créée le {new Date(formData.created_at).toLocaleDateString('fr-FR')} à {new Date(formData.created_at).toLocaleTimeString('fr-FR')}
               </p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-end gap-2 flex-wrap">
+              <ClientQuoteReminderButton quoteRequestId={quoteRequestId} />
+              <button type="button" onClick={() => setShowQuotes(true)} className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium flex items-center gap-2"><FileText className="w-4 h-4" />Voir les devis</button>
               {formData.furniture_inventory && (
                 <button
                   onClick={() => setShowInventoryModal(true)}
@@ -830,6 +835,8 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
           )}
         </div>
       </div>
+
+      {showQuotes && <QuotesListModal quoteRequestId={quoteRequestId} onClose={() => setShowQuotes(false)} />}
 
       {showInventoryModal && (
         <FurnitureInventoryModal

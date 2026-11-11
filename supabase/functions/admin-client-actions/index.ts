@@ -4,6 +4,8 @@
 //                            et faire sa demande de devis.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { canRemind, canRespond, pendingQuoteEmail, escapeEmail } from "../../../src/lib/clientPendingQuotes.ts";
+import { sendFollowupEmail } from "../_shared/followup-email.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -22,10 +24,30 @@ Deno.serve(async (req: Request) => {
 
     const { data: userData, error: userError } = await admin.auth.getUser(authHeader.replace("Bearer ", ""));
     if (userError || !userData.user) return json({ error: "Session invalide" }, 401);
+    const { action, clientUserId, quoteRequestId, reason, detail = "" } = await req.json();
+    if (action === "quote_feedback") {
+      const { data: request, error } = await admin.from("quote_requests").select("id, reference, client_user_id, client_email, from_city, to_city").eq("id", quoteRequestId).is("deleted_at", null).maybeSingle();
+      if (error || !request || typeof reason !== "string" || typeof detail !== "string" || !canRespond(request.client_user_id, userData.user.id, reason, detail)) return json({ error: "Réponse invalide ou demande inaccessible" }, 403);
+      const text = `Réponse concernant ${request.reference || request.id} (${request.from_city} → ${request.to_city}) :\n${reason}\n${detail}`;
+      const sent = await sendFollowupEmail("trouvetond@gmail.com", `Réponse client — ${request.reference || request.id}`, `<p>${escapeEmail(text).replace(/\n/g, "<br>")}</p><p>Client : ${escapeEmail(request.client_email || "")}</p><p>L’équipe Trouve Ton Déménageur<br>01 89 70 78 81</p>`);
+      if (!sent.ok) return json({ error: sent.error }, 502);
+      return json({ ok: true });
+    }
     const { data: adminRow } = await admin.from("admins").select("id").eq("email", userData.user.email).maybeSingle();
     if (!adminRow) return json({ error: "Accès réservé aux administrateurs" }, 403);
 
-    const { action, clientUserId } = await req.json();
+    if (action === "quote_reminder") {
+      const { data: request, error } = await admin.from("quote_requests").select("id, reference, client_name, client_email, client_user_id, from_city, to_city, deleted_at, is_draft, status, accepted_quote_id").eq("id", quoteRequestId).maybeSingle();
+      if (error || !request) return json({ error: "Demande introuvable" }, 404);
+      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+      const { count, error: quotesError } = await admin.from("quotes").select("id", { count: "exact", head: true }).eq("quote_request_id", request.id).eq("status", "pending").gte("validity_date", today);
+      if (quotesError) return json({ error: "Impossible de vérifier les devis disponibles" }, 500);
+      if (!canRemind(request, count || 0)) return json({ error: "Aucun devis en attente disponible pour cette demande" }, 409);
+      if (!request.client_email || !request.client_user_id) return json({ error: "Compte ou email client manquant" }, 409);
+      const sent = await sendFollowupEmail(request.client_email, "Vos devis de déménagement vous attendent", pendingQuoteEmail(request, count || 0));
+      if (!sent.ok) return json({ error: sent.error }, 502);
+      return json({ ok: true });
+    }
     if (!clientUserId || !["activate", "profile_reminder"].includes(action)) {
       return json({ error: "Paramètres invalides" }, 400);
     }

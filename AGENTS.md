@@ -21,3 +21,4 @@
 - The global noscript fallback uses a styled div instead of H1, leaving each page's React or prerendered content as its sole primary heading.
 
 - Account email/phone and identical active move requests are reserved atomically in private identity-claim tables with database triggers; preserve historical duplicates and enforce protection across all writers, not just UI checks.
+- Manual pending-quote reminders share one admin-authorized action across request and client dialogs; hesitation responses verify request ownership and send to the fixed team inbox, never accepting a browser-supplied recipient.

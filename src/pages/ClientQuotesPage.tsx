@@ -13,6 +13,7 @@ import { MessagingInterface } from '../components/MessagingInterface';
 import RouteMap from '../components/RouteMap';
 import type { FurnitureInventory } from '../components/VolumeCalculator';
 import { showToast } from '../utils/toast';
+import { ClientQuoteFeedback } from '../components/ClientQuoteFeedback';
 
 // Mover details interface
 interface MoverDetails {
@@ -108,7 +109,8 @@ export default function ClientQuotesPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [visibleMaps, setVisibleMaps] = useState<Set<string>>(new Set());
   const [messagingQuote, setMessagingQuote] = useState<{ quoteRequestId: string; moverId: string } | null>(null);
-  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
+  const [selectedRequestId, setSelectedRequestId] = useState<string | null>(() => new URLSearchParams(window.location.search).get('requestId'));
+  const [showFeedback, setShowFeedback] = useState(() => new URLSearchParams(window.location.search).get('feedback') === '1');
 
   const toggleMapVisibility = (requestId: string) => {
     setVisibleMaps(prev => {
@@ -1045,6 +1047,8 @@ export default function ClientQuotesPage() {
           </div>
         </div>
       )}
+
+      {showFeedback && selectedRequest && <ClientQuoteFeedback requestId={selectedRequest.id} onClose={() => setShowFeedback(false)} />}
 
       {messagingQuote && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import QuotesListModal from './QuotesListModal';
+import ClientQuoteReminderButton from './ClientQuoteReminderButton';
 import { AdminFollowupModal } from './AdminFollowupModal';
 
 interface ClientDetailModalProps {
@@ -439,7 +440,8 @@ export default function ClientDetailModal({ clientId, onClose, onUpdate, adminRo
                           Créée le {new Date(quote.created_at).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-end flex-wrap gap-2">
+                        <ClientQuoteReminderButton quoteRequestId={quote.id} />
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(quote.status)}`}>
                           {getStatusLabel(quote.status)}
                         </span>
