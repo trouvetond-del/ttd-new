@@ -25,3 +25,4 @@
 
 - Free-entry numeric fields use NumberInput editing buffers so clearing never forces default digits; mandatory mover profile integers keep raw drafts and validate before saving, with row-return checks preventing false success.
 - Mover Groupage derives candidate pairs from list_open_moves safe projections and commune centres; never read admin groupage alerts or expose client contacts, and retain existing privacy-aware bid details and per-request acceptance.
+- Vercel app rewrites must cover every client-router path prefix, including public move listings and driver pages, so hard refresh and emailed links do not return host 404s.
