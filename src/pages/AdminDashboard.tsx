@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ChevronDown, Bot, Briefcase, Handshake } from 'lucide-react';
 import {
   LayoutDashboard,
   Users,
@@ -94,6 +95,7 @@ export default function AdminDashboard() {
   const initialTab = (urlTab && validTabs.includes(urlTab as ActiveTab)) ? urlTab as ActiveTab : 'overview';
   const [activeTab, setActiveTabState] = useState<ActiveTab>(initialTab);
   const setActiveTab = (tab: ActiveTab) => { setActiveTabState(tab); navigate(`/admin/dashboard/${tab}`, { replace: true }); };
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
   const [adminRole, setAdminRole] = useState<string>('');
   const [adminEmail, setAdminEmail] = useState<string>('');
@@ -473,13 +475,25 @@ export default function AdminDashboard() {
         <div className="h-full overflow-y-auto p-4">
           <p className="px-3 mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-300/60">Navigation</p>
           <nav className="space-y-1">
-            {navItems.map((item) => {
+            {(() => {
+              const groups: { key: string; label: string; icon: any; ids: string[] }[] = [
+                { key: 'clients', label: 'Clients', icon: Users, ids: ['users', 'client_prospects', 'recent_quotes'] },
+                { key: 'movers', label: 'Déménageurs', icon: Truck, ids: ['pending_movers', 'mover_search', 'prospects'] },
+                { key: 'missions', label: 'Missions', icon: Truck, ids: ['missions', 'mission_photos', 'groupage'] },
+                { key: 'contracts', label: 'Contrats & paiements', icon: Briefcase, ids: ['contracts', 'financial', 'promo_codes'] },
+                { key: 'problems', label: 'Problèmes', icon: AlertTriangle, ids: ['disputes'] },
+                { key: 'partners', label: 'Partenaires', icon: Handshake, ids: ['partners'] },
+                { key: 'ia', label: 'IA', icon: Bot, ids: ['social_studio', 'acquisition', 'sea_report', 'seo_report', 'security'] },
+              ];
+              const groupOf = (id: string) => groups.find(g => g.ids.includes(id));
+              const renderItem = (item: NavItem, nested = false) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
 
               return (
                 <button
                   key={item.id}
+                  data-nested={nested || undefined}
                   onClick={() => {
                     setActiveTab(item.id);
                     if (item.id !== 'financial') setHighlightPaymentId(null);
@@ -503,7 +517,34 @@ export default function AdminDashboard() {
                   )}
                 </button>
               );
-            })}
+              };
+              const seen = new Set<string>();
+              return navItems.map((item) => {
+                const g = groupOf(item.id);
+                if (!g) return renderItem(item);
+                if (seen.has(g.key)) return null;
+                seen.add(g.key);
+                const children = navItems.filter(i => g.ids.includes(i.id));
+                const GIcon = g.icon;
+                const containsActive = children.some(i => i.id === activeTab);
+                const open = openGroups[g.key] ?? containsActive;
+                const alert = g.key === 'ia' && securityAlert;
+                return (
+                  <div key={g.key}>
+                    <button
+                      onClick={() => setOpenGroups(o => ({ ...o, [g.key]: !open }))}
+                      aria-expanded={open}
+                      className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${containsActive ? 'text-white bg-white/10' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                    >
+                      <GIcon className={`w-5 h-5 shrink-0 ${alert ? 'text-red-400 animate-pulse' : 'text-blue-300 group-hover:text-emerald-300'}`} />
+                      <span className={`font-medium ${alert ? 'text-red-400' : ''}`}>{g.label}</span>
+                      <ChevronDown className={`ml-auto w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+                    </button>
+                    {open && <div className="mt-1 ml-4 pl-2 border-l border-white/10 space-y-1">{children.map(c => renderItem(c, true))}</div>}
+                  </div>
+                );
+              });
+            })()}
           </nav>
 
           <div className="mt-6 pt-6 border-t border-white/10 space-y-1">
