@@ -16,7 +16,6 @@ import {
   User,
   HelpCircle,
   Download,
-  Activity,
   UserPlus,
   Clock,
   FileText,
@@ -483,16 +482,16 @@ export default function AdminDashboard() {
           <p className="px-3 mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-300/60">Navigation</p>
           <nav className="space-y-1">
             {(() => {
-              const groups: { key: string; label: string; icon: any; ids: string[]; usersType?: 'clients' | 'movers' }[] = [
+              const groups: { key: string; label: string; icon: any; ids: string[]; usersType?: 'clients' | 'movers'; directId?: ActiveTab }[] = [
                 { key: 'clients', label: 'Clients', icon: Users, ids: ['pending_clients', 'client_prospects'], usersType: 'clients' as const },
                 { key: 'movers', label: 'Déménageurs', icon: Truck, ids: ['pending_movers', 'mover_search', 'prospects'], usersType: 'movers' as const },
-                { key: 'missions', label: 'Missions', icon: Truck, ids: ['missions', 'mission_photos', 'groupage'] },
-                { key: 'contracts', label: 'Contrats & paiements', icon: Briefcase, ids: ['contracts', 'financial', 'promo_codes'] },
-                { key: 'problems', label: 'Problèmes', icon: AlertTriangle, ids: ['disputes'] },
-                { key: 'partners', label: 'Partenaires', icon: Handshake, ids: ['partners'] },
+                { key: 'missions', label: 'Missions', icon: Truck, ids: ['mission_photos', 'groupage'], directId: 'missions' },
+                { key: 'contracts', label: 'Contrats & paiements', icon: Briefcase, ids: ['financial', 'promo_codes'], directId: 'contracts' },
+                { key: 'problems', label: 'Litiges', icon: AlertTriangle, ids: [], directId: 'disputes' },
+                { key: 'partners', label: 'Partenaires', icon: Handshake, ids: [], directId: 'partners' },
                 { key: 'ia', label: 'IA', icon: Bot, ids: ['social_studio', 'acquisition', 'sea_report', 'seo_report', 'security'] },
               ];
-              const groupOf = (id: string) => groups.find(g => g.ids.includes(id));
+              const groupOf = (id: string) => groups.find(g => g.ids.includes(id) || g.directId === id);
               const renderItem = (item: NavItem, nested = false) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -533,8 +532,9 @@ export default function AdminDashboard() {
                 seen.add(g.key);
                 const children = navItems.filter(i => g.ids.includes(i.id));
                 const GIcon = g.icon;
-                const containsActive = children.some(i => i.id === activeTab) || (!!g.usersType && activeTab === 'users' && userTypeFilter === g.usersType);
-                const open = openGroups[g.key] ?? containsActive;
+                const childActive = children.some(i => i.id === activeTab) || (!!g.usersType && activeTab === 'users' && userTypeFilter === g.usersType);
+                const containsActive = childActive || (!!g.directId && activeTab === g.directId);
+                const open = (openGroups[g.key] ?? childActive) && children.length > 0;
                 const alert = g.key === 'ia' && securityAlert;
                 return (
                   <div key={g.key}>
@@ -545,24 +545,30 @@ export default function AdminDashboard() {
                             handleNavigateToUsers(g.usersType);
                             setOpenGroups(o => ({ ...o, [g.key]: true }));
                             if (window.innerWidth < 1024) setSidebarOpen(false);
+                          } else if (g.directId) {
+                            setActiveTab(g.directId);
+                            if (g.directId !== 'financial') setHighlightPaymentId(null);
+                            if (window.innerWidth < 1024) setSidebarOpen(false);
                           } else {
                             setOpenGroups(o => ({ ...o, [g.key]: !open }));
                           }
                         }}
-                        aria-expanded={g.usersType ? undefined : open}
+                        aria-expanded={g.usersType || g.directId ? undefined : open}
                         className="flex-1 flex items-center gap-3 pl-3 py-2.5 text-left"
                       >
                         <GIcon className={`w-5 h-5 shrink-0 ${alert ? 'text-red-400 animate-pulse' : 'text-blue-300 group-hover:text-emerald-300'}`} />
                         <span className={`font-medium ${alert ? 'text-red-400' : ''}`}>{g.label}</span>
                       </button>
-                      <button
-                        onClick={() => setOpenGroups(o => ({ ...o, [g.key]: !open }))}
-                        aria-expanded={open}
-                        aria-label={`${open ? 'Fermer' : 'Ouvrir'} le menu ${g.label}`}
-                        className="px-3 py-2.5"
-                      >
-                        <ChevronDown className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
-                      </button>
+                      {children.length > 0 && (
+                        <button
+                          onClick={() => setOpenGroups(o => ({ ...o, [g.key]: !open }))}
+                          aria-expanded={open}
+                          aria-label={`${open ? 'Fermer' : 'Ouvrir'} le menu ${g.label}`}
+                          className="px-3 py-2.5"
+                        >
+                          <ChevronDown className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+                        </button>
+                      )}
                     </div>
                     {open && <div className="mt-1 ml-4 pl-2 border-l border-white/10 space-y-1">{children.map(c => renderItem(c, true))}</div>}
                   </div>
@@ -604,23 +610,6 @@ export default function AdminDashboard() {
             >
               <Download className="w-5 h-5" />
               <span className="font-medium">Exports</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setActiveTab('activity_logs');
-                if (window.innerWidth < 1024) {
-                  setSidebarOpen(false);
-                }
-              }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
-                activeTab === 'activity_logs'
-                  ? 'bg-gradient-to-r from-[#3B82F6] to-[#10B981] text-white shadow-lg shadow-blue-500/30'
-                  : 'text-slate-300 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              <Activity className="w-5 h-5" />
-              <span className="font-medium">Logs d'Activité</span>
             </button>
 
             <button
