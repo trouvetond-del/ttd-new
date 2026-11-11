@@ -13,3 +13,13 @@ jobs:
           q() { python3 -c 'import json,sys;print(json.dumps({"query":sys.stdin.read()}))' | curl --fail-with-body -sS -X POST https://api.supabase.com/v1/projects/bvvbkaluajgdurxnnqqu/database/query -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H 'Content-Type: application/json' --data @-; echo; }
           q < supabase/sql/account-duplicate-guards.sql
           q < scripts/account-duplicates.test.sql
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -e
+          supabase functions deploy create-draft-quote-account --project-ref bvvbkaluajgdurxnnqqu --yes
+          supabase functions deploy create-quick-lead-account --project-ref bvvbkaluajgdurxnnqqu --yes
+          supabase functions deploy create-mover-lead-account --project-ref bvvbkaluajgdurxnnqqu --yes

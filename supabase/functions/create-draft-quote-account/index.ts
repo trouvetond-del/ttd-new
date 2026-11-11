@@ -84,7 +84,7 @@ Deno.serve(async (req: Request) => {
       email,
       password: tempPassword,
       email_confirm: true,
-      user_metadata: { first_name: firstName, last_name: lastName },
+      user_metadata: { first_name: firstName, last_name: lastName, phone },
     });
 
     if (createError || !newUser?.user) {

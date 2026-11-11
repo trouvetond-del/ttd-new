@@ -91,7 +91,7 @@ Deno.serve(async (req: Request) => {
       email,
       password,
       email_confirm: true,
-      user_metadata: { first_name: firstName, last_name: lastName },
+      user_metadata: { first_name: firstName, last_name: lastName, phone: quoteRequest?.client_phone || "" },
     });
 
     if (createError || !newUser?.user) {

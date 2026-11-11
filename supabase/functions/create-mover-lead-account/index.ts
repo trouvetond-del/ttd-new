@@ -96,6 +96,7 @@ Deno.serve(async (req: Request) => {
       user_metadata: {
         first_name: verification.manager_firstname,
         last_name: verification.manager_lastname,
+        phone: verification.phone,
         role: "mover",
       },
     });
