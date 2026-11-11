@@ -4,7 +4,7 @@ CREATE TEMP TABLE consistency_quotes_before AS SELECT to_jsonb(q) data FROM publ
 DO $$
 DECLARE target uuid; actor uuid; g uuid; result jsonb; baseline jsonb;
 BEGIN
- SELECT a.id,g.id INTO target,g FROM public.groupage_alerts g JOIN public.quote_requests a ON a.id=g.request_a
+ SELECT a.id,g.id INTO target,g FROM public.groupage_alerts g JOIN public.quote_requests a ON (a.id=g.request_a OR a.id=g.request_b)
  WHERE a.deleted_at IS NULL LIMIT 1;
  SELECT user_id INTO actor FROM public.admins WHERE user_id IS NOT NULL LIMIT 1;
  IF target IS NULL OR actor IS NULL THEN RAISE EXCEPTION 'Existing groupage and admin required'; END IF;
