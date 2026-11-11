@@ -4,6 +4,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { buildVideo, loadVoiceConfig } from "./media.mjs";
 import { generateImage } from "./openai-image.mjs";
+import { shareLinkedIn } from "./linkedin.mjs";
 
 const GRAPH = "https://graph.facebook.com/v21.0";
 const env = (k) => { const v = process.env[k]; if (!v) throw new Error(`Secret manquant : ${k}`); return v; };
@@ -65,7 +66,7 @@ async function recordPub(table, id, platform, media_type, external_id) {
 async function publish(job) {
   const t = await loadTarget(job.target_table, job.target_id);
   if (!t.video && !t.image) throw new Error("Ce post n'a ni photo ni vidéo.");
-  const platforms = job.platforms?.length ? job.platforms : ["facebook", "instagram"];
+  const platforms = job.platforms?.length ? job.platforms : ["facebook", "instagram", "linkedin"];
   const out = {}; const done = [];
   for (const p of platforms) {
     if (p === "facebook") {
@@ -81,6 +82,11 @@ async function publish(job) {
       out.ig_media_id = (await meta("POST", `/${IG}/media_publish`, { creation_id: c.id })).id;
       await recordPub(job.target_table, job.target_id, "instagram", t.video ? "video" : "image", out.ig_media_id);
       done.push("Instagram");
+    } else if (p === "linkedin") {
+      const li = await shareLinkedIn({ text: t.message, imageUrl: t.video ? null : t.image, videoUrl: t.video });
+      if (li.error) throw new Error(li.error);
+      await recordPub(job.target_table, job.target_id, "linkedin", t.video ? "video" : "image", li.id);
+      done.push("LinkedIn");
     }
   }
   await sb.from(job.target_table).update({ ...out, status: "published", published_at: new Date().toISOString(), error: null }).eq("id", job.target_id);
