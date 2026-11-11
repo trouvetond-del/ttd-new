@@ -27,6 +27,7 @@ export function MoverLayout({ children, activeSection: propActiveSection, title 
   const menuItems = [
     { id: 'dashboard', label: 'Tableau de bord', icon: Home, color: 'text-emerald-600', route: '/mover/dashboard' },
     { id: 'find-moves', label: 'Trouver des déménagements', icon: Search, color: 'text-sky-600', route: '/mover/find-moves' },
+    { id: 'groupage', label: 'Groupage', icon: Truck, color: 'text-teal-600', route: '/mover/groupage' },
     { id: 'quote-requests', label: 'Demandes de devis', icon: Package, color: 'text-blue-600', route: '/mover/quote-requests' },
     { id: 'my-quotes', label: 'Mes devis', icon: FileText, color: 'text-indigo-600', route: '/mover/my-quotes' },
     { id: 'earnings', label: 'Gains totaux', icon: Euro, color: 'text-green-600', route: '/mover/finances' },
@@ -43,6 +44,7 @@ export function MoverLayout({ children, activeSection: propActiveSection, title 
     if (propActiveSection) return propActiveSection;
     const path = location.pathname;
     if (path.includes('/mover/drivers')) return 'drivers';
+    if (path.includes('/mover/groupage')) return 'groupage';
     if (path.includes('/find-moves')) return 'find-moves';
     if (path.includes('/quote-requests')) return 'quote-requests';
     if (path.includes('/my-quotes')) return 'my-quotes';

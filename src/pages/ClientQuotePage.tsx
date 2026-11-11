@@ -1,3 +1,4 @@
+import { NumberInput } from '../components/NumberInput';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ArrowLeft, ArrowRight, MapPin, Home, Package, CheckCircle, Calculator, User, Shield, AlertCircle, Clock, Navigation } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -1157,7 +1158,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               Étage
                             </label>
-                            <input
+                            <NumberInput
                               type="number"
                               placeholder="0"
                               min="0"
@@ -1357,7 +1358,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               Étage
                             </label>
-                            <input
+                            <NumberInput
                               type="number"
                               placeholder="0"
                               min="0"

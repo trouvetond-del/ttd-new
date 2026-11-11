@@ -1,0 +1,14 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { validInteger } from '../src/lib/editableNumbers';
+import { findGroupages } from '../src/lib/moverGroupage';
+test('profile experience accepts zero, blank is not zero', () => { assert.equal(validInteger('0',0,99),0); assert.equal(validInteger('',0,99),null); assert.equal(validInteger('12',0,99),12); });
+test('team requires a positive integer, never silently replaces blank with one', () => { assert.equal(validInteger('',1,999),null); assert.equal(validInteger('0',1,999),null); assert.equal(validInteger('4',1,999),4); assert.equal(validInteger('1.5',1,999),null); });
+const moves=[{id:'a',moving_date:'2026-11-21'},{id:'b',moving_date:'2026-11-24'}];
+const centres={a:{from:{lat:50.63,lng:3.06},to:{lat:48.85,lng:2.35}},b:{from:{lat:50.64,lng:3.07},to:{lat:48.86,lng:2.36}}};
+test('two routes within 200km and 3 days are groupage candidates',()=>assert.equal(findGroupages(moves,centres)[0]?.kind,'same_route'));
+test('4 days cannot match',()=>assert.equal(findGroupages([moves[0],{...moves[1],moving_date:'2026-11-25'}],centres).length,0));
+test('far endpoints cannot match',()=>assert.equal(findGroupages(moves,{...centres,b:{from:{lat:43.3,lng:5.4},to:{lat:44,lng:7}}}).length,0));
+test('arrival near next departure creates a return opportunity',()=>assert.equal(findGroupages(moves,{...centres,b:{from:centres.a.to,to:centres.a.from}})[0]?.kind,'return_trip'));
+test('missing coordinates do not become zero distance',()=>assert.equal(findGroupages(moves,{...centres,b:{from:null,to:null}}).length,0));
+test('a request cannot pair with itself',()=>assert.equal(findGroupages([moves[0],moves[0]],centres).length,0));

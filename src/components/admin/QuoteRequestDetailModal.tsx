@@ -1,3 +1,4 @@
+import { NumberInput } from '../NumberInput';
 import { useState, useEffect } from 'react';
 import { X, MapPin, Home, Calendar, Package, FileText, AlertCircle, Save, Loader, Navigation, Edit } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -486,7 +487,7 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Étage</label>
-                  <input
+                  <NumberInput
                     type="number"
                     min="0"
                     value={formData.floor_from || 0}
@@ -607,7 +608,7 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Étage</label>
-                  <input
+                  <NumberInput
                     type="number"
                     min="0"
                     value={formData.floor_to || 0}

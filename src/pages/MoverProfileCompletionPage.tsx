@@ -1,3 +1,4 @@
+import { NumberInput } from '../components/NumberInput';
 // MoverProfileCompletionPage with 3-step wizard UI
 // Steps: 1. Gérant, 2. Entreprise, 3. Documents
 
@@ -1136,7 +1137,7 @@ export default function MoverProfileCompletionPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Volume (m³)</label>
-                  <input
+                  <NumberInput
                     type="number"
                     value={truck.capacity_m3}
                     onChange={(e) => updateTruck(index, 'capacity_m3', parseFloat(e.target.value) || 0)}

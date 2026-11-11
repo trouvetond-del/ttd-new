@@ -22,3 +22,6 @@
 
 - Account email/phone and identical active move requests are reserved atomically in private identity-claim tables with database triggers; preserve historical duplicates and enforce protection across all writers, not just UI checks.
 - Manual pending-quote reminders share one admin-authorized action across request and client dialogs; hesitation responses verify request ownership and send to the fixed team inbox, never accepting a browser-supplied recipient.
+
+- Free-entry numeric fields use NumberInput editing buffers so clearing never forces default digits; mandatory mover profile integers keep raw drafts and validate before saving, with row-return checks preventing false success.
+- Mover Groupage derives candidate pairs from list_open_moves safe projections and commune centres; never read admin groupage alerts or expose client contacts, and retain existing privacy-aware bid details and per-request acceptance.

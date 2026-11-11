@@ -1,3 +1,5 @@
+import { validInteger } from '../lib/editableNumbers';
+import { NumberInput } from './NumberInput';
 import { useState, useEffect } from 'react';
 import { Save, Plus, X, Star, Award, MapPin, Users, Calendar, Bell, TruckIcon, Mail } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -34,6 +36,8 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
   const [profile, setProfile] = useState<MoverProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [yearsDraft, setYearsDraft] = useState('0');
+  const [teamDraft, setTeamDraft] = useState('1');
   const [newCertification, setNewCertification] = useState('');
   const [newServiceArea, setNewServiceArea] = useState('');
   const [newSpecialty, setNewSpecialty] = useState('');
@@ -70,6 +74,8 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
             ? data.services
             : [];
 
+        setYearsDraft(String(data.years_experience ?? 0));
+        setTeamDraft(String(data.team_size ?? 1));
         setProfile({
           ...data,
           certifications: data.certifications || [],
@@ -94,7 +100,13 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
   }
 
   async function saveProfile() {
-    if (!profile) return;
+    if (!profile || saving) return;
+    const years = validInteger(yearsDraft, 0, 99);
+    const team = validInteger(teamDraft, 1, 999);
+    if (years === null || team === null) {
+      showToast('Renseignez une expérience de 0 à 99 ans et une équipe de 1 à 999 personnes', 'error');
+      return;
+    }
 
     setSaving(true);
     try {
@@ -102,8 +114,8 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
         .from('movers')
         .update({
           description: profile.description,
-          years_experience: profile.years_experience,
-          team_size: profile.team_size,
+          years_experience: years,
+          team_size: team,
           insurance_number: profile.insurance_number,
           certifications: profile.certifications,
           service_areas: profile.service_areas,
@@ -120,7 +132,7 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
           has_furniture_lift: profile.has_furniture_lift,
           vehicle_ownership: profile.vehicle_ownership,
         })
-        .eq('id', moverId);
+        .eq('id', moverId).select('id').single();
 
       if (error) throw error;
 
@@ -234,7 +246,7 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <h3 className="text-xl font-bold text-gray-900">Informations de l'entreprise</h3>
         <button
           onClick={saveProfile}
@@ -266,11 +278,9 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
           </label>
           <input
             type="number"
-            min="0"
-            value={profile.years_experience}
-            onChange={(e) =>
-              setProfile({ ...profile, years_experience: parseInt(e.target.value) || 0 })
-            }
+            min="0" max="99" step="1" aria-label="Années d’expérience"
+            value={yearsDraft}
+            onChange={(e) => setYearsDraft(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -281,11 +291,9 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
           </label>
           <input
             type="number"
-            min="1"
-            value={profile.team_size}
-            onChange={(e) =>
-              setProfile({ ...profile, team_size: parseInt(e.target.value) || 1 })
-            }
+            min="1" max="999" step="1" aria-label="Taille de l’équipe"
+            value={teamDraft}
+            onChange={(e) => setTeamDraft(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
@@ -315,7 +323,7 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
               value={newCertification}
               onChange={(e) => setNewCertification(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addCertification()}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Ex: Certification ISO 9001"
             />
             <button
@@ -353,7 +361,7 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
               value={newServiceArea}
               onChange={(e) => setNewServiceArea(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addServiceArea()}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Ex: Paris, Lyon..."
             />
             <button
@@ -392,7 +400,7 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
               value={newSpecialty}
               onChange={(e) => setNewSpecialty(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addSpecialty()}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Ex: Déménagement de piano, Œuvres d'art..."
             />
             <button
@@ -487,7 +495,7 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
                     value={newDepartment}
                     onChange={(e) => setNewDepartment(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && addDepartment()}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Ex: 75, 92, 93..."
                   />
                   <button
@@ -529,7 +537,7 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
                   value={newPreferredZone}
                   onChange={(e) => setNewPreferredZone(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addPreferredZone()}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Ex: Paris, Lyon, Marseille..."
                 />
                 <button
@@ -564,10 +572,10 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Distance maximale (optionnel)
               </label>
-              <input
+              <NumberInput
                 type="number"
                 min="0"
-                value={profile.max_distance_km || ''}
+                value={profile.max_distance_km ?? ''}
                 onChange={(e) =>
                   setProfile({
                     ...profile,

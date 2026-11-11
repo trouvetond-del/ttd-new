@@ -1,3 +1,4 @@
+import { NumberInput } from '../components/NumberInput';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { User, Lock, CheckCircle, AlertCircle, EyeOff, Eye, Loader2, Phone, Mail, ArrowRight, ArrowLeft, MapPin, Clock, Map as MapIcon } from 'lucide-react';
@@ -224,7 +225,7 @@ export default function ClientInviteSignupPage() {
                   <select value={qf.from_home_type} onChange={e => sf('from_home_type', e.target.value)} className={ic}><option value="">Type</option>{HOME_TYPES.map(t => <option key={t}>{t}</option>)}</select>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  <div><label className="text-xs text-gray-600">Étage</label><input type="number" min="0" value={qf.floor_from} onChange={e => sf('floor_from', parseInt(e.target.value) || 0)} className={ic} /></div>
+                  <div><label className="text-xs text-gray-600">Étage</label><NumberInput type="number" min="0" value={qf.floor_from} onChange={e => sf('floor_from', parseInt(e.target.value) || 0)} className={ic} /></div>
                   <div><label className="text-xs text-gray-600">Portage</label><select value={qf.carrying_distance_from} onChange={e => sf('carrying_distance_from', e.target.value)} className={ic}><option value="">—</option>{CARRYING_DISTANCES.map(d => <option key={d}>{d}</option>)}</select></div>
                   <div className="flex flex-col justify-end gap-1"><label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={qf.elevator_from} onChange={e => sf('elevator_from', e.target.checked)} className="rounded" />Ascenseur</label><label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={qf.furniture_lift_needed_departure} onChange={e => sf('furniture_lift_needed_departure', e.target.checked)} className="rounded" />Monte-meuble</label></div>
                 </div>
@@ -238,7 +239,7 @@ export default function ClientInviteSignupPage() {
                   <select value={qf.to_home_type} onChange={e => sf('to_home_type', e.target.value)} className={ic}><option value="">Type</option>{HOME_TYPES.map(t => <option key={t}>{t}</option>)}</select>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  <div><label className="text-xs text-gray-600">Étage</label><input type="number" min="0" value={qf.floor_to} onChange={e => sf('floor_to', parseInt(e.target.value) || 0)} className={ic} /></div>
+                  <div><label className="text-xs text-gray-600">Étage</label><NumberInput type="number" min="0" value={qf.floor_to} onChange={e => sf('floor_to', parseInt(e.target.value) || 0)} className={ic} /></div>
                   <div><label className="text-xs text-gray-600">Portage</label><select value={qf.carrying_distance_to} onChange={e => sf('carrying_distance_to', e.target.value)} className={ic}><option value="">—</option>{CARRYING_DISTANCES.map(d => <option key={d}>{d}</option>)}</select></div>
                   <div className="flex flex-col justify-end gap-1"><label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={qf.elevator_to} onChange={e => sf('elevator_to', e.target.checked)} className="rounded" />Ascenseur</label><label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={qf.furniture_lift_needed_arrival} onChange={e => sf('furniture_lift_needed_arrival', e.target.checked)} className="rounded" />Monte-meuble</label></div>
                 </div>

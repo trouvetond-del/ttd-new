@@ -1,3 +1,4 @@
+import { NumberInput } from './NumberInput';
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Package, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -260,7 +261,7 @@ export default function InventoryManager({ quoteRequestId, userId, readOnly = fa
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Quantité *
                   </label>
-                  <input
+                  <NumberInput
                     type="number"
                     min="1"
                     value={newItem.quantity}

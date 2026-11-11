@@ -1,3 +1,4 @@
+import { NumberInput } from '../components/NumberInput';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Building, User, Lock, CheckCircle, AlertCircle, FileText, Shield, EyeOff, Eye, Loader2, MapPin, Phone, Mail, ArrowRight, X, Check, Upload, Truck, Plus, Trash2, Landmark } from 'lucide-react';
@@ -286,7 +287,7 @@ export default function MoverInviteSignupPage() {
                 <div className="flex items-center justify-between mb-3"><h4 className="font-semibold text-gray-900 flex items-center gap-2"><Truck className="w-4 h-4 text-blue-600" /> Véhicule #{idx + 1}</h4>{trucks.length > 1 && <button onClick={() => removeTruck(tr.id)} className="text-red-600 hover:text-red-700 text-sm flex items-center gap-1"><Trash2 className="w-3.5 h-3.5" /> Supprimer</button>}</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div><label className="block text-sm font-medium text-gray-700 mb-1">Immatriculation <span className="text-red-500">*</span></label><input type="text" value={tr.registration_number} onChange={e => updateTruck(tr.id, 'registration_number', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="AA-123-BB" /></div>
-                  <div><label className="block text-sm font-medium text-gray-700 mb-1">Capacité (m³) <span className="text-red-500">*</span></label><input type="number" min="1" step="0.1" value={tr.capacity_m3 || ''} onChange={e => updateTruck(tr.id, 'capacity_m3', parseFloat(e.target.value) || 0)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="20" /></div>
+                  <div><label className="block text-sm font-medium text-gray-700 mb-1">Capacité (m³) <span className="text-red-500">*</span></label><NumberInput type="number" min="1" step="0.1" value={tr.capacity_m3 || ''} onChange={e => updateTruck(tr.id, 'capacity_m3', parseFloat(e.target.value) || 0)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="20" /></div>
                 </div>
                 <FUF label="Carte grise" desc="Document véhicule" files={tr.registration_card_files} onChange={(f) => updateTruck(tr.id, 'registration_card_files', f)} accept=".pdf,.jpg,.jpeg,.png" />
               </div>))}

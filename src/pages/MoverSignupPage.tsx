@@ -1,3 +1,4 @@
+import { NumberInput } from '../components/NumberInput';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Building, User, FileText, Upload, Eye, EyeOff, Truck } from 'lucide-react';
@@ -349,15 +350,8 @@ export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
     setLoading(true);
 
     try {
-      // Étape 1: Nettoyer automatiquement l'ancien compte avec le même SIRET (mode test)
+      // Existing accounts must never be removed by a signup attempt.
       showToast('Vérification des doublons...', 'info');
-
-      await supabase.rpc('cleanup_test_mover_by_siret', {
-        test_siret: companyData.siret
-      });
-
-      // Petit délai pour s'assurer que le nettoyage est terminé
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Étape 2: Créer le compte utilisateur
       const { data: authResponse, error: signupError } = await supabase.auth.signUp({
@@ -1489,7 +1483,7 @@ export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Capacité (m³) <span className="text-red-500">*</span>
                         </label>
-                        <input
+                        <NumberInput
                           type="number"
                           min="1"
                           step="0.1"

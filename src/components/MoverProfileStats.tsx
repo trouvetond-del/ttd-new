@@ -1,3 +1,4 @@
+import { validInteger } from '../lib/editableNumbers';
 import { useState } from 'react';
 import { Star, Calendar, Users, Award, X, Save } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -28,17 +29,20 @@ export function MoverProfileStats({
   const [showTeamModal, setShowTeamModal] = useState(false);
   const [showMovesModal, setShowMovesModal] = useState(false);
 
-  const [newYearsExperience, setNewYearsExperience] = useState(yearsExperience);
-  const [newTeamSize, setNewTeamSize] = useState(teamSize);
+  const [newYearsExperience, setNewYearsExperience] = useState(String(yearsExperience));
+  const [newTeamSize, setNewTeamSize] = useState(String(teamSize));
   const [saving, setSaving] = useState(false);
 
   const handleUpdateExperience = async () => {
+    if (saving) return;
+    const parsed = validInteger(newYearsExperience, 0, 99);
+    if (parsed === null) { showToast('Renseignez un nombre entier entre 0 et 99', 'error'); return; }
     setSaving(true);
     try {
       const { error } = await supabase
         .from('movers')
-        .update({ years_experience: newYearsExperience })
-        .eq('id', moverId);
+        .update({ years_experience: parsed })
+        .eq('id', moverId).select('id').single();
 
       if (error) throw error;
 
@@ -54,12 +58,15 @@ export function MoverProfileStats({
   };
 
   const handleUpdateTeamSize = async () => {
+    if (saving) return;
+    const parsed = validInteger(newTeamSize, 1, 999);
+    if (parsed === null) { showToast('Renseignez un nombre entier entre 1 et 999', 'error'); return; }
     setSaving(true);
     try {
       const { error } = await supabase
         .from('movers')
-        .update({ team_size: newTeamSize })
-        .eq('id', moverId);
+        .update({ team_size: parsed })
+        .eq('id', moverId).select('id').single();
 
       if (error) throw error;
 
@@ -91,7 +98,7 @@ export function MoverProfileStats({
 
           <button
             onClick={() => {
-              setNewYearsExperience(yearsExperience);
+              setNewYearsExperience(String(yearsExperience));
               setShowExperienceModal(true);
             }}
             className="text-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg hover:shadow-md transition-all border border-blue-200 hover:border-blue-300"
@@ -103,7 +110,7 @@ export function MoverProfileStats({
 
           <button
             onClick={() => {
-              setNewTeamSize(teamSize);
+              setNewTeamSize(String(teamSize));
               setShowTeamModal(true);
             }}
             className="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg hover:shadow-md transition-all border border-green-200 hover:border-green-300"
@@ -164,7 +171,7 @@ export function MoverProfileStats({
                   min="0"
                   max="99"
                   value={newYearsExperience}
-                  onChange={(e) => setNewYearsExperience(parseInt(e.target.value) || 0)}
+                  onChange={(e) => setNewYearsExperience(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -213,7 +220,7 @@ export function MoverProfileStats({
                   min="1"
                   max="999"
                   value={newTeamSize}
-                  onChange={(e) => setNewTeamSize(parseInt(e.target.value) || 1)}
+                  onChange={(e) => setNewTeamSize(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>

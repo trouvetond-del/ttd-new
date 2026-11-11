@@ -1,3 +1,4 @@
+import { NumberInput } from './NumberInput';
 import { useState } from 'react';
 import { Search, X, SlidersHorizontal } from 'lucide-react';
 
@@ -178,7 +179,7 @@ export function SearchAndFilter({
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Prix minimum (€)
                 </label>
-                <input
+                <NumberInput
                   type="number"
                   min="0"
                   value={filters.minPrice}
@@ -191,7 +192,7 @@ export function SearchAndFilter({
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Prix maximum (€)
                 </label>
-                <input
+                <NumberInput
                   type="number"
                   min="0"
                   value={filters.maxPrice}

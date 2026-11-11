@@ -5,6 +5,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { MoverLayout } from '../components/MoverLayout';
 import QuoteBidModal from '../components/QuoteBidModal';
 import { regionFromPostalCode, FRENCH_REGIONS } from '../utils/frenchRegion';
+import { findGroupages, type MoveCentres } from '../lib/moverGroupage';
+import { showToast } from '../utils/toast';
 import { coordsFromPostalCode, searchCities, distanceKm, type LatLng } from '../utils/geoFrance';
 
 const MAX_RADIUS = 250;
@@ -14,12 +16,15 @@ const COLUMNS = `id, reference, client_user_id, client_name, client_email, clien
   furniture_lift_needed_departure, furniture_lift_needed_arrival, date_flexibility_days, additional_info, services_needed,
   furniture_inventory, furniture_photos, accepts_groupage, status, created_at, updated_at, is_data_masked, distance_km`;
 
-export default function MoverFindMovesPage() {
+export default function MoverFindMovesPage({ groupageOnly = false }: { groupageOnly?: boolean }) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<any[]>([]);
   const [quoted, setQuoted] = useState<Set<string>>(new Set());
   const [coords, setCoords] = useState<Record<string, LatLng | null>>({});
+  const [centres, setCentres] = useState<MoveCentres>({});
+  const [loadError, setLoadError] = useState('');
+  const [kind, setKind] = useState('');
   const [ref, setRef] = useState('');
   const [region, setRegion] = useState('');
   const [radius, setRadius] = useState(MAX_RADIUS);
@@ -33,6 +38,8 @@ export default function MoverFindMovesPage() {
   const load = async () => {
     if (!user) return;
     setLoading(true);
+    setLoadError('');
+    try {
     const { data: mover } = await supabase.from('movers').select('id, city, postal_code').eq('user_id', user.id).maybeSingle();
     if (mover?.postal_code) {
       const c = await coordsFromPostalCode(mover.postal_code);
@@ -46,20 +53,28 @@ export default function MoverFindMovesPage() {
       const { data: mine } = await supabase.from('quotes').select('quote_request_id').eq('mover_id', mover.id);
       setQuoted(new Set((mine || []).map((q: any) => q.quote_request_id)));
     }
-    const { data } = await supabase.rpc('list_open_moves');
+    const { data, error } = await supabase.rpc('list_open_moves');
+    if (error) throw error;
     const list = data || [];
     setRequests(list);
-    setLoading(false);
-    const entries = await Promise.all(list.map(async (r: any) => [r.id, await coordsFromPostalCode(r.from_postal_code)] as const));
-    setCoords(Object.fromEntries(entries));
+    const entries = await Promise.all(list.map(async (r: any) => {
+      const [from, to] = await Promise.all([coordsFromPostalCode(r.from_postal_code), groupageOnly ? coordsFromPostalCode(r.to_postal_code) : Promise.resolve(null)]);
+      return [r.id, { from, to }] as const;
+    }));
+    const allCentres = Object.fromEntries(entries);
+    setCentres(allCentres);
+    setCoords(Object.fromEntries(entries.map(([id, c]) => [id, c.from])));
+    } catch { setLoadError('Impossible de charger les déménagements. Réessayez.'); }
+    finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, [user]);
+  useEffect(() => { load(); }, [user, groupageOnly]);
 
   // Détails complets (masqués selon les règles de confidentialité) seulement au moment de déposer un devis
   const openBid = async (r: any) => {
-    const { data } = await supabase.from('quote_requests_with_privacy').select(COLUMNS).eq('id', r.id).maybeSingle();
-    setBidRequest(data || r);
+    const { data, error } = await supabase.from('quote_requests_with_privacy').select(COLUMNS).eq('id', r.id).maybeSingle();
+    if (error || !data) { showToast('Demande indisponible. Actualisez la liste.', 'error'); return; }
+    setBidRequest(data);
   };
 
   useEffect(() => {
@@ -80,10 +95,15 @@ export default function MoverFindMovesPage() {
       .sort((a, b) => (useRadius ? (a.fromOrigin ?? 9999) - (b.fromOrigin ?? 9999) : 0));
   }, [requests, coords, ref, region, radius, useRadius, origin]);
 
+  const groupages = useMemo(() => {
+    const visible = new Set(rows.map(r => r.id));
+    return findGroupages(requests, centres).filter(p => (!kind || p.kind === kind) && (visible.has(p.a.id) || visible.has(p.b.id)));
+  }, [requests, centres, rows, kind]);
+
   const fmtDate = (d: string) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
   return (
-    <MoverLayout title="Trouver des déménagements">
+    <MoverLayout title={groupageOnly ? "Groupage" : "Trouver des déménagements"}>
       <div className="max-w-6xl mx-auto space-y-5">
         <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="grid gap-4 md:grid-cols-3">
@@ -138,10 +158,31 @@ export default function MoverFindMovesPage() {
           </div>
         </div>
 
-        <p className="text-sm text-gray-600">{loading ? 'Chargement…' : `${rows.length} déménagement${rows.length > 1 ? 's' : ''} ouvert${rows.length > 1 ? 's' : ''}`}</p>
+        {groupageOnly && <label className="block text-sm">Type de trajet
+          <select value={kind} onChange={e => setKind(e.target.value)} className="ml-3 border rounded-lg px-3 py-2">
+            <option value="">Tous</option><option value="same_route">Même trajet</option><option value="return_trip">Retour à vide</option>
+          </select>
+        </label>}
+        {loadError && <div role="alert">{loadError} <button onClick={load}>Réessayer</button></div>}
+        <p className="text-sm text-gray-600">{loading ? 'Chargement…' : groupageOnly ? `${groupages.length} groupage${groupages.length > 1 ? 's' : ''} disponible${groupages.length > 1 ? 's' : ''}` : `${rows.length} déménagement${rows.length > 1 ? 's' : ''} ouvert${rows.length > 1 ? 's' : ''}`}</p>
 
         {loading ? (
           <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-blue-600" /></div>
+        ) : groupageOnly ? (
+          groupages.length === 0 ? <p className="py-10 text-center text-gray-500">Aucun groupage disponible pour ces critères.</p> :
+          <div className="space-y-4">{groupages.map(pair => <article key={pair.id} className="border border-gray-200 rounded-lg bg-white p-4">
+            <div className="flex flex-wrap justify-between gap-2 mb-3">
+              <h2 className="font-semibold">{pair.kind === 'same_route' ? 'Même trajet' : 'Retour à vide'}</h2>
+              <span className="text-sm">{pair.days} jour{pair.days > 1 ? 's' : ''} d’écart · Raccordement ≈ {Math.round(pair.distance1)} km</span>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">{[pair.a, pair.b].map(r => <div key={r.id} className="min-w-0 space-y-2">
+              <strong>{r.reference}</strong>
+              <p className="break-words">{r.from_city} ({r.from_postal_code}) → {r.to_city} ({r.to_postal_code})</p>
+              <p className="text-sm">{fmtDate(r.moving_date)} · {r.volume_m3 ?? '—'} m³</p>
+              {quoted.has(r.id) ? <span className="text-sm text-green-700">Devis déposé</span> :
+                <button onClick={() => openBid(r)} className="rounded-lg bg-blue-600 text-white px-4 py-2 text-sm">Déposer mon devis</button>}
+            </div>)}</div>
+          </article>)}</div>
         ) : rows.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">Aucun déménagement ne correspond à ces critères.</div>
         ) : (

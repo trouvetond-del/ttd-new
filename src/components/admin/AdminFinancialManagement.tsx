@@ -1,3 +1,4 @@
+import { NumberInput } from '../NumberInput';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import {
@@ -487,7 +488,7 @@ export default function AdminFinancialManagement({ onNavigateToDisputes, highlig
                   <p className="text-xs text-gray-500">Montant au déménageur, reste au client</p>
                   {guaranteeDecision === 'partial_return' && (
                     <div className="mt-2 flex items-center gap-2">
-                      <input type="number" value={guaranteeReturnAmount} onChange={(e) => setGuaranteeReturnAmount(Math.min(Number(e.target.value), Math.max(0, (guaranteePayment.guarantee_amount || 0) - (guaranteePayment.refund_amount || 0))))} min={0} max={Math.max(0, (guaranteePayment.guarantee_amount || 0) - (guaranteePayment.refund_amount || 0))} className="w-28 px-3 py-1 border rounded text-sm" />
+                      <NumberInput type="number" value={guaranteeReturnAmount} onChange={(e) => setGuaranteeReturnAmount(Math.min(Number(e.target.value), Math.max(0, (guaranteePayment.guarantee_amount || 0) - (guaranteePayment.refund_amount || 0))))} min={0} max={Math.max(0, (guaranteePayment.guarantee_amount || 0) - (guaranteePayment.refund_amount || 0))} className="w-28 px-3 py-1 border rounded text-sm" />
                       <span className="text-sm text-gray-600">€ → déménageur</span>
                     </div>
                   )}

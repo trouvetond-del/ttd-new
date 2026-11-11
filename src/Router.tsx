@@ -699,6 +699,7 @@ export function AppRouter() {
               </MoverProtectedRoute>
             }
           />
+          <Route path="/mover/groupage" element={<MoverProtectedRoute><MoverFindMovesPage groupageOnly /></MoverProtectedRoute>} />
           <Route
             path="/mover/find-moves"
             element={

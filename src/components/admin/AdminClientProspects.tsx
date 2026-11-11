@@ -1,3 +1,4 @@
+import { NumberInput } from '../NumberInput';
 import { useState, useEffect, useMemo } from 'react';
 import {
   Phone, PhoneOff, PhoneCall, PhoneForwarded, Mail, Send, Search,
@@ -886,7 +887,7 @@ function AddSingleClientModal({ onClose, onAdded }: { onClose: () => void; onAdd
                 <div className="grid grid-cols-3 gap-2">
                   <div>
                     <label className="text-xs text-gray-600 dark:text-gray-400">Étage</label>
-                    <input type="number" min="0" max="30" value={quoteForm.floor_from} onChange={(e) => setQ('floor_from', parseInt(e.target.value) || 0)} className={inputClass('')} />
+                    <NumberInput type="number" min="0" max="30" value={quoteForm.floor_from} onChange={(e) => setQ('floor_from', parseInt(e.target.value) || 0)} className={inputClass('')} />
                   </div>
                   <div>
                     <label className="text-xs text-gray-600 dark:text-gray-400">Distance portage</label>
@@ -960,7 +961,7 @@ function AddSingleClientModal({ onClose, onAdded }: { onClose: () => void; onAdd
                 <div className="grid grid-cols-3 gap-2">
                   <div>
                     <label className="text-xs text-gray-600 dark:text-gray-400">Étage</label>
-                    <input type="number" min="0" max="30" value={quoteForm.floor_to} onChange={(e) => setQ('floor_to', parseInt(e.target.value) || 0)} className={inputClass('')} />
+                    <NumberInput type="number" min="0" max="30" value={quoteForm.floor_to} onChange={(e) => setQ('floor_to', parseInt(e.target.value) || 0)} className={inputClass('')} />
                   </div>
                   <div>
                     <label className="text-xs text-gray-600 dark:text-gray-400">Distance portage</label>
