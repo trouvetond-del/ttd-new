@@ -113,9 +113,10 @@ export default function AdminUserManagement({
           supabase.from('movers').select('user_id'),
           supabase.from('clients').select('user_id, first_name, last_name, phone, profile_completed'),
           supabase.rpc('get_all_users'),
-          supabase.from('quote_requests').select('client_user_id'),
+          supabase.from('quote_requests').select('client_user_id, is_draft, deleted_at'),
         ]);
-        const qrUserIds = new Set(((qrResult as any)?.data || []).map((q: any) => q.client_user_id).filter(Boolean));
+        // Actif = au moins une demande de devis réellement envoyée (ni brouillon, ni supprimée).
+        const qrUserIds = new Set(((qrResult as any)?.data || []).filter((q: any) => q.is_draft !== true && !q.deleted_at).map((q: any) => q.client_user_id).filter(Boolean));
 
         const adminUserIds = new Set(admins?.map((a: any) => a.user_id) || []);
         const moverUserIds = new Set(movers?.map((m: any) => m.user_id) || []);
@@ -128,7 +129,7 @@ export default function AdminUserManagement({
             clientDataMap.set(client.user_id, {
               name: `${client.first_name || ''} ${client.last_name || ''}`.trim() || 'Non renseigné',
               phone: client.phone || 'Non renseigné',
-              profileCompleted: client.profile_completed === true || (qrUserIds.has(client.user_id) && !!client.phone && !!client.first_name),
+              profileCompleted: qrUserIds.has(client.user_id) && !!client.phone && !!client.first_name,
             });
           }
         });
@@ -168,9 +169,10 @@ export default function AdminUserManagement({
           supabase.from('movers').select('*'),
           supabase.from('clients').select('user_id, first_name, last_name, phone, profile_completed'),
           supabase.rpc('get_all_users'),
-          supabase.from('quote_requests').select('client_user_id'),
+          supabase.from('quote_requests').select('client_user_id, is_draft, deleted_at'),
         ]);
-        const qrUserIds = new Set(((qrResult as any)?.data || []).map((q: any) => q.client_user_id).filter(Boolean));
+        // Actif = au moins une demande de devis réellement envoyée (ni brouillon, ni supprimée).
+        const qrUserIds = new Set(((qrResult as any)?.data || []).filter((q: any) => q.is_draft !== true && !q.deleted_at).map((q: any) => q.client_user_id).filter(Boolean));
 
         const adminUserIds = new Set(admins?.map((a: any) => a.user_id) || []);
         const moverUserIds = new Set(moversData?.map((m: any) => m.user_id) || []);
@@ -183,7 +185,7 @@ export default function AdminUserManagement({
             clientDataMap.set(client.user_id, {
               name: `${client.first_name || ''} ${client.last_name || ''}`.trim() || 'Non renseigné',
               phone: client.phone || 'Non renseigné',
-              profileCompleted: client.profile_completed === true || (qrUserIds.has(client.user_id) && !!client.phone && !!client.first_name),
+              profileCompleted: qrUserIds.has(client.user_id) && !!client.phone && !!client.first_name,
             });
           }
         });
@@ -767,21 +769,7 @@ export default function AdminUserManagement({
                           <Eye className="w-4 h-4" />
                           Détails
                         </button>
-                        {user.role === 'client' && user.is_active === false && (
-                          <button
-                            onClick={async () => {
-                              if (!window.confirm(`Passer "${user.company_name !== 'Non renseigné' ? user.company_name : user.email}" en Actif ?`)) return;
-                              const { data, error } = await supabase.functions.invoke('admin-client-actions', { body: { action: 'activate', clientUserId: user.id } });
-                              if (error || data?.error) { showToast(data?.error || "Impossible d'activer ce client", 'error'); return; }
-                              showToast('Client passé en Actif', 'success');
-                              loadUsers();
-                            }}
-                            className="inline-flex items-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
-                            title="Passer ce client en Actif"
-                          >
-                            Activer
-                          </button>
-                        )}
+                        
                         {user.role === 'mover' && user.verification_status === 'verified' && user.is_active && (
                           <button
                             onClick={async () => {
