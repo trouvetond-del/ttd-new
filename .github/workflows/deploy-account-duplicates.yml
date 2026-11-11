@@ -1,0 +1,15 @@
+name: Deploy atomic duplicate safeguards
+on:
+  workflow_dispatch: {}
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -e
+          q() { python3 -c 'import json,sys;print(json.dumps({"query":sys.stdin.read()}))' | curl --fail-with-body -sS -X POST https://api.supabase.com/v1/projects/bvvbkaluajgdurxnnqqu/database/query -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H 'Content-Type: application/json' --data @-; echo; }
+          q < supabase/sql/account-duplicate-guards.sql
+          q < scripts/account-duplicates.test.sql

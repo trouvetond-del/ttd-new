@@ -39,6 +39,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
   const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const submissionInFlight = useRef(false);
   const [loadingExistingData, setLoadingExistingData] = useState(!!editingQuoteRequestId);
   const [error, setError] = useState('');
   const [showVolumeCalculator, setShowVolumeCalculator] = useState(false);
@@ -462,6 +463,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submissionInFlight.current || submitted) return;
     setError('');
     setFieldErrors({});
     const errors: {[key: string]: string} = {};
@@ -516,6 +518,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
       return;
     }
 
+    submissionInFlight.current = true;
     setLoading(true);
 
     try {
@@ -881,9 +884,11 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
 
       setSubmitted(true);
     } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue');
-      showToast(err.message || 'Une erreur est survenue', 'error');
+      const message = (err.message || 'Une erreur est survenue').replace(/^DUPLICATE_(?:MOVE|ACCOUNT):\s*/, '');
+      setError(message);
+      showToast(message, 'error');
     } finally {
+      submissionInFlight.current = false;
       setLoading(false);
     }
   };
