@@ -4,7 +4,7 @@ DO $$
 DECLARE source public.quote_requests; candidate public.quote_requests; target_client uuid; client_phone text; target_mover uuid; blocked boolean := false;
 BEGIN
  SELECT * INTO STRICT source FROM public.quote_requests WHERE reference='TTD-190329';
- candidate := source; candidate.id := gen_random_uuid(); candidate.reference := NULL;
+ candidate := source; candidate.id := gen_random_uuid(); candidate.reference := NULL; candidate.resume_token := gen_random_uuid();
  BEGIN
   INSERT INTO public.quote_requests SELECT (candidate).*;
  EXCEPTION WHEN unique_violation THEN
