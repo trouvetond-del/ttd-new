@@ -4,6 +4,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { buildVideo, loadVoiceConfig } from "./media.mjs";
 import { generateImage } from "./openai-image.mjs";
+import { shareLinkedIn } from "./linkedin.mjs";
 
 const SITE = "https://www.trouvetondemenageur.fr";
 const GRAPH = "https://graph.facebook.com/v21.0";
@@ -43,6 +44,8 @@ async function publishReel(videoUrl, caption) {
   }
   const ig = await graph(`/${env("IG_USER_ID")}/media_publish`, { creation_id: c.id });
   const fb = await graph(`/${env("FB_PAGE_ID")}/videos`, { file_url: videoUrl, description: caption });
+  const li = await shareLinkedIn({ text: caption, videoUrl });
+  if (li.error) await notifyAdmins("LinkedIn : publication échouée", li.error);
   return { fb: fb.id, ig: ig.id };
 }
 async function notifyAdmins(title, message) {
