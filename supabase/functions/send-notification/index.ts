@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { buildMoverQuoteEmail } from "../_shared/mover-quote-email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -849,43 +850,35 @@ Deno.serve(async (req: Request) => {
         );
         break;
 
-      case "activity_zone_new_quote":
-        subject = "📍 Nouvelle demande dans votre zone d'activité";
-        htmlContent = createEmailTemplate(
-          "Nouvelle demande de déménagement 📦",
-          "Dans votre zone d'activité",
-          `
-            <p style="color:#666; font-size:16px; line-height:1.6; margin-bottom:24px;">
-              Une nouvelle demande de devis correspond à votre zone d'activité.
-            </p>
-
-            <div style="background:#f0f9ff; padding:20px; border-radius:10px; margin-bottom:20px; border-left:4px solid #667eea;">
-              <h3 style="color:#1e40af; font-size:16px; margin:0 0 12px;">📋 Détails du déménagement</h3>
-              <p style="color:#333; margin:4px 0;"><strong>Départ:</strong> ${data.fromCity} (${data.fromPostalCode})</p>
-              <p style="color:#333; margin:4px 0;"><strong>Arrivée:</strong> ${data.toCity} (${data.toPostalCode})</p>
-              <p style="color:#333; margin:4px 0;"><strong>Date:</strong> ${data.movingDate}</p>
-              <p style="color:#333; margin:4px 0;"><strong>Type de bien:</strong> ${data.homeSize}</p>
-              ${data.volumeM3 ? `<p style="color:#333; margin:4px 0;"><strong>Volume:</strong> ${data.volumeM3} m³</p>` : ''}
-              ${data.surfaceM2 ? `<p style="color:#333; margin:4px 0;"><strong>Surface:</strong> ${data.surfaceM2} m²</p>` : ''}
-            </div>
-
-            ${data.servicesNeeded && data.servicesNeeded.length > 0 ? `
-              <div style="background:#e6f7ff; padding:20px; border-radius:10px; margin-bottom:20px;">
-                <h3 style="color:#0369a1; font-size:16px; margin:0 0 12px;">✨ Services demandés</h3>
-                <ul style="color:#666; margin:0; padding-left:20px; line-height:1.8;">
-                  ${data.servicesNeeded.map((s: string) => `<li>${s}</li>`).join('')}
-                </ul>
-              </div>
-            ` : ''}
-
-            <div style="background:#fffbe6; padding:16px; border-radius:10px; border-left:4px solid #ffd700;">
-              <p style="color:#666; margin:0; font-size:14px;">
-                <strong>⏱️ Soyez rapide!</strong> Les premiers devis ont plus de chances d'être acceptés. Connectez-vous pour consulter tous les détails et soumettre votre devis.
-              </p>
-            </div>
-          `
-        );
+      case "activity_zone_new_quote": {
+        // Même design que la relance « Déposer mon devis » (validé).
+        let qr: Record<string, any> | null = null;
+        if (data.quoteRequestId) {
+          const { data: r } = await supabase.from("quote_requests").select("*").eq("id", data.quoteRequestId).maybeSingle();
+          qr = r;
+        } else if (data.fromCity && data.toCity) {
+          const { data: r } = await supabase.from("quote_requests").select("*")
+            .eq("from_city", data.fromCity).eq("to_city", data.toCity)
+            .order("created_at", { ascending: false }).limit(1).maybeSingle();
+          qr = r;
+        }
+        const movingDate = qr?.moving_date || data.movingDate;
+        const t = new Date(movingDate); const today = new Date(); today.setHours(0, 0, 0, 0); t.setHours(0, 0, 0, 0);
+        const days = Math.max(0, Math.ceil((t.getTime() - today.getTime()) / 86400000));
+        subject = `📦 Nouvelle demande : ${qr?.from_city || data.fromCity} → ${qr?.to_city || data.toCity}`;
+        htmlContent = buildMoverQuoteEmail({
+          companyName: data.companyName,
+          reference: qr?.reference || "Nouvelle demande",
+          fromCity: qr?.from_city || data.fromCity,
+          toCity: qr?.to_city || data.toCity,
+          movingDate,
+          days,
+          volumeM3: qr?.volume_m3 ?? data.volumeM3,
+          newRequest: true,
+          quote: qr || { from_postal_code: data.fromPostalCode, to_postal_code: data.toPostalCode, services_needed: data.servicesNeeded },
+        });
         break;
+      }
 
       case "quote_update":
         subject = "🔄 Demande de déménagement modifiée";
