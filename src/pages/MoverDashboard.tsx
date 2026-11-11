@@ -77,6 +77,7 @@ export function MoverDashboard({ onNotificationQuoteRequest }: MoverDashboardPro
         const { count: availableCount } = await supabase
           .from('quote_requests')
           .select('*', { count: 'exact', head: true })
+          .is('deleted_at', null)
           .in('status', ['new', 'quoted'])
           .eq('is_draft', false)
           .not('from_home_size', 'is', null)

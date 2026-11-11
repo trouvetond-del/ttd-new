@@ -108,10 +108,10 @@ export default function AdminOverview({
           .lt('created_at', thirtyDaysAgo.toISOString()),
         supabase.from('movers').select('id, created_at, is_active'),
         supabase.from('movers').select('id').gte('created_at', thirtyDaysAgo.toISOString()),
-        supabase.from('quote_requests').select('id, client_user_id, created_at'),
-        supabase.from('quote_requests').select('id, client_user_id').gte('created_at', thirtyDaysAgo.toISOString()),
-        supabase.from('quote_requests').select('id, created_at'),
-        supabase.from('quote_requests').select('id').gte('created_at', thirtyDaysAgo.toISOString()),
+        supabase.from('quote_requests').select('id, client_user_id, created_at').is('deleted_at', null),
+        supabase.from('quote_requests').select('id, client_user_id').is('deleted_at', null).gte('created_at', thirtyDaysAgo.toISOString()),
+        supabase.from('quote_requests').select('id, created_at').is('deleted_at', null),
+        supabase.from('quote_requests').select('id').is('deleted_at', null).gte('created_at', thirtyDaysAgo.toISOString()),
         supabase.from('quotes').select('id, status').eq('status', 'accepted'),
         supabase
           .from('movers')
@@ -470,6 +470,7 @@ const KPICard = ({
       const { data } = await supabase
         .from('quote_requests')
         .select('id, from_city, to_city, moving_date, status, created_at')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(10);
       setQuoteRequests(data || []);

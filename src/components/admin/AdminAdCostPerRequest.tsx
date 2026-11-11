@@ -25,7 +25,7 @@ export default function AdminAdCostPerRequest() {
       let requests: { acquisition_source: string | null }[] = [];
       if (p) {
         const { data: qr, error: e2 } = await supabase.from('quote_requests').select('acquisition_source')
-          .eq('is_draft', false).in('acquisition_source', ['google_ads', 'meta_ads'])
+          .eq('is_draft', false).is('deleted_at', null).in('acquisition_source', ['google_ads', 'meta_ads'])
           .gte('submitted_at', `${p.start}T00:00:00`).lte('submitted_at', `${p.end}T23:59:59`).limit(5000);
         if (e2) throw e2;
         requests = qr || [];

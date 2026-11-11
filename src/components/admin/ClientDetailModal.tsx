@@ -94,6 +94,7 @@ export default function ClientDetailModal({ clientId, onClose, onUpdate, adminRo
         supabase
           .from('quote_requests')
           .select('*')
+          .is('deleted_at', null)
           .eq('client_user_id', clientId)
           .order('created_at', { ascending: false }),
         supabase.rpc('get_all_users'),

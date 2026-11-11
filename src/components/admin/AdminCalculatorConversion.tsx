@@ -4,7 +4,7 @@ import { Calculator, RefreshCw } from 'lucide-react';
 import { computeConversion, type ConversionStats } from '../../utils/calculatorConversion';
 
 async function load(source: 'calculateur' | null): Promise<ConversionStats> {
-  let q = supabase.from('quote_requests').select('id, accepted_quote_id').eq('is_draft', false);
+  let q = supabase.from('quote_requests').select('id, accepted_quote_id').eq('is_draft', false).is('deleted_at', null);
   q = source ? q.eq('acquisition_source', source) : q;
   const { data: requests, error } = await q.limit(5000);
   if (error) throw error;

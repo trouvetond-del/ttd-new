@@ -92,6 +92,7 @@ export function ClientDashboard() {
       const { data: requestsData, error: requestsError } = await supabase
         .from('quote_requests')
         .select('*')
+        .is('deleted_at', null)
         .eq('client_user_id', user?.id)
         .order('created_at', { ascending: false });
 

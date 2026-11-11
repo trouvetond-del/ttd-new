@@ -79,6 +79,7 @@ export function useNavigationHelpers() {
     const { data: existingQuotes } = await supabase
       .from('quote_requests')
       .select('id, from_home_size, from_home_type, to_home_size, to_home_type, volume_m3')
+      .is('deleted_at', null)
       .eq('client_user_id', loggedInUser.id)
       .order('created_at', { ascending: false })
       .limit(1);

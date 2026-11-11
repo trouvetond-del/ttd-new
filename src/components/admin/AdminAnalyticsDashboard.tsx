@@ -44,7 +44,7 @@ export default function AdminAnalyticsDashboard({ adminRole = '' }: AdminAnalyti
         { data: users },
         { data: movers },
       ] = await Promise.all([
-        supabase.from('quote_requests').select('*'),
+        supabase.from('quote_requests').select('*').is('deleted_at', null),
         supabase.from('quotes').select('*'),
         supabase.from('payments').select('*'),
         supabase.from('users').select('*').eq('role', 'client'),

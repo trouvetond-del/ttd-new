@@ -169,6 +169,7 @@ export default function ClientQuotesPage() {
             payments!quote_id(id, payment_status, paid_at)
           )
         `)
+        .is('deleted_at', null)
         .eq('client_user_id', user?.id)
         .order('created_at', { ascending: false });
 

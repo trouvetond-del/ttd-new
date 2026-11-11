@@ -65,6 +65,7 @@ export default function AdminMissions({ adminRole }: AdminMissionsProps) {
       const { data: quoteRequests, error: qrError } = await supabase
         .from('quote_requests')
         .select('*')
+        .is('deleted_at', null)
         .in('status', ['accepted', 'completed'])
         .order('created_at', { ascending: false });
 

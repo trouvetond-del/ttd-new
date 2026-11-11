@@ -60,7 +60,7 @@ export default function AdminExports({ adminRole = '' }: AdminExportsProps) {
       const { data: allUsers } = await supabase.rpc('get_all_users');
       const { data: clients } = await supabase.from('clients').select('user_id, first_name, last_name, phone, profile_completed');
       const { data: movers } = await supabase.from('movers').select('*');
-      const { data: quoteRequestClients } = await supabase.from('quote_requests').select('client_user_id');
+      const { data: quoteRequestClients } = await supabase.from('quote_requests').select('client_user_id').is('deleted_at', null);
 
       const qrIds = new Set((quoteRequestClients || []).map((q: any) => q.client_user_id).filter(Boolean));
       const clientPhoneMap = new Map<string, { firstName?: string; lastName?: string; phone?: string; profileCompleted?: boolean }>();
@@ -162,6 +162,7 @@ export default function AdminExports({ adminRole = '' }: AdminExportsProps) {
       const { data: quoteRequests } = await supabase
         .from('quote_requests')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       const quotesData = (quoteRequests || []).map((quote: any) => ({
@@ -198,6 +199,7 @@ export default function AdminExports({ adminRole = '' }: AdminExportsProps) {
       const { data: payments } = await supabase
         .from('payments')
         .select('*')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       const paymentsData = (payments || []).map((payment: any) => ({

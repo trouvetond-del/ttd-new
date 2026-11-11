@@ -64,7 +64,7 @@ export function AdvancedAnalytics() {
         supabase.from('quotes').select('price, payment_status, commission_amount, escrow_amount'),
         supabase.from('fraud_alerts').select('*', { count: 'exact', head: true }),
         supabase.from('document_verifications').select('*', { count: 'exact', head: true }),
-        supabase.from('quote_requests').select('status'),
+        supabase.from('quote_requests').select('status').is('deleted_at', null),
       ]);
 
       let totalRevenue = 0;
