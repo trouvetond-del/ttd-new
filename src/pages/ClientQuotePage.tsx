@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, MapPin, Home, Package, CheckCircle, Calculator, 
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { readAcquisitionSource, clearAcquisitionSource } from '../utils/acquisitionSource';
+import { readQuotePrefill, clearQuotePrefill } from '../utils/quotePrefill';
 import { trackAdEvent } from '../lib/ads';
 import { useAuth } from '../contexts/AuthContext';
 import { VolumeCalculator, type FurnitureInventory } from '../components/VolumeCalculator';
@@ -97,6 +98,25 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
     market_price_estimate: null as number | null
   });
   const [selectedFormula, setSelectedFormula] = useState<string>('');
+
+  // Reprend ce que la personne a déjà saisi sur la page publicité ou le
+  // calculateur de volume, sans jamais écraser une valeur déjà remplie.
+  useEffect(() => {
+    if (editingQuoteRequestId) return;
+    const pre = readQuotePrefill();
+    if (!pre) return;
+    setFormData(prev => ({
+      ...prev,
+      client_name: prev.client_name || pre.client_name || '',
+      client_email: prev.client_email || pre.client_email || '',
+      client_phone: prev.client_phone || pre.client_phone || '',
+      moving_date: prev.moving_date || pre.moving_date || '',
+      from_home_type: prev.from_home_type || pre.from_home_type || '',
+      from_home_size: prev.from_home_size || (pre.from_home_size && homeSizes.includes(pre.from_home_size) ? pre.from_home_size : ''),
+      volume_m3: prev.volume_m3 || (pre.volume_m3 && pre.volume_m3 > 0 ? pre.volume_m3 : null),
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -599,7 +619,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
           .eq('id', targetQuoteRequestId);
 
         if (updateError) throw updateError;
-        if (isFirstRealSubmission) clearAcquisitionSource();
+        if (isFirstRealSubmission) clearAcquisitionSource(); clearQuotePrefill();
 
         // Expire any pending/accepted quotes
         const { data: quotesToExpire } = await supabase
@@ -785,7 +805,7 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
           }]);
 
         if (submitError) throw submitError;
-        clearAcquisitionSource();
+        clearAcquisitionSource(); clearQuotePrefill();
 
         // Conversion : demande de devis complète envoyée (compte + formulaire complet)
         trackAdEvent('Lead', { content_name: 'full_quote_request' });

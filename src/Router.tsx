@@ -62,6 +62,8 @@ import Blog from './pages/Blog';
 import CityPage from './pages/CityPage';
 import TarifsPage from './pages/TarifsPage';
 import CalculateurPage from './pages/CalculateurPage';
+import VolumeCalculatorPage from './pages/VolumeCalculatorPage';
+import AdLandingPage from './pages/AdLandingPage';
 import BlogArticle from './pages/BlogArticle';
 import { EmailVerificationPage } from './pages/EmailVerificationPage';
 import { CheckEmailPage } from './pages/CheckEmailPage';
@@ -473,6 +475,8 @@ export function AppRouter() {
           <Route path="/demenagement/:slug" element={<CityPage />} />
           <Route path="/tarifs-demenagement-2026" element={<TarifsPage />} />
           <Route path="/calculateur-prix-demenagement" element={<CalculateurPage />} />
+          <Route path="/calculateur-volume" element={<VolumeCalculatorPage />} />
+          <Route path="/devis-demenagement" element={<AdLandingPage />} />
           <Route path="/guide-demenagement" element={<MovingGuidePage />} />
           <Route path="/blog/:slug" element={<BlogArticle />} />
           {/* Legal Routes */}

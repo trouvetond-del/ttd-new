@@ -1,0 +1,10 @@
+import { expect, test } from 'bun:test';
+import { nextClientStep } from '../supabase/functions/send-partial-lead-reminder/sequence';
+const h = 3_600_000, now = Date.parse('2026-11-11T12:00:00Z');
+const lead = (ageH: number, count: number, converted: string | null = null) => ({ created_at: new Date(now - ageH * h).toISOString(), reminder_count: count, converted_at: converted });
+test('first email one hour after capture', () => { expect(nextClientStep(lead(0.5, 0), now)).toBe(null); expect(nextClientStep(lead(1, 0), now)).toBe(0); });
+test('second email at day 2', () => { expect(nextClientStep(lead(47, 1), now)).toBe(null); expect(nextClientStep(lead(48, 1), now)).toBe(1); });
+test('third email at day 5', () => { expect(nextClientStep(lead(119, 2), now)).toBe(null); expect(nextClientStep(lead(120, 2), now)).toBe(2); });
+test('never more than 3 emails', () => expect(nextClientStep(lead(150, 3), now)).toBe(null));
+test('finished request stops reminders', () => expect(nextClientStep(lead(48, 1, '2026-11-10T00:00:00Z'), now)).toBe(null));
+test('old captures are never reminded', () => expect(nextClientStep(lead(24 * 8, 0), now)).toBe(null));

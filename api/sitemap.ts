@@ -30,6 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     { url: '/guide-demenagement', priority: '0.7', changefreq: 'monthly' },
     { url: '/tarifs-demenagement-2026', priority: '0.85', changefreq: 'monthly' },
     { url: '/calculateur-prix-demenagement', priority: '0.85', changefreq: 'monthly' },
+    { url: '/calculateur-volume', priority: '0.8', changefreq: 'monthly' },
     { url: '/faq', priority: '0.6', changefreq: 'monthly' },
     { url: '/pricing', priority: '0.6', changefreq: 'monthly' },
     { url: '/about', priority: '0.5', changefreq: 'monthly' },
