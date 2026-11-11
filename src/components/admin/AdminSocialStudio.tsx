@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Clapperboard, Image as ImageIcon, Video, Facebook, Instagram, Pencil, Mic, Trash2, Upload, BarChart3,
   RefreshCw, Loader, ExternalLink, Eye, MousePointerClick, Heart, MessageCircle, Share2, Clock, CheckCircle2,
-  XCircle, Plus, BookA, X, Sparkles, Archive, Bot,
+  XCircle, Plus, BookA, X, Sparkles, Archive, Bot, Linkedin,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
@@ -11,7 +11,7 @@ import StudioAgentChat from './StudioAgentChat';
 type Table = 'marketing_posts' | 'marketing_opportunity_posts';
 type Scene = { voiceover: string; image_url?: string | null; image_prompt?: string | null };
 type Pub = {
-  id: string; target_table: Table; target_id: string; platform: 'facebook' | 'instagram'; permalink: string | null;
+  id: string; target_table: Table; target_id: string; platform: 'facebook' | 'instagram' | 'linkedin'; permalink: string | null;
   published_at: string; deleted_at: string | null; views: number | null; clicks: number | null; likes: number | null;
   comments: number | null; shares: number | null; saves: number | null; stats_at: string | null; stats_error: string | null;
 };
@@ -186,7 +186,7 @@ export default function AdminSocialStudio() {
                       <div className="space-y-1">
                         {ps.map((x) => (
                           <div key={x.id} className="flex items-center gap-3 rounded-lg bg-slate-50 px-2 py-1 text-xs text-slate-600">
-                            {x.platform === 'facebook' ? <Facebook className="h-4 w-4 text-blue-600" /> : <Instagram className="h-4 w-4 text-pink-600" />}
+                            {x.platform === 'facebook' ? <Facebook className="h-4 w-4 text-blue-600" /> : x.platform === 'linkedin' ? <Linkedin className="h-4 w-4" /> : <Instagram className="h-4 w-4 text-pink-600" />}
                             <span title="Vues"><Eye className="mr-0.5 inline h-3 w-3" />{x.views ?? '—'}</span>
                             <span title="Clics"><MousePointerClick className="mr-0.5 inline h-3 w-3" />{x.clicks ?? '—'}</span>
                             <span title="J'aime"><Heart className="mr-0.5 inline h-3 w-3" />{x.likes ?? 0}</span>
@@ -205,6 +205,9 @@ export default function AdminSocialStudio() {
                       </button>
                       <button onClick={() => queue('publish', p, ['instagram'])} className="flex items-center justify-center gap-1 rounded-xl bg-gradient-to-r from-pink-500 to-orange-400 px-3 py-2 text-xs font-semibold text-white hover:opacity-90">
                         <Instagram className="h-4 w-4" />Partager Instagram
+                      </button>
+                      <button onClick={() => queue('publish', p, ['linkedin'])} className="col-span-2 flex items-center justify-center gap-1 rounded-lg border px-3 py-2 text-xs font-semibold">
+                        <Linkedin className="h-4 w-4" />Partager LinkedIn
                       </button>
                       <button onClick={() => setEditText(p)} className="flex items-center justify-center gap-1 rounded-xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-200">
                         <Pencil className="h-4 w-4" />Modifier le texte
@@ -297,8 +300,8 @@ function PlatformPick({ value, onChange, label }: { value: string[]; onChange: (
   return (
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <span className="text-slate-600">{label}</span>
-      {['facebook', 'instagram'].map((p) => (
-        <label key={p} className="flex items-center gap-1"><input type="checkbox" checked={value.includes(p)} onChange={() => toggle(p)} />{p === 'facebook' ? 'Facebook' : 'Instagram'}</label>
+      {['facebook', 'instagram', 'linkedin'].map((p) => (
+        <label key={p} className="flex items-center gap-1"><input type="checkbox" checked={value.includes(p)} onChange={() => toggle(p)} />{p === 'facebook' ? 'Facebook' : p === 'linkedin' ? 'LinkedIn' : 'Instagram'}</label>
       ))}
     </div>
   );
@@ -626,6 +629,9 @@ function SharePanel({ posts, pubs, jobs, queue }: { posts: Post[]; pubs: Pub[]; 
                 <button disabled={locked} onClick={() => queue('publish', p, ['facebook', 'instagram'])}
                   className="mt-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow disabled:cursor-not-allowed disabled:from-slate-400 disabled:to-slate-400">
                   <Share2 className="h-4 w-4" />{locked ? `Republiable dans ${h} h ${m} min` : 'Publier sur Facebook et Instagram'}
+                </button>
+                <button disabled={locked} onClick={() => queue('publish', p, ['linkedin'])} className="flex items-center justify-center gap-2 rounded-lg border px-4 py-2 text-sm font-semibold disabled:opacity-50">
+                  <Linkedin className="h-4 w-4" />Partager LinkedIn
                 </button>
               </div>
             </div>

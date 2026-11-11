@@ -28,3 +28,4 @@
 - Vercel app rewrites must cover every client-router path prefix, including public move listings and driver pages, so hard refresh and emailed links do not return host 404s.
 - Request action consistency is enforced by a transactional database trigger and deterministic audit RPC; operational readers refresh on realtime, local actions, cross-tab messages and focus, and verification failures never replay writes or claim success.
 - Groupage invalidation is separate from manual dismissal, preserving history and reversible restoration while excluding deleted, draft, closed, expired or geometrically incompatible pairs from alerts and sends.
+- Administrative list removal uses an admin-only reversible visibility ledger, not auth deletion; account/mover entries synchronize while contracts, signatures, payments and end-user access remain intact.

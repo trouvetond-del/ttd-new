@@ -1,3 +1,5 @@
+import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
+import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { NumberInput } from '../NumberInput';
 import { useState, useEffect, useMemo } from 'react';
 import {
@@ -37,6 +39,7 @@ const EMAIL_DELAY_MS = 600;
 const MAX_BULK_EMAILS = 50;
 
 export default function AdminClientProspects() {
+  const removal = useAdminListRemoval('client_prospects');
   const [prospects, setProspects] = useState<ClientProspect[]>([]);
   const [loading, setLoading] = useState(true);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -96,7 +99,7 @@ export default function AdminClientProspects() {
   }, [prospects]);
 
   const filteredProspects = useMemo(() => {
-    let f = prospects;
+    let f = prospects.filter(p=>removal.includes(p.id));
     switch (tabFilter) {
       case 'to_call': f = f.filter(p => p.has_phone && ['not_called', 'called_no_answer', 'callback_later'].includes(p.call_status) && p.invitation_status === 'not_invited'); break;
       case 'to_call_not_called': f = f.filter(p => p.has_phone && p.call_status === 'not_called' && p.invitation_status === 'not_invited'); break;
@@ -113,7 +116,7 @@ export default function AdminClientProspects() {
       f = f.filter(p => p.email.toLowerCase().includes(l) || (p.firstname || '').toLowerCase().includes(l) || (p.lastname || '').toLowerCase().includes(l) || (p.phone || '').replace(/\s/g, '').includes(l.replace(/\s/g, '')));
     }
     return f;
-  }, [prospects, tabFilter, searchTerm]);
+  }, [prospects, tabFilter, searchTerm, removal.includes]);
 
   const updateCallStatus = async (id: string, status: CallStatus, notes?: string) => {
     setUpdatingCall(id);
@@ -206,23 +209,11 @@ export default function AdminClientProspects() {
   };
 
   const deleteProspect = async (id: string) => {
-    if (!confirm('Supprimer ?')) return;
-    await supabase.from('client_prospects').delete().eq('id', id);
-    setProspects(prev => prev.filter(p => p.id !== id));
-    setSelectedIds(prev => { const n = new Set(prev); n.delete(id); return n; });
-    showToast('Supprimé', 'success');
+    await removal.change([id]); await fetchProspects(); setSelectedIds(new Set());
   };
-
   const deleteSelectedProspects = async () => {
-    if (selectedIds.size === 0) return;
-    if (!confirm(`Supprimer ${selectedIds.size} prospect(s) sélectionné(s) ?`)) return;
-    const ids = Array.from(selectedIds);
-    for (const id of ids) {
-      await supabase.from('client_prospects').delete().eq('id', id);
-    }
-    setProspects(prev => prev.filter(p => !selectedIds.has(p.id)));
-    setSelectedIds(new Set());
-    showToast(`${ids.length} prospect(s) supprimé(s)`, 'success');
+    const ids=filteredProspects.filter(p=>selectedIds.has(p.id)).map(p=>p.id);
+    await removal.change(ids); await fetchProspects(); setSelectedIds(new Set());
   };
 
   const exportProspects = async (onlySelected = false) => {
@@ -340,6 +331,7 @@ export default function AdminClientProspects() {
         <input type="text" placeholder="Rechercher par nom, email, téléphone..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg" />
       </div>
 
+      <AdminListRemovalBar removal={removal} ids={filteredProspects.map(p=>p.id)} />
       {loading ? (
         <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-600 border-t-transparent"></div></div>
       ) : filteredProspects.length === 0 ? (

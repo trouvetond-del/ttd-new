@@ -1,3 +1,5 @@
+import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
+import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { isMoverQualified } from '../../lib/moverQualification';
@@ -53,6 +55,7 @@ export default function AdminUserManagement({
   initialUserType = 'all',
   initialUserStatus = 'all'
 }: AdminUserManagementProps) {
+  const removal = useAdminListRemoval('accounts');
   const isSuperAdmin = adminRole === 'super_admin';
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
@@ -260,7 +263,7 @@ export default function AdminUserManagement({
   };
 
   const applyFilters = (userList: User[]) => {
-    let filtered = [...userList];
+    let filtered = userList.filter(user => removal.includes(user.id));
 
     if (searchTerm) {
       filtered = filtered.filter(
@@ -334,7 +337,7 @@ export default function AdminUserManagement({
 
   useEffect(() => {
     applyFilters(users);
-  }, [searchTerm, userStatus, users, dateSortDirection]);
+  }, [searchTerm, userStatus, users, dateSortDirection, removal.includes]);
 
   const handleSelectAll = () => {
     if (selectedUsers.size === filteredUsers.length) {
@@ -441,23 +444,8 @@ export default function AdminUserManagement({
             await supabase.from(table).update({ is_banned: true }).eq('user_id', userId);
             break;
           case 'delete':
-            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-            const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+            throw new Error('Utilisez la corbeille pour conserver les contrats et paiements.');
 
-            const response = await fetch(`${supabaseUrl}/functions/v1/delete-auth-user`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${supabaseAnonKey}`,
-              },
-              body: JSON.stringify({ userId }),
-            });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || 'Erreur lors de la suppression');
-            }
-            break;
         }
       }
 
@@ -620,6 +608,7 @@ export default function AdminUserManagement({
           </div>
         </div>
 
+        <AdminListRemovalBar removal={removal} ids={filteredUsers.map(u=>u.id)} />
         {selectedUsers.size > 0 && (
           <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-between">
             <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
@@ -640,12 +629,6 @@ export default function AdminUserManagement({
               >
                 Suspendre
               </button>
-              <button
-                onClick={() => handleBulkAction('delete')}
-                className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-              >
-                Supprimer
-              </button>
             </div>
           </div>
         )}
@@ -657,8 +640,8 @@ export default function AdminUserManagement({
                 <th className="px-4 py-3 text-left">
                   <input
                     type="checkbox"
-                    checked={selectedUsers.size === filteredUsers.length && filteredUsers.length > 0}
-                    onChange={handleSelectAll}
+                    checked={filteredUsers.length>0 && filteredUsers.every(u=>removal.selected.has(u.id))}
+                    onChange={()=>{handleSelectAll();removal.toggleAll(filteredUsers.map(u=>u.id));}}
                     className="rounded border-gray-300"
                   />
                 </th>
@@ -708,8 +691,8 @@ export default function AdminUserManagement({
                     <td className="px-4 py-4">
                       <input
                         type="checkbox"
-                        checked={selectedUsers.has(user.id)}
-                        onChange={() => handleSelectUser(user.id)}
+                        checked={removal.selected.has(user.id)}
+                        onChange={()=>{handleSelectUser(user.id);removal.toggle(user.id);}}
                         className="rounded border-gray-300"
                       />
                     </td>

@@ -1,3 +1,5 @@
+import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
+import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useState, useEffect } from 'react';
 import { Clock, Eye, RefreshCw, CheckCircle, XCircle, Building, Mail, Phone, Search, Truck } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -21,6 +23,7 @@ interface PendingMover {
 }
 
 export default function AdminPendingMovers() {
+  const removal = useAdminListRemoval('movers');
   const [movers, setMovers] = useState<PendingMover[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMoverId, setSelectedMoverId] = useState<string | null>(null);
@@ -50,7 +53,7 @@ export default function AdminPendingMovers() {
     setLoading(false);
   };
 
-  const filtered = movers.filter(m => {
+  const filtered = movers.filter(m => removal.includes(m.id)).filter(m => {
     if (!searchTerm) return true;
     const lower = searchTerm.toLowerCase();
     return m.company_name.toLowerCase().includes(lower) || m.email.toLowerCase().includes(lower) || (m.city || '').toLowerCase().includes(lower);
@@ -74,6 +77,7 @@ export default function AdminPendingMovers() {
           className="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" />
       </div>
 
+      <AdminListRemovalBar removal={removal} ids={filtered.map(m=>m.id)} />
       {loading ? (
         <div className="flex items-center justify-center py-12"><RefreshCw className="w-8 h-8 animate-spin text-blue-600" /></div>
       ) : filtered.length === 0 ? (
@@ -87,6 +91,7 @@ export default function AdminPendingMovers() {
           {filtered.map(mover => (
             <div key={mover.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between gap-4">
+                <AdminListCheckbox removal={removal} id={mover.id} label={mover.company_name}/>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="font-semibold text-gray-900 dark:text-white">{mover.company_name}</h3>

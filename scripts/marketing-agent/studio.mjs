@@ -57,10 +57,11 @@ async function loadTarget(table, id) {
 }
 
 async function recordPub(table, id, platform, media_type, external_id) {
-  let permalink = null;
-  try { permalink = (await meta("GET", `/${external_id}`, { fields: platform === "instagram" ? "permalink" : (media_type === "video" ? "permalink_url" : "permalink_url") })).permalink ?? null; } catch {}
+  let permalink = platform === 'linkedin' ? `https://www.linkedin.com/feed/update/${external_id}/` : null;
+  try { if (platform !== 'linkedin') permalink = (await meta("GET", `/${external_id}`, { fields: platform === "instagram" ? "permalink" : "permalink_url" })).permalink ?? null; } catch {}
   try { if (!permalink && platform === "facebook") permalink = (await meta("GET", `/${external_id}`, { fields: "permalink_url" })).permalink_url ?? null; } catch {}
-  await sb.from("social_publications").upsert({ target_table: table, target_id: id, platform, media_type, external_id, permalink }, { onConflict: "platform,external_id" });
+  const { error } = await sb.from("social_publications").upsert({ target_table: table, target_id: id, platform, media_type, external_id, permalink }, { onConflict: "platform,external_id" });
+  if (error) throw new Error(`Publication effectuée, enregistrement à vérifier : ${error.message}`);
 }
 
 async function publish(job) {
@@ -190,6 +191,7 @@ async function refreshStats(force) {
   const { data } = await q;
   let n = 0;
   for (const p of data ?? []) {
+    if (p.platform === 'linkedin') continue; // Do not ask Meta for LinkedIn metrics.
     try {
       const s = p.platform === "facebook" ? await fbStats(p) : await igStats(p);
       await sb.from("social_publications").update({ ...s, stats_error: s.stats_error ?? null, stats_at: new Date().toISOString() }).eq("id", p.id);

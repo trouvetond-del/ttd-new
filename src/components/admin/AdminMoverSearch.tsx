@@ -1,3 +1,5 @@
+import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
+import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Search, Truck, Phone, Mail, FileText, MapPin, CheckCircle, Clock, XCircle, Eye, X, Loader2, AlertCircle, Building } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -23,6 +25,7 @@ interface MoverResult {
 }
 
 export default function AdminMoverSearch() {
+  const removal = useAdminListRemoval('movers');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchField, setSearchField] = useState<'all' | 'name' | 'email' | 'phone' | 'siret'>('all');
   const [allMovers, setAllMovers] = useState<MoverResult[]>([]);
@@ -63,7 +66,7 @@ export default function AdminMoverSearch() {
 
     const termClean = term.replace(/\s/g, '');
 
-    return allMovers.filter((mover) => {
+    return allMovers.filter(mover => removal.includes(mover.id)).filter((mover) => {
       const companyName = (mover.company_name || '').toLowerCase();
       const firstName = (mover.manager_firstname || '').toLowerCase();
       const lastName = (mover.manager_lastname || '').toLowerCase();
@@ -99,7 +102,7 @@ export default function AdminMoverSearch() {
           );
       }
     });
-  }, [searchTerm, searchField, allMovers]);
+  }, [searchTerm, searchField, allMovers, removal.includes]);
 
   const hasSearched = searchTerm.trim().length >= 2;
 
@@ -219,6 +222,7 @@ export default function AdminMoverSearch() {
         </div>
       )}
 
+      <AdminListRemovalBar removal={removal} ids={filteredResults.map(m=>m.id)} />
       {/* Results */}
       {!loading && filteredResults.length > 0 && (
         <div className="space-y-3">
@@ -236,6 +240,7 @@ export default function AdminMoverSearch() {
                   className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all p-4 sm:p-5"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <AdminListCheckbox removal={removal} id={mover.id} label={mover.company_name}/>
                     {/* Left: Info */}
                     <div className="flex-1 min-w-0 space-y-2">
                       <div className="flex items-center gap-2 flex-wrap">

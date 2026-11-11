@@ -1,3 +1,5 @@
+import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
+import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useEffect, useMemo, useState } from 'react';
 import { RefreshCw, Send, Search, Copy, Phone } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -22,6 +24,7 @@ const SITE = 'https://www.trouvetondemenageur.fr';
 const date = (d: string | null) => (d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—');
 
 export default function AdminPartners() {
+  const removal = useAdminListRemoval('storage_partners');
   const [partners, setPartners] = useState<Partner[]>([]);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,9 +46,9 @@ export default function AdminPartners() {
   }
   useEffect(() => { void load(); }, []);
 
-  const shown = useMemo(() => partners.filter(p =>
+  const shown = useMemo(() => partners.filter(p => removal.includes(p.id)).filter(p =>
     (!filter || p.status === filter) &&
-    (!q || `${p.name} ${p.city} ${p.code} ${p.email ?? ''}`.toLowerCase().includes(q.toLowerCase()))), [partners, q, filter]);
+    (!q || `${p.name} ${p.city} ${p.code} ${p.email ?? ''}`.toLowerCase().includes(q.toLowerCase()))), [partners, q, filter, removal.trash, removal.ready, removal.includes]);
   const count = (s: string) => partners.filter(p => p.status === s).length;
   const nameOf = (id: string) => partners.find(p => p.id === id)?.name ?? '—';
 
@@ -96,14 +99,16 @@ export default function AdminPartners() {
         </select>
       </div>
 
+      <AdminListRemovalBar removal={removal} ids={shown.map(p=>p.id)} />
       <div className="overflow-x-auto rounded-xl border bg-white">
         <table className="min-w-full text-sm">
           <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
-            <tr><th className="p-3">Box</th><th className="p-3">Contact</th><th className="p-3">Code QR</th><th className="p-3">Statut</th><th className="p-3">Mails</th><th className="p-3"></th></tr>
+            <tr><th className="p-3"></th><th className="p-3">Box</th><th className="p-3">Contact</th><th className="p-3">Code QR</th><th className="p-3">Statut</th><th className="p-3">Mails</th><th className="p-3"></th></tr>
           </thead>
           <tbody className="divide-y">
-            {loading ? <tr><td className="p-4" colSpan={6}>Chargement…</td></tr> : shown.map(p => (
+            {loading ? <tr><td className="p-4" colSpan={7}>Chargement…</td></tr> : shown.map(p => (
               <tr key={p.id} className="align-top">
+                <td className="p-3"><AdminListCheckbox removal={removal} id={p.id} label={p.name}/></td>
                 <td className="p-3"><div className="font-medium">{p.name}</div><div className="text-xs text-gray-500">{p.city}{p.address ? ` · ${p.address}` : ''}</div></td>
                 <td className="p-3 text-xs">
                   {p.phone && <a href={`tel:${p.phone.replace(/\s/g, '')}`} className="flex items-center gap-1 text-blue-700"><Phone size={12} />{p.phone}</a>}

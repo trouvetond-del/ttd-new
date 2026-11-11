@@ -1,3 +1,5 @@
+import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
+import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useState, useEffect } from 'react';
 import { FileText, RefreshCw, Download, Send, Clock, CheckCircle, XCircle, AlertTriangle, Eye, Search } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -36,6 +38,7 @@ const statusConfig: Record<string, { label: string; color: string; bg: string; i
 };
 
 export default function AdminDropboxSignContracts() {
+  const removal = useAdminListRemoval('mover_contracts');
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
@@ -215,7 +218,7 @@ export default function AdminDropboxSignContracts() {
     setSyncingAll(false);
   };
 
-  const filteredContracts = contracts.filter(c => {
+  const filteredContracts = contracts.filter(c => removal.includes(c.id)).filter(c => {
     if (filter !== 'all' && c.status !== filter) return false;
     if (searchTerm) {
       const s = searchTerm.toLowerCase();
@@ -321,6 +324,7 @@ export default function AdminDropboxSignContracts() {
         </select>
       </div>
 
+      <AdminListRemovalBar removal={removal} ids={filteredContracts.map(c=>c.id)} />
       {/* Table */}
       {loading ? (
         <div className="flex justify-center py-12">
@@ -339,7 +343,7 @@ export default function AdminDropboxSignContracts() {
             <table className="w-full">
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300">Entreprise</th>
+                  <th className="px-4 py-3"></th><th className="text-left px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300">Entreprise</th>
                   <th className="text-left px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300">Email</th>
                   <th className="text-left px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300">Statut</th>
                   <th className="text-left px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300">Envoyé le</th>
@@ -353,6 +357,7 @@ export default function AdminDropboxSignContracts() {
                   const StatusIcon = sc.icon;
                   return (
                     <tr key={contract.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                      <td className="px-4 py-3"><AdminListCheckbox removal={removal} id={contract.id} label={contract.movers?.company_name || "contrat"}/></td>
                       <td className="px-4 py-3">
                         <p className="font-medium text-gray-900 dark:text-white text-sm">
                           {contract.movers?.company_name || contract.contract_data?.company_name || '—'}

@@ -1,3 +1,5 @@
+import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
+import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useState, useEffect } from 'react';
 import { FileText, Download, Eye, Calendar, MapPin, Euro, Building2, User, Search, Filter, RefreshCw, Send, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -37,6 +39,7 @@ interface ContractDetail {
 }
 
 export function AdminContractsPanel() {
+  const removal = useAdminListRemoval('contracts');
   const [contracts, setContracts] = useState<ContractView[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedContract, setSelectedContract] = useState<ContractDetail | null>(null);
@@ -275,7 +278,7 @@ export function AdminContractsPanel() {
     }
   };
 
-  const filteredContracts = contracts.filter(contract => {
+  const filteredContracts = contracts.filter(contract => removal.includes(contract.id)).filter(contract => {
     const matchesSearch = 
       contract.contract_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -395,13 +398,14 @@ export function AdminContractsPanel() {
         </div>
       </div>
 
+      <AdminListRemovalBar removal={removal} ids={filteredContracts.map(c=>c.id)} />
       {/* Contracts Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contrat</th>
+                <th className="px-4 py-3"></th><th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contrat</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Déménageur</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trajet</th>
@@ -415,6 +419,7 @@ export function AdminContractsPanel() {
             <tbody className="divide-y divide-gray-200">
               {filteredContracts.map((contract) => (
                 <tr key={contract.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-4"><AdminListCheckbox removal={removal} id={contract.id} label={contract.contract_number}/></td>
                   <td className="px-4 py-4">
                     <div className="font-medium text-gray-900">{contract.contract_number}</div>
                     <div className="text-xs text-gray-500">{new Date(contract.created_at).toLocaleDateString('fr-FR')}</div>

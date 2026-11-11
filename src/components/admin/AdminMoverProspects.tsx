@@ -1,3 +1,5 @@
+import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
+import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useState, useEffect, useMemo } from 'react';
 import {
   Phone, PhoneOff, PhoneCall, PhoneForwarded, Mail, Send, Search,
@@ -57,6 +59,7 @@ const EMAIL_DELAY_MS = 600;
 const MAX_BULK_EMAILS = 50;
 
 export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: string }) {
+  const removal = useAdminListRemoval('mover_prospects');
   const [prospects, setProspects] = useState<MoverProspect[]>([]);
   const [loading, setLoading] = useState(true);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -118,7 +121,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
   }, [prospects]);
 
   const filteredProspects = useMemo(() => {
-    let f = prospects;
+    let f = prospects.filter(p=>removal.includes(p.id));
     switch (tabFilter) {
       case 'to_call': f = f.filter(p => p.has_phone && ['not_called', 'called_no_answer', 'callback_later'].includes(p.call_status) && p.invitation_status === 'not_invited'); break;
       case 'to_call_not_called': f = f.filter(p => p.has_phone && p.call_status === 'not_called' && p.invitation_status === 'not_invited'); break;
@@ -145,7 +148,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
       );
     }
     return f;
-  }, [prospects, tabFilter, searchTerm]);
+  }, [prospects, tabFilter, searchTerm, removal.includes]);
 
   const updateCallStatus = async (id: string, status: CallStatus, notes?: string) => {
     setUpdatingCall(id);
@@ -269,23 +272,11 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
   };
 
   const deleteProspect = async (id: string) => {
-    if (!confirm('Supprimer ce prospect ?')) return;
-    await supabase.from('mover_prospects').delete().eq('id', id);
-    setProspects(prev => prev.filter(p => p.id !== id));
-    setSelectedIds(prev => { const n = new Set(prev); n.delete(id); return n; });
-    showToast('Prospect supprimé', 'success');
+    await removal.change([id]); await fetchProspects(); setSelectedIds(new Set());
   };
-
   const deleteSelectedProspects = async () => {
-    if (selectedIds.size === 0) return;
-    if (!confirm(`Supprimer ${selectedIds.size} prospect(s) sélectionné(s) ?`)) return;
-    const ids = Array.from(selectedIds);
-    for (const id of ids) {
-      await supabase.from('mover_prospects').delete().eq('id', id);
-    }
-    setProspects(prev => prev.filter(p => !selectedIds.has(p.id)));
-    setSelectedIds(new Set());
-    showToast(`${ids.length} prospect(s) supprimé(s)`, 'success');
+    const ids=filteredProspects.filter(p=>selectedIds.has(p.id)).map(p=>p.id);
+    await removal.change(ids); await fetchProspects(); setSelectedIds(new Set());
   };
 
   const exportProspects = async (onlySelected = false) => {
@@ -434,6 +425,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
       </div>
 
       {/* Loading / Empty / List */}
+      <AdminListRemovalBar removal={removal} ids={filteredProspects.map(p=>p.id)} />
       {loading ? (
         <div className="flex justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent"></div></div>
       ) : filteredProspects.length === 0 ? (
