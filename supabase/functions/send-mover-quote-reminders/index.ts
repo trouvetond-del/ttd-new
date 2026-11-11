@@ -37,7 +37,15 @@ function coverageMatches(coverageArea: string[] | null, fromCity: string, toCity
   return normalized.some((c) => c && (from.includes(c) || to.includes(c) || c.includes(from) || c.includes(to)));
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
+  // Mode « nouveau partenaire » : { moverId } envoie immédiatement à ce
+  // déménageur toutes les demandes ouvertes, sans filtre de zone ni délai.
+  let welcomeMoverId: string | null = null;
+  try {
+    const body = await req.json();
+    if (body && typeof body.moverId === "string") welcomeMoverId = body.moverId;
+  } catch { /* appel cron sans corps */ }
+
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -75,12 +83,14 @@ Deno.serve(async () => {
   }
 
   // Déménageurs actifs et vérifiés, notifications email activées
-  const { data: movers } = await supabaseAdmin
+  let moversQuery = supabaseAdmin
     .from("movers")
     .select("id, user_id, email, company_name, coverage_area")
     .eq("verification_status", "verified")
     .eq("is_active", true)
     .eq("email_notifications_enabled", true);
+  if (welcomeMoverId) moversQuery = moversQuery.eq("id", welcomeMoverId);
+  const { data: movers } = await moversQuery;
 
   if (!movers || movers.length === 0) {
     return new Response(JSON.stringify({ processed: 0, emailsSent: 0 }), {
@@ -116,7 +126,7 @@ Deno.serve(async () => {
     for (const mover of movers) {
       if (quotedMoverIds.has(mover.id)) continue;
       const inZone = coverageMatches(mover.coverage_area, request.from_city, request.to_city);
-      if (!inZone && !broadenBeyondZone) continue;
+      if (!welcomeMoverId && !inZone && !broadenBeyondZone) continue;
 
       // Dernière relance envoyée à ce déménageur pour cette demande
       const { data: lastReminder } = await supabaseAdmin
@@ -128,7 +138,7 @@ Deno.serve(async () => {
         .limit(1)
         .maybeSingle();
 
-      if (lastReminder) {
+      if (lastReminder && !welcomeMoverId) {
         const hoursSince = (Date.now() - new Date(lastReminder.sent_at).getTime()) / (1000 * 60 * 60);
         if (hoursSince < urgency.minHoursBetweenReminders) continue;
       }

@@ -6,6 +6,8 @@ on:
     paths:
       - 'supabase/functions/admin-invite-mover-quote/**'
       - 'supabase/functions/send-mover-quote-reminders/**'
+      - 'supabase/functions/dropboxsign-webhook/**'
+      - 'supabase/functions/dropboxsign-check-status/**'
       - 'supabase/functions/_shared/mover-quote-email.ts'
       - '.github/workflows/deploy-mover-invite.yml'
 jobs:
@@ -21,3 +23,5 @@ jobs:
         run: |
           supabase functions deploy admin-invite-mover-quote --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt --yes
           supabase functions deploy send-mover-quote-reminders --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt --yes
+          supabase functions deploy dropboxsign-webhook --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt --yes
+          supabase functions deploy dropboxsign-check-status --project-ref bvvbkaluajgdurxnnqqu --yes

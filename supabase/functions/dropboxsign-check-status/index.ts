@@ -116,6 +116,19 @@ Deno.serve(async (req: Request) => {
         activated = !moverErr;
         if (moverErr) console.error("Mover activation error:", moverErr);
         else console.log("Mover activated:", contract.mover_id);
+        if (activated) {
+        // Nouveau partenaire : lui envoyer tout de suite les offres disponibles
+        try {
+          await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-mover-quote-reminders`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ moverId: contract.mover_id }),
+          });
+        } catch (e) { console.error("Envoi offres disponibles échoué:", e); }
+        }
       }
 
       // ════════════════════════════════════════

@@ -159,7 +159,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
     } catch (error: any) { showToast(`Erreur: ${error.message}`, 'error'); } finally { setUpdatingCall(null); }
   };
 
-  const sendInvitation = async (prospect: MoverProspect, isResend = false) => {
+  const sendInvitation = async (prospect: MoverProspect, isResend = false, silent = false): Promise<boolean> => {
     setSendingAction(prospect.id);
     setSendingInvite(true);
     try {
@@ -198,8 +198,24 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
       if (!resp.ok) throw new Error('Erreur envoi email');
 
       setProspects(prev => prev.map(p => p.id === prospect.id ? { ...p, invitation_status: 'invited', invitation_sent_at: new Date().toISOString(), call_status: 'called_interested' } : p));
-      showToast(isResend ? `Invitation renvoyée à ${prospect.email}` : `Invitation envoyée à ${prospect.email}`, 'success');
-    } catch (error: any) { showToast(`Erreur: ${error.message}`, 'error'); } finally { setSendingAction(null); setSendingInvite(false); }
+      if (!silent) showToast(isResend ? `Invitation renvoyée à ${prospect.email}` : `Invitation envoyée à ${prospect.email}`, 'success');
+      return true;
+    } catch (error: any) { if (!silent) showToast(`Erreur: ${error.message}`, 'error'); return false; } finally { setSendingAction(null); setSendingInvite(false); }
+  };
+
+  const resendSelectedInvitations = async () => {
+    const toSend = filteredProspects.filter(p => selectedIds.has(p.id) && p.invitation_status === 'invited' && p.email);
+    if (toSend.length === 0) { showToast('Aucun déménageur invité dans la sélection', 'warning'); return; }
+    if (!confirm(`Renvoyer le mail d'inscription à ${toSend.length} déménageur(s) ?`)) return;
+    setBulkSending(true); setBulkProgress({ sent: 0, total: toSend.length });
+    let sent = 0;
+    for (const p of toSend) {
+      if (await sendInvitation(p, true, true)) sent++;
+      setBulkProgress({ sent, total: toSend.length });
+      await new Promise(r => setTimeout(r, EMAIL_DELAY_MS));
+    }
+    setBulkSending(false); setSelectedIds(new Set());
+    showToast(`${sent}/${toSend.length} invitation(s) renvoyée(s)`, sent === toSend.length ? 'success' : 'warning');
   };
 
   const sendDiscoveryEmail = async (prospect: MoverProspect) => {
@@ -391,6 +407,10 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
                 className="flex items-center gap-2 px-4 py-1.5 text-sm border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-100 dark:border-blue-600 dark:text-blue-300 dark:hover:bg-blue-800">
                 <Download className="w-3.5 h-3.5" /> Exporter
               </button>}
+              <button onClick={resendSelectedInvitations} disabled={bulkSending}
+                className="flex items-center gap-2 px-4 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
+                {bulkSending ? <>{bulkProgress.sent}/{bulkProgress.total}</> : <><RotateCw className="w-3.5 h-3.5" /> Renvoyer l'invitation</>}
+              </button>
               <button onClick={deleteSelectedProspects}
                 className="flex items-center gap-2 px-4 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700">
                 <Trash2 className="w-3.5 h-3.5" /> Supprimer
