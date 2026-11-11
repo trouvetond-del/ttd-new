@@ -7,6 +7,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { buildVideo, loadVoiceConfig } from "./media.mjs";
 import { generateImage } from "./openai-image.mjs";
+import { shareLinkedIn } from "./linkedin.mjs";
 
 const SITE = "https://www.trouvetondemenageur.fr";
 const GRAPH = "https://graph.facebook.com/v21.0";
@@ -144,6 +145,8 @@ async function publishImage(imageUrl, message) {
   const c = await graph(`/${env("IG_USER_ID")}/media`, { image_url: imageUrl, caption: message.replace(/(?<!https:\/\/)www\.trouvetondemenageur\.fr/g, "https://www.trouvetondemenageur.fr").slice(0, 2200) });
   await waitIgReady(c.id);
   const ig = await graph(`/${env("IG_USER_ID")}/media_publish`, { creation_id: c.id });
+  const li = await shareLinkedIn({ text: message, imageUrl });
+  if (li.error) await notifyAdmins("LinkedIn : publication échouée", li.error);
   return { fb: fb.post_id ?? fb.id, ig: ig.id };
 }
 async function publishReel(videoUrl, caption) {
@@ -151,6 +154,8 @@ async function publishReel(videoUrl, caption) {
   await waitIgReady(c.id);
   const ig = await graph(`/${env("IG_USER_ID")}/media_publish`, { creation_id: c.id });
   const fb = await graph(`/${env("FB_PAGE_ID")}/videos`, { file_url: videoUrl, description: caption });
+  const li = await shareLinkedIn({ text: caption, videoUrl });
+  if (li.error) await notifyAdmins("LinkedIn : publication échouée", li.error);
   return { fb: fb.id, ig: ig.id };
 }
 
