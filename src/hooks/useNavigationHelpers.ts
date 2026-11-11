@@ -67,6 +67,15 @@ export function useNavigationHelpers() {
       throw new Error('Veuillez utiliser la connexion partenaire');
     }
 
+    const returnTo = new URLSearchParams(window.location.search).get('returnTo');
+    if (returnTo?.startsWith('/client/quotes?')) {
+      const target = new URL(returnTo, window.location.origin);
+      if (target.origin === window.location.origin && target.pathname === '/client/quotes' && target.searchParams.has('requestId')) {
+        navigate(target.pathname + target.search);
+        return;
+      }
+    }
+
     const { data: existingQuotes } = await supabase
       .from('quote_requests')
       .select('id, from_home_size, from_home_type, to_home_size, to_home_type, volume_m3')

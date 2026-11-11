@@ -180,6 +180,9 @@ function ClientProtectedRoute({ children, allowGuest = false }: { children: Reac
   if (!user) {
     // Visiteur non connecté : autorisé seulement sur le formulaire public de devis
     if (allowGuest) return <>{children}</>;
+    if (location.pathname === '/client/quotes' && new URLSearchParams(location.search).has('requestId')) {
+      return <Navigate to={`/client/login?returnTo=${encodeURIComponent(location.pathname + location.search)}`} replace />;
+    }
     return <Navigate to="/client/login" replace />;
   }
 
