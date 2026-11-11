@@ -25,7 +25,13 @@ Deno.serve(async (req: Request) => {
     if (!token) {
       return new Response(JSON.stringify({ success: false, error: 'Non autorisé' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
-    if (token !== supabaseServiceKey) {
+    // Clé serveur (ancienne ou nouvelle forme) : elle seule peut lire la table admins sans session.
+    let isServerKey = token === supabaseServiceKey;
+    if (!isServerKey && token.startsWith('sb_secret_')) {
+      const probe = await fetch(`${supabaseUrl}/rest/v1/admins?select=user_id&limit=1`, { headers: { apikey: token } });
+      isServerKey = probe.ok && Array.isArray(await probe.json().catch(() => null));
+    }
+    if (!isServerKey) {
       const { data: userData } = await supabase.auth.getUser(token);
       const uid = userData?.user?.id;
       const { data: adminRow } = uid
