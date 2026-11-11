@@ -27,9 +27,10 @@ Deno.serve(async (req: Request) => {
     }
     // Clé serveur (ancienne ou nouvelle forme) : elle seule peut lire la table admins sans session.
     let isServerKey = token === supabaseServiceKey;
-    if (!isServerKey && token.startsWith('sb_secret_')) {
-      const probe = await fetch(`${supabaseUrl}/rest/v1/admins?select=user_id&limit=1`, { headers: { apikey: token } });
-      isServerKey = probe.ok && Array.isArray(await probe.json().catch(() => null));
+    if (!isServerKey) {
+      const probe = await fetch(`${supabaseUrl}/rest/v1/admins?select=user_id&limit=1`, { headers: { apikey: token, Authorization: `Bearer ${token}` } });
+      const rows = await probe.json().catch(() => null);
+      isServerKey = probe.ok && Array.isArray(rows) && rows.length > 0;
     }
     if (!isServerKey) {
       const { data: userData } = await supabase.auth.getUser(token);
