@@ -56,6 +56,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 type ActiveTab =
   | 'mission_photos'
+  | 'pending_clients'
   | 'overview'
   | 'users'
   | 'prospects'
@@ -91,7 +92,7 @@ interface NavItem {
 export default function AdminDashboard() {
   const { tab: urlTab } = useParams<{ tab?: string }>();
   const navigate = useNavigate();
-  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report','sea_report','groupage','acquisition','partners','mission_photos'];
+  const validTabs: ActiveTab[] = ['overview','users','prospects','client_prospects','pending_movers','contracts','missions','financial','analytics','disputes','settings','help','exports','activity_logs','mover_search','recent_quotes','promo_codes','security','social_studio','seo_report','sea_report','groupage','acquisition','partners','mission_photos','pending_clients'];
   const initialTab = (urlTab && validTabs.includes(urlTab as ActiveTab)) ? urlTab as ActiveTab : 'overview';
   const [activeTab, setActiveTabState] = useState<ActiveTab>(initialTab);
   const setActiveTab = (tab: ActiveTab) => { setActiveTabState(tab); navigate(`/admin/dashboard/${tab}`, { replace: true }); };
@@ -154,11 +155,11 @@ export default function AdminDashboard() {
   const allNavItems: NavItem[] = [
     { id: 'overview', label: 'Vue d\'ensemble', icon: LayoutDashboard, color: 'text-blue-600' },
     // { id: 'mover_search', label: 'Recherche déménageur', icon: Search, color: 'text-indigo-600' },
-    { id: 'users', label: 'Utilisateurs', icon: Users, color: 'text-purple-600' },
+    { id: 'recent_quotes', label: 'Demandes de Devis Récentes', icon: FileText, color: 'text-sky-600' },
+    { id: 'pending_clients', label: 'Clients en attente', icon: Clock, color: 'text-amber-600' },
     { id: 'prospects', label: 'Prospects Déménageurs', icon: UserPlus, color: 'text-teal-600' },
     { id: 'client_prospects', label: 'Prospects Clients', icon: UserPlus, color: 'text-pink-600' },
     { id: 'pending_movers', label: 'Déménageurs en Attente', icon: Clock, color: 'text-amber-600' },
-    { id: 'recent_quotes', label: 'Demandes de Devis Récentes', icon: FileText, color: 'text-sky-600' },
     { id: 'contracts', label: 'Contrats Dropbox Sign', icon: FileText, color: 'text-cyan-600' },
     { id: 'missions', label: 'Missions', icon: Truck, color: 'text-indigo-600' },
     { id: 'mission_photos', label: 'Photos de mission', icon: Camera, color: 'text-amber-600' },
@@ -268,8 +269,14 @@ export default function AdminDashboard() {
         return <AdminRecentQuoteRequests />;
       case 'contracts':
         return <AdminDropboxSignContracts />;
+      case 'pending_clients':
+        return <AdminUserManagement key="pending_clients"
+          adminRole={adminRole}
+          initialUserType="clients"
+          initialUserStatus="inactive"
+        />;
       case 'users':
-        return <AdminUserManagement
+        return <AdminUserManagement key={`users-${userTypeFilter}-${userStatusFilter}`}
           adminRole={adminRole}
           initialUserType={userTypeFilter}
           initialUserStatus={userStatusFilter}
@@ -476,9 +483,9 @@ export default function AdminDashboard() {
           <p className="px-3 mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-300/60">Navigation</p>
           <nav className="space-y-1">
             {(() => {
-              const groups: { key: string; label: string; icon: any; ids: string[] }[] = [
-                { key: 'clients', label: 'Clients', icon: Users, ids: ['users', 'client_prospects', 'recent_quotes'] },
-                { key: 'movers', label: 'Déménageurs', icon: Truck, ids: ['pending_movers', 'mover_search', 'prospects'] },
+              const groups: { key: string; label: string; icon: any; ids: string[]; usersType?: 'clients' | 'movers' }[] = [
+                { key: 'clients', label: 'Clients', icon: Users, ids: ['pending_clients', 'client_prospects'], usersType: 'clients' as const },
+                { key: 'movers', label: 'Déménageurs', icon: Truck, ids: ['pending_movers', 'mover_search', 'prospects'], usersType: 'movers' as const },
                 { key: 'missions', label: 'Missions', icon: Truck, ids: ['missions', 'mission_photos', 'groupage'] },
                 { key: 'contracts', label: 'Contrats & paiements', icon: Briefcase, ids: ['contracts', 'financial', 'promo_codes'] },
                 { key: 'problems', label: 'Problèmes', icon: AlertTriangle, ids: ['disputes'] },
@@ -526,20 +533,37 @@ export default function AdminDashboard() {
                 seen.add(g.key);
                 const children = navItems.filter(i => g.ids.includes(i.id));
                 const GIcon = g.icon;
-                const containsActive = children.some(i => i.id === activeTab);
+                const containsActive = children.some(i => i.id === activeTab) || (!!g.usersType && activeTab === 'users' && userTypeFilter === g.usersType);
                 const open = openGroups[g.key] ?? containsActive;
                 const alert = g.key === 'ia' && securityAlert;
                 return (
                   <div key={g.key}>
-                    <button
-                      onClick={() => setOpenGroups(o => ({ ...o, [g.key]: !open }))}
-                      aria-expanded={open}
-                      className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${containsActive ? 'text-white bg-white/10' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}
-                    >
-                      <GIcon className={`w-5 h-5 shrink-0 ${alert ? 'text-red-400 animate-pulse' : 'text-blue-300 group-hover:text-emerald-300'}`} />
-                      <span className={`font-medium ${alert ? 'text-red-400' : ''}`}>{g.label}</span>
-                      <ChevronDown className={`ml-auto w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
-                    </button>
+                    <div className={`group w-full flex items-center rounded-xl transition-all duration-200 ${containsActive ? 'text-white bg-white/10' : 'text-slate-300 hover:bg-white/10 hover:text-white'}`}>
+                      <button
+                        onClick={() => {
+                          if (g.usersType) {
+                            handleNavigateToUsers(g.usersType);
+                            setOpenGroups(o => ({ ...o, [g.key]: true }));
+                            if (window.innerWidth < 1024) setSidebarOpen(false);
+                          } else {
+                            setOpenGroups(o => ({ ...o, [g.key]: !open }));
+                          }
+                        }}
+                        aria-expanded={g.usersType ? undefined : open}
+                        className="flex-1 flex items-center gap-3 pl-3 py-2.5 text-left"
+                      >
+                        <GIcon className={`w-5 h-5 shrink-0 ${alert ? 'text-red-400 animate-pulse' : 'text-blue-300 group-hover:text-emerald-300'}`} />
+                        <span className={`font-medium ${alert ? 'text-red-400' : ''}`}>{g.label}</span>
+                      </button>
+                      <button
+                        onClick={() => setOpenGroups(o => ({ ...o, [g.key]: !open }))}
+                        aria-expanded={open}
+                        aria-label={`${open ? 'Fermer' : 'Ouvrir'} le menu ${g.label}`}
+                        className="px-3 py-2.5"
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+                      </button>
+                    </div>
                     {open && <div className="mt-1 ml-4 pl-2 border-l border-white/10 space-y-1">{children.map(c => renderItem(c, true))}</div>}
                   </div>
                 );
