@@ -82,7 +82,7 @@ export default function AdminClientProspects() {
   };
 
   const stats = useMemo(() => {
-    const all = prospects;
+    const all = prospects.filter(p => removal.isActive(p.id));
     const withPhone = all.filter(p => p.has_phone);
     return {
       total: all.length,
@@ -96,7 +96,7 @@ export default function AdminClientProspects() {
       signedUp: all.filter(p => p.invitation_status === 'signed_up').length,
       noPhone: all.filter(p => !p.has_phone).length,
     };
-  }, [prospects]);
+  }, [prospects, removal.isActive]);
 
   const filteredProspects = useMemo(() => {
     let f = prospects.filter(p=>removal.includes(p.id));

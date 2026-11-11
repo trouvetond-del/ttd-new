@@ -19,6 +19,8 @@ export function useAdminListRemoval(entity: AdminListEntity) {
   useEffect(() => { void load(); }, [entity]);
   useActionRefresh(load);
   const includes = useCallback((id: string) => ready && hidden.has(id) === trash, [ready, hidden, trash]);
+  /** True when the record is NOT in the trash: use it for every total and status counter. */
+  const isActive = useCallback((id: string) => !hidden.has(id), [hidden]);
   const toggle = (id: string) => setSelected(prev => { const next=new Set(prev);next.has(id)?next.delete(id):next.add(id);return next; });
   const change = async (ids: string[], restore = trash) => {
     if (!ids.length || busy || !ready) return;
@@ -32,7 +34,7 @@ export function useAdminListRemoval(entity: AdminListEntity) {
     } catch (error) { showToast(error instanceof Error ? error.message : 'Suppression impossible', 'error'); }
     finally { setBusy(false); }
   };
-  return { includes, ready, trash, busy, selected, toggle, change, selectedVisible: (ids: string[]) => selectedVisibleIds(selected,ids),
+  return { includes, isActive, hidden, ready, trash, busy, selected, toggle, change, selectedVisible: (ids: string[]) => selectedVisibleIds(selected,ids),
     toggleAll: (ids: string[]) => setSelected(prev=>toggleVisibleSelection(prev,ids)),
     setTrash: (value: boolean) => { setTrash(value);setSelected(new Set()); } };
 }

@@ -189,7 +189,7 @@ export default function AdminDropboxSignContracts() {
   const [syncingAll, setSyncingAll] = useState(false);
 
   const handleSyncAllPending = async () => {
-    const pending = contracts.filter(c => c.status === 'sent' || c.status === 'opened');
+    const pending = contracts.filter(c => removal.isActive(c.id)).filter(c => c.status === 'sent' || c.status === 'opened');
     if (pending.length === 0) {
       showToast('Aucun contrat en attente à synchroniser', 'info');
       return;
@@ -232,12 +232,13 @@ export default function AdminDropboxSignContracts() {
     return true;
   });
 
+  const activeContracts = contracts.filter(c => removal.isActive(c.id));
   const stats = {
-    total: contracts.length,
-    sent: contracts.filter(c => c.status === 'sent' || c.status === 'opened').length,
-    signed: contracts.filter(c => c.status === 'signed').length,
-    declined: contracts.filter(c => c.status === 'declined').length,
-    expired: contracts.filter(c => c.status === 'expired').length,
+    total: activeContracts.length,
+    sent: activeContracts.filter(c => c.status === 'sent' || c.status === 'opened').length,
+    signed: activeContracts.filter(c => c.status === 'signed').length,
+    declined: activeContracts.filter(c => c.status === 'declined').length,
+    expired: activeContracts.filter(c => c.status === 'expired').length,
   };
 
   const formatDate = (d: string | null) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';

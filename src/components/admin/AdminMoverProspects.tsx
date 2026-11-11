@@ -103,7 +103,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
   };
 
   const stats = useMemo(() => {
-    const all = prospects;
+    const all = prospects.filter(p => removal.isActive(p.id));
     const withPhone = all.filter(p => p.has_phone);
     return {
       total: all.length,
@@ -118,7 +118,7 @@ export default function AdminMoverProspects({ adminRole = '' }: { adminRole?: st
       noPhone: all.filter(p => !p.has_phone).length,
       lovable: all.filter(p => p.raw_data?.source === 'lovable').length,
     };
-  }, [prospects]);
+  }, [prospects, removal.isActive]);
 
   const filteredProspects = useMemo(() => {
     let f = prospects.filter(p=>removal.includes(p.id));

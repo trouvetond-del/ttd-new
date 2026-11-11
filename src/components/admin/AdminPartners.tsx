@@ -49,7 +49,8 @@ export default function AdminPartners() {
   const shown = useMemo(() => partners.filter(p => removal.includes(p.id)).filter(p =>
     (!filter || p.status === filter) &&
     (!q || `${p.name} ${p.city} ${p.code} ${p.email ?? ''}`.toLowerCase().includes(q.toLowerCase()))), [partners, q, filter, removal.trash, removal.ready, removal.includes]);
-  const count = (s: string) => partners.filter(p => p.status === s).length;
+  const activePartners = partners.filter(p => removal.isActive(p.id));
+  const count = (s: string) => activePartners.filter(p => p.status === s).length;
   const nameOf = (id: string) => partners.find(p => p.id === id)?.name ?? '—';
 
   async function relancer(p: Partner) {
@@ -81,7 +82,7 @@ export default function AdminPartners() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
-        {[['Total', partners.length], ['Mail envoyé', count('contacte') + count('relance')], ['A répondu', count('a_repondu')], ['À appeler', count('a_appeler')], ['Partenaires', count('partenaire')], ['Remboursements à vérifier', rewards.filter(r => r.status === 'a_verifier').length]].map(([l, v]) => (
+        {[['Total', activePartners.length], ['Mail envoyé', count('contacte') + count('relance')], ['A répondu', count('a_repondu')], ['À appeler', count('a_appeler')], ['Partenaires', count('partenaire')], ['Remboursements à vérifier', rewards.filter(r => r.status === 'a_verifier').length]].map(([l, v]) => (
           <div key={l as string} className="rounded-xl border bg-white p-3"><div className="text-xs text-gray-500">{l}</div><div className="text-xl font-bold">{v}</div></div>
         ))}
       </div>

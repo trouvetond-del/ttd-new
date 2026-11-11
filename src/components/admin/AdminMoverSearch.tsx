@@ -104,6 +104,7 @@ export default function AdminMoverSearch() {
     });
   }, [searchTerm, searchField, allMovers, removal.includes]);
 
+  const activeMoverCount = allMovers.filter(m => removal.isActive(m.id)).length;
   const hasSearched = searchTerm.trim().length >= 2;
 
   const getStatusBadge = (mover: MoverResult) => {
@@ -147,7 +148,7 @@ export default function AdminMoverSearch() {
             <div>
               <h2 className="text-lg font-bold text-gray-900">Rechercher un déménageur</h2>
               <p className="text-sm text-gray-500">
-                {loading ? 'Chargement...' : `${allMovers.length} déménageur${allMovers.length > 1 ? 's' : ''} enregistré${allMovers.length > 1 ? 's' : ''}`}
+                {loading ? 'Chargement...' : `${activeMoverCount} déménageur${activeMoverCount > 1 ? 's' : ''} enregistré${activeMoverCount > 1 ? 's' : ''}`}
                 {' — '}Recherchez par nom, email, téléphone ou SIRET
               </p>
             </div>
@@ -305,11 +306,11 @@ export default function AdminMoverSearch() {
       )}
 
       {/* Initial state — no search yet */}
-      {!loading && !hasSearched && allMovers.length > 0 && (
+      {!loading && !hasSearched && activeMoverCount > 0 && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
           <Search className="w-16 h-16 text-gray-200 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-400">Commencez à taper pour rechercher</h3>
-          <p className="text-gray-400 text-sm mt-1">Recherchez parmi {allMovers.length} déménageurs enregistrés</p>
+          <p className="text-gray-400 text-sm mt-1">Recherchez parmi {activeMoverCount} déménageurs enregistrés</p>
         </div>
       )}
 

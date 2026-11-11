@@ -307,13 +307,14 @@ export function AdminContractsPanel() {
   });
 
   // Stats
+  const activeContracts = contracts.filter(c => removal.isActive(c.id));
   const stats = {
-    total: contracts.length,
-    active: contracts.filter(c => c.status === 'active').length,
-    completed: contracts.filter(c => c.status === 'completed').length,
-    disputed: contracts.filter(c => c.status === 'disputed').length,
-    totalAmount: contracts.reduce((sum, c) => sum + (c.total_amount || 0), 0),
-    pendingEmails: contracts.filter(c => !c.sent_to_client || !c.sent_to_mover).length,
+    total: activeContracts.length,
+    active: activeContracts.filter(c => c.status === 'active').length,
+    completed: activeContracts.filter(c => c.status === 'completed').length,
+    disputed: activeContracts.filter(c => c.status === 'disputed').length,
+    totalAmount: activeContracts.reduce((sum, c) => sum + (c.total_amount || 0), 0),
+    pendingEmails: activeContracts.filter(c => !c.sent_to_client || !c.sent_to_mover).length,
   };
 
   if (loading) {

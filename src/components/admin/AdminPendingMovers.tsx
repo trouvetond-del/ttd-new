@@ -53,6 +53,7 @@ export default function AdminPendingMovers() {
     setLoading(false);
   };
 
+  const activeMovers = movers.filter(m => removal.isActive(m.id));
   const filtered = movers.filter(m => removal.includes(m.id)).filter(m => {
     if (!searchTerm) return true;
     const lower = searchTerm.toLowerCase();
@@ -64,7 +65,7 @@ export default function AdminPendingMovers() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2"><Clock className="w-6 h-6 text-amber-600" /> Déménageurs en Attente</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{movers.length} déménageur(s) en attente de validation</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{activeMovers.length} déménageur(s) en attente de validation</p>
         </div>
         <button onClick={loadMovers} className="flex items-center gap-2 px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
           <RefreshCw className="w-4 h-4" /> Actualiser
@@ -83,8 +84,8 @@ export default function AdminPendingMovers() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-16">
           <CheckCircle className="w-16 h-16 text-green-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">{movers.length === 0 ? 'Aucun déménageur en attente' : 'Aucun résultat'}</h3>
-          <p className="text-sm text-gray-500 mt-1">{movers.length === 0 ? 'Tous les déménageurs ont été traités ! 🎉' : 'Modifiez votre recherche'}</p>
+          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300">{activeMovers.length === 0 ? 'Aucun déménageur en attente' : 'Aucun résultat'}</h3>
+          <p className="text-sm text-gray-500 mt-1">{activeMovers.length === 0 ? 'Tous les déménageurs ont été traités ! 🎉' : 'Modifiez votre recherche'}</p>
         </div>
       ) : (
         <div className="space-y-3">

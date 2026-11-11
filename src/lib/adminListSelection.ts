@@ -7,3 +7,7 @@ export function toggleVisibleSelection(selected: Set<string>, visible: string[])
   for (const id of visible) { if (all) next.delete(id); else next.add(id); }
   return next;
 }
+/** Records in the trash never count in totals or status counters (e.g. "Expirés"). */
+export function countActive<T extends { id: string }>(items: T[], hidden: Set<string>, match: (item: T) => boolean = () => true): number {
+  return items.filter(item => !hidden.has(item.id) && match(item)).length;
+}
