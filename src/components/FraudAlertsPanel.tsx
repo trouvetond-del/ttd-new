@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertTriangle, Shield, CheckCircle, XCircle, Eye, Loader } from 'lucide-react';
+import { AlertTriangle, Shield, CheckCircle, XCircle, Eye, Loader, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { showToast } from '../utils/toast';
 
@@ -12,6 +12,7 @@ type FraudAlert = {
   status: 'new' | 'investigating' | 'resolved' | 'false_positive';
   created_at: string;
   resolved_at?: string;
+  dismissed_at?: string | null;
 };
 
 const ALERT_TYPE_LABELS: Record<string, string> = {
@@ -89,9 +90,13 @@ export function FraudAlertsPanel() {
   const [selectedAlert, setSelectedAlert] = useState<FraudAlert | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterSeverity, setFilterSeverity] = useState<string>('all');
+  const [people, setPeople] = useState<Record<string, { name: string; email?: string; phone?: string; kind: string }>>({});
 
   useEffect(() => {
     loadAlerts();
+  }, [filterStatus, filterSeverity]);
+
+  useEffect(() => {
 
     const subscription = supabase
       .channel('fraud-alerts')
@@ -129,7 +134,22 @@ export function FraudAlertsPanel() {
       const { data, error } = await query;
 
       if (error) throw error;
-      setAlerts(data || []);
+      const visible = (data || []).filter((a: any) => !a.dismissed_at);
+      setAlerts(visible);
+      const ids = Array.from(new Set(visible.map((a: any) => a.user_id).filter(Boolean)));
+      if (ids.length) {
+        const [{ data: movers }, { data: clients }] = await Promise.all([
+          supabase.from('movers').select('user_id, company_name, manager_firstname, manager_lastname, email, phone').in('user_id', ids),
+          supabase.from('clients').select('user_id, first_name, last_name, email, phone').in('user_id', ids),
+        ]);
+        const map: Record<string, { name: string; email?: string; phone?: string; kind: string }> = {};
+        (clients || []).forEach((c: any) => { map[c.user_id] = { name: `${c.first_name ?? ''} ${c.last_name ?? ''}`.trim() || c.email, email: c.email, phone: c.phone, kind: 'Client' }; });
+        (movers || []).forEach((m: any) => {
+          const manager = `${m.manager_firstname ?? ''} ${m.manager_lastname ?? ''}`.trim();
+          map[m.user_id] = { name: m.company_name ? `${m.company_name}${manager ? ` (${manager})` : ''}` : manager || m.email, email: m.email, phone: m.phone, kind: 'Déménageur' };
+        });
+        setPeople(map);
+      }
     } catch (error) {
       console.error('Error loading fraud alerts:', error);
       showToast('Erreur lors du chargement des alertes', 'error');
@@ -157,6 +177,29 @@ export function FraudAlertsPanel() {
       console.error('Error updating alert status:', error);
       showToast('Erreur lors de la mise à jour', 'error');
     }
+  };
+
+  const dismissAlert = async (alertId: string) => {
+    if (!window.confirm('Supprimer cette alerte ? Elle ne sera plus affichée.')) return;
+    const { error } = await supabase
+      .from('fraud_alerts')
+      .update({ dismissed_at: new Date().toISOString(), status: 'resolved', resolved_at: new Date().toISOString() })
+      .eq('id', alertId);
+    if (error) {
+      console.error('Error dismissing alert:', error);
+      showToast(`Suppression impossible : ${error.message}`, 'error');
+      return;
+    }
+    showToast('Alerte supprimée', 'success');
+    setAlerts((prev) => prev.filter((a) => a.id !== alertId));
+    setSelectedAlert(null);
+  };
+
+  const whoLabel = (a: FraudAlert) => {
+    const p = people[a.user_id];
+    if (p) return `${p.kind} : ${p.name}${p.email ? ` — ${p.email}` : ''}${p.phone ? ` — ${p.phone}` : ''}`;
+    const d = a.details ?? {};
+    return d.company_name || d.email ? `${d.company_name ?? ''} ${d.email ?? ''}`.trim() : 'Compte introuvable (peut-être déjà supprimé)';
   };
 
   const filteredAlerts = alerts;
@@ -267,6 +310,7 @@ export function FraudAlertsPanel() {
                         {SEVERITY_LABELS[alert.severity] || alert.severity}
                       </span>
                     </div>
+                    <p className="text-sm font-medium text-gray-900 mb-1">{whoLabel(alert)}</p>
                     <p className="text-sm text-gray-700 mb-2">
                       {explainAlert(alert).cause}
                     </p>
@@ -282,6 +326,14 @@ export function FraudAlertsPanel() {
                     className="text-blue-600 hover:text-blue-800"
                   >
                     <Eye className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); dismissAlert(alert.id); }}
+                    className="ml-3 text-red-600 hover:text-red-800"
+                    title="Supprimer l'alerte (traitée)"
+                    aria-label="Supprimer l'alerte"
+                  >
+                    <Trash2 className="w-5 h-5" />
                   </button>
                 </div>
               </div>
@@ -327,6 +379,8 @@ export function FraudAlertsPanel() {
             </div>
 
             <div className="mb-6">
+              <h4 className="font-semibold text-gray-900 mb-2">Qui ?</h4>
+              <p className="text-gray-800 mb-4">{whoLabel(selectedAlert)}</p>
               <h4 className="font-semibold text-gray-900 mb-2">Que se passe-t-il ?</h4>
               <p className="text-gray-800 mb-4">{explainAlert(selectedAlert).cause}</p>
               <h4 className="font-semibold text-gray-900 mb-2">Que faire ?</h4>
@@ -379,6 +433,13 @@ export function FraudAlertsPanel() {
                   </button>
                 </>
               )}
+              <button
+                onClick={() => dismissAlert(selectedAlert.id)}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 ml-auto"
+              >
+                <Trash2 className="w-4 h-4" />
+                Supprimer l'alerte
+              </button>
             </div>
           </div>
         </div>

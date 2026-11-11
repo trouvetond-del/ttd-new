@@ -1,0 +1,47 @@
+name: Agent expiration des documents — chaque matin 8 h 30 Paris
+on:
+  schedule:
+    - cron: '30 7 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/check-document-expiration/**'
+      - 'supabase/sql/fraud-alerts-dismiss.sql'
+      - '.github/workflows/document-expiration-agent.yml'
+permissions:
+  contents: read
+concurrency:
+  group: document-expiration-agent
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Colonne de suppression des alertes
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y postgresql-client
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/sql/fraud-alerts-dismiss.sql
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Déployer le contrôle d'expiration
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy check-document-expiration --project-ref bvvbkaluajgdurxnnqqu
+  check:
+    needs: [deploy]
+    if: always() && (needs.deploy.result == 'success' || needs.deploy.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Vérifier les documents et alerter
+        env:
+          KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          OUT=$(curl -sS -w '\n%{http_code}' -X POST https://bvvbkaluajgdurxnnqqu.supabase.co/functions/v1/check-document-expiration \
+            -H "Authorization: Bearer $KEY" -H "apikey: $KEY" -H 'Content-Type: application/json' -d '{}')
+          echo "$OUT"
+          CODE=$(echo "$OUT" | tail -n1)
+          [ "$CODE" = 200 ] || exit 1

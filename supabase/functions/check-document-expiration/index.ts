@@ -20,6 +20,22 @@ Deno.serve(async (req: Request) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Seuls un admin connecté ou l'agent planifié (clé serveur) peuvent lancer le contrôle.
+    const token = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '');
+    if (!token) {
+      return new Response(JSON.stringify({ success: false, error: 'Non autorisé' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    if (token !== supabaseServiceKey) {
+      const { data: userData } = await supabase.auth.getUser(token);
+      const uid = userData?.user?.id;
+      const { data: adminRow } = uid
+        ? await supabase.from('admins').select('user_id').eq('user_id', uid).maybeSingle()
+        : { data: null };
+      if (!adminRow) {
+        return new Response(JSON.stringify({ success: false, error: 'Réservé aux administrateurs' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+    }
+
     const alertsSent = {
       movers: [] as any[],
       admins: [] as any[],
@@ -39,7 +55,8 @@ Deno.serve(async (req: Request) => {
         JSON.stringify({
           success: true,
           message: 'Aucun document à expirer',
-          alertsSent: 0,
+          expiringDocumentsCount: 0,
+          alertsSent: { movers: 0, admins: 0 },
         }),
         {
           headers: {
@@ -115,7 +132,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Envoyer une alerte récapitulative aux admins si beaucoup de documents expirent
-    if (expiringDocs.length >= 5) {
+    if (expiringDocs.length > 0) {
       // Récupérer tous les admins
       const { data: admins } = await supabase
         .from('admins')
@@ -129,6 +146,15 @@ Deno.serve(async (req: Request) => {
           : `${expiringDocs.length} documents de déménageurs expirent dans les 30 prochains jours.`;
 
         for (const admin of admins) {
+          // Une seule alerte admin par jour pour éviter les doublons
+          const { data: todayAlert } = await supabase
+            .from('notifications')
+            .select('id')
+            .eq('user_id', admin.user_id)
+            .eq('notification_type', 'admin_document_expiration_summary')
+            .gte('created_at', new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString())
+            .limit(1);
+          if (todayAlert && todayAlert.length > 0) continue;
           const { error: adminNotifError } = await supabase
             .from('notifications')
             .insert({

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { AlertTriangle, CheckCircle, Clock, FileText, Calendar, TrendingUp } from 'lucide-react';
 import { showToast } from '../../utils/toast';
+import { useNavigate } from 'react-router-dom';
 
 interface VerificationStats {
   pendingMovers: number;
@@ -21,6 +22,8 @@ const AdminVerificationAlerts: React.FC = () => {
   });
   const [expiringDocs, setExpiringDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [checking, setChecking] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadVerificationStats();
@@ -61,33 +64,32 @@ const AdminVerificationAlerts: React.FC = () => {
   };
 
   const runExpirationCheck = async () => {
+    setChecking(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/check-document-expiration`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      const result = await response.json();
-
-      if (result.success) {
-        showToast(`${result.alertsSent.movers} alertes envoyées`, 'success');
-        await loadVerificationStats();
-      } else {
-        showToast('Erreur lors de la vérification', 'error');
+      const { data: result, error } = await supabase.functions.invoke('check-document-expiration', { body: {} });
+      if (error || !result?.success) {
+        throw new Error(result?.error || error?.message || 'Erreur');
       }
+      const count = result.expiringDocumentsCount ?? 0;
+      showToast(
+        count === 0
+          ? 'Contrôle terminé : aucun document n\'expire dans les 30 prochains jours'
+          : `${count} document(s) expirent bientôt — ${result.alertsSent?.movers ?? 0} déménageur(s) prévenu(s)`,
+        'success'
+      );
+      await loadVerificationStats();
     } catch (error: any) {
-      showToast('Erreur lors de la vérification', 'error');
+      console.error('Expiration check failed:', error);
+      showToast(`Erreur lors de la vérification : ${error?.message ?? 'inconnue'}`, 'error');
+    } finally {
+      setChecking(false);
     }
   };
 
   const statCards = [
     {
       title: 'En attente',
+      target: 'pending_movers',
       value: stats.pendingMovers,
       icon: Clock,
       color: 'yellow',
@@ -97,6 +99,7 @@ const AdminVerificationAlerts: React.FC = () => {
     },
     {
       title: 'À réviser',
+      target: 'pending_movers',
       value: stats.needsReview,
       icon: AlertTriangle,
       color: 'orange',
@@ -106,6 +109,7 @@ const AdminVerificationAlerts: React.FC = () => {
     },
     {
       title: 'Documents expirants',
+      target: 'expiring',
       value: stats.expiringDocuments,
       icon: Calendar,
       color: 'red',
@@ -115,6 +119,7 @@ const AdminVerificationAlerts: React.FC = () => {
     },
     {
       title: 'Vérifiés',
+      target: 'users',
       value: stats.verifiedMovers,
       icon: CheckCircle,
       color: 'green',
@@ -132,10 +137,11 @@ const AdminVerificationAlerts: React.FC = () => {
         </h3>
         <button
           onClick={runExpirationCheck}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm flex items-center gap-2"
+          disabled={checking}
+          className="disabled:opacity-60 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm flex items-center gap-2"
         >
           <TrendingUp className="w-4 h-4" />
-          Vérifier expirations
+          {checking ? 'Vérification…' : 'Vérifier expirations'}
         </button>
       </div>
 
@@ -143,9 +149,18 @@ const AdminVerificationAlerts: React.FC = () => {
         {statCards.map((card) => {
           const Icon = card.icon;
           return (
-            <div
+            <button
+              type="button"
               key={card.title}
-              className={`${card.bgColor} rounded-lg p-4 border border-${card.color}-200`}
+              onClick={() => {
+                if (card.target === 'expiring') {
+                  document.getElementById('expiring-docs-list')?.scrollIntoView({ behavior: 'smooth' });
+                  if (expiringDocs.length === 0) showToast('Aucun document n\'expire dans les 30 prochains jours', 'success');
+                } else {
+                  navigate(`/admin/dashboard/${card.target}`);
+                }
+              }}
+              className={`${card.bgColor} text-left w-full rounded-lg p-4 border border-${card.color}-200 cursor-pointer hover:shadow-md hover:-translate-y-0.5 transition`}
             >
               <div className="flex items-center justify-between mb-2">
                 <h4 className={`text-sm font-medium ${card.textColor}`}>{card.title}</h4>
@@ -154,13 +169,13 @@ const AdminVerificationAlerts: React.FC = () => {
               <p className={`text-3xl font-bold ${card.textColor}`}>
                 {loading ? '...' : card.value}
               </p>
-            </div>
+            </button>
           );
         })}
       </div>
 
       {expiringDocs.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div id="expiring-docs-list" className="bg-red-50 border border-red-200 rounded-lg p-4">
           <h4 className="font-semibold text-red-900 mb-3 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5" />
             Documents expirant prochainement
