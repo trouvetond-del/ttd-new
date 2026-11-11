@@ -108,6 +108,8 @@ Deno.serve(async (req: Request) => {
         } else if (notification.notification_type === 'activity_zone') {
           emailType = 'activity_zone_new_quote';
           emailData = {
+            quoteRequestId: quoteRequest.id,
+            companyName: mover.company_name,
             fromCity: quoteRequest.from_city,
             fromPostalCode: quoteRequest.from_postal_code,
             toCity: quoteRequest.to_city,
