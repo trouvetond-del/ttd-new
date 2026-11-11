@@ -1,0 +1,45 @@
+name: Nouveau mail demande + renvoi Horbourg-Wihr
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/resend-new-request-email.yml'
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Déployer les mails
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          for f in send-notification process-notification-queue admin-invite-mover-quote send-mover-quote-reminders; do
+            supabase functions deploy $f --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt --yes
+          done
+      - name: Renvoyer à tous les déménageurs vérifiés
+        env:
+          KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request, urllib.parse, time
+          U="https://bvvbkaluajgdurxnnqqu.supabase.co"; K=os.environ["KEY"]
+          H={"Authorization":"Bearer "+K,"apikey":K,"Content-Type":"application/json"}
+          def get(p):
+            return json.load(urllib.request.urlopen(urllib.request.Request(U+"/rest/v1/"+p,headers=H)))
+          qr=get("quote_requests?select=id,reference,from_city,to_city&from_city=ilike.*Horbourg*&to_city=ilike.*Colmar*&deleted_at=is.null&order=created_at.desc&limit=1")
+          assert qr, "Demande introuvable"
+          q=qr[0]; print("Demande", q["reference"])
+          movers=get("movers?select=email,company_name&verification_status=eq.verified&is_active=eq.true&email=not.is.null")
+          ok=0
+          for m in movers:
+            body=json.dumps({"type":"activity_zone_new_quote","recipientEmail":m["email"],"data":{"quoteRequestId":q["id"],"companyName":m["company_name"],"fromCity":q["from_city"],"toCity":q["to_city"]}}).encode()
+            try:
+              r=urllib.request.urlopen(urllib.request.Request(U+"/functions/v1/send-notification",data=body,headers=H,method="POST")); ok+=1
+            except Exception as e: print("Échec", m["company_name"], e)
+            time.sleep(0.6)
+          print(f"Envoyés {ok}/{len(movers)}")
+          PY
