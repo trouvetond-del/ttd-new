@@ -2,12 +2,17 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Calendar, Package, Navigation, Loader2, Truck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useActionRefresh } from '../hooks/useActionRefresh';
 
 // Page publique : déménagements ouverts, sans aucune donnée client. Clic → connexion / inscription déménageur.
 export default function PublicMovesPage() {
   const navigate = useNavigate();
   const [moves, setMoves] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  useActionRefresh(async () => {
+    const { data, error } = await supabase.rpc('list_open_moves');
+    if (!error) setMoves(data || []);
+  });
 
   useEffect(() => {
     document.title = 'Déménagements disponibles pour les déménageurs | TrouveTonDéménageur';

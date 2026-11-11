@@ -7,6 +7,8 @@ import AdminAssignQuoteModal from './AdminAssignQuoteModal';
 import AdminInviteMoverModal from './AdminInviteMoverModal';
 import { showToast } from '../../utils/toast';
 import { getMoveReference } from '../../utils/moveReference';
+import { verifyRequestAction } from '../../lib/actionConsistency';
+import { useActionRefresh } from '../../hooks/useActionRefresh';
 
 interface QuoteRequest {
   id: string;
@@ -223,6 +225,7 @@ export default function AdminRecentQuoteRequests() {
   useEffect(() => {
     loadQuoteRequests();
   }, [statusFilter, showTrash]);
+  useActionRefresh(loadQuoteRequests);
 
   const handleDelete = async (id: string, clientName?: string) => {
     const confirmed = window.confirm(
@@ -235,11 +238,12 @@ export default function AdminRecentQuoteRequests() {
       const { error } = await supabase.rpc('admin_trash_quote_request', { request_id: id });
       if (error) throw error;
 
+      await verifyRequestAction(id, 'trashed');
       setQuoteRequests((prev) => prev.filter((q) => q.id !== id));
       showToast('Demande déplacée dans la corbeille', 'success');
     } catch (error) {
       console.error('Error deleting quote request:', error);
-      showToast('Erreur lors de la suppression de la demande', 'error');
+      showToast(error instanceof Error ? error.message : 'Erreur lors de la suppression de la demande', 'error');
     } finally {
       setDeletingId(null);
     }
@@ -250,11 +254,12 @@ export default function AdminRecentQuoteRequests() {
     try {
       const { error } = await supabase.rpc('admin_restore_quote_request', { request_id: id });
       if (error) throw error;
+      await verifyRequestAction(id, 'restored');
       setQuoteRequests((previous) => previous.filter((request) => request.id !== id));
       showToast('Demande restaurée', 'success');
     } catch (error) {
       console.error('Error restoring quote request:', error);
-      showToast('La demande n’a pas pu être restaurée', 'error');
+      showToast(error instanceof Error ? error.message : 'La demande n’a pas pu être restaurée', 'error');
     } finally {
       setRestoringId(null);
     }
@@ -268,13 +273,14 @@ export default function AdminRecentQuoteRequests() {
     if (!confirmed) return;
     setArchivingId(id);
     try {
-      const { error } = await supabase.from('quote_requests').update({ status: 'completed' }).eq('id', id);
+      const { error } = await supabase.from('quote_requests').update({ status: 'completed' }).is('deleted_at', null).eq('id', id).select('id').single();
       if (error) throw error;
+      await verifyRequestAction(id, 'completed');
       setQuoteRequests((prev) => prev.map((q) => (q.id === id ? { ...q, status: 'completed' } : q)));
       showToast('Demande archivée, contact conservé', 'success');
     } catch (error) {
       console.error('Error archiving quote request:', error);
-      showToast("Erreur lors de l'archivage", 'error');
+      showToast(error instanceof Error ? error.message : "Erreur lors de l'archivage", 'error');
     } finally {
       setArchivingId(null);
     }

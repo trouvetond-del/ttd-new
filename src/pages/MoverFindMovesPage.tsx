@@ -7,6 +7,7 @@ import QuoteBidModal from '../components/QuoteBidModal';
 import { regionFromPostalCode, FRENCH_REGIONS } from '../utils/frenchRegion';
 import { findGroupages, type MoveCentres } from '../lib/moverGroupage';
 import { showToast } from '../utils/toast';
+import { useActionRefresh } from '../hooks/useActionRefresh';
 import { coordsFromPostalCode, searchCities, distanceKm, type LatLng } from '../utils/geoFrance';
 
 const MAX_RADIUS = 250;
@@ -69,6 +70,7 @@ export default function MoverFindMovesPage({ groupageOnly = false }: { groupageO
   };
 
   useEffect(() => { load(); }, [user, groupageOnly]);
+  useActionRefresh(load);
 
   // Détails complets (masqués selon les règles de confidentialité) seulement au moment de déposer un devis
   const openBid = async (r: any) => {

@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import { Truck, Send, RefreshCw, ArrowRight, EyeOff } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
+import { isGroupageRequestActive } from '../../lib/groupageEligibility';
+import { useActionRefresh } from '../../hooks/useActionRefresh';
+import { announceActionCompleted } from '../../lib/actionConsistency';
 
-interface Req { id: string; client_name: string; from_city: string; to_city: string; moving_date: string; volume_m3?: number | null; status: string; accepts_groupage?: boolean | null }
+interface Req { id: string; client_name: string; from_city: string; to_city: string; moving_date: string; volume_m3?: number | null; status: string; deleted_at?: string | null; is_draft?: boolean | null; accepts_groupage?: boolean | null }
 interface Alert { id: string; kind: 'same_route' | 'return_trip'; distance_1_km: number; distance_2_km: number; days_apart: number; movers_alerted_at: string | null; movers_alerted_count: number; created_at: string; a?: Req; b?: Req }
 
 const fmt = (d: string) => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -12,22 +15,29 @@ export default function AdminGroupage() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState('');
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from('groupage_alerts').select('*').is('dismissed_at', null).order('created_at', { ascending: false }).limit(200);
+    setLoadError('');
+    try {
+    const { data, error } = await supabase.from('groupage_alerts').select('*').is('dismissed_at', null).is('invalidated_at', null).order('created_at', { ascending: false }).limit(200);
+    if (error) throw error;
     const rows = (data || []) as any[];
     const ids = [...new Set(rows.flatMap((r) => [r.request_a, r.request_b]))];
-    const { data: reqs } = ids.length
-      ? await supabase.from('quote_requests').select('id, client_name, from_city, to_city, moving_date, volume_m3, status, accepts_groupage').in('id', ids)
-      : { data: [] as Req[] };
+    const { data: reqs, error: requestError } = ids.length
+      ? await supabase.from('quote_requests').select('id, client_name, from_city, to_city, moving_date, volume_m3, status, accepts_groupage, deleted_at, is_draft').is('deleted_at', null).in('id', ids)
+      : { data: [] as Req[], error: null };
+    if (requestError) throw requestError;
     const map = new Map((reqs || []).map((r: any) => [r.id, r]));
     const today = new Date().toISOString().slice(0, 10);
     setAlerts(rows.map((r) => ({ ...r, a: map.get(r.request_a), b: map.get(r.request_b) }))
-      .filter((r) => r.a && r.b && r.a.moving_date >= today && r.b.moving_date >= today));
-    setLoading(false);
+      .filter((r) => r.a && r.b && isGroupageRequestActive(r.a, today) && isGroupageRequestActive(r.b, today)));
+    } catch { setAlerts([]); setLoadError('Impossible de vérifier les groupages. Réessayez.'); }
+    finally { setLoading(false); }
   };
   useEffect(() => { load(); }, []);
+  useActionRefresh(load);
 
   const alertMovers = async (id: string) => {
     setBusy(id);
@@ -35,10 +45,14 @@ export default function AdminGroupage() {
     setBusy(null);
     if (error) { showToast("Impossible d'alerter les déménageurs : " + error.message, 'error'); return; }
     showToast(`${data} déménageur(s) vérifié(s) prévenu(s)`, 'success');
-    load();
+    announceActionCompleted(); load();
   };
   const dismiss = async (id: string) => {
-    await supabase.from('groupage_alerts').update({ dismissed_at: new Date().toISOString() }).eq('id', id);
+    const { data, error } = await supabase.from('groupage_alerts').update({ dismissed_at: new Date().toISOString() }).eq('id', id).select('id').single();
+    if (error || !data) { showToast('Le groupage n’a pas été masqué.', 'error'); return; }
+    const check = await supabase.from('groupage_alerts').select('dismissed_at').eq('id', id).single();
+    announceActionCompleted();
+    if (check.error || !check.data?.dismissed_at) showToast('Masquage enregistré, vérification incomplète.', 'error');
     load();
   };
 
@@ -59,9 +73,9 @@ export default function AdminGroupage() {
         </div>
         <button onClick={load} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"><RefreshCw className="w-4 h-4" /> Actualiser</button>
       </div>
-      {loading ? <p className="text-gray-500">Chargement…</p> : alerts.length === 0 ? (
+      {loadError ? <p role="alert">{loadError}</p> : loading ? <p className="text-gray-500">Chargement…</p> : alerts.length === 0 ? (
         <div className="rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500">Aucun groupage possible pour le moment.</div>
-      ) : alerts.map((g) => (
+      ) : alerts.map((g) => g.a && g.b ? (
         <div key={g.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <span className={`text-sm font-semibold px-3 py-1 rounded-full ${g.kind === 'same_route' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}`}>
@@ -71,7 +85,7 @@ export default function AdminGroupage() {
               {g.kind === 'same_route' ? `Départs à ${g.distance_1_km} km · arrivées à ${g.distance_2_km} km` : `Arrivée du 1er à ${g.distance_1_km} km du départ du 2e`} · {g.days_apart} jour(s) d'écart
             </span>
           </div>
-          <div className="flex flex-col md:flex-row gap-3"><Leg r={g.a!} /><Leg r={g.b!} /></div>
+          <div className="flex flex-col md:flex-row gap-3"><Leg r={g.a} /><Leg r={g.b} /></div>
           <div className="flex flex-wrap items-center justify-between gap-2 mt-3">
             <span className="text-xs text-gray-500">{g.movers_alerted_at ? `${g.movers_alerted_count} déménageur(s) prévenu(s) le ${new Date(g.movers_alerted_at).toLocaleString('fr-FR')}` : 'Déménageurs pas encore prévenus'}</span>
             <div className="flex gap-2">
@@ -80,7 +94,7 @@ export default function AdminGroupage() {
             </div>
           </div>
         </div>
-      ))}
+      ) : null)}
     </div>
   );
 }

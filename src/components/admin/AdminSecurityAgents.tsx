@@ -3,6 +3,7 @@ import { Activity, ShieldAlert, Unlock, Loader } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { showToast } from '../../utils/toast';
 import { FraudAlertsPanel } from '../FraudAlertsPanel';
+import ActionConsistencyPanel from './ActionConsistencyPanel';
 
 type HealthCheck = { id: string; checked_at: string; status: 'ok' | 'warning' | 'critical'; issues: { level: string; message: string }[]; ai_summary: string | null };
 type BlockedAlert = { id: string; created_at: string; severity: string; details: { reason?: string } };
@@ -46,6 +47,7 @@ export default function AdminSecurityAgents() {
 
   return (
     <div className="space-y-8">
+      <ActionConsistencyPanel />
       <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
         <div className="flex items-center gap-3 mb-4">
           <Activity className="w-6 h-6 text-blue-600" />

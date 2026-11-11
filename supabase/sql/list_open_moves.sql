@@ -6,7 +6,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
   SELECT qr.id, qr.reference::text, qr.from_city::text, qr.from_postal_code::text, qr.to_city::text, qr.to_postal_code::text,
     qr.moving_date::date, qr.volume_m3::numeric, qr.distance_km::numeric, qr.from_home_size::text
   FROM quote_requests qr
-  WHERE qr.status IN ('new','quoted')
+  WHERE qr.deleted_at IS NULL AND qr.status IN ('new','quoted')
     AND COALESCE(qr.is_draft,false) = false
     AND qr.moving_date >= CURRENT_DATE
   ORDER BY qr.moving_date ASC;

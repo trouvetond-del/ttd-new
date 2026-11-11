@@ -1,0 +1,20 @@
+name: Deploy action consistency controller
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ['supabase/sql/action-consistency.sql', '.github/workflows/deploy-action-consistency.yml']
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -e
+          q() { python3 -c 'import json,sys;print(json.dumps({"query":sys.stdin.read()}))' | curl -sS -f -X POST "https://api.supabase.com/v1/projects/bvvbkaluajgdurxnnqqu/database/query" -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" --data @-; echo; }
+          q < supabase/sql/list_open_moves.sql
+          q < supabase/sql/action-consistency.sql
+          q < scripts/action-consistency.test.sql
+          printf '%s' "select json_build_object('checks',(select json_agg(t) from (select action,ok,details from action_consistency_checks order by created_at desc limit 5)t),'invalid_visible_pairs',(select count(*) from groupage_alerts where dismissed_at is null and invalidated_at is null and not groupage_pair_valid(id)));" | q
