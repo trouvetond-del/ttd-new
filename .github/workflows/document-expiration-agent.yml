@@ -8,6 +8,7 @@ on:
     paths:
       - 'supabase/functions/check-document-expiration/**'
       - 'supabase/sql/fraud-alerts-dismiss.sql'
+      - 'supabase/sql/document-expiration-rules.sql'
       - '.github/workflows/document-expiration-agent.yml'
 permissions:
   contents: read
@@ -23,6 +24,7 @@ jobs:
       - name: Colonne de suppression des alertes
         run: |
           psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/sql/fraud-alerts-dismiss.sql
+          psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/sql/document-expiration-rules.sql
       - uses: supabase/setup-cli@v1
         with:
           version: latest

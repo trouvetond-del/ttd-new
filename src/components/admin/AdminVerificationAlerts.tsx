@@ -12,6 +12,10 @@ interface VerificationStats {
   needsReview: number;
 }
 
+const DOC_LABELS: Record<string, string> = { kbis: 'KBIS', urssaf: 'Attestation URSSAF', insurance: 'Assurance', identity: "Pièce d'identité", transport_license: 'Licence de transport' };
+const docLabel = (t: string) => DOC_LABELS[t] ?? t;
+const daysText = (n: number) => n < 0 ? `expiré depuis ${-n} jour(s)` : `expire dans ${n} jour(s)`;
+
 const AdminVerificationAlerts: React.FC = () => {
   const [stats, setStats] = useState<VerificationStats>({
     pendingMovers: 0,
@@ -73,8 +77,8 @@ const AdminVerificationAlerts: React.FC = () => {
       const count = result.expiringDocumentsCount ?? 0;
       showToast(
         count === 0
-          ? 'Contrôle terminé : aucun document n\'expire dans les 30 prochains jours'
-          : `${count} document(s) expirent bientôt — ${result.alertsSent?.movers ?? 0} déménageur(s) prévenu(s)`,
+          ? 'Contrôle terminé : aucun document expiré ni à renouveler dans les 30 jours'
+          : `${count} document(s) expirés ou à renouveler — ${result.alertsSent?.movers ?? 0} déménageur(s) prévenu(s)`,
         'success'
       );
       await loadVerificationStats();
@@ -178,7 +182,7 @@ const AdminVerificationAlerts: React.FC = () => {
         <div id="expiring-docs-list" className="bg-red-50 border border-red-200 rounded-lg p-4">
           <h4 className="font-semibold text-red-900 mb-3 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5" />
-            Documents expirant prochainement
+            Documents expirés ou à renouveler
           </h4>
           <div className="space-y-2 max-h-64 overflow-y-auto">
             {expiringDocs.slice(0, 10).map((doc: any, idx: number) => (
@@ -189,7 +193,7 @@ const AdminVerificationAlerts: React.FC = () => {
                 <div>
                   <p className="font-medium text-gray-900">{doc.company_name}</p>
                   <p className="text-gray-600">
-                    {doc.document_type} - expire le {new Date(doc.expiration_date).toLocaleDateString('fr-FR')}
+                    {docLabel(doc.document_type)} — {doc.days_remaining < 0 ? 'expiré le' : 'expire le'} {new Date(doc.expiration_date).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -199,7 +203,7 @@ const AdminVerificationAlerts: React.FC = () => {
                     ? 'bg-orange-100 text-orange-800'
                     : 'bg-yellow-100 text-yellow-800'
                 }`}>
-                  {doc.days_remaining}j restants
+                  {doc.days_remaining < 0 ? `Expiré (${-doc.days_remaining} j)` : `${doc.days_remaining} j restants`}
                 </span>
               </div>
             ))}

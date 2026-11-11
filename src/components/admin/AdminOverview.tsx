@@ -16,7 +16,6 @@ import {
   RefreshCw,
   Eye,
 } from 'lucide-react';
-import AdminVerificationAlerts from './AdminVerificationAlerts';
 import QuoteRequestDetailModal from './QuoteRequestDetailModal';
 import UrgentQuoteRequestsAlert from './UrgentQuoteRequestsAlert';
 import { PendingMoverDetailModal } from './PendingMoverDetailModal';
@@ -660,8 +659,6 @@ const KPICard = ({
           onClick={onNavigateToPendingApprovals}
         />
       </div>
-
-      <AdminVerificationAlerts />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PendingMoversSection />

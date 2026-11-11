@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import AdminOverview from '../components/admin/AdminOverview';
 import AdminUserManagement from '../components/admin/AdminUserManagement';
+import AdminVerificationAlerts from '../components/admin/AdminVerificationAlerts';
 import AdminFinancialManagement from '../components/admin/AdminFinancialManagement';
 import AdminAnalyticsDashboard from '../components/admin/AdminAnalyticsDashboard';
 import AdminSystemSettings from '../components/admin/AdminSystemSettings';
@@ -275,11 +276,11 @@ export default function AdminDashboard() {
           initialUserStatus="inactive"
         />;
       case 'users':
-        return <AdminUserManagement key={`users-${userTypeFilter}-${userStatusFilter}`}
+        return <>{userTypeFilter === 'movers' && <div className="mb-6"><AdminVerificationAlerts /></div>}<AdminUserManagement key={`users-${userTypeFilter}-${userStatusFilter}`}
           adminRole={adminRole}
           initialUserType={userTypeFilter}
           initialUserStatus={userStatusFilter}
-        />;
+        /></>;
       case 'missions':
         return <AdminMissions adminRole={adminRole} />;
       case 'financial':
@@ -509,7 +510,7 @@ export default function AdminDashboard() {
                   }}
                   className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'bg-gradient-to-r from-[#3B82F6] to-[#10B981] text-white shadow-lg shadow-blue-500/30 translate-x-1'
+                      ? (nested ? 'bg-white/10 text-white' : 'bg-gradient-to-r from-[#3B82F6] to-[#10B981] text-white shadow-lg shadow-blue-500/30 translate-x-1')
                       : 'text-slate-300 hover:bg-white/10 hover:text-white hover:translate-x-1'
                   }`}
                 >

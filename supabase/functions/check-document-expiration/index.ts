@@ -7,6 +7,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
 };
 
+const DOC_LABELS: Record<string, string> = { kbis: 'KBIS', urssaf: 'Attestation URSSAF', insurance: 'Assurance', identity: "Pièce d'identité", transport_license: 'Licence de transport' };
+const docLabel = (t: string) => DOC_LABELS[t] ?? t;
+const daysText = (n: number) => n < 0 ? `expiré depuis ${-n} jour(s)` : `expire dans ${n} jour(s)`;
+
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
@@ -110,12 +114,12 @@ Deno.serve(async (req: Request) => {
 
       // Créer le message avec la liste des documents
       const docsList = docs
-        .map(d => `- ${d.document_type}: expire le ${new Date(d.expiration_date).toLocaleDateString('fr-FR')} (${d.days_remaining} jours restants)`)
+        .map(d => `- ${docLabel(d.document_type)} : ${daysText(d.days_remaining)} (${new Date(d.expiration_date).toLocaleDateString('fr-FR')})`)
         .join('\n');
 
       const message = docs.length === 1
-        ? `Votre ${docs[0].document_type} expire dans ${docs[0].days_remaining} jours. Merci de le renouveler au plus vite.`
-        : `${docs.length} de vos documents expirent bientôt:\n${docsList}\n\nMerci de les renouveler au plus vite.`;
+        ? `Votre document « ${docLabel(docs[0].document_type)} » ${daysText(docs[0].days_remaining)}. Merci d'envoyer une version à jour au plus vite.`
+        : `${docs.length} de vos documents sont expirés ou expirent bientôt :\n${docsList}\n\nMerci de les renouveler au plus vite.`;
 
       // Créer la notification pour le déménageur
       const { error: notifError } = await supabase
@@ -149,7 +153,7 @@ Deno.serve(async (req: Request) => {
         const criticalDocs = expiringDocs.filter((d: any) => d.days_remaining <= 7);
         
         const message = criticalDocs.length > 0
-          ? `Attention: ${criticalDocs.length} document(s) expirent dans moins de 7 jours !\n\nTotal de documents expirant dans 30 jours: ${expiringDocs.length}`
+          ? `Attention : ${criticalDocs.length} document(s) déjà expirés ou expirant sous 7 jours.\n\nTotal à renouveler (30 jours) : ${expiringDocs.length}`
           : `${expiringDocs.length} documents de déménageurs expirent dans les 30 prochains jours.`;
 
         for (const admin of admins) {
