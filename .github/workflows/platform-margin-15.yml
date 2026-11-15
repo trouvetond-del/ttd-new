@@ -1,1 +1,39 @@
-bmFtZTogTWFyZ2UgcGxhdGVmb3JtZSAxNSAlCm9uOgogIHB1c2g6CiAgICBicmFuY2hlczogW21haW5dCiAgICBwYXRoczoKICAgICAgLSAnc3VwYWJhc2UvbWlncmF0aW9uc19tYW51ZWxsZXMvcGxhdGZvcm0tbWFyZ2luLTE1LnNxbCcKICAgICAgLSAnc2NyaXB0cy9xdW90ZXMvc2VuZC1tYXJnaW4tdXBkYXRlcy5tanMnCiAgICAgIC0gJy5naXRodWIvd29ya2Zsb3dzL3BsYXRmb3JtLW1hcmdpbi0xNS55bWwnCiAgd29ya2Zsb3dfZGlzcGF0Y2g6IHt9CnBlcm1pc3Npb25zOgogIGNvbnRlbnRzOiByZWFkCmNvbmN1cnJlbmN5OgogIGdyb3VwOiBwbGF0Zm9ybS1tYXJnaW4tMTUKICBjYW5jZWwtaW4tcHJvZ3Jlc3M6IGZhbHNlCmpvYnM6CiAgYXBwbHk6CiAgICBydW5zLW9uOiB1YnVudHUtbGF0ZXN0CiAgICBzdGVwczoKICAgICAgLSB1c2VzOiBhY3Rpb25zL2NoZWNrb3V0QHY0CiAgICAgIC0gbmFtZTogQXBwbGlxdWVyIGxhIG1hcmdlIGF1eCBkZXZpcyBlbiBhdHRlbnRlIG5vbiBwYXnDqXMKICAgICAgICBydW46IHBzcWwgIiR7eyBzZWNyZXRzLlNVUEFCQVNFX0RCX1VSTCB9fSIgLXYgT05fRVJST1JfU1RPUD0xIC1mIHN1cGFiYXNlL21pZ3JhdGlvbnNfbWFudWVsbGVzL3BsYXRmb3JtLW1hcmdpbi0xNS5zcWwKICAgICAgLSBuYW1lOiBJbnN0YWxsZXIgbGVzIGTDqXBlbmRhbmNlcwogICAgICAgIHJ1bjogbnBtIGNpIC0taWdub3JlLXNjcmlwdHMgLS1uby1hdWRpdCAtLW5vLWZ1bmQKICAgICAgLSBuYW1lOiBWw6lyaWZpZXIgb3UgZW52b3llciBsZXMgbm91dmVhdXggZGV2aXMKICAgICAgICBlbnY6CiAgICAgICAgICBTVVBBQkFTRV9VUkw6ICR7eyBzZWNyZXRzLlNVUEFCQVNFX1VSTCB9fQogICAgICAgICAgU1VQQUJBU0VfU0VSVklDRV9ST0xFX0tFWTogJHt7IHNlY3JldHMuU1VQQUJBU0VfU0VSVklDRV9ST0xFX0tFWSB9fQogICAgICAgICAgUkVTRU5EX0FQSV9LRVk6ICR7eyBzZWNyZXRzLlJFU0VORF9BUElfS0VZIH19CiAgICAgICAgICBTRU5EX0VNQUlMUzogJ2ZhbHNlJwogICAgICAgIHJ1bjogbm9kZSBzY3JpcHRzL3F1b3Rlcy9zZW5kLW1hcmdpbi11cGRhdGVzLm1qcwogICAgICAtIHVzZXM6IHN1cGFiYXNlL3NldHVwLWNsaUB2MQogICAgICAgIHdpdGg6CiAgICAgICAgICB2ZXJzaW9uOiBsYXRlc3QKICAgICAgLSBuYW1lOiBNZXR0cmUgw6Agam91ciBsZSBjYWxjdWwgZHUgcGFpZW1lbnQKICAgICAgICBlbnY6CiAgICAgICAgICBTVVBBQkFTRV9BQ0NFU1NfVE9LRU46ICR7eyBzZWNyZXRzLlNVUEFCQVNFX0FDQ0VTU19UT0tFTiB9fQogICAgICAgIHJ1bjogfAogICAgICAgICAgc3VwYWJhc2UgZnVuY3Rpb25zIGRlcGxveSBjcmVhdGUtcGF5bWVudC1pbnRlbnQgLS1wcm9qZWN0LXJlZiBidnZia2FsdWFqZ2R1cnhubnFxdSAtLXllcwogICAgICAgICAgc3VwYWJhc2UgZnVuY3Rpb25zIGRlcGxveSBzdHJpcGUtd2ViaG9vayAtLXByb2plY3QtcmVmIGJ2dmJrYWx1YWpnZHVyeG5ucXF1IC0teWVzCg==
+name: Marge plateforme 15 %
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations_manuelles/platform-margin-15.sql'
+      - 'scripts/quotes/send-margin-updates.mjs'
+      - '.github/workflows/platform-margin-15.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: platform-margin-15
+  cancel-in-progress: false
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Appliquer la marge aux devis en attente non payés
+        run: psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/platform-margin-15.sql
+      - name: Installer les dépendances
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Vérifier ou envoyer les nouveaux devis
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SEND_EMAILS: 'false'
+        run: node scripts/quotes/send-margin-updates.mjs
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Mettre à jour le calcul du paiement
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase functions deploy create-payment-intent --project-ref bvvbkaluajgdurxnnqqu --yes
+          supabase functions deploy stripe-webhook --project-ref bvvbkaluajgdurxnnqqu --yes

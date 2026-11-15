@@ -1,1 +1,316 @@
-aW1wb3J0IHsgY2xpZW50UHJpY2VGb3JNb3ZlclByaWNlLCBwbGF0Zm9ybVByaWNlQnJlYWtkb3duIH0gZnJvbSAnLi9wbGF0Zm9ybVByaWNpbmcnOwoKaW50ZXJmYWNlIFF1b3RlUmVxdWVzdERhdGEgewogIHZvbHVtZV9tMz86IG51bWJlcjsKICBzdXJmYWNlX20yPzogbnVtYmVyOwogIGhvbWVfc2l6ZTogc3RyaW5nOwogIGZsb29yX2Zyb206IG51bWJlcjsKICBmbG9vcl90bzogbnVtYmVyOwogIGVsZXZhdG9yX2Zyb206IGJvb2xlYW47CiAgZWxldmF0b3JfdG86IGJvb2xlYW47CiAgc2VydmljZXNfbmVlZGVkOiBzdHJpbmdbXTsKICBkaXN0YW5jZV9rbT86IG51bWJlcjsKICBmcm9tX3Bvc3RhbF9jb2RlOiBzdHJpbmc7CiAgdG9fcG9zdGFsX2NvZGU6IHN0cmluZzsKICBmcm9tX2NpdHk/OiBzdHJpbmc7CiAgdG9fY2l0eT86IHN0cmluZzsKICBmdXJuaXR1cmVfbGlmdF9uZWVkZWRfZGVwYXJ0dXJlPzogYm9vbGVhbjsKICBmdXJuaXR1cmVfbGlmdF9uZWVkZWRfYXJyaXZhbD86IGJvb2xlYW47CiAgYWNjZXB0c19ncm91cGFnZT86IGJvb2xlYW47Cn0KCmludGVyZmFjZSBQcmljZUNhbGN1bGF0aW9uIHsKICBtYXJrZXRQcmljZTogbnVtYmVyOwogIHByaWNlSW5kaWNhdG9yOiAnZ3JlZW4nIHwgJ29yYW5nZScgfCAncmVkJzsKICBjbGllbnREaXNwbGF5UHJpY2U6IG51bWJlcjsKfQoKaW50ZXJmYWNlIE1hcmtldFByaWNlQnJlYWtkb3duIHsKICBiYXNlUHJpY2U6IG51bWJlcjsKICBkaXN0YW5jZUNvc3Q6IG51bWJlcjsKICBmbG9vckNvc3Q6IG51bWJlcjsKICBzZXJ2aWNlc0Nvc3Q6IG51bWJlcjsKICB0b3RhbE1hcmtldFByaWNlOiBudW1iZXI7CiAgZGV0YWlsczogc3RyaW5nW107Cn0KCmNvbnN0IE1BUktFVF9SQVRFX1BFUl9NMyA9IDUwOwpjb25zdCBNQVJLRVRfUkFURV9QRVJfTTNfTkFUSU9OQUwgPSA2NTsKY29uc3QgTUFSS0VUX1JBVEVfUEVSX00zX0lOVEVSTkFUSU9OQUwgPSAxMDA7CmNvbnN0IE1BUktFVF9SQVRFX1BFUl9NMiA9IDIyOwoKY29uc3QgSE9NRV9TSVpFX0JBU0VfVk9MVU1FUzogUmVjb3JkPHN0cmluZywgbnVtYmVyPiA9IHsKICAnc3R1ZGlvJzogMTUsCiAgJ3QxJzogMjAsCiAgJ3QyJzogMzAsCiAgJ3QzJzogNDUsCiAgJ3Q0JzogNjAsCiAgJ3Q1JzogNzUsCiAgJ21haXNvbic6IDkwLAp9OwoKY29uc3QgU0VSVklDRV9DT1NUUzogUmVjb3JkPHN0cmluZywgbnVtYmVyPiA9IHsKICAncGFja2luZyc6IDI1MCwKICAnZnVybml0dXJlX2Rpc2Fzc2VtYmx5JzogMzAwLAogICdmdXJuaXR1cmVfYXNzZW1ibHknOiAzMDAsCiAgJ3N0b3JhZ2UnOiAxNTAsCiAgJ3BpYW5vJzogMzUwLAogICdmcmFnaWxlX2l0ZW1zJzogMTIwLAogICdjbGVhbmluZyc6IDE4MCwKICAnRW1iYWxsYWdlL0TDqWJhbGxhZ2UnOiAyNTAsCiAgJ0TDqW1vbnRhZ2UvUmVtb250YWdlIG1ldWJsZXMnOiAzMDAsCiAgJ0ZvdXJuaXR1cmUgZGUgY2FydG9ucyc6IDgwLAogICdHYXJkZS1tZXVibGVzJzogMTUwLAogICdUcmFuc3BvcnQgZFwnb2JqZXRzIGZyYWdpbGVzJzogMTIwLAogICdOZXR0b3lhZ2UgYXByw6hzIGTDqW3DqW5hZ2VtZW50JzogMTgwLAp9OwoKY29uc3QgRkxPT1JfQ09TVF9XSVRIT1VUX0VMRVZBVE9SID0gODA7CmNvbnN0IEZMT09SX0NPU1RfV0lUSF9FTEVWQVRPUiA9IDA7CmNvbnN0IEZVUk5JVFVSRV9MSUZUX0NPU1QgPSA0MDA7CgpleHBvcnQgZnVuY3Rpb24gY2FsY3VsYXRlTWFya2V0UHJpY2UocXVvdGVEYXRhOiBRdW90ZVJlcXVlc3REYXRhKTogbnVtYmVyIHsKICBjb25zdCBicmVha2Rvd24gPSBjYWxjdWxhdGVNYXJrZXRQcmljZVdpdGhCcmVha2Rvd24ocXVvdGVEYXRhKTsKICByZXR1cm4gYnJlYWtkb3duLnRvdGFsTWFya2V0UHJpY2U7Cn0KCmV4cG9ydCBmdW5jdGlvbiBjYWxjdWxhdGVNYXJrZXRQcmljZVdpdGhCcmVha2Rvd24ocXVvdGVEYXRhOiBRdW90ZVJlcXVlc3REYXRhKTogTWFya2V0UHJpY2VCcmVha2Rvd24gewogIGNvbnN0IGRldGFpbHM6IHN0cmluZ1tdID0gW107CiAgY29uc3QgZGlzdGFuY2UgPSBxdW90ZURhdGEuZGlzdGFuY2Vfa20gfHwgMDsKCiAgLy8gRGV0ZWN0IGludGVybmF0aW9uYWwgbW92ZQogIGNvbnN0IGlzSW50ZXJuYXRpb25hbCA9IGRldGVjdEludGVybmF0aW9uYWxNb3ZlKHF1b3RlRGF0YSk7CiAgY29uc3QgaXNOYXRpb25hbCA9ICFpc0ludGVybmF0aW9uYWwgJiYgZGlzdGFuY2UgPiAyMDA7CgogIC8vIENob29zZSByYXRlIHBlciBtwrMgYmFzZWQgb24gbW92ZSB0eXBlCiAgY29uc3QgcmF0ZVBlck0zID0gaXNJbnRlcm5hdGlvbmFsID8gTUFSS0VUX1JBVEVfUEVSX00zX0lOVEVSTkFUSU9OQUwgOiAoaXNOYXRpb25hbCA/IE1BUktFVF9SQVRFX1BFUl9NM19OQVRJT05BTCA6IE1BUktFVF9SQVRFX1BFUl9NMyk7CgogIGxldCBiYXNlUHJpY2UgPSAwOwogIGxldCB2b2x1bWVNMyA9IDA7CgogIGlmIChxdW90ZURhdGEudm9sdW1lX20zICYmIHF1b3RlRGF0YS52b2x1bWVfbTMgPiAwKSB7CiAgICB2b2x1bWVNMyA9IHF1b3RlRGF0YS52b2x1bWVfbTM7CiAgICBiYXNlUHJpY2UgPSB2b2x1bWVNMyAqIHJhdGVQZXJNMzsKICAgIGRldGFpbHMucHVzaChgVm9sdW1lOiAke3ZvbHVtZU0zfW3CsyDDlyAke3JhdGVQZXJNM33igqwgPSAke2Jhc2VQcmljZX3igqwke2lzSW50ZXJuYXRpb25hbCA/ICcgKHRhcmlmIGludGVybmF0aW9uYWwpJyA6ICcnfWApOwogIH0gZWxzZSBpZiAocXVvdGVEYXRhLnN1cmZhY2VfbTIgJiYgcXVvdGVEYXRhLnN1cmZhY2VfbTIgPiAwKSB7CiAgICBiYXNlUHJpY2UgPSBxdW90ZURhdGEuc3VyZmFjZV9tMiAqIE1BUktFVF9SQVRFX1BFUl9NMjsKICAgIHZvbHVtZU0zID0gcXVvdGVEYXRhLnN1cmZhY2VfbTIgKiAxLjU7CiAgICBkZXRhaWxzLnB1c2goYFN1cmZhY2U6ICR7cXVvdGVEYXRhLnN1cmZhY2VfbTJ9bcKyIMOXICR7TUFSS0VUX1JBVEVfUEVSX00yfeKCrCA9ICR7YmFzZVByaWNlfeKCrGApOwogIH0gZWxzZSB7CiAgICBjb25zdCBob21lU2l6ZSA9IHF1b3RlRGF0YS5ob21lX3NpemUudG9Mb3dlckNhc2UoKTsKICAgIHZvbHVtZU0zID0gSE9NRV9TSVpFX0JBU0VfVk9MVU1FU1tob21lU2l6ZV0gfHwgMzA7CiAgICBiYXNlUHJpY2UgPSB2b2x1bWVNMyAqIHJhdGVQZXJNMzsKICAgIGRldGFpbHMucHVzaChgVHlwZSBkZSBsb2dlbWVudDogJHtxdW90ZURhdGEuaG9tZV9zaXplfSAoJHt2b2x1bWVNM31twrMgZXN0aW3DqXMpIMOXICR7cmF0ZVBlck0zfeKCrCA9ICR7YmFzZVByaWNlfeKCrGApOwogIH0KCiAgbGV0IGRpc3RhbmNlQ29zdCA9IDA7CiAgaWYgKGRpc3RhbmNlID4gMCkgewogICAgaWYgKGlzSW50ZXJuYXRpb25hbCkgewogICAgICAvLyBJbnRlcm5hdGlvbmFsOiB+MuKCrC9rbSArIGFkbWluIHN1cmNoYXJnZQogICAgICBkaXN0YW5jZUNvc3QgPSBkaXN0YW5jZSAqIDIuMCArIDQwMDsKICAgICAgZGV0YWlscy5wdXNoKGBEaXN0YW5jZSBpbnRlcm5hdGlvbmFsZTogJHtkaXN0YW5jZX1rbSDDlyAyLjAw4oKsICsgNDAw4oKsIGFkbWluID0gJHtkaXN0YW5jZUNvc3QudG9GaXhlZCgwKX3igqxgKTsKICAgIH0gZWxzZSBpZiAoZGlzdGFuY2UgPiAyMDApIHsKICAgICAgLy8gTmF0aW9uYWwgbG9uZyBkaXN0YW5jZTogOTDigqwgZmxhdCArIDAuNDXigqwva20gYmV5b25kIDIwMGttCiAgICAgIGRpc3RhbmNlQ29zdCA9IDkwICsgKGRpc3RhbmNlIC0gMjAwKSAqIDAuNDU7CiAgICAgIGRldGFpbHMucHVzaChgRGlzdGFuY2UgbG9uZ3VlOiA5MOKCrCArICR7KGRpc3RhbmNlIC0gMjAwKS50b0ZpeGVkKDApfWttIMOXIDAuNDXigqwgPSAke2Rpc3RhbmNlQ29zdC50b0ZpeGVkKDApfeKCrGApOwogICAgfSBlbHNlIGlmIChkaXN0YW5jZSA+IDUwKSB7CiAgICAgIC8vIE1lZGl1bSBkaXN0YW5jZTogMC42MOKCrC9rbSBiZXlvbmQgNTBrbQogICAgICBkaXN0YW5jZUNvc3QgPSAoZGlzdGFuY2UgLSA1MCkgKiAwLjYwOwogICAgICBkZXRhaWxzLnB1c2goYERpc3RhbmNlOiAkeyhkaXN0YW5jZSAtIDUwKS50b0ZpeGVkKDApfWttIMOXIDAuNjDigqwgPSAke2Rpc3RhbmNlQ29zdC50b0ZpeGVkKDApfeKCrGApOwogICAgfSBlbHNlIHsKICAgICAgZGV0YWlscy5wdXNoKGBEaXN0YW5jZTogJHtkaXN0YW5jZX1rbSAoPCA1MGttLCBpbmNsdXMpYCk7CiAgICB9CiAgfSBlbHNlIHsKICAgIGNvbnN0IGZyb21EZXB0ID0gcGFyc2VJbnQocXVvdGVEYXRhLmZyb21fcG9zdGFsX2NvZGUuc3Vic3RyaW5nKDAsIDIpKTsKICAgIGNvbnN0IHRvRGVwdCA9IHBhcnNlSW50KHF1b3RlRGF0YS50b19wb3N0YWxfY29kZS5zdWJzdHJpbmcoMCwgMikpOwogICAgY29uc3QgZGVwdERpZmYgPSBNYXRoLmFicyhmcm9tRGVwdCAtIHRvRGVwdCk7CgogICAgaWYgKGRlcHREaWZmID09PSAwKSB7CiAgICAgIGRpc3RhbmNlQ29zdCA9IDA7CiAgICAgIGRldGFpbHMucHVzaChgRGlzdGFuY2U6IG3Dqm1lIGTDqXBhcnRlbWVudCAoaW5jbHVzIGRhbnMgbGUgcHJpeClgKTsKICAgIH0gZWxzZSB7CiAgICAgIGNvbnN0IGVzdGltYXRlZEttID0gZGVwdERpZmYgKiA1MDsKICAgICAgZGlzdGFuY2VDb3N0ID0gZGVwdERpZmYgKiAyNTsKICAgICAgZGV0YWlscy5wdXNoKGBEaXN0YW5jZSBlc3RpbcOpZTogJHtkZXB0RGlmZn0gZMOpcGFydGVtZW50cyAo4omIJHtlc3RpbWF0ZWRLbX1rbSkgw5cgMjXigqwgPSAke2Rpc3RhbmNlQ29zdH3igqxgKTsKICAgIH0KICB9CgogIGxldCBmbG9vckNvc3QgPSAwOwogIGlmIChxdW90ZURhdGEuZmxvb3JfZnJvbSA+IDAgJiYgIXF1b3RlRGF0YS5lbGV2YXRvcl9mcm9tKSB7CiAgICBjb25zdCBjb3N0ID0gcXVvdGVEYXRhLmZsb29yX2Zyb20gKiBGTE9PUl9DT1NUX1dJVEhPVVRfRUxFVkFUT1I7CiAgICBmbG9vckNvc3QgKz0gY29zdDsKICAgIGRldGFpbHMucHVzaChgw4l0YWdlcyBkw6lwYXJ0OiAke3F1b3RlRGF0YS5mbG9vcl9mcm9tfSDDlyAke0ZMT09SX0NPU1RfV0lUSE9VVF9FTEVWQVRPUn3igqwgKHNhbnMgYXNjZW5zZXVyKSA9ICR7Y29zdH3igqxgKTsKICB9IGVsc2UgaWYgKHF1b3RlRGF0YS5mbG9vcl9mcm9tID4gMCkgewogICAgZGV0YWlscy5wdXNoKGDDiXRhZ2VzIGTDqXBhcnQ6ICR7cXVvdGVEYXRhLmZsb29yX2Zyb219IChhdmVjIGFzY2Vuc2V1ciwgZ3JhdHVpdClgKTsKICB9CgogIGlmIChxdW90ZURhdGEuZmxvb3JfdG8gPiAwICYmICFxdW90ZURhdGEuZWxldmF0b3JfdG8pIHsKICAgIGNvbnN0IGNvc3QgPSBxdW90ZURhdGEuZmxvb3JfdG8gKiBGTE9PUl9DT1NUX1dJVEhPVVRfRUxFVkFUT1I7CiAgICBmbG9vckNvc3QgKz0gY29zdDsKICAgIGRldGFpbHMucHVzaChgw4l0YWdlcyBhcnJpdsOpZTogJHtxdW90ZURhdGEuZmxvb3JfdG99IMOXICR7RkxPT1JfQ09TVF9XSVRIT1VUX0VMRVZBVE9SfeKCrCAoc2FucyBhc2NlbnNldXIpID0gJHtjb3N0feKCrGApOwogIH0gZWxzZSBpZiAocXVvdGVEYXRhLmZsb29yX3RvID4gMCkgewogICAgZGV0YWlscy5wdXNoKGDDiXRhZ2VzIGFycml2w6llOiAke3F1b3RlRGF0YS5mbG9vcl90b30gKGF2ZWMgYXNjZW5zZXVyLCBncmF0dWl0KWApOwogIH0KCiAgLy8gTW9udGUtbWV1YmxlCiAgaWYgKHF1b3RlRGF0YS5mdXJuaXR1cmVfbGlmdF9uZWVkZWRfZGVwYXJ0dXJlKSB7CiAgICBmbG9vckNvc3QgKz0gRlVSTklUVVJFX0xJRlRfQ09TVDsKICAgIGRldGFpbHMucHVzaChgTW9udGUtbWV1YmxlIGTDqXBhcnQ6ICR7RlVSTklUVVJFX0xJRlRfQ09TVH3igqxgKTsKICB9CiAgaWYgKHF1b3RlRGF0YS5mdXJuaXR1cmVfbGlmdF9uZWVkZWRfYXJyaXZhbCkgewogICAgZmxvb3JDb3N0ICs9IEZVUk5JVFVSRV9MSUZUX0NPU1Q7CiAgICBkZXRhaWxzLnB1c2goYE1vbnRlLW1ldWJsZSBhcnJpdsOpZTogJHtGVVJOSVRVUkVfTElGVF9DT1NUfeKCrGApOwogIH0KCiAgbGV0IHNlcnZpY2VzQ29zdCA9IDA7CiAgaWYgKHF1b3RlRGF0YS5zZXJ2aWNlc19uZWVkZWQgJiYgcXVvdGVEYXRhLnNlcnZpY2VzX25lZWRlZC5sZW5ndGggPiAwKSB7CiAgICBxdW90ZURhdGEuc2VydmljZXNfbmVlZGVkLmZvckVhY2goc2VydmljZSA9PiB7CiAgICAgIGNvbnN0IGNvc3QgPSBTRVJWSUNFX0NPU1RTW3NlcnZpY2VdIHx8IDA7CiAgICAgIGlmIChjb3N0ID4gMCkgewogICAgICAgIHNlcnZpY2VzQ29zdCArPSBjb3N0OwogICAgICAgIGRldGFpbHMucHVzaChgU2VydmljZTogJHtzZXJ2aWNlfSA9ICR7Y29zdH3igqxgKTsKICAgICAgfQogICAgfSk7CiAgfQoKICBsZXQgdG90YWxNYXJrZXRQcmljZSA9IE1hdGgucm91bmQoYmFzZVByaWNlICsgZGlzdGFuY2VDb3N0ICsgZmxvb3JDb3N0ICsgc2VydmljZXNDb3N0KTsKCiAgLy8gR3JvdXBhZ2UgZGlzY291bnQKICBpZiAocXVvdGVEYXRhLmFjY2VwdHNfZ3JvdXBhZ2UpIHsKICAgIGNvbnN0IGRpc2NvdW50ID0gTWF0aC5yb3VuZCh0b3RhbE1hcmtldFByaWNlICogMC4yNSk7CiAgICB0b3RhbE1hcmtldFByaWNlIC09IGRpc2NvdW50OwogICAgZGV0YWlscy5wdXNoKGBHcm91cGFnZSAoLTI1JSk6IC0ke2Rpc2NvdW50feKCrGApOwogIH0KCiAgcmV0dXJuIHsKICAgIGJhc2VQcmljZTogTWF0aC5yb3VuZChiYXNlUHJpY2UpLAogICAgZGlzdGFuY2VDb3N0OiBNYXRoLnJvdW5kKGRpc3RhbmNlQ29zdCksCiAgICBmbG9vckNvc3Q6IE1hdGgucm91bmQoZmxvb3JDb3N0KSwKICAgIHNlcnZpY2VzQ29zdDogTWF0aC5yb3VuZChzZXJ2aWNlc0Nvc3QpLAogICAgdG90YWxNYXJrZXRQcmljZSwKICAgIGRldGFpbHMsCiAgfTsKfQoKZnVuY3Rpb24gZGV0ZWN0SW50ZXJuYXRpb25hbE1vdmUocXVvdGVEYXRhOiBRdW90ZVJlcXVlc3REYXRhKTogYm9vbGVhbiB7CiAgY29uc3QgZGlzdGFuY2UgPSBxdW90ZURhdGEuZGlzdGFuY2Vfa20gfHwgMDsKICBjb25zdCBmcm9tQ2l0eSA9IChxdW90ZURhdGEuZnJvbV9jaXR5IHx8IHF1b3RlRGF0YS5mcm9tX3Bvc3RhbF9jb2RlIHx8ICcnKS50b0xvd2VyQ2FzZSgpOwogIGNvbnN0IHRvQ2l0eSA9IChxdW90ZURhdGEudG9fY2l0eSB8fCBxdW90ZURhdGEudG9fcG9zdGFsX2NvZGUgfHwgJycpLnRvTG93ZXJDYXNlKCk7CgogIGNvbnN0IGNvdW50cnlJbmRpY2F0b3JzOiBSZWNvcmQ8c3RyaW5nLCBzdHJpbmdbXT4gPSB7CiAgICAnQkUnOiBbJ2JydXhlbGxlcycsICdicnVzc2VscycsICdsacOoZ2UnLCAnYW52ZXJzJywgJ2dhbmQnLCAnbmFtdXInLCAnbW9ucycsICdjaGFybGVyb2knLCAnd29sdXdlJywgJ2l4ZWxsZXMnLCAnc2NoYWVyYmVlaycsICdhbmRlcmxlY2h0JywgJ3VjY2xlJywgJ2V0dGVyYmVlaycsICdtb2xlbmJlZWsnLCAnZm9yZXN0JywgJ2pldHRlJywgJ2F1ZGVyZ2hlbScsICdldmVyZScsICdvb3N0ZW5kZScsICdicnVnZXMnLCAnbGV1dmVuJywgJ21lY2hlbGVuJywgJ2tvcnRyaWprJywgJ2FhbHN0JywgJ2hhc3NlbHQnLCAnZ2VuaycsICd0dXJuaG91dCddLAogICAgJ0NIJzogWyd6dXJpY2gnLCAnesO8cmljaCcsICdiZXJuJywgJ2Jlcm5lJywgJ2Jhc2VsJywgJ2LDomxlJywgJ2dlbsOodmUnLCAnZ2VuZXZhJywgJ2xhdXNhbm5lJywgJ2x1Y2VybmUnLCAnbHV6ZXJuJywgJ3dpbnRlcnRodXInLCAnbHVnYW5vJywgJ2ZyaWJvdXJnJywgJ25ldWNow6J0ZWwnLCAnc2lvbicsICd5dmVyZG9uJywgJ3RodW4nXSwKICAgICdERSc6IFsnYmVybGluJywgJ23DvG5jaGVuJywgJ211bmljaCcsICdoYW1idXJnJywgJ2vDtmxuJywgJ2NvbG9nbmUnLCAnZnJhbmtmdXJ0JywgJ3N0dXR0Z2FydCcsICdkw7xzc2VsZG9yZicsICdkb3J0bXVuZCcsICdlc3NlbicsICdicmVtZW4nLCAnZHJlc2RlbicsICdsZWlwemlnJywgJ2hhbm5vdmVyJywgJ27DvHJuYmVyZycsICdib25uJywgJ2FhY2hlbicsICdtYW5uaGVpbScsICdrYXJsc3J1aGUnXSwKICAgICdMVSc6IFsnbHV4ZW1ib3VyZycsICdlc2NoLXN1ci1hbHpldHRlJywgJ2RpZmZlcmRhbmdlJywgJ2R1ZGVsYW5nZSddLAogICAgJ05MJzogWydhbXN0ZXJkYW0nLCAncm90dGVyZGFtJywgJ2RlbiBoYWFnJywgJ3V0cmVjaHQnLCAnZWluZGhvdmVuJywgJ2dyb25pbmdlbicsICdtYWFzdHJpY2h0JywgJ2JyZWRhJywgJ2FybmhlbSddLAogIH07CgogIGxldCBmcm9tQ291bnRyeSA9ICdGUic7CiAgbGV0IHRvQ291bnRyeSA9ICdGUic7CgogIGZvciAoY29uc3QgW2NvdW50cnksIGluZGljYXRvcnNdIG9mIE9iamVjdC5lbnRyaWVzKGNvdW50cnlJbmRpY2F0b3JzKSkgewogICAgZm9yIChjb25zdCBpbmQgb2YgaW5kaWNhdG9ycykgewogICAgICBpZiAoZnJvbUNpdHkuaW5jbHVkZXMoaW5kKSkgZnJvbUNvdW50cnkgPSBjb3VudHJ5OwogICAgICBpZiAodG9DaXR5LmluY2x1ZGVzKGluZCkpIHRvQ291bnRyeSA9IGNvdW50cnk7CiAgICB9CiAgfQoKICBpZiAoZnJvbUNvdW50cnkgIT09IHRvQ291bnRyeSkgcmV0dXJuIHRydWU7CiAgaWYgKGRpc3RhbmNlID4gNTAwKSByZXR1cm4gdHJ1ZTsKICByZXR1cm4gZmFsc2U7Cn0KCmV4cG9ydCBmdW5jdGlvbiBjYWxjdWxhdGVQcmljZUluZGljYXRvcigKICBwcm9wb3NlZFByaWNlOiBudW1iZXIsCiAgbWFya2V0UHJpY2U6IG51bWJlcgopOiAnZ3JlZW4nIHwgJ29yYW5nZScgfCAncmVkJyB7CiAgaWYgKHByb3Bvc2VkUHJpY2UgPD0gMCB8fCBwcm9wb3NlZFByaWNlIDwgbWFya2V0UHJpY2UgKiAwLjUpIHsKICAgIHJldHVybiAncmVkJzsKICB9CgogIGNvbnN0IGRpZmZlcmVuY2UgPSAoKHByb3Bvc2VkUHJpY2UgLSBtYXJrZXRQcmljZSkgLyBtYXJrZXRQcmljZSkgKiAxMDA7CgogIGlmIChkaWZmZXJlbmNlID49IC0xMCAmJiBkaWZmZXJlbmNlIDw9IDEwKSB7CiAgICByZXR1cm4gJ2dyZWVuJzsKICB9IGVsc2UgaWYgKChkaWZmZXJlbmNlID4gMTAgJiYgZGlmZmVyZW5jZSA8PSAyNSkgfHwgKGRpZmZlcmVuY2UgPCAtMTAgJiYgZGlmZmVyZW5jZSA+PSAtMjUpKSB7CiAgICByZXR1cm4gJ29yYW5nZSc7CiAgfSBlbHNlIHsKICAgIHJldHVybiAncmVkJzsKICB9Cn0KCmV4cG9ydCBmdW5jdGlvbiBnZXRQcmljZUluZGljYXRvck1lc3NhZ2UoCiAgaW5kaWNhdG9yOiAnZ3JlZW4nIHwgJ29yYW5nZScgfCAncmVkJywKICBwcm9wb3NlZFByaWNlOiBudW1iZXIsCiAgbWFya2V0UHJpY2U6IG51bWJlcgopOiBzdHJpbmcgewogIGNvbnN0IGRpZmZlcmVuY2UgPSAoKHByb3Bvc2VkUHJpY2UgLSBtYXJrZXRQcmljZSkgLyBtYXJrZXRQcmljZSkgKiAxMDA7CiAgY29uc3QgZGlmZlRleHQgPSBkaWZmZXJlbmNlID4gMCA/IGArJHtkaWZmZXJlbmNlLnRvRml4ZWQoMCl9JWAgOiBgJHtkaWZmZXJlbmNlLnRvRml4ZWQoMCl9JWA7CgogIHN3aXRjaCAoaW5kaWNhdG9yKSB7CiAgICBjYXNlICdncmVlbic6CiAgICAgIHJldHVybiBgRXhjZWxsZW50IHByaXggKCR7ZGlmZlRleHR9IHBhciByYXBwb3J0IGF1IG1hcmNow6kpYDsKICAgIGNhc2UgJ29yYW5nZSc6CiAgICAgIHJldHVybiBgUHJpeCBjb3JyZWN0IG1haXMgbMOpZ8OocmVtZW50IMOpbGV2w6kgKCR7ZGlmZlRleHR9IHBhciByYXBwb3J0IGF1IG1hcmNow6kpYDsKICAgIGNhc2UgJ3JlZCc6CiAgICAgIGlmIChwcm9wb3NlZFByaWNlIDwgbWFya2V0UHJpY2UgKiAwLjUpIHsKICAgICAgICByZXR1cm4gYFByaXggYW5vcm1hbGVtZW50IGJhcyBldCBzdXNwZWN0ICgke2RpZmZUZXh0fSBwYXIgcmFwcG9ydCBhdSBtYXJjaMOpKWA7CiAgICAgIH0gZWxzZSB7CiAgICAgICAgcmV0dXJuIGBQcml4IHRyb3Agw6lsb2lnbsOpIGR1IG1hcmNow6kgKCR7ZGlmZlRleHR9KWA7CiAgICAgIH0KICB9Cn0KCmV4cG9ydCBmdW5jdGlvbiBjYWxjdWxhdGVDbGllbnREaXNwbGF5UHJpY2UocHJvcG9zZWRQcmljZTogbnVtYmVyKTogbnVtYmVyIHsKICByZXR1cm4gY2xpZW50UHJpY2VGb3JNb3ZlclByaWNlKHByb3Bvc2VkUHJpY2UpOwp9CgovKioKICogUEFZTUVOVCBTWVNURU0gKHYyIOKAlCBDb21taXNzaW9uLW9ubHkgbW9kZWwpCiAqCiAqIDEuIE1vdmVyIHByb3Bvc2VzIHByaWNlIFguCiAqIDIuIENsaWVudCBzZWVzIFkgPSBYICsgMTUlIHBsYXRmb3JtIG1hcmdpbi4KICogMy4gQ2xpZW50IHBheXMgdGhlIHBsYXRmb3JtIGZlZSB2aWEgU3RyaXBlOiBZIC0gWC4KICogNC4gT24gbW92aW5nIGRheSwgY2xpZW50IHBheXMgWCBkaXJlY3RseSB0byB0aGUgbW92ZXIuCiAqIFBhc3NpbmcgdGhlIHN0b3JlZCBtb3ZlciBwcmljZSBwcmVzZXJ2ZXMgaGlzdG9yaWNhbCBhY2NlcHRlZC9wYWlkIHF1b3Rlcy4KICovCmV4cG9ydCBmdW5jdGlvbiBjYWxjdWxhdGVQcmljZUJyZWFrZG93bihjbGllbnREaXNwbGF5UHJpY2U6IG51bWJlciwga25vd25Nb3ZlclByaWNlPzogbnVtYmVyIHwgbnVsbCkgewogIHJldHVybiBwbGF0Zm9ybVByaWNlQnJlYWtkb3duKGNsaWVudERpc3BsYXlQcmljZSwga25vd25Nb3ZlclByaWNlKTsKfQoKZXhwb3J0IGZ1bmN0aW9uIHZhbGlkYXRlUXVvdGVQcmljaW5nKAogIHF1b3RlRGF0YTogUXVvdGVSZXF1ZXN0RGF0YSwKICBwcm9wb3NlZFByaWNlOiBudW1iZXIKKTogUHJpY2VDYWxjdWxhdGlvbiB7CiAgY29uc3QgbWFya2V0UHJpY2UgPSBjYWxjdWxhdGVNYXJrZXRQcmljZShxdW90ZURhdGEpOwogIGNvbnN0IHByaWNlSW5kaWNhdG9yID0gY2FsY3VsYXRlUHJpY2VJbmRpY2F0b3IocHJvcG9zZWRQcmljZSwgbWFya2V0UHJpY2UpOwogIGNvbnN0IGNsaWVudERpc3BsYXlQcmljZSA9IGNhbGN1bGF0ZUNsaWVudERpc3BsYXlQcmljZShwcm9wb3NlZFByaWNlKTsKCiAgcmV0dXJuIHsKICAgIG1hcmtldFByaWNlLAogICAgcHJpY2VJbmRpY2F0b3IsCiAgICBjbGllbnREaXNwbGF5UHJpY2UsCiAgfTsKfQoKZXhwb3J0IGZ1bmN0aW9uIGNhbGN1bGF0ZVJlZnVuZEFtb3VudCgKICBhbW91bnRQYWlkOiBudW1iZXIsCiAgZGF5c0JlZm9yZU1vdmluZzogbnVtYmVyCik6IHsgcmVmdW5kUGVyY2VudGFnZTogbnVtYmVyOyByZWZ1bmRBbW91bnQ6IG51bWJlciB9IHsKICBsZXQgcmVmdW5kUGVyY2VudGFnZSA9IDA7CgogIGlmIChkYXlzQmVmb3JlTW92aW5nID49IDcpIHsKICAgIHJlZnVuZFBlcmNlbnRhZ2UgPSAxMDA7CiAgfSBlbHNlIGlmIChkYXlzQmVmb3JlTW92aW5nID49IDIpIHsKICAgIHJlZnVuZFBlcmNlbnRhZ2UgPSA1MDsKICB9IGVsc2UgewogICAgcmVmdW5kUGVyY2VudGFnZSA9IDA7CiAgfQoKICBjb25zdCByZWZ1bmRBbW91bnQgPSBNYXRoLnJvdW5kKChhbW91bnRQYWlkICogcmVmdW5kUGVyY2VudGFnZSkgLyAxMDApOwoKICByZXR1cm4gewogICAgcmVmdW5kUGVyY2VudGFnZSwKICAgIHJlZnVuZEFtb3VudCwKICB9Owp9Cg==
+import { clientPriceForMoverPrice, platformPriceBreakdown } from './platformPricing';
+
+interface QuoteRequestData {
+  volume_m3?: number;
+  surface_m2?: number;
+  home_size: string;
+  floor_from: number;
+  floor_to: number;
+  elevator_from: boolean;
+  elevator_to: boolean;
+  services_needed: string[];
+  distance_km?: number;
+  from_postal_code: string;
+  to_postal_code: string;
+  from_city?: string;
+  to_city?: string;
+  furniture_lift_needed_departure?: boolean;
+  furniture_lift_needed_arrival?: boolean;
+  accepts_groupage?: boolean;
+}
+
+interface PriceCalculation {
+  marketPrice: number;
+  priceIndicator: 'green' | 'orange' | 'red';
+  clientDisplayPrice: number;
+}
+
+interface MarketPriceBreakdown {
+  basePrice: number;
+  distanceCost: number;
+  floorCost: number;
+  servicesCost: number;
+  totalMarketPrice: number;
+  details: string[];
+}
+
+const MARKET_RATE_PER_M3 = 50;
+const MARKET_RATE_PER_M3_NATIONAL = 65;
+const MARKET_RATE_PER_M3_INTERNATIONAL = 100;
+const MARKET_RATE_PER_M2 = 22;
+
+const HOME_SIZE_BASE_VOLUMES: Record<string, number> = {
+  'studio': 15,
+  't1': 20,
+  't2': 30,
+  't3': 45,
+  't4': 60,
+  't5': 75,
+  'maison': 90,
+};
+
+const SERVICE_COSTS: Record<string, number> = {
+  'packing': 250,
+  'furniture_disassembly': 300,
+  'furniture_assembly': 300,
+  'storage': 150,
+  'piano': 350,
+  'fragile_items': 120,
+  'cleaning': 180,
+  'Emballage/Déballage': 250,
+  'Démontage/Remontage meubles': 300,
+  'Fourniture de cartons': 80,
+  'Garde-meubles': 150,
+  'Transport d\'objets fragiles': 120,
+  'Nettoyage après déménagement': 180,
+};
+
+const FLOOR_COST_WITHOUT_ELEVATOR = 80;
+const FLOOR_COST_WITH_ELEVATOR = 0;
+const FURNITURE_LIFT_COST = 400;
+
+export function calculateMarketPrice(quoteData: QuoteRequestData): number {
+  const breakdown = calculateMarketPriceWithBreakdown(quoteData);
+  return breakdown.totalMarketPrice;
+}
+
+export function calculateMarketPriceWithBreakdown(quoteData: QuoteRequestData): MarketPriceBreakdown {
+  const details: string[] = [];
+  const distance = quoteData.distance_km || 0;
+
+  // Detect international move
+  const isInternational = detectInternationalMove(quoteData);
+  const isNational = !isInternational && distance > 200;
+
+  // Choose rate per m³ based on move type
+  const ratePerM3 = isInternational ? MARKET_RATE_PER_M3_INTERNATIONAL : (isNational ? MARKET_RATE_PER_M3_NATIONAL : MARKET_RATE_PER_M3);
+
+  let basePrice = 0;
+  let volumeM3 = 0;
+
+  if (quoteData.volume_m3 && quoteData.volume_m3 > 0) {
+    volumeM3 = quoteData.volume_m3;
+    basePrice = volumeM3 * ratePerM3;
+    details.push(`Volume: ${volumeM3}m³ × ${ratePerM3}€ = ${basePrice}€${isInternational ? ' (tarif international)' : ''}`);
+  } else if (quoteData.surface_m2 && quoteData.surface_m2 > 0) {
+    basePrice = quoteData.surface_m2 * MARKET_RATE_PER_M2;
+    volumeM3 = quoteData.surface_m2 * 1.5;
+    details.push(`Surface: ${quoteData.surface_m2}m² × ${MARKET_RATE_PER_M2}€ = ${basePrice}€`);
+  } else {
+    const homeSize = quoteData.home_size.toLowerCase();
+    volumeM3 = HOME_SIZE_BASE_VOLUMES[homeSize] || 30;
+    basePrice = volumeM3 * ratePerM3;
+    details.push(`Type de logement: ${quoteData.home_size} (${volumeM3}m³ estimés) × ${ratePerM3}€ = ${basePrice}€`);
+  }
+
+  let distanceCost = 0;
+  if (distance > 0) {
+    if (isInternational) {
+      // International: ~2€/km + admin surcharge
+      distanceCost = distance * 2.0 + 400;
+      details.push(`Distance internationale: ${distance}km × 2.00€ + 400€ admin = ${distanceCost.toFixed(0)}€`);
+    } else if (distance > 200) {
+      // National long distance: 90€ flat + 0.45€/km beyond 200km
+      distanceCost = 90 + (distance - 200) * 0.45;
+      details.push(`Distance longue: 90€ + ${(distance - 200).toFixed(0)}km × 0.45€ = ${distanceCost.toFixed(0)}€`);
+    } else if (distance > 50) {
+      // Medium distance: 0.60€/km beyond 50km
+      distanceCost = (distance - 50) * 0.60;
+      details.push(`Distance: ${(distance - 50).toFixed(0)}km × 0.60€ = ${distanceCost.toFixed(0)}€`);
+    } else {
+      details.push(`Distance: ${distance}km (< 50km, inclus)`);
+    }
+  } else {
+    const fromDept = parseInt(quoteData.from_postal_code.substring(0, 2));
+    const toDept = parseInt(quoteData.to_postal_code.substring(0, 2));
+    const deptDiff = Math.abs(fromDept - toDept);
+
+    if (deptDiff === 0) {
+      distanceCost = 0;
+      details.push(`Distance: même département (inclus dans le prix)`);
+    } else {
+      const estimatedKm = deptDiff * 50;
+      distanceCost = deptDiff * 25;
+      details.push(`Distance estimée: ${deptDiff} départements (≈${estimatedKm}km) × 25€ = ${distanceCost}€`);
+    }
+  }
+
+  let floorCost = 0;
+  if (quoteData.floor_from > 0 && !quoteData.elevator_from) {
+    const cost = quoteData.floor_from * FLOOR_COST_WITHOUT_ELEVATOR;
+    floorCost += cost;
+    details.push(`Étages départ: ${quoteData.floor_from} × ${FLOOR_COST_WITHOUT_ELEVATOR}€ (sans ascenseur) = ${cost}€`);
+  } else if (quoteData.floor_from > 0) {
+    details.push(`Étages départ: ${quoteData.floor_from} (avec ascenseur, gratuit)`);
+  }
+
+  if (quoteData.floor_to > 0 && !quoteData.elevator_to) {
+    const cost = quoteData.floor_to * FLOOR_COST_WITHOUT_ELEVATOR;
+    floorCost += cost;
+    details.push(`Étages arrivée: ${quoteData.floor_to} × ${FLOOR_COST_WITHOUT_ELEVATOR}€ (sans ascenseur) = ${cost}€`);
+  } else if (quoteData.floor_to > 0) {
+    details.push(`Étages arrivée: ${quoteData.floor_to} (avec ascenseur, gratuit)`);
+  }
+
+  // Monte-meuble
+  if (quoteData.furniture_lift_needed_departure) {
+    floorCost += FURNITURE_LIFT_COST;
+    details.push(`Monte-meuble départ: ${FURNITURE_LIFT_COST}€`);
+  }
+  if (quoteData.furniture_lift_needed_arrival) {
+    floorCost += FURNITURE_LIFT_COST;
+    details.push(`Monte-meuble arrivée: ${FURNITURE_LIFT_COST}€`);
+  }
+
+  let servicesCost = 0;
+  if (quoteData.services_needed && quoteData.services_needed.length > 0) {
+    quoteData.services_needed.forEach(service => {
+      const cost = SERVICE_COSTS[service] || 0;
+      if (cost > 0) {
+        servicesCost += cost;
+        details.push(`Service: ${service} = ${cost}€`);
+      }
+    });
+  }
+
+  let totalMarketPrice = Math.round(basePrice + distanceCost + floorCost + servicesCost);
+
+  // Groupage discount
+  if (quoteData.accepts_groupage) {
+    const discount = Math.round(totalMarketPrice * 0.25);
+    totalMarketPrice -= discount;
+    details.push(`Groupage (-25%): -${discount}€`);
+  }
+
+  return {
+    basePrice: Math.round(basePrice),
+    distanceCost: Math.round(distanceCost),
+    floorCost: Math.round(floorCost),
+    servicesCost: Math.round(servicesCost),
+    totalMarketPrice,
+    details,
+  };
+}
+
+function detectInternationalMove(quoteData: QuoteRequestData): boolean {
+  const distance = quoteData.distance_km || 0;
+  const fromCity = (quoteData.from_city || quoteData.from_postal_code || '').toLowerCase();
+  const toCity = (quoteData.to_city || quoteData.to_postal_code || '').toLowerCase();
+
+  const countryIndicators: Record<string, string[]> = {
+    'BE': ['bruxelles', 'brussels', 'liège', 'anvers', 'gand', 'namur', 'mons', 'charleroi', 'woluwe', 'ixelles', 'schaerbeek', 'anderlecht', 'uccle', 'etterbeek', 'molenbeek', 'forest', 'jette', 'auderghem', 'evere', 'oostende', 'bruges', 'leuven', 'mechelen', 'kortrijk', 'aalst', 'hasselt', 'genk', 'turnhout'],
+    'CH': ['zurich', 'zürich', 'bern', 'berne', 'basel', 'bâle', 'genève', 'geneva', 'lausanne', 'lucerne', 'luzern', 'winterthur', 'lugano', 'fribourg', 'neuchâtel', 'sion', 'yverdon', 'thun'],
+    'DE': ['berlin', 'münchen', 'munich', 'hamburg', 'köln', 'cologne', 'frankfurt', 'stuttgart', 'düsseldorf', 'dortmund', 'essen', 'bremen', 'dresden', 'leipzig', 'hannover', 'nürnberg', 'bonn', 'aachen', 'mannheim', 'karlsruhe'],
+    'LU': ['luxembourg', 'esch-sur-alzette', 'differdange', 'dudelange'],
+    'NL': ['amsterdam', 'rotterdam', 'den haag', 'utrecht', 'eindhoven', 'groningen', 'maastricht', 'breda', 'arnhem'],
+  };
+
+  let fromCountry = 'FR';
+  let toCountry = 'FR';
+
+  for (const [country, indicators] of Object.entries(countryIndicators)) {
+    for (const ind of indicators) {
+      if (fromCity.includes(ind)) fromCountry = country;
+      if (toCity.includes(ind)) toCountry = country;
+    }
+  }
+
+  if (fromCountry !== toCountry) return true;
+  if (distance > 500) return true;
+  return false;
+}
+
+export function calculatePriceIndicator(
+  proposedPrice: number,
+  marketPrice: number
+): 'green' | 'orange' | 'red' {
+  if (proposedPrice <= 0 || proposedPrice < marketPrice * 0.5) {
+    return 'red';
+  }
+
+  const difference = ((proposedPrice - marketPrice) / marketPrice) * 100;
+
+  if (difference >= -10 && difference <= 10) {
+    return 'green';
+  } else if ((difference > 10 && difference <= 25) || (difference < -10 && difference >= -25)) {
+    return 'orange';
+  } else {
+    return 'red';
+  }
+}
+
+export function getPriceIndicatorMessage(
+  indicator: 'green' | 'orange' | 'red',
+  proposedPrice: number,
+  marketPrice: number
+): string {
+  const difference = ((proposedPrice - marketPrice) / marketPrice) * 100;
+  const diffText = difference > 0 ? `+${difference.toFixed(0)}%` : `${difference.toFixed(0)}%`;
+
+  switch (indicator) {
+    case 'green':
+      return `Excellent prix (${diffText} par rapport au marché)`;
+    case 'orange':
+      return `Prix correct mais légèrement élevé (${diffText} par rapport au marché)`;
+    case 'red':
+      if (proposedPrice < marketPrice * 0.5) {
+        return `Prix anormalement bas et suspect (${diffText} par rapport au marché)`;
+      } else {
+        return `Prix trop éloigné du marché (${diffText})`;
+      }
+  }
+}
+
+export function calculateClientDisplayPrice(proposedPrice: number): number {
+  return clientPriceForMoverPrice(proposedPrice);
+}
+
+/**
+ * PAYMENT SYSTEM (v2 — Commission-only model)
+ *
+ * 1. Mover proposes price X.
+ * 2. Client sees Y = X + 15% platform margin.
+ * 3. Client pays the platform fee via Stripe: Y - X.
+ * 4. On moving day, client pays X directly to the mover.
+ * Passing the stored mover price preserves historical accepted/paid quotes.
+ */
+export function calculatePriceBreakdown(clientDisplayPrice: number, knownMoverPrice?: number | null) {
+  return platformPriceBreakdown(clientDisplayPrice, knownMoverPrice);
+}
+
+export function validateQuotePricing(
+  quoteData: QuoteRequestData,
+  proposedPrice: number
+): PriceCalculation {
+  const marketPrice = calculateMarketPrice(quoteData);
+  const priceIndicator = calculatePriceIndicator(proposedPrice, marketPrice);
+  const clientDisplayPrice = calculateClientDisplayPrice(proposedPrice);
+
+  return {
+    marketPrice,
+    priceIndicator,
+    clientDisplayPrice,
+  };
+}
+
+export function calculateRefundAmount(
+  amountPaid: number,
+  daysBeforeMoving: number
+): { refundPercentage: number; refundAmount: number } {
+  let refundPercentage = 0;
+
+  if (daysBeforeMoving >= 7) {
+    refundPercentage = 100;
+  } else if (daysBeforeMoving >= 2) {
+    refundPercentage = 50;
+  } else {
+    refundPercentage = 0;
+  }
+
+  const refundAmount = Math.round((amountPaid * refundPercentage) / 100);
+
+  return {
+    refundPercentage,
+    refundAmount,
+  };
+}

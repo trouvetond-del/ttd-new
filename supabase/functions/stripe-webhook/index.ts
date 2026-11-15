@@ -1,1 +1,407 @@
-aW1wb3J0ICJqc3I6QHN1cGFiYXNlL2Z1bmN0aW9ucy1qcy9lZGdlLXJ1bnRpbWUuZC50cyI7CmltcG9ydCBTdHJpcGUgZnJvbSAibnBtOnN0cmlwZUAxNy40LjAiOwppbXBvcnQgeyBjcmVhdGVDbGllbnQgfSBmcm9tICJqc3I6QHN1cGFiYXNlL3N1cGFiYXNlLWpzQDIiOwoKY29uc3QgY29yc0hlYWRlcnMgPSB7CiAgIkFjY2Vzcy1Db250cm9sLUFsbG93LU9yaWdpbiI6ICIqIiwKICAiQWNjZXNzLUNvbnRyb2wtQWxsb3ctTWV0aG9kcyI6ICJHRVQsIFBPU1QsIFBVVCwgREVMRVRFLCBPUFRJT05TIiwKICAiQWNjZXNzLUNvbnRyb2wtQWxsb3ctSGVhZGVycyI6ICJDb250ZW50LVR5cGUsIEF1dGhvcml6YXRpb24sIFgtQ2xpZW50LUluZm8sIEFwaWtleSwgc3RyaXBlLXNpZ25hdHVyZSIsCn07CgpEZW5vLnNlcnZlKGFzeW5jIChyZXE6IFJlcXVlc3QpID0+IHsKICBpZiAocmVxLm1ldGhvZCA9PT0gIk9QVElPTlMiKSB7CiAgICByZXR1cm4gbmV3IFJlc3BvbnNlKG51bGwsIHsKICAgICAgc3RhdHVzOiAyMDAsCiAgICAgIGhlYWRlcnM6IGNvcnNIZWFkZXJzLAogICAgfSk7CiAgfQoKICB0cnkgewogICAgY29uc3Qgc3RyaXBlU2VjcmV0S2V5ID0gRGVuby5lbnYuZ2V0KCJTVFJJUEVfU0VDUkVUX0tFWSIpOwogICAgY29uc3Qgc3RyaXBlV2ViaG9va1NlY3JldCA9IERlbm8uZW52LmdldCgiU1RSSVBFX1dFQkhPT0tfU0VDUkVUIik7CiAgICBjb25zdCBzdXBhYmFzZVVybCA9IERlbm8uZW52LmdldCgiU1VQQUJBU0VfVVJMIik7CiAgICBjb25zdCBzdXBhYmFzZVNlcnZpY2VLZXkgPSBEZW5vLmVudi5nZXQoIlNVUEFCQVNFX1NFUlZJQ0VfUk9MRV9LRVkiKTsKCiAgICBpZiAoIXN0cmlwZVNlY3JldEtleSkgewogICAgICB0aHJvdyBuZXcgRXJyb3IoIlNUUklQRV9TRUNSRVRfS0VZIG5vbiBjb25maWd1csOpZSIpOwogICAgfQoKICAgIGlmICghc3RyaXBlV2ViaG9va1NlY3JldCkgewogICAgICB0aHJvdyBuZXcgRXJyb3IoIlNUUklQRV9XRUJIT09LX1NFQ1JFVCBub24gY29uZmlndXLDqWUiKTsKICAgIH0KCiAgICBpZiAoIXN1cGFiYXNlVXJsIHx8ICFzdXBhYmFzZVNlcnZpY2VLZXkpIHsKICAgICAgdGhyb3cgbmV3IEVycm9yKCJTdXBhYmFzZSBjb25maWd1cmF0aW9uIG1hbnF1YW50ZSIpOwogICAgfQoKICAgIGNvbnN0IHN0cmlwZSA9IG5ldyBTdHJpcGUoc3RyaXBlU2VjcmV0S2V5LCB7CiAgICAgIGFwaVZlcnNpb246ICIyMDI0LTEyLTE4LmFjYWNpYSIsCiAgICB9KTsKCiAgICBjb25zdCBzdXBhYmFzZSA9IGNyZWF0ZUNsaWVudChzdXBhYmFzZVVybCwgc3VwYWJhc2VTZXJ2aWNlS2V5KTsKCiAgICAvLyBHZXQgdGhlIHNpZ25hdHVyZSBmcm9tIGhlYWRlcnMKICAgIGNvbnN0IHNpZ25hdHVyZSA9IHJlcS5oZWFkZXJzLmdldCgic3RyaXBlLXNpZ25hdHVyZSIpOwogICAgaWYgKCFzaWduYXR1cmUpIHsKICAgICAgcmV0dXJuIG5ldyBSZXNwb25zZSgKICAgICAgICBKU09OLnN0cmluZ2lmeSh7IGVycm9yOiAiTWlzc2luZyBzdHJpcGUtc2lnbmF0dXJlIGhlYWRlciIgfSksCiAgICAgICAgewogICAgICAgICAgc3RhdHVzOiA0MDAsCiAgICAgICAgICBoZWFkZXJzOiB7IC4uLmNvcnNIZWFkZXJzLCAiQ29udGVudC1UeXBlIjogImFwcGxpY2F0aW9uL2pzb24iIH0sCiAgICAgICAgfQogICAgICApOwogICAgfQoKICAgIC8vIEdldCB0aGUgcmF3IGJvZHkKICAgIGNvbnN0IGJvZHkgPSBhd2FpdCByZXEudGV4dCgpOwoKICAgIC8vIFZlcmlmeSB0aGUgd2ViaG9vayBzaWduYXR1cmUKICAgIGxldCBldmVudDogU3RyaXBlLkV2ZW50OwogICAgdHJ5IHsKICAgICAgZXZlbnQgPSBhd2FpdCBzdHJpcGUud2ViaG9va3MuY29uc3RydWN0RXZlbnRBc3luYyhib2R5LCBzaWduYXR1cmUsIHN0cmlwZVdlYmhvb2tTZWNyZXQpOwogICAgfSBjYXRjaCAoZXJyOiBhbnkpIHsKICAgICAgY29uc29sZS5lcnJvcigiV2ViaG9vayBzaWduYXR1cmUgdmVyaWZpY2F0aW9uIGZhaWxlZDoiLCBlcnIubWVzc2FnZSk7CiAgICAgIHJldHVybiBuZXcgUmVzcG9uc2UoCiAgICAgICAgSlNPTi5zdHJpbmdpZnkoeyBlcnJvcjogYFdlYmhvb2sgc2lnbmF0dXJlIHZlcmlmaWNhdGlvbiBmYWlsZWQ6ICR7ZXJyLm1lc3NhZ2V9YCB9KSwKICAgICAgICB7CiAgICAgICAgICBzdGF0dXM6IDQwMCwKICAgICAgICAgIGhlYWRlcnM6IHsgLi4uY29yc0hlYWRlcnMsICJDb250ZW50LVR5cGUiOiAiYXBwbGljYXRpb24vanNvbiIgfSwKICAgICAgICB9CiAgICAgICk7CiAgICB9CgogICAgY29uc29sZS5sb2coIldlYmhvb2sgZXZlbnQgcmVjZWl2ZWQ6IiwgZXZlbnQudHlwZSk7CgogICAgLy8gSGFuZGxlIHRoZSBldmVudAogICAgc3dpdGNoIChldmVudC50eXBlKSB7CiAgICAgIGNhc2UgInBheW1lbnRfaW50ZW50LnN1Y2NlZWRlZCI6IHsKICAgICAgICBjb25zdCBwYXltZW50SW50ZW50ID0gZXZlbnQuZGF0YS5vYmplY3QgYXMgU3RyaXBlLlBheW1lbnRJbnRlbnQ7CiAgICAgICAgY29uc29sZS5sb2coIlBheW1lbnRJbnRlbnQgc3VjY2VlZGVkOiIsIHBheW1lbnRJbnRlbnQuaWQpOwoKICAgICAgICBjb25zdCBxdW90ZUlkID0gcGF5bWVudEludGVudC5tZXRhZGF0YT8ucXVvdGVfaWQ7CiAgICAgICAgaWYgKCFxdW90ZUlkKSB7CiAgICAgICAgICBjb25zb2xlLmxvZygiTm8gcXVvdGVfaWQgaW4gbWV0YWRhdGEsIHNraXBwaW5nIik7CiAgICAgICAgICBicmVhazsKICAgICAgICB9CgogICAgICAgIC8vIFRyeSB0byBnZXQgZmVlIOKAlCBtYXkgbm90IGJlIGF2YWlsYWJsZSB5ZXQgKGJhbGFuY2VfdHJhbnNhY3Rpb24gY3JlYXRlZCBhc3luYykKICAgICAgICBsZXQgc3RyaXBlRmVlID0gMDsKICAgICAgICBsZXQgY2FyZENvdW50cnkgPSAnJzsKICAgICAgICBsZXQgY2FyZEJyYW5kID0gJyc7CiAgICAgICAgdHJ5IHsKICAgICAgICAgIGNvbnN0IGNoYXJnZUlkID0gcGF5bWVudEludGVudC5sYXRlc3RfY2hhcmdlIGFzIHN0cmluZzsKICAgICAgICAgIGNvbnNvbGUubG9nKCJsYXRlc3RfY2hhcmdlIElEOiIsIGNoYXJnZUlkKTsKICAgICAgICAgIGlmIChjaGFyZ2VJZCkgewogICAgICAgICAgICBjb25zdCBjaGFyZ2UgPSBhd2FpdCBzdHJpcGUuY2hhcmdlcy5yZXRyaWV2ZShjaGFyZ2VJZCwgewogICAgICAgICAgICAgIGV4cGFuZDogWydiYWxhbmNlX3RyYW5zYWN0aW9uJ10sCiAgICAgICAgICAgIH0pOwogICAgICAgICAgICBjb25zb2xlLmxvZygiYmFsYW5jZV90cmFuc2FjdGlvbiB0eXBlOiIsIHR5cGVvZiBjaGFyZ2UuYmFsYW5jZV90cmFuc2FjdGlvbiwgInZhbHVlOiIsIGNoYXJnZS5iYWxhbmNlX3RyYW5zYWN0aW9uID8gJ2V4aXN0cycgOiAnbnVsbCcpOwogICAgICAgICAgICAKICAgICAgICAgICAgY29uc3QgYmFsYW5jZVR4ID0gY2hhcmdlLmJhbGFuY2VfdHJhbnNhY3Rpb247CiAgICAgICAgICAgIGlmIChiYWxhbmNlVHggJiYgdHlwZW9mIGJhbGFuY2VUeCA9PT0gJ29iamVjdCcgJiYgJ2ZlZScgaW4gYmFsYW5jZVR4KSB7CiAgICAgICAgICAgICAgc3RyaXBlRmVlID0gKGJhbGFuY2VUeCBhcyBhbnkpLmZlZSAvIDEwMDsKICAgICAgICAgICAgICBjb25zb2xlLmxvZygiU3RyaXBlIGZlZSAoZXhwYW5kZWQpOiIsIHN0cmlwZUZlZSwgIkVVUiIpOwogICAgICAgICAgICB9IGVsc2UgaWYgKHR5cGVvZiBiYWxhbmNlVHggPT09ICdzdHJpbmcnKSB7CiAgICAgICAgICAgICAgY29uc3QgYnQgPSBhd2FpdCBzdHJpcGUuYmFsYW5jZVRyYW5zYWN0aW9ucy5yZXRyaWV2ZShiYWxhbmNlVHgpOwogICAgICAgICAgICAgIHN0cmlwZUZlZSA9IGJ0LmZlZSAvIDEwMDsKICAgICAgICAgICAgICBjb25zb2xlLmxvZygiU3RyaXBlIGZlZSAoZmV0Y2hlZCk6Iiwgc3RyaXBlRmVlLCAiRVVSIik7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGNvbnN0IGNhcmQgPSBjaGFyZ2UucGF5bWVudF9tZXRob2RfZGV0YWlscz8uY2FyZDsKICAgICAgICAgICAgaWYgKGNhcmQpIHsKICAgICAgICAgICAgICBjYXJkQ291bnRyeSA9IGNhcmQuY291bnRyeSB8fCAnJzsKICAgICAgICAgICAgICBjYXJkQnJhbmQgPSBjYXJkLmJyYW5kIHx8ICcnOwogICAgICAgICAgICAgIGNvbnNvbGUubG9nKCJDYXJkOiIsIGNhcmRCcmFuZCwgImNvdW50cnk6IiwgY2FyZENvdW50cnkpOwogICAgICAgICAgICB9CiAgICAgICAgICB9CiAgICAgICAgfSBjYXRjaCAoZmVlRXJyOiBhbnkpIHsKICAgICAgICAgIGNvbnNvbGUuZXJyb3IoIkZlZSByZXRyaWV2YWwgZXJyb3I6IiwgZmVlRXJyPy5tZXNzYWdlIHx8IGZlZUVycik7CiAgICAgICAgfQoKICAgICAgICAvLyBVcGRhdGUgdGhlIHBheW1lbnQgcmVjb3JkIHRvIG1hcmsgaXQgYXMgdmVyaWZpZWQgKyBzdG9yZSBmZWUKICAgICAgICBjb25zdCB1cGRhdGVEYXRhOiBSZWNvcmQ8c3RyaW5nLCBhbnk+ID0gewogICAgICAgICAgcGF5bWVudF9zdGF0dXM6ICJjb21wbGV0ZWQiLAogICAgICAgICAgc3RyaXBlX3ZlcmlmaWVkOiB0cnVlLAogICAgICAgICAgc3RyaXBlX3ZlcmlmaWVkX2F0OiBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCksCiAgICAgICAgfTsKICAgICAgICBpZiAoc3RyaXBlRmVlID4gMCkgdXBkYXRlRGF0YS5zdHJpcGVfZmVlID0gc3RyaXBlRmVlOwogICAgICAgIGlmIChjYXJkQ291bnRyeSkgdXBkYXRlRGF0YS5zdHJpcGVfY2FyZF9jb3VudHJ5ID0gY2FyZENvdW50cnk7CiAgICAgICAgaWYgKGNhcmRCcmFuZCkgdXBkYXRlRGF0YS5zdHJpcGVfY2FyZF9icmFuZCA9IGNhcmRCcmFuZDsKCiAgICAgICAgY29uc3QgeyBlcnJvcjogdXBkYXRlRXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlCiAgICAgICAgICAuZnJvbSgicGF5bWVudHMiKQogICAgICAgICAgLnVwZGF0ZSh1cGRhdGVEYXRhKQogICAgICAgICAgLmVxKCJzdHJpcGVfcGF5bWVudF9pZCIsIHBheW1lbnRJbnRlbnQuaWQpOwoKICAgICAgICBpZiAodXBkYXRlRXJyb3IpIHsKICAgICAgICAgIGNvbnNvbGUuZXJyb3IoIkVycm9yIHVwZGF0aW5nIHBheW1lbnQ6IiwgdXBkYXRlRXJyb3IpOwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICBjb25zb2xlLmxvZygiUGF5bWVudCB2ZXJpZmllZCBzdWNjZXNzZnVsbHkgZm9yIHF1b3RlOiIsIHF1b3RlSWQsICJmZWU6Iiwgc3RyaXBlRmVlKTsKICAgICAgICB9CgogICAgICAgIC8vIOKUgOKUgCBSZWNvcmQgcHJvbW8gY29kZSB1c2FnZSAob25seSBvbiBzdWNjZXNzZnVsIHBheW1lbnQpIOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgAogICAgICAgIGNvbnN0IHByb21vQ29kZUlkICAgPSBwYXltZW50SW50ZW50Lm1ldGFkYXRhPy5wcm9tb19jb2RlX2lkOwogICAgICAgIGNvbnN0IHByb21vVXNlcklkICAgPSBwYXltZW50SW50ZW50Lm1ldGFkYXRhPy51c2VyX2lkOwogICAgICAgIGNvbnN0IGRpc2NvdW50QW10ICAgPSBwYXJzZUZsb2F0KHBheW1lbnRJbnRlbnQubWV0YWRhdGE/LmRpc2NvdW50X2Ftb3VudCB8fCAiMCIpOwogICAgICAgIGNvbnN0IG9yaWdpbmFsQW10ICAgPSBwYXJzZUZsb2F0KHBheW1lbnRJbnRlbnQubWV0YWRhdGE/Lm9yaWdpbmFsX2Ftb3VudCB8fCAiMCIpOwogICAgICAgIGNvbnN0IGZpbmFsQW10ICAgICAgPSBwYXJzZUZsb2F0KHBheW1lbnRJbnRlbnQubWV0YWRhdGE/LmZpbmFsX2Ftb3VudCB8fCAiMCIpOwoKICAgICAgICBpZiAocHJvbW9Db2RlSWQgJiYgcHJvbW9Vc2VySWQgJiYgZGlzY291bnRBbXQgPiAwICYmIHF1b3RlSWQpIHsKICAgICAgICAgIC8vIEluc2VydCB1c2FnZSAoaWdub3JlIGNvbmZsaWN0IOKAlCBpZGVtcG90ZW50IHZpYSB1bmlxdWUgY29uc3RyYWludCBvbiBwcm9tb19jb2RlX2lkK3VzZXJfaWQrcXVvdGVfaWQpCiAgICAgICAgICBjb25zdCB7IGVycm9yOiB1c2FnZUVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZQogICAgICAgICAgICAuZnJvbSgicHJvbW9fY29kZV91c2FnZSIpCiAgICAgICAgICAgIC5pbnNlcnQoewogICAgICAgICAgICAgIHByb21vX2NvZGVfaWQ6ICAgcHJvbW9Db2RlSWQsCiAgICAgICAgICAgICAgdXNlcl9pZDogICAgICAgICBwcm9tb1VzZXJJZCwKICAgICAgICAgICAgICBxdW90ZV9pZDogICAgICAgIHF1b3RlSWQsCiAgICAgICAgICAgICAgZGlzY291bnRfYW1vdW50OiBkaXNjb3VudEFtdCwKICAgICAgICAgICAgICBvcmlnaW5hbF9hbW91bnQ6IG9yaWdpbmFsQW10LAogICAgICAgICAgICAgIGZpbmFsX2Ftb3VudDogICAgZmluYWxBbXQsCiAgICAgICAgICAgIH0pCiAgICAgICAgICAgIC5zZWxlY3QoKQogICAgICAgICAgICAubWF5YmVTaW5nbGUoKTsKCiAgICAgICAgICBpZiAodXNhZ2VFcnJvciAmJiAhdXNhZ2VFcnJvci5tZXNzYWdlLmluY2x1ZGVzKCJkdXBsaWNhdGUiKSkgewogICAgICAgICAgICBjb25zb2xlLmVycm9yKCJFcnJvciByZWNvcmRpbmcgcHJvbW8gdXNhZ2U6IiwgdXNhZ2VFcnJvcik7CiAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAvLyBJbmNyZW1lbnQgY3VycmVudF91c2VzIGF0b21pY2FsbHkKICAgICAgICAgICAgY29uc3QgeyBlcnJvcjogcnBjRXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlLnJwYygiaW5jcmVtZW50X3Byb21vX2NvZGVfdXNlcyIsIHsKICAgICAgICAgICAgICBwX3Byb21vX2NvZGVfaWQ6IHByb21vQ29kZUlkLAogICAgICAgICAgICB9KTsKICAgICAgICAgICAgaWYgKHJwY0Vycm9yKSBjb25zb2xlLmVycm9yKCJFcnJvciBpbmNyZW1lbnRpbmcgcHJvbW8gdXNlczoiLCBycGNFcnJvcik7CiAgICAgICAgICAgIGVsc2UgY29uc29sZS5sb2coIlByb21vIHVzYWdlIHJlY29yZGVkIGZvciBjb2RlOiIsIHBheW1lbnRJbnRlbnQubWV0YWRhdGE/LnByb21vX2NvZGUpOwogICAgICAgICAgfQogICAgICAgIH0KICAgICAgICAvLyDilIDilIAgRmFpcmUgcGFzc2VyIGxlIGRldmlzIGVuICJhY2NlcHTDqSIgKyBub3RpZmllciBsZSBkw6ltw6luYWdldXIg4pSA4pSA4pSA4pSACiAgICAgICAgLy8gQlVHIENSSVRJUVVFIENPUlJJR8OJIDogY2V0dGUgbG9naXF1ZSBleGlzdGFpdCBkYW5zIGwnYW5jaWVubmUgcGFnZQogICAgICAgIC8vIHNyYy9wYWdlcy9DbGllbnRQYXltZW50UGFnZS50c3ggKHJlbXBsYWPDqWUgZGVwdWlzIHBhcgogICAgICAgIC8vIENsaWVudFBheW1lbnRQYWdlTmV3LnRzeCwgcXVpIG5lIGwnYSBqYW1haXMgcmVwcmlzZSAtLSBsJ2FuY2llbgogICAgICAgIC8vIGZpY2hpZXIgZXN0IHJlc3TDqSBkYW5zIGxlIHJlcG8gc2FucyDDqnRyZSBicmFuY2jDqSDDoCBhdWN1bmUgcm91dGUsCiAgICAgICAgLy8gY2UgcXVpIGEgY2FjaMOpIGxhIGRpc3Bhcml0aW9uIGRlIGNldHRlIMOpdGFwZSkuIFLDqXN1bHRhdCBlbgogICAgICAgIC8vIHByb2R1Y3Rpb24gOiBhcHLDqHMgdW4gcGFpZW1lbnQgcsOpdXNzaSwgcXVvdGVzLnN0YXR1cyByZXN0YWl0CiAgICAgICAgLy8gJ3BlbmRpbmcnIHBvdXIgdG91am91cnMsIHF1b3RlX3JlcXVlc3RzLmFjY2VwdGVkX3F1b3RlX2lkIG4nw6l0YWl0CiAgICAgICAgLy8gamFtYWlzIHJlbnNlaWduw6ksIGxlcyBkZXZpcyBjb25jdXJyZW50cyBkZXMgYXV0cmVzIGTDqW3DqW5hZ2V1cnMKICAgICAgICAvLyBuJ8OpdGFpZW50IGphbWFpcyByZWpldMOpcywgZXQgQVVDVU5FIG5vdGlmaWNhdGlvbiBuJ8OpdGFpdCBlbnZvecOpZQogICAgICAgIC8vIGF1IGTDqW3DqW5hZ2V1ciBwb3VyIGx1aSBkaXJlIHF1J2lsIGF2YWl0IGdhZ27DqSBsYSBtaXNzaW9uLgogICAgICAgIC8vCiAgICAgICAgLy8gRmFpdCBpY2kgKHdlYmhvb2ssIGphbWFpcyBjw7R0w6kgbmF2aWdhdGV1cikgcG91ciBsYSBtw6ptZSByYWlzb24gcXVlCiAgICAgICAgLy8gbGUgcmVzdGUgZGUgY2UgZmljaGllciA6IGMnZXN0IGxlIHNldWwgcG9pbnQgb8O5IGxlIHBhaWVtZW50IGVzdAogICAgICAgIC8vIHLDqWVsbGVtZW50IGNvbmZpcm3DqSBwYXIgc2lnbmF0dXJlIFN0cmlwZSB2w6lyaWZpw6llIGPDtHTDqSBzZXJ2ZXVyLgogICAgICAgIC8vCiAgICAgICAgLy8gSWRlbXBvdGVuY2UgOiBsZSAuZXEoJ3N0YXR1cycsICdwZW5kaW5nJykgZmFpdCBxdWUgc2kgU3RyaXBlCiAgICAgICAgLy8gcmVudm9pZSBjZXQgw6l2w6huZW1lbnQgZGV1eCBmb2lzIChyZXRyeSksIGxhIGRldXhpw6htZSBleMOpY3V0aW9uIG5lCiAgICAgICAgLy8gbWV0IMOgIGpvdXIgYXVjdW5lIGxpZ25lIChkw6lqw6AgJ2FjY2VwdGVkJykgLS0gb24gbidleMOpY3V0ZSBkb25jIGxlCiAgICAgICAgLy8gcmVqZXQgZGVzIGRldmlzIGNvbmN1cnJlbnRzIGV0IGwnZW52b2kgZGVzIGVtYWlscyBxdWUgbGEgcHJlbWnDqHJlCiAgICAgICAgLy8gZm9pcywgamFtYWlzIGVuIGRvdWJsZS4KICAgICAgICB0cnkgewogICAgICAgICAgY29uc3QgeyBkYXRhOiBxdW90ZVJvdyB9ID0gYXdhaXQgc3VwYWJhc2UKICAgICAgICAgICAgLmZyb20oInF1b3RlcyIpCiAgICAgICAgICAgIC5zZWxlY3QoImlkLCBxdW90ZV9yZXF1ZXN0X2lkLCBtb3Zlcl9pZCwgcHJpY2UsIGNsaWVudF9kaXNwbGF5X3ByaWNlIikKICAgICAgICAgICAgLmVxKCJpZCIsIHF1b3RlSWQpCiAgICAgICAgICAgIC5tYXliZVNpbmdsZSgpOwoKICAgICAgICAgIGlmIChxdW90ZVJvdykgewogICAgICAgICAgICBjb25zdCB7IGRhdGE6IGFjY2VwdGVkUm93cywgZXJyb3I6IGFjY2VwdEVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZQogICAgICAgICAgICAgIC5mcm9tKCJxdW90ZXMiKQogICAgICAgICAgICAgIC51cGRhdGUoeyBzdGF0dXM6ICJhY2NlcHRlZCIgfSkKICAgICAgICAgICAgICAuZXEoImlkIiwgcXVvdGVJZCkKICAgICAgICAgICAgICAuZXEoInN0YXR1cyIsICJwZW5kaW5nIikKICAgICAgICAgICAgICAuc2VsZWN0KCJpZCIpOwoKICAgICAgICAgICAgaWYgKGFjY2VwdEVycm9yKSB7CiAgICAgICAgICAgICAgY29uc29sZS5lcnJvcigiRXJyb3IgYWNjZXB0aW5nIHF1b3RlOiIsIGFjY2VwdEVycm9yKTsKICAgICAgICAgICAgfSBlbHNlIGlmIChhY2NlcHRlZFJvd3MgJiYgYWNjZXB0ZWRSb3dzLmxlbmd0aCA+IDApIHsKICAgICAgICAgICAgICAvLyBQcmVtacOocmUgZm9pcyBxdSdvbiB0cmFpdGUgY2V0IMOpdsOobmVtZW50IHBvdXIgY2UgZGV2aXMuCiAgICAgICAgICAgICAgYXdhaXQgc3VwYWJhc2UKICAgICAgICAgICAgICAgIC5mcm9tKCJxdW90ZV9yZXF1ZXN0cyIpCiAgICAgICAgICAgICAgICAudXBkYXRlKHsKICAgICAgICAgICAgICAgICAgc3RhdHVzOiAiYWNjZXB0ZWQiLAogICAgICAgICAgICAgICAgICBhY2NlcHRlZF9xdW90ZV9pZDogcXVvdGVJZCwKICAgICAgICAgICAgICAgICAgcGF5bWVudF9zdGF0dXM6ICJkZXBvc2l0X3BhaWQiLAogICAgICAgICAgICAgICAgfSkKICAgICAgICAgICAgICAgIC5lcSgiaWQiLCBxdW90ZVJvdy5xdW90ZV9yZXF1ZXN0X2lkKTsKCiAgICAgICAgICAgICAgYXdhaXQgc3VwYWJhc2UKICAgICAgICAgICAgICAgIC5mcm9tKCJxdW90ZXMiKQogICAgICAgICAgICAgICAgLnVwZGF0ZSh7IHN0YXR1czogInJlamVjdGVkIiB9KQogICAgICAgICAgICAgICAgLmVxKCJxdW90ZV9yZXF1ZXN0X2lkIiwgcXVvdGVSb3cucXVvdGVfcmVxdWVzdF9pZCkKICAgICAgICAgICAgICAgIC5uZXEoImlkIiwgcXVvdGVJZCk7CgogICAgICAgICAgICAgIGNvbnN0IHsgZGF0YTogbW92ZXJEYXRhIH0gPSBhd2FpdCBzdXBhYmFzZQogICAgICAgICAgICAgICAgLmZyb20oIm1vdmVycyIpCiAgICAgICAgICAgICAgICAuc2VsZWN0KCJlbWFpbCIpCiAgICAgICAgICAgICAgICAuZXEoImlkIiwgcXVvdGVSb3cubW92ZXJfaWQpCiAgICAgICAgICAgICAgICAubWF5YmVTaW5nbGUoKTsKCiAgICAgICAgICAgICAgY29uc3QgeyBkYXRhOiByZXF1ZXN0RGF0YSB9ID0gYXdhaXQgc3VwYWJhc2UKICAgICAgICAgICAgICAgIC5mcm9tKCJxdW90ZV9yZXF1ZXN0cyIpCiAgICAgICAgICAgICAgICAuc2VsZWN0KCJjbGllbnRfZW1haWwsIGNsaWVudF9uYW1lLCBmcm9tX2NpdHksIHRvX2NpdHksIG1vdmluZ19kYXRlIikKICAgICAgICAgICAgICAgIC5lcSgiaWQiLCBxdW90ZVJvdy5xdW90ZV9yZXF1ZXN0X2lkKQogICAgICAgICAgICAgICAgLm1heWJlU2luZ2xlKCk7CgogICAgICAgICAgICAgIGlmIChtb3ZlckRhdGE/LmVtYWlsICYmIHJlcXVlc3REYXRhKSB7CiAgICAgICAgICAgICAgICBjb25zdCBub3RpZnkgPSAodHlwZTogc3RyaW5nLCBleHRyYTogUmVjb3JkPHN0cmluZywgdW5rbm93bj4gPSB7fSkgPT4KICAgICAgICAgICAgICAgICAgZmV0Y2goYCR7c3VwYWJhc2VVcmx9L2Z1bmN0aW9ucy92MS9zZW5kLW5vdGlmaWNhdGlvbmAsIHsKICAgICAgICAgICAgICAgICAgICBtZXRob2Q6ICJQT1NUIiwKICAgICAgICAgICAgICAgICAgICBoZWFkZXJzOiB7CiAgICAgICAgICAgICAgICAgICAgICBBdXRob3JpemF0aW9uOiBgQmVhcmVyICR7c3VwYWJhc2VTZXJ2aWNlS2V5fWAsCiAgICAgICAgICAgICAgICAgICAgICAiQ29udGVudC1UeXBlIjogImFwcGxpY2F0aW9uL2pzb24iLAogICAgICAgICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgICAgICAgYm9keTogSlNPTi5zdHJpbmdpZnkoewogICAgICAgICAgICAgICAgICAgICAgdHlwZSwKICAgICAgICAgICAgICAgICAgICAgIHJlY2lwaWVudEVtYWlsOiBtb3ZlckRhdGEuZW1haWwsCiAgICAgICAgICAgICAgICAgICAgICBkYXRhOiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHByaWNlOiBxdW90ZVJvdy5wcmljZSB8fCBNYXRoLnJvdW5kKHF1b3RlUm93LmNsaWVudF9kaXNwbGF5X3ByaWNlIC8gMS4xNSksCiAgICAgICAgICAgICAgICAgICAgICAgIG1vdmluZ0RhdGU6IG5ldyBEYXRlKHJlcXVlc3REYXRhLm1vdmluZ19kYXRlKS50b0xvY2FsZURhdGVTdHJpbmcoImZyLUZSIiksCiAgICAgICAgICAgICAgICAgICAgICAgIGZyb21DaXR5OiByZXF1ZXN0RGF0YS5mcm9tX2NpdHksCiAgICAgICAgICAgICAgICAgICAgICAgIHRvQ2l0eTogcmVxdWVzdERhdGEudG9fY2l0eSwKICAgICAgICAgICAgICAgICAgICAgICAgY2xpZW50RW1haWw6IHJlcXVlc3REYXRhLmNsaWVudF9lbWFpbCwKICAgICAgICAgICAgICAgICAgICAgICAgY2xpZW50TmFtZTogcmVxdWVzdERhdGEuY2xpZW50X25hbWUsCiAgICAgICAgICAgICAgICAgICAgICAgIC4uLmV4dHJhLAogICAgICAgICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgICAgICB9KSwKICAgICAgICAgICAgICAgICAgfSkuY2F0Y2goKGUpID0+IGNvbnNvbGUuZXJyb3IoYE5vdGlmaWNhdGlvbiAnJHt0eXBlfScgw6ljaG91w6llIChub24gYmxvcXVhbnQpOmAsIGUubWVzc2FnZSkpOwoKICAgICAgICAgICAgICAgIGF3YWl0IFByb21pc2UuYWxsKFtub3RpZnkoInF1b3RlX2FjY2VwdGVkIiksIG5vdGlmeSgicGF5bWVudF9yZWNlaXZlZCIpXSk7CiAgICAgICAgICAgICAgICBjb25zb2xlLmxvZygiRGV2aXMgYWNjZXB0w6kgKyBkw6ltw6luYWdldXIgbm90aWZpw6k6IiwgcXVvdGVJZCk7CiAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgICB9CiAgICAgICAgfSBjYXRjaCAoYWNjZXB0Rmxvd0Vycm9yOiBhbnkpIHsKICAgICAgICAgIC8vIE5lIGRvaXQgamFtYWlzIGZhaXJlIMOpY2hvdWVyIGwnYWNjdXPDqSBkZSByw6ljZXB0aW9uIGR1IHdlYmhvb2sKICAgICAgICAgIC8vIMOgIFN0cmlwZSAtLSBsZSBwYWllbWVudCBsdWktbcOqbWUgcmVzdGUgdmFsaWRlIG3Dqm1lIHNpIGNldHRlCiAgICAgICAgICAvLyBwYXJ0aWUgcGxhbnRlIDsgw6Agc3VydmVpbGxlciBkYW5zIGxlcyBsb2dzIGxlIGNhcyDDqWNow6lhbnQuCiAgICAgICAgICBjb25zb2xlLmVycm9yKCJFcnJldXIgZmx1eCBhY2NlcHRhdGlvbiBkZXZpcyAobm9uIGJsb3F1YW50KToiLCBhY2NlcHRGbG93RXJyb3IubWVzc2FnZSk7CiAgICAgICAgfQoKICAgICAgICBicmVhazsKICAgICAgfQoKICAgICAgY2FzZSAicGF5bWVudF9pbnRlbnQucGF5bWVudF9mYWlsZWQiOiB7CiAgICAgICAgY29uc3QgcGF5bWVudEludGVudCA9IGV2ZW50LmRhdGEub2JqZWN0IGFzIFN0cmlwZS5QYXltZW50SW50ZW50OwogICAgICAgIGNvbnNvbGUubG9nKCJQYXltZW50SW50ZW50IGZhaWxlZDoiLCBwYXltZW50SW50ZW50LmlkKTsKCiAgICAgICAgY29uc3QgcXVvdGVJZCA9IHBheW1lbnRJbnRlbnQubWV0YWRhdGE/LnF1b3RlX2lkOwogICAgICAgIGlmICghcXVvdGVJZCkgewogICAgICAgICAgY29uc29sZS5sb2coIk5vIHF1b3RlX2lkIGluIG1ldGFkYXRhLCBza2lwcGluZyIpOwogICAgICAgICAgYnJlYWs7CiAgICAgICAgfQoKICAgICAgICAvLyBVcGRhdGUgdGhlIHBheW1lbnQgcmVjb3JkIHRvIG1hcmsgaXQgYXMgZmFpbGVkCiAgICAgICAgY29uc3QgeyBlcnJvcjogdXBkYXRlRXJyb3IgfSA9IGF3YWl0IHN1cGFiYXNlCiAgICAgICAgICAuZnJvbSgicGF5bWVudHMiKQogICAgICAgICAgLnVwZGF0ZSh7CiAgICAgICAgICAgIHBheW1lbnRfc3RhdHVzOiAiZmFpbGVkIiwKICAgICAgICAgICAgc3RyaXBlX2Vycm9yOiBwYXltZW50SW50ZW50Lmxhc3RfcGF5bWVudF9lcnJvcj8ubWVzc2FnZSB8fCAiUGF5bWVudCBmYWlsZWQiLAogICAgICAgICAgfSkKICAgICAgICAgIC5lcSgic3RyaXBlX3BheW1lbnRfaWQiLCBwYXltZW50SW50ZW50LmlkKTsKCiAgICAgICAgaWYgKHVwZGF0ZUVycm9yKSB7CiAgICAgICAgICBjb25zb2xlLmVycm9yKCJFcnJvciB1cGRhdGluZyBwYXltZW50OiIsIHVwZGF0ZUVycm9yKTsKICAgICAgICB9CgogICAgICAgIC8vIFJldmVydCB0aGUgcXVvdGUgc3RhdHVzCiAgICAgICAgY29uc3QgeyBkYXRhOiBwYXltZW50RGF0YSB9ID0gYXdhaXQgc3VwYWJhc2UKICAgICAgICAgIC5mcm9tKCJwYXltZW50cyIpCiAgICAgICAgICAuc2VsZWN0KCJxdW90ZV9pZCwgcXVvdGVfcmVxdWVzdF9pZCIpCiAgICAgICAgICAuZXEoInN0cmlwZV9wYXltZW50X2lkIiwgcGF5bWVudEludGVudC5pZCkKICAgICAgICAgIC5zaW5nbGUoKTsKCiAgICAgICAgaWYgKHBheW1lbnREYXRhKSB7CiAgICAgICAgICBhd2FpdCBzdXBhYmFzZQogICAgICAgICAgICAuZnJvbSgicXVvdGVzIikKICAgICAgICAgICAgLnVwZGF0ZSh7IHN0YXR1czogInBlbmRpbmciIH0pCiAgICAgICAgICAgIC5lcSgiaWQiLCBwYXltZW50RGF0YS5xdW90ZV9pZCk7CgogICAgICAgICAgYXdhaXQgc3VwYWJhc2UKICAgICAgICAgICAgLmZyb20oInF1b3RlX3JlcXVlc3RzIikKICAgICAgICAgICAgLnVwZGF0ZSh7IAogICAgICAgICAgICAgIHBheW1lbnRfc3RhdHVzOiAibm9fcGF5bWVudCIsCiAgICAgICAgICAgICAgYWNjZXB0ZWRfcXVvdGVfaWQ6IG51bGwgCiAgICAgICAgICAgIH0pCiAgICAgICAgICAgIC5lcSgiaWQiLCBwYXltZW50RGF0YS5xdW90ZV9yZXF1ZXN0X2lkKTsKICAgICAgICB9CiAgICAgICAgYnJlYWs7CiAgICAgIH0KCiAgICAgIGNhc2UgImNoYXJnZS51cGRhdGVkIjoKICAgICAgY2FzZSAiY2hhcmdlLnN1Y2NlZWRlZCI6IHsKICAgICAgICAvLyBUaGlzIGZpcmVzIHdoZW4gdGhlIGNoYXJnZSBpcyBmaW5hbGl6ZWQgd2l0aCBiYWxhbmNlX3RyYW5zYWN0aW9uCiAgICAgICAgY29uc3QgY2hhcmdlID0gZXZlbnQuZGF0YS5vYmplY3QgYXMgU3RyaXBlLkNoYXJnZTsKICAgICAgICBjb25zdCBwaUlkID0gY2hhcmdlLnBheW1lbnRfaW50ZW50IGFzIHN0cmluZzsKICAgICAgICBjb25zb2xlLmxvZygiQ2hhcmdlIGV2ZW50OiIsIGV2ZW50LnR5cGUsICJjaGFyZ2U6IiwgY2hhcmdlLmlkLCAicGk6IiwgcGlJZCk7CgogICAgICAgIGlmIChwaUlkICYmIGNoYXJnZS5iYWxhbmNlX3RyYW5zYWN0aW9uKSB7CiAgICAgICAgICB0cnkgewogICAgICAgICAgICBsZXQgZmVlID0gMDsKICAgICAgICAgICAgY29uc3QgYnQgPSBjaGFyZ2UuYmFsYW5jZV90cmFuc2FjdGlvbjsKICAgICAgICAgICAgaWYgKHR5cGVvZiBidCA9PT0gJ29iamVjdCcgJiYgJ2ZlZScgaW4gYnQpIHsKICAgICAgICAgICAgICBmZWUgPSAoYnQgYXMgYW55KS5mZWUgLyAxMDA7CiAgICAgICAgICAgIH0gZWxzZSBpZiAodHlwZW9mIGJ0ID09PSAnc3RyaW5nJykgewogICAgICAgICAgICAgIGNvbnN0IGJhbGFuY2VUeCA9IGF3YWl0IHN0cmlwZS5iYWxhbmNlVHJhbnNhY3Rpb25zLnJldHJpZXZlKGJ0KTsKICAgICAgICAgICAgICBmZWUgPSBiYWxhbmNlVHguZmVlIC8gMTAwOwogICAgICAgICAgICB9CgogICAgICAgICAgICBpZiAoZmVlID4gMCkgewogICAgICAgICAgICAgIGNvbnNvbGUubG9nKCJVcGRhdGluZyBzdHJpcGVfZmVlOiIsIGZlZSwgImZvciBQSToiLCBwaUlkKTsKICAgICAgICAgICAgICBhd2FpdCBzdXBhYmFzZQogICAgICAgICAgICAgICAgLmZyb20oInBheW1lbnRzIikKICAgICAgICAgICAgICAgIC51cGRhdGUoeyBzdHJpcGVfZmVlOiBmZWUgfSkKICAgICAgICAgICAgICAgIC5lcSgic3RyaXBlX3BheW1lbnRfaWQiLCBwaUlkKTsKICAgICAgICAgICAgfQogICAgICAgICAgfSBjYXRjaCAoZXJyOiBhbnkpIHsKICAgICAgICAgICAgY29uc29sZS5lcnJvcigiY2hhcmdlLnVwZGF0ZWQgZmVlIGVycm9yOiIsIGVycj8ubWVzc2FnZSB8fCBlcnIpOwogICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBicmVhazsKICAgICAgfQoKICAgICAgY2FzZSAiY2hhcmdlLnJlZnVuZGVkIjogewogICAgICAgIGNvbnN0IGNoYXJnZSA9IGV2ZW50LmRhdGEub2JqZWN0IGFzIFN0cmlwZS5DaGFyZ2U7CiAgICAgICAgY29uc29sZS5sb2coIkNoYXJnZSByZWZ1bmRlZDoiLCBjaGFyZ2UuaWQpOwoKICAgICAgICBjb25zdCBwYXltZW50SW50ZW50SWQgPSBjaGFyZ2UucGF5bWVudF9pbnRlbnQgYXMgc3RyaW5nOwogICAgICAgIGlmIChwYXltZW50SW50ZW50SWQpIHsKICAgICAgICAgIGNvbnN0IHsgZXJyb3I6IHVwZGF0ZUVycm9yIH0gPSBhd2FpdCBzdXBhYmFzZQogICAgICAgICAgICAuZnJvbSgicGF5bWVudHMiKQogICAgICAgICAgICAudXBkYXRlKHsKICAgICAgICAgICAgICBwYXltZW50X3N0YXR1czogY2hhcmdlLmFtb3VudF9yZWZ1bmRlZCA9PT0gY2hhcmdlLmFtb3VudCAKICAgICAgICAgICAgICAgID8gInJlZnVuZGVkX2Z1bGwiIAogICAgICAgICAgICAgICAgOiAicmVmdW5kZWRfcGFydGlhbCIsCiAgICAgICAgICAgICAgcmVmdW5kX2Ftb3VudDogY2hhcmdlLmFtb3VudF9yZWZ1bmRlZCAvIDEwMCwKICAgICAgICAgICAgICByZWZ1bmRlZF9hdDogbmV3IERhdGUoKS50b0lTT1N0cmluZygpLAogICAgICAgICAgICB9KQogICAgICAgICAgICAuZXEoInN0cmlwZV9wYXltZW50X2lkIiwgcGF5bWVudEludGVudElkKTsKCiAgICAgICAgICBpZiAodXBkYXRlRXJyb3IpIHsKICAgICAgICAgICAgY29uc29sZS5lcnJvcigiRXJyb3IgdXBkYXRpbmcgcmVmdW5kOiIsIHVwZGF0ZUVycm9yKTsKICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgYnJlYWs7CiAgICAgIH0KCiAgICAgIGRlZmF1bHQ6CiAgICAgICAgY29uc29sZS5sb2coIlVuaGFuZGxlZCBldmVudCB0eXBlOiIsIGV2ZW50LnR5cGUpOwogICAgfQoKICAgIHJldHVybiBuZXcgUmVzcG9uc2UoCiAgICAgIEpTT04uc3RyaW5naWZ5KHsgcmVjZWl2ZWQ6IHRydWUgfSksCiAgICAgIHsKICAgICAgICBzdGF0dXM6IDIwMCwKICAgICAgICBoZWFkZXJzOiB7IC4uLmNvcnNIZWFkZXJzLCAiQ29udGVudC1UeXBlIjogImFwcGxpY2F0aW9uL2pzb24iIH0sCiAgICAgIH0KICAgICk7CiAgfSBjYXRjaCAoZXJyb3I6IGFueSkgewogICAgY29uc29sZS5lcnJvcigiV2ViaG9vayBlcnJvcjoiLCBlcnJvcik7CgogICAgcmV0dXJuIG5ldyBSZXNwb25zZSgKICAgICAgSlNPTi5zdHJpbmdpZnkoewogICAgICAgIGVycm9yOiBlcnJvci5tZXNzYWdlIHx8ICJFcnJldXIgbG9ycyBkdSB0cmFpdGVtZW50IGR1IHdlYmhvb2siLAogICAgICB9KSwKICAgICAgewogICAgICAgIHN0YXR1czogNTAwLAogICAgICAgIGhlYWRlcnM6IHsgLi4uY29yc0hlYWRlcnMsICJDb250ZW50LVR5cGUiOiAiYXBwbGljYXRpb24vanNvbiIgfSwKICAgICAgfQogICAgKTsKICB9Cn0pOwo=
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import Stripe from "npm:stripe@17.4.0";
+import { createClient } from "jsr:@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey, stripe-signature",
+};
+
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 200,
+      headers: corsHeaders,
+    });
+  }
+
+  try {
+    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+    const stripeWebhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!stripeSecretKey) {
+      throw new Error("STRIPE_SECRET_KEY non configurée");
+    }
+
+    if (!stripeWebhookSecret) {
+      throw new Error("STRIPE_WEBHOOK_SECRET non configurée");
+    }
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error("Supabase configuration manquante");
+    }
+
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: "2024-12-18.acacia",
+    });
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Get the signature from headers
+    const signature = req.headers.get("stripe-signature");
+    if (!signature) {
+      return new Response(
+        JSON.stringify({ error: "Missing stripe-signature header" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Get the raw body
+    const body = await req.text();
+
+    // Verify the webhook signature
+    let event: Stripe.Event;
+    try {
+      event = await stripe.webhooks.constructEventAsync(body, signature, stripeWebhookSecret);
+    } catch (err: any) {
+      console.error("Webhook signature verification failed:", err.message);
+      return new Response(
+        JSON.stringify({ error: `Webhook signature verification failed: ${err.message}` }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    console.log("Webhook event received:", event.type);
+
+    // Handle the event
+    switch (event.type) {
+      case "payment_intent.succeeded": {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.log("PaymentIntent succeeded:", paymentIntent.id);
+
+        const quoteId = paymentIntent.metadata?.quote_id;
+        if (!quoteId) {
+          console.log("No quote_id in metadata, skipping");
+          break;
+        }
+
+        // Try to get fee — may not be available yet (balance_transaction created async)
+        let stripeFee = 0;
+        let cardCountry = '';
+        let cardBrand = '';
+        try {
+          const chargeId = paymentIntent.latest_charge as string;
+          console.log("latest_charge ID:", chargeId);
+          if (chargeId) {
+            const charge = await stripe.charges.retrieve(chargeId, {
+              expand: ['balance_transaction'],
+            });
+            console.log("balance_transaction type:", typeof charge.balance_transaction, "value:", charge.balance_transaction ? 'exists' : 'null');
+            
+            const balanceTx = charge.balance_transaction;
+            if (balanceTx && typeof balanceTx === 'object' && 'fee' in balanceTx) {
+              stripeFee = (balanceTx as any).fee / 100;
+              console.log("Stripe fee (expanded):", stripeFee, "EUR");
+            } else if (typeof balanceTx === 'string') {
+              const bt = await stripe.balanceTransactions.retrieve(balanceTx);
+              stripeFee = bt.fee / 100;
+              console.log("Stripe fee (fetched):", stripeFee, "EUR");
+            }
+
+            const card = charge.payment_method_details?.card;
+            if (card) {
+              cardCountry = card.country || '';
+              cardBrand = card.brand || '';
+              console.log("Card:", cardBrand, "country:", cardCountry);
+            }
+          }
+        } catch (feeErr: any) {
+          console.error("Fee retrieval error:", feeErr?.message || feeErr);
+        }
+
+        // Update the payment record to mark it as verified + store fee
+        const updateData: Record<string, any> = {
+          payment_status: "completed",
+          stripe_verified: true,
+          stripe_verified_at: new Date().toISOString(),
+        };
+        if (stripeFee > 0) updateData.stripe_fee = stripeFee;
+        if (cardCountry) updateData.stripe_card_country = cardCountry;
+        if (cardBrand) updateData.stripe_card_brand = cardBrand;
+
+        const { error: updateError } = await supabase
+          .from("payments")
+          .update(updateData)
+          .eq("stripe_payment_id", paymentIntent.id);
+
+        if (updateError) {
+          console.error("Error updating payment:", updateError);
+        } else {
+          console.log("Payment verified successfully for quote:", quoteId, "fee:", stripeFee);
+        }
+
+        // ── Record promo code usage (only on successful payment) ──────────
+        const promoCodeId   = paymentIntent.metadata?.promo_code_id;
+        const promoUserId   = paymentIntent.metadata?.user_id;
+        const discountAmt   = parseFloat(paymentIntent.metadata?.discount_amount || "0");
+        const originalAmt   = parseFloat(paymentIntent.metadata?.original_amount || "0");
+        const finalAmt      = parseFloat(paymentIntent.metadata?.final_amount || "0");
+
+        if (promoCodeId && promoUserId && discountAmt > 0 && quoteId) {
+          // Insert usage (ignore conflict — idempotent via unique constraint on promo_code_id+user_id+quote_id)
+          const { error: usageError } = await supabase
+            .from("promo_code_usage")
+            .insert({
+              promo_code_id:   promoCodeId,
+              user_id:         promoUserId,
+              quote_id:        quoteId,
+              discount_amount: discountAmt,
+              original_amount: originalAmt,
+              final_amount:    finalAmt,
+            })
+            .select()
+            .maybeSingle();
+
+          if (usageError && !usageError.message.includes("duplicate")) {
+            console.error("Error recording promo usage:", usageError);
+          } else {
+            // Increment current_uses atomically
+            const { error: rpcError } = await supabase.rpc("increment_promo_code_uses", {
+              p_promo_code_id: promoCodeId,
+            });
+            if (rpcError) console.error("Error incrementing promo uses:", rpcError);
+            else console.log("Promo usage recorded for code:", paymentIntent.metadata?.promo_code);
+          }
+        }
+        // ── Faire passer le devis en "accepté" + notifier le déménageur ────
+        // BUG CRITIQUE CORRIGÉ : cette logique existait dans l'ancienne page
+        // src/pages/ClientPaymentPage.tsx (remplacée depuis par
+        // ClientPaymentPageNew.tsx, qui ne l'a jamais reprise -- l'ancien
+        // fichier est resté dans le repo sans être branché à aucune route,
+        // ce qui a caché la disparition de cette étape). Résultat en
+        // production : après un paiement réussi, quotes.status restait
+        // 'pending' pour toujours, quote_requests.accepted_quote_id n'était
+        // jamais renseigné, les devis concurrents des autres déménageurs
+        // n'étaient jamais rejetés, et AUCUNE notification n'était envoyée
+        // au déménageur pour lui dire qu'il avait gagné la mission.
+        //
+        // Fait ici (webhook, jamais côté navigateur) pour la même raison que
+        // le reste de ce fichier : c'est le seul point où le paiement est
+        // réellement confirmé par signature Stripe vérifiée côté serveur.
+        //
+        // Idempotence : le .eq('status', 'pending') fait que si Stripe
+        // renvoie cet évènement deux fois (retry), la deuxième exécution ne
+        // met à jour aucune ligne (déjà 'accepted') -- on n'exécute donc le
+        // rejet des devis concurrents et l'envoi des emails que la première
+        // fois, jamais en double.
+        try {
+          const { data: quoteRow } = await supabase
+            .from("quotes")
+            .select("id, quote_request_id, mover_id, price, client_display_price")
+            .eq("id", quoteId)
+            .maybeSingle();
+
+          if (quoteRow) {
+            const { data: acceptedRows, error: acceptError } = await supabase
+              .from("quotes")
+              .update({ status: "accepted" })
+              .eq("id", quoteId)
+              .eq("status", "pending")
+              .select("id");
+
+            if (acceptError) {
+              console.error("Error accepting quote:", acceptError);
+            } else if (acceptedRows && acceptedRows.length > 0) {
+              // Première fois qu'on traite cet évènement pour ce devis.
+              await supabase
+                .from("quote_requests")
+                .update({
+                  status: "accepted",
+                  accepted_quote_id: quoteId,
+                  payment_status: "deposit_paid",
+                })
+                .eq("id", quoteRow.quote_request_id);
+
+              await supabase
+                .from("quotes")
+                .update({ status: "rejected" })
+                .eq("quote_request_id", quoteRow.quote_request_id)
+                .neq("id", quoteId);
+
+              const { data: moverData } = await supabase
+                .from("movers")
+                .select("email")
+                .eq("id", quoteRow.mover_id)
+                .maybeSingle();
+
+              const { data: requestData } = await supabase
+                .from("quote_requests")
+                .select("client_email, client_name, from_city, to_city, moving_date")
+                .eq("id", quoteRow.quote_request_id)
+                .maybeSingle();
+
+              if (moverData?.email && requestData) {
+                const notify = (type: string, extra: Record<string, unknown> = {}) =>
+                  fetch(`${supabaseUrl}/functions/v1/send-notification`, {
+                    method: "POST",
+                    headers: {
+                      Authorization: `Bearer ${supabaseServiceKey}`,
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      type,
+                      recipientEmail: moverData.email,
+                      data: {
+                        price: quoteRow.price || Math.round(quoteRow.client_display_price / 1.15),
+                        movingDate: new Date(requestData.moving_date).toLocaleDateString("fr-FR"),
+                        fromCity: requestData.from_city,
+                        toCity: requestData.to_city,
+                        clientEmail: requestData.client_email,
+                        clientName: requestData.client_name,
+                        ...extra,
+                      },
+                    }),
+                  }).catch((e) => console.error(`Notification '${type}' échouée (non bloquant):`, e.message));
+
+                await Promise.all([notify("quote_accepted"), notify("payment_received")]);
+                console.log("Devis accepté + déménageur notifié:", quoteId);
+              }
+            }
+          }
+        } catch (acceptFlowError: any) {
+          // Ne doit jamais faire échouer l'accusé de réception du webhook
+          // à Stripe -- le paiement lui-même reste valide même si cette
+          // partie plante ; à surveiller dans les logs le cas échéant.
+          console.error("Erreur flux acceptation devis (non bloquant):", acceptFlowError.message);
+        }
+
+        break;
+      }
+
+      case "payment_intent.payment_failed": {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        console.log("PaymentIntent failed:", paymentIntent.id);
+
+        const quoteId = paymentIntent.metadata?.quote_id;
+        if (!quoteId) {
+          console.log("No quote_id in metadata, skipping");
+          break;
+        }
+
+        // Update the payment record to mark it as failed
+        const { error: updateError } = await supabase
+          .from("payments")
+          .update({
+            payment_status: "failed",
+            stripe_error: paymentIntent.last_payment_error?.message || "Payment failed",
+          })
+          .eq("stripe_payment_id", paymentIntent.id);
+
+        if (updateError) {
+          console.error("Error updating payment:", updateError);
+        }
+
+        // Revert the quote status
+        const { data: paymentData } = await supabase
+          .from("payments")
+          .select("quote_id, quote_request_id")
+          .eq("stripe_payment_id", paymentIntent.id)
+          .single();
+
+        if (paymentData) {
+          await supabase
+            .from("quotes")
+            .update({ status: "pending" })
+            .eq("id", paymentData.quote_id);
+
+          await supabase
+            .from("quote_requests")
+            .update({ 
+              payment_status: "no_payment",
+              accepted_quote_id: null 
+            })
+            .eq("id", paymentData.quote_request_id);
+        }
+        break;
+      }
+
+      case "charge.updated":
+      case "charge.succeeded": {
+        // This fires when the charge is finalized with balance_transaction
+        const charge = event.data.object as Stripe.Charge;
+        const piId = charge.payment_intent as string;
+        console.log("Charge event:", event.type, "charge:", charge.id, "pi:", piId);
+
+        if (piId && charge.balance_transaction) {
+          try {
+            let fee = 0;
+            const bt = charge.balance_transaction;
+            if (typeof bt === 'object' && 'fee' in bt) {
+              fee = (bt as any).fee / 100;
+            } else if (typeof bt === 'string') {
+              const balanceTx = await stripe.balanceTransactions.retrieve(bt);
+              fee = balanceTx.fee / 100;
+            }
+
+            if (fee > 0) {
+              console.log("Updating stripe_fee:", fee, "for PI:", piId);
+              await supabase
+                .from("payments")
+                .update({ stripe_fee: fee })
+                .eq("stripe_payment_id", piId);
+            }
+          } catch (err: any) {
+            console.error("charge.updated fee error:", err?.message || err);
+          }
+        }
+        break;
+      }
+
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        console.log("Charge refunded:", charge.id);
+
+        const paymentIntentId = charge.payment_intent as string;
+        if (paymentIntentId) {
+          const { error: updateError } = await supabase
+            .from("payments")
+            .update({
+              payment_status: charge.amount_refunded === charge.amount 
+                ? "refunded_full" 
+                : "refunded_partial",
+              refund_amount: charge.amount_refunded / 100,
+              refunded_at: new Date().toISOString(),
+            })
+            .eq("stripe_payment_id", paymentIntentId);
+
+          if (updateError) {
+            console.error("Error updating refund:", updateError);
+          }
+        }
+        break;
+      }
+
+      default:
+        console.log("Unhandled event type:", event.type);
+    }
+
+    return new Response(
+      JSON.stringify({ received: true }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  } catch (error: any) {
+    console.error("Webhook error:", error);
+
+    return new Response(
+      JSON.stringify({
+        error: error.message || "Erreur lors du traitement du webhook",
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  }
+});

@@ -1,1 +1,477 @@
-aW1wb3J0IGpzUERGIGZyb20gJ2pzcGRmJzsKCmV4cG9ydCBpbnRlcmZhY2UgSW52b2ljZURhdGEgewogIGludm9pY2VOdW1iZXI6IHN0cmluZzsKICBpc3N1ZURhdGU6IHN0cmluZzsKICBkb3NzaWVyUmVmZXJlbmNlOiBzdHJpbmc7CiAgY2xpZW50TmFtZTogc3RyaW5nOwogIGNsaWVudEVtYWlsOiBzdHJpbmc7CiAgY2xpZW50UGhvbmU6IHN0cmluZzsKICBjbGllbnRBZGRyZXNzPzogc3RyaW5nOwogIGNsaWVudENpdHk/OiBzdHJpbmc7CiAgY2xpZW50UG9zdGFsQ29kZT86IHN0cmluZzsKICBhbW91bnRIVDogbnVtYmVyOyAvLyBmcmFpcyBkZSByw6lzZXJ2YXRpb24gSFQKICB0dmFSYXRlOiBudW1iZXI7ICAgLy8gZS5nLiAyMAogIHN0YXR1czogJ1BhecOpZScgfCAnRW4gYXR0ZW50ZSc7Cn0KCmZ1bmN0aW9uIGxvYWRMb2dvQXNCYXNlNjQoKTogUHJvbWlzZTxzdHJpbmc+IHsKICByZXR1cm4gbmV3IFByb21pc2UoKHJlc29sdmUpID0+IHsKICAgIGNvbnN0IGltZyA9IG5ldyBJbWFnZSgpOwogICAgaW1nLmNyb3NzT3JpZ2luID0gJ2Fub255bW91cyc7CiAgICBpbWcub25sb2FkID0gKCkgPT4gewogICAgICBjb25zdCBjYW52YXMgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdjYW52YXMnKTsKICAgICAgY2FudmFzLndpZHRoID0gaW1nLndpZHRoOwogICAgICBjYW52YXMuaGVpZ2h0ID0gaW1nLmhlaWdodDsKICAgICAgY29uc3QgY3R4ID0gY2FudmFzLmdldENvbnRleHQoJzJkJyk7CiAgICAgIGN0eD8uZHJhd0ltYWdlKGltZywgMCwgMCk7CiAgICAgIHJlc29sdmUoY2FudmFzLnRvRGF0YVVSTCgnaW1hZ2UvcG5nJykpOwogICAgfTsKICAgIGltZy5vbmVycm9yID0gKCkgPT4gcmVzb2x2ZSgnJyk7CiAgICBpbWcuc3JjID0gJy90dGQtbG9nby5wbmcnOwogIH0pOwp9CgpleHBvcnQgYXN5bmMgZnVuY3Rpb24gZ2VuZXJhdGVJbnZvaWNlUERGKGRhdGE6IEludm9pY2VEYXRhKTogUHJvbWlzZTx2b2lkPiB7CiAgY29uc3QgZG9jID0gbmV3IGpzUERGKCdwJywgJ21tJywgJ2E0Jyk7CiAgY29uc3QgcGFnZVdpZHRoID0gMjEwOwogIGNvbnN0IG1hcmdpbiA9IDIwOwogIGNvbnN0IGNvbnRlbnRXaWR0aCA9IHBhZ2VXaWR0aCAtIG1hcmdpbiAqIDI7CiAgbGV0IHkgPSAyMDsKCiAgLy8gQ29sb3JzCiAgY29uc3QgZGFya0JsdWUgPSBbMzAsIDU4LCA5NV07CiAgY29uc3QgZ3JheSA9IFsxMDAsIDExNiwgMTM5XTsKICBjb25zdCBsaWdodEdyYXkgPSBbMjQxLCAyNDUsIDI0OV07CiAgY29uc3QgYmxhY2sgPSBbMCwgMCwgMF07CiAgY29uc3QgZ3JlZW4gPSBbMjIsIDE2MywgNzRdOwogIGNvbnN0IHllbGxvdyA9IFsyMDIsIDEzOCwgNF07CiAgY29uc3QgYWNjZW50Qmx1ZSA9IFs1OSwgMTMwLCAyNDZdOwoKICAvLyBUcnkgdG8gbG9hZCBsb2dvCiAgY29uc3QgbG9nb0Jhc2U2NCA9IGF3YWl0IGxvYWRMb2dvQXNCYXNlNjQoKTsKCiAgLy8gPT09IEhFQURFUiA9PT0KICAvLyBMb2dvCiAgaWYgKGxvZ29CYXNlNjQpIHsKICAgIHRyeSB7CiAgICAgIGRvYy5hZGRJbWFnZShsb2dvQmFzZTY0LCAnUE5HJywgbWFyZ2luLCB5LCAyNSwgMjUpOwogICAgfSBjYXRjaCB7IC8qIHNraXAgbG9nbyAqLyB9CiAgfQoKICAvLyAiRmFjdHVyZSIgdGl0bGUKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0Rm9udFNpemUoMjgpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZGFya0JsdWUpOwogIGRvYy50ZXh0KCdGYWN0dXJlJywgbWFyZ2luICsgMzAsIHkgKyA4KTsKCiAgLy8gQ29tcGFueSBpbmZvCiAgZG9jLnNldEZvbnRTaXplKDgpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZGFya0JsdWUpOwogIGRvYy50ZXh0KCdUUk9VVkUgVE9OIETDiU3DiU5BR0VVUicsIG1hcmdpbiArIDMwLCB5ICsgMTUpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBjb25zdCBjb21wYW55TGluZXMgPSBbCiAgICAnU0FTVSBhdSBjYXBpdGFsIGRlIDEgMDAwLDAwIOKCrCDCtyBSQ1MnLAogICAgJ1BhcmlzIDEwMSAzNzggMjQ4JywKICAgICc2MCBydWUgRnJhbsOnb2lzIDFlciDCtyA3NTAwOCBQYXJpcycsCiAgICAnVFZBIGludHJhY29tbXVuYXV0YWlyZSA6IEZSIDgzJywKICAgICcxMDEzNzgyNDgnLAogICAgJ3N1cHBvcnRAdHJvdXZldG9uZGVtZW5hZ2V1ci5mciDCtycsCiAgICAnMDEuODkuNzAuNzguODEnLAogIF07CiAgY29tcGFueUxpbmVzLmZvckVhY2goKGxpbmUsIGkpID0+IHsKICAgIGRvYy50ZXh0KGxpbmUsIG1hcmdpbiArIDMwLCB5ICsgMjAgKyBpICogNCk7CiAgfSk7CgogIC8vIERvY3VtZW50IGJveCAocmlnaHQgc2lkZSkKICBjb25zdCBib3hYID0gMTI1OwogIGNvbnN0IGJveFkgPSB5OwogIGNvbnN0IGJveFcgPSA2NTsKCiAgLy8gQm94IGhlYWRlcgogIGRvYy5zZXRGaWxsQ29sb3IoMjQxLCAyNDUsIDI0OSk7CiAgZG9jLnJvdW5kZWRSZWN0KGJveFgsIGJveFksIGJveFcsIDQyLCAyLCAyLCAnRicpOwogIGRvYy5zZXREcmF3Q29sb3IoMjAwLCAyMTAsIDIyMCk7CiAgZG9jLnJvdW5kZWRSZWN0KGJveFgsIGJveFksIGJveFcsIDQyLCAyLCAyLCAnUycpOwoKICBkb2Muc2V0Rm9udFNpemUoNyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOwogIGRvYy50ZXh0KCdET0NVTUVOVCBDT01QVEFCTEUnLCBib3hYICsgNCwgYm94WSArIDYpOwoKICBkb2Muc2V0Rm9udFNpemUoMTQpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZGFya0JsdWUpOwogIGRvYy50ZXh0KGRhdGEuaW52b2ljZU51bWJlciwgYm94WCArIDQsIGJveFkgKyAxNCk7CgogIGRvYy5zZXRGb250U2l6ZSg3KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7CiAgZG9jLnRleHQoIkRhdGUgZCfDqW1pc3Npb24iLCBib3hYICsgNCwgYm94WSArIDIwKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0Rm9udFNpemUoOCk7CiAgZG9jLnRleHQoZGF0YS5pc3N1ZURhdGUsIGJveFggKyA0LCBib3hZICsgMjQpOwoKICBkb2Muc2V0Rm9udFNpemUoNyk7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdub3JtYWwnKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOwogIGRvYy50ZXh0KCdSw6lmw6lyZW5jZSBkw6ltw6luYWdlbWVudCcsIGJveFggKyAzNCwgYm94WSArIDIwKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0Rm9udFNpemUoOCk7CiAgZG9jLnRleHQoZGF0YS5kb3NzaWVyUmVmZXJlbmNlLCBib3hYICsgMzQsIGJveFkgKyAyNCk7CgogIGRvYy5zZXRGb250U2l6ZSg3KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7CiAgZG9jLnRleHQoJ01vZGUgZGUgcGFpZW1lbnQnLCBib3hYICsgNCwgYm94WSArIDMwKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0Rm9udFNpemUoOCk7CiAgZG9jLnRleHQoJ1BhaWVtZW50IHPDqWN1cmlzw6knLCBib3hYICsgNCwgYm94WSArIDM0KTsKICBkb2MudGV4dCgnU3RyaXBlJywgYm94WCArIDQsIGJveFkgKyAzOCk7CgogIGRvYy5zZXRGb250U2l6ZSg3KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7CiAgZG9jLnRleHQoJ1N0YXR1dCcsIGJveFggKyAzNCwgYm94WSArIDMwKTsKCiAgLy8gU3RhdHVzIGJhZGdlCiAgY29uc3Qgc3RhdHVzQ29sb3IgPSBkYXRhLnN0YXR1cyA9PT0gJ1BhecOpZScgPyBncmVlbiA6IHllbGxvdzsKICBkb2Muc2V0RmlsbENvbG9yKHN0YXR1c0NvbG9yWzBdLCBzdGF0dXNDb2xvclsxXSwgc3RhdHVzQ29sb3JbMl0pOwogIGRvYy5yb3VuZGVkUmVjdChib3hYICsgMzQsIGJveFkgKyAzMiwgMjAsIDcsIDIsIDIsICdGJyk7CiAgZG9jLnNldEZvbnRTaXplKDcpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoMjU1LCAyNTUsIDI1NSk7CiAgZG9jLnRleHQoZGF0YS5zdGF0dXMsIGJveFggKyAzNywgYm94WSArIDM3KTsKCiAgeSArPSA1MjsKCiAgLy8gPT09IENMSUVOVCBGQUNUVVLDiSA9PT0KICBkb2Muc2V0Rm9udFNpemUoOCk7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdib2xkJyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBkb2MudGV4dCgnQ0xJRU5UIEZBQ1RVUsOJJywgbWFyZ2luLCB5KTsKICB5ICs9IDQ7CgogIGRvYy5zZXREcmF3Q29sb3IoMjIwLCAyMjAsIDIyMCk7CiAgZG9jLnJvdW5kZWRSZWN0KG1hcmdpbiwgeSwgY29udGVudFdpZHRoLCAyOCwgMiwgMiwgJ1MnKTsKCiAgLy8gTGVmdDogaWRlbnRpdHkKICBkb2Muc2V0Rm9udFNpemUoNyk7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdub3JtYWwnKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOwogIGRvYy50ZXh0KCdJZGVudGl0w6knLCBtYXJnaW4gKyA0LCB5ICsgNik7CiAgZG9jLnNldEZvbnRTaXplKDExKTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsKICBkb2MudGV4dChkYXRhLmNsaWVudE5hbWUsIG1hcmdpbiArIDQsIHkgKyAxMik7CiAgZG9jLnNldEZvbnRTaXplKDgpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBkb2MudGV4dChkYXRhLmNsaWVudEVtYWlsLCBtYXJnaW4gKyA0LCB5ICsgMTcpOwogIGRvYy50ZXh0KGRhdGEuY2xpZW50UGhvbmUgfHwgJycsIG1hcmdpbiArIDQsIHkgKyAyMik7CgogIC8vIFJpZ2h0OiBhZGRyZXNzCiAgY29uc3QgcmlnaHRDb2wgPSBtYXJnaW4gKyBjb250ZW50V2lkdGggLyAyICsgNTsKICBkb2Muc2V0Rm9udFNpemUoNyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBkb2MudGV4dCgnQWRyZXNzZSBkZSBmYWN0dXJhdGlvbicsIHJpZ2h0Q29sLCB5ICsgNik7CiAgZG9jLnNldEZvbnRTaXplKDExKTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsKICBkb2MudGV4dChkYXRhLmNsaWVudEFkZHJlc3MgfHwgJ+KAlCcsIHJpZ2h0Q29sLCB5ICsgMTIpOwogIGRvYy5zZXRGb250U2l6ZSg4KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7CiAgaWYgKGRhdGEuY2xpZW50Q2l0eSB8fCBkYXRhLmNsaWVudFBvc3RhbENvZGUpIHsKICAgIGRvYy50ZXh0KGAke2RhdGEuY2xpZW50UG9zdGFsQ29kZSB8fCAnJ30gJHtkYXRhLmNsaWVudENpdHkgfHwgJyd9YC50cmltKCksIHJpZ2h0Q29sLCB5ICsgMTcpOwogIH0KCiAgeSArPSAzNjsKCiAgLy8gPT09IETDiVRBSUwgRkFDVFVSw4kgPT09CiAgZG9jLnNldEZvbnRTaXplKDgpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7CiAgZG9jLnRleHQoJ0TDiVRBSUwgRkFDVFVSw4knLCBtYXJnaW4sIHkpOwogIHkgKz0gNDsKCiAgLy8gVGFibGUgaGVhZGVyCiAgZG9jLnNldEZpbGxDb2xvciguLi5saWdodEdyYXkpOwogIGRvYy5yZWN0KG1hcmdpbiwgeSwgY29udGVudFdpZHRoLCA4LCAnRicpOwogIGRvYy5zZXRGb250U2l6ZSg3KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOwogIGRvYy50ZXh0KCdEZXNjcmlwdGlvbicsIG1hcmdpbiArIDQsIHkgKyA1LjUpOwogIGRvYy50ZXh0KCdRdMOpJywgbWFyZ2luICsgMTEwLCB5ICsgNS41KTsKICBkb2MudGV4dCgnUFUgSFQnLCBtYXJnaW4gKyAxMjUsIHkgKyA1LjUpOwogIGRvYy50ZXh0KCdUb3RhbCBIVCcsIG1hcmdpbiArIDE0OCwgeSArIDUuNSk7CiAgeSArPSA4OwoKICAvLyBUYWJsZSByb3cKICBkb2Muc2V0RHJhd0NvbG9yKDIyMCwgMjIwLCAyMjApOwogIGRvYy5saW5lKG1hcmdpbiwgeSwgbWFyZ2luICsgY29udGVudFdpZHRoLCB5KTsKICB5ICs9IDM7CgogIGRvYy5zZXRGb250U2l6ZSg5KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsKICBkb2MudGV4dCgnRnJhaXMgZGUgcsOpc2VydmF0aW9uIOKAkyBtaXNlIGVuIHJlbGF0aW9uIHBsYXRlZm9ybWUnLCBtYXJnaW4gKyA0LCB5ICsgNCk7CiAgZG9jLnNldEZvbnRTaXplKDcpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBkb2MudGV4dCgiUsOpc2VydmF0aW9uIGQndW4gZMOpbcOpbmFnZXVyIHZpYSBsYSBwbGF0ZWZvcm1lIiwgbWFyZ2luICsgNCwgeSArIDkpOwogIGRvYy50ZXh0KCdUUk9VVkUgVE9OIETDiU3DiU5BR0VVUicsIG1hcmdpbiArIDQsIHkgKyAxMyk7CiAgZG9jLnRleHQoYERvc3NpZXIgOiAke2RhdGEuZG9zc2llclJlZmVyZW5jZX1gLCBtYXJnaW4gKyA0LCB5ICsgMTcpOwoKICBkb2Muc2V0Rm9udFNpemUoOSk7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdub3JtYWwnKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsKICBkb2MudGV4dCgnMScsIG1hcmdpbiArIDExMiwgeSArIDQpOwogIGRvYy50ZXh0KGAke2RhdGEuYW1vdW50SFQudG9GaXhlZCgyKX0g4oKsYCwgbWFyZ2luICsgMTIzLCB5ICsgNCk7CiAgZG9jLnRleHQoYCR7ZGF0YS5hbW91bnRIVC50b0ZpeGVkKDIpfSDigqxgLCBtYXJnaW4gKyAxNDYsIHkgKyA0KTsKCiAgeSArPSAyNDsKICBkb2Muc2V0RHJhd0NvbG9yKDIyMCwgMjIwLCAyMjApOwogIGRvYy5saW5lKG1hcmdpbiwgeSwgbWFyZ2luICsgY29udGVudFdpZHRoLCB5KTsKCiAgLy8gPT09IFRPVEFMUyA9PT0KICB5ICs9IDY7CiAgY29uc3QgdG90YWxzWCA9IG1hcmdpbiArIDEwMDsKICBjb25zdCB0b3RhbHNWYWxYID0gbWFyZ2luICsgMTUwOwoKICBjb25zdCB0dmFBbW91bnQgPSBkYXRhLmFtb3VudEhUICogKGRhdGEudHZhUmF0ZSAvIDEwMCk7CiAgY29uc3QgdG90YWxUVEMgPSBkYXRhLmFtb3VudEhUICsgdHZhQW1vdW50OwoKICBkb2Muc2V0RmlsbENvbG9yKDI0OCwgMjUwLCAyNTIpOwogIGRvYy5yb3VuZGVkUmVjdCh0b3RhbHNYIC0gNCwgeSAtIDMsIDc0LCAzMiwgMiwgMiwgJ0YnKTsKCiAgZG9jLnNldEZvbnRTaXplKDkpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBkb2MudGV4dCgnU291cy10b3RhbCBIVCcsIHRvdGFsc1gsIHkgKyAzKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2MudGV4dChgJHtkYXRhLmFtb3VudEhULnRvRml4ZWQoMil9IOKCrGAsIHRvdGFsc1ZhbFgsIHkgKyAzKTsKCiAgeSArPSA5OwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBkb2MudGV4dChgVFZBICgke2RhdGEudHZhUmF0ZX0gJSlgLCB0b3RhbHNYLCB5ICsgMyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ibGFjayk7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdib2xkJyk7CiAgZG9jLnRleHQoYCR7dHZhQW1vdW50LnRvRml4ZWQoMil9IOKCrGAsIHRvdGFsc1ZhbFgsIHkgKyAzKTsKCiAgeSArPSA5OwogIGRvYy5zZXREcmF3Q29sb3IoMjAwLCAyMDAsIDIwMCk7CiAgZG9jLmxpbmUodG90YWxzWCwgeSwgdG90YWxzWCArIDY4LCB5KTsKICB5ICs9IDI7CiAgZG9jLnNldEZvbnRTaXplKDEyKTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmRhcmtCbHVlKTsKICBkb2MudGV4dCgnVG90YWwgVFRDJywgdG90YWxzWCwgeSArIDUpOwogIGRvYy50ZXh0KGAke3RvdGFsVFRDLnRvRml4ZWQoMil9IOKCrGAsIHRvdGFsc1ZhbFggLSAyLCB5ICsgNSk7CgogIHkgKz0gMTg7CgogIC8vID09PSBESVNDTEFJTUVSID09PQogIGRvYy5zZXREcmF3Q29sb3IoLi4uYWNjZW50Qmx1ZSk7CiAgZG9jLnNldExpbmVXaWR0aCgxKTsKICBkb2MubGluZShtYXJnaW4sIHksIG1hcmdpbiwgeSArIDE4KTsKICBkb2Muc2V0TGluZVdpZHRoKDAuMik7CgogIGRvYy5zZXRGb250U2l6ZSg4KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uYmxhY2spOwogIGRvYy50ZXh0KCdDZXMgZnJhaXMgY29ycmVzcG9uZGVudCDDoCBsYSBjb21taXNzaW9uIGRlIG1pc2UgZW4gcmVsYXRpb24gZGUgbGEgcGxhdGVmb3JtZSBldCAnLCBtYXJnaW4gKyA0LCB5ICsgNCk7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdib2xkJyk7CiAgZG9jLnRleHQoJ25lIGNvbnN0aXR1ZW50IHBhcyB1bicsIG1hcmdpbiArIDQgKyBkb2MuZ2V0VGV4dFdpZHRoKCdDZXMgZnJhaXMgY29ycmVzcG9uZGVudCDDoCBsYSBjb21taXNzaW9uIGRlIG1pc2UgZW4gcmVsYXRpb24gZGUgbGEgcGxhdGVmb3JtZSBldCAnKSwgeSArIDQpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOwogIGRvYy50ZXh0KCdhY29tcHRlJywgbWFyZ2luICsgNCwgeSArIDkpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7CiAgZG9jLnRleHQoJyBzdXIgbGEgcHJlc3RhdGlvbiBkZSBkw6ltw6luYWdlbWVudC4nLCBtYXJnaW4gKyA0ICsgZG9jLmdldFRleHRXaWR0aCgnYWNvbXB0ZScpLCB5ICsgOSk7CiAgZG9jLnRleHQoJ0xlIHNvbGRlIGRlIGxhIHByZXN0YXRpb24gZXN0IHLDqWdsw6kgZGlyZWN0ZW1lbnQgZW50cmUgbGUgQ2xpZW50IGV0IGxlIETDqW3DqW5hZ2V1ci4nLCBtYXJnaW4gKyA0LCB5ICsgMTQpOwoKICB5ICs9IDI2OwoKICAvLyA9PT0gRk9PVEVSID09PQogIGRvYy5zZXREcmF3Q29sb3IoMjIwLCAyMjAsIDIyMCk7CiAgZG9jLmxpbmUobWFyZ2luLCB5LCBtYXJnaW4gKyBjb250ZW50V2lkdGgsIHkpOwogIHkgKz0gNjsKCiAgZG9jLnNldEZvbnRTaXplKDgpOwogIGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7CiAgZG9jLnRleHQoJ0hvdGxpbmUnLCBtYXJnaW4sIHkpOwogIGRvYy50ZXh0KCdTaXRlJywgbWFyZ2luICsgMTAwLCB5KTsKICB5ICs9IDU7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdub3JtYWwnKTsKICBkb2MudGV4dCgnMDEuODkuNzAuNzguODEnLCBtYXJnaW4sIHkpOwogIGRvYy50ZXh0KCd3d3cudHJvdXZldG9uZGVtZW5hZ2V1ci5mcicsIG1hcmdpbiArIDEwMCwgeSk7CiAgeSArPSA0OwogIGRvYy50ZXh0KCdzdXBwb3J0QHRyb3V2ZXRvbmRlbWVuYWdldXIuZnInLCBtYXJnaW4sIHkpOwogIGRvYy5zZXRGb250U2l6ZSg3KTsKICBkb2MudGV4dCgnRmFjdHVyZSBnw6luw6lyw6llIGF1dG9tYXRpcXVlbWVudCBwYXIgbGUgQ1JNJywgbWFyZ2luICsgMTAwLCB5KTsKCiAgLy8gU2F2ZQogIGRvYy5zYXZlKGBGYWN0dXJlXyR7ZGF0YS5pbnZvaWNlTnVtYmVyfS5wZGZgKTsKfQoKLy8gUmV0dXJucyBpbnZvaWNlIFBERiBhcyBiYXNlNjQgc3RyaW5nIChmb3IgZW1haWwgYXR0YWNobWVudHMpCmV4cG9ydCBhc3luYyBmdW5jdGlvbiBnZXRJbnZvaWNlUERGQmFzZTY0KGRhdGE6IEludm9pY2VEYXRhKTogUHJvbWlzZTxzdHJpbmc+IHsKICBjb25zdCBkb2MgPSBuZXcganNQREYoJ3AnLCAnbW0nLCAnYTQnKTsKICBhd2FpdCBidWlsZEludm9pY2VQREZDb250ZW50KGRvYywgZGF0YSk7CiAgcmV0dXJuIGRvYy5vdXRwdXQoJ2RhdGF1cmlzdHJpbmcnKS5zcGxpdCgnLCcpWzFdOwp9CgovLyBIZWxwZXIgdG8gYnVpbGQgaW52b2ljZSBjb250ZW50IGludG8gYSBqc1BERiBkb2MKYXN5bmMgZnVuY3Rpb24gYnVpbGRJbnZvaWNlUERGQ29udGVudChkb2M6IGpzUERGLCBkYXRhOiBJbnZvaWNlRGF0YSk6IFByb21pc2U8dm9pZD4gewogIC8vIFJlLWludm9rZSB0aGUgc2FtZSBnZW5lcmF0aW9uIGxvZ2ljIGFzIGdlbmVyYXRlSW52b2ljZVBERiBidXQgb24gdGhlIHByb3ZpZGVkIGRvYwogIC8vIFdlIGNhbGwgZ2VuZXJhdGVJbnZvaWNlUERGVG9Eb2MgaW50ZXJuYWxseQp9CgovLyBBbHRlcm5hdGU6IHNpbXBsZXIgYXBwcm9hY2gg4oCUIGdlbmVyYXRlIGZ1bGwgUERGIGFuZCBleHRyYWN0IGJhc2U2NApleHBvcnQgYXN5bmMgZnVuY3Rpb24gZ2VuZXJhdGVJbnZvaWNlUERGQmFzZTY0KGRhdGE6IEludm9pY2VEYXRhKTogUHJvbWlzZTxzdHJpbmc+IHsKICBjb25zdCBkb2MgPSBuZXcganNQREYoJ3AnLCAnbW0nLCAnYTQnKTsKICBjb25zdCBwYWdlV2lkdGggPSAyMTA7CiAgY29uc3QgbWFyZ2luID0gMjA7CiAgY29uc3QgY29udGVudFdpZHRoID0gcGFnZVdpZHRoIC0gbWFyZ2luICogMjsKICBsZXQgeSA9IDIwOwoKICBjb25zdCBkYXJrQmx1ZSA9IFszMCwgNTgsIDk1XTsKICBjb25zdCBncmF5ID0gWzEwMCwgMTE2LCAxMzldOwogIGNvbnN0IGxpZ2h0R3JheSA9IFsyNDEsIDI0NSwgMjQ5XTsKICBjb25zdCBibGFjayA9IFswLCAwLCAwXTsKICBjb25zdCBncmVlbiA9IFsyMiwgMTYzLCA3NF07CiAgY29uc3QgeWVsbG93ID0gWzIwMiwgMTM4LCA0XTsKICBjb25zdCBhY2NlbnRCbHVlID0gWzU5LCAxMzAsIDI0Nl07CgogIGNvbnN0IGxvZ29CYXNlNjQgPSBhd2FpdCBsb2FkTG9nb0FzQmFzZTY0KCk7CgogIGlmIChsb2dvQmFzZTY0KSB7IHRyeSB7IGRvYy5hZGRJbWFnZShsb2dvQmFzZTY0LCAnUE5HJywgbWFyZ2luLCB5LCAyNSwgMjUpOyB9IGNhdGNoIHsgLyogc2tpcCAqLyB9IH0KCiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdib2xkJyk7IGRvYy5zZXRGb250U2l6ZSgyOCk7IGRvYy5zZXRUZXh0Q29sb3IoLi4uZGFya0JsdWUpOwogIGRvYy50ZXh0KCdGYWN0dXJlJywgbWFyZ2luICsgMzAsIHkgKyA4KTsKICBkb2Muc2V0Rm9udFNpemUoOCk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmRhcmtCbHVlKTsKICBkb2MudGV4dCgnVFJPVVZFIFRPTiBEw4lNw4lOQUdFVVInLCBtYXJnaW4gKyAzMCwgeSArIDE1KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOwogIFsnU0FTVSBhdSBjYXBpdGFsIGRlIDEgMDAwLDAwIOKCrCDCtyBSQ1MnLCdQYXJpcyAxMDEgMzc4IDI0OCcsJzYwIHJ1ZSBGcmFuw6dvaXMgMWVyIMK3IDc1MDA4IFBhcmlzJywnVFZBIGludHJhY29tbXVuYXV0YWlyZSA6IEZSIDgzJywnMTAxMzc4MjQ4Jywnc3VwcG9ydEB0cm91dmV0b25kZW1lbmFnZXVyLmZyIMK3JywnMDEuODkuNzAuNzguODEnXS5mb3JFYWNoKChsLCBpKSA9PiB7IGRvYy50ZXh0KGwsIG1hcmdpbiArIDMwLCB5ICsgMjAgKyBpICogNCk7IH0pOwoKICBjb25zdCBib3hYID0gMTI1LCBib3hZID0geSwgYm94VyA9IDY1OwogIGRvYy5zZXRGaWxsQ29sb3IoMjQxLCAyNDUsIDI0OSk7IGRvYy5yb3VuZGVkUmVjdChib3hYLCBib3hZLCBib3hXLCA0MiwgMiwgMiwgJ0YnKTsKICBkb2Muc2V0RHJhd0NvbG9yKDIwMCwgMjEwLCAyMjApOyBkb2Mucm91bmRlZFJlY3QoYm94WCwgYm94WSwgYm94VywgNDIsIDIsIDIsICdTJyk7CiAgZG9jLnNldEZvbnRTaXplKDcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOyBkb2MudGV4dCgnRE9DVU1FTlQgQ09NUFRBQkxFJywgYm94WCArIDQsIGJveFkgKyA2KTsKICBkb2Muc2V0Rm9udFNpemUoMTQpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsgZG9jLnNldFRleHRDb2xvciguLi5kYXJrQmx1ZSk7IGRvYy50ZXh0KGRhdGEuaW52b2ljZU51bWJlciwgYm94WCArIDQsIGJveFkgKyAxNCk7CiAgZG9jLnNldEZvbnRTaXplKDcpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOyBkb2MudGV4dCgiRGF0ZSBkJ8OpbWlzc2lvbiIsIGJveFggKyA0LCBib3hZICsgMjApOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uYmxhY2spOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsgZG9jLnNldEZvbnRTaXplKDgpOyBkb2MudGV4dChkYXRhLmlzc3VlRGF0ZSwgYm94WCArIDQsIGJveFkgKyAyNCk7CiAgZG9jLnNldEZvbnRTaXplKDcpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOyBkb2MudGV4dCgnUsOpZsOpcmVuY2UgZMOpbcOpbmFnZW1lbnQnLCBib3hYICsgMzQsIGJveFkgKyAyMCk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ibGFjayk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOyBkb2Muc2V0Rm9udFNpemUoOCk7IGRvYy50ZXh0KGRhdGEuZG9zc2llclJlZmVyZW5jZSwgYm94WCArIDM0LCBib3hZICsgMjQpOwogIGRvYy5zZXRGb250U2l6ZSg3KTsgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdub3JtYWwnKTsgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsgZG9jLnRleHQoJ01vZGUgZGUgcGFpZW1lbnQnLCBib3hYICsgNCwgYm94WSArIDMwKTsKICBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdib2xkJyk7IGRvYy5zZXRGb250U2l6ZSg4KTsgZG9jLnRleHQoJ1BhaWVtZW50IHPDqWN1cmlzw6knLCBib3hYICsgNCwgYm94WSArIDM0KTsgZG9jLnRleHQoJ1N0cmlwZScsIGJveFggKyA0LCBib3hZICsgMzgpOwogIGRvYy5zZXRGb250U2l6ZSg3KTsgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdub3JtYWwnKTsgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsgZG9jLnRleHQoJ1N0YXR1dCcsIGJveFggKyAzNCwgYm94WSArIDMwKTsKICBjb25zdCBzYyA9IGRhdGEuc3RhdHVzID09PSAnUGF5w6llJyA/IGdyZWVuIDogeWVsbG93OwogIGRvYy5zZXRGaWxsQ29sb3Ioc2NbMF0sIHNjWzFdLCBzY1syXSk7IGRvYy5yb3VuZGVkUmVjdChib3hYICsgMzQsIGJveFkgKyAzMiwgMjAsIDcsIDIsIDIsICdGJyk7CiAgZG9jLnNldEZvbnRTaXplKDcpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsgZG9jLnNldFRleHRDb2xvcigyNTUsIDI1NSwgMjU1KTsgZG9jLnRleHQoZGF0YS5zdGF0dXMsIGJveFggKyAzNywgYm94WSArIDM3KTsKCiAgeSArPSA1MjsKICBkb2Muc2V0Rm9udFNpemUoOCk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOyBkb2MudGV4dCgnQ0xJRU5UIEZBQ1RVUsOJJywgbWFyZ2luLCB5KTsgeSArPSA0OwogIGRvYy5zZXREcmF3Q29sb3IoMjIwLCAyMjAsIDIyMCk7IGRvYy5yb3VuZGVkUmVjdChtYXJnaW4sIHksIGNvbnRlbnRXaWR0aCwgMjgsIDIsIDIsICdTJyk7CiAgZG9jLnNldEZvbnRTaXplKDcpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOyBkb2MudGV4dCgnSWRlbnRpdMOpJywgbWFyZ2luICsgNCwgeSArIDYpOwogIGRvYy5zZXRGb250U2l6ZSgxMSk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsgZG9jLnRleHQoZGF0YS5jbGllbnROYW1lLCBtYXJnaW4gKyA0LCB5ICsgMTIpOwogIGRvYy5zZXRGb250U2l6ZSg4KTsgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdub3JtYWwnKTsgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsgZG9jLnRleHQoZGF0YS5jbGllbnRFbWFpbCwgbWFyZ2luICsgNCwgeSArIDE3KTsgZG9jLnRleHQoZGF0YS5jbGllbnRQaG9uZSB8fCAnJywgbWFyZ2luICsgNCwgeSArIDIyKTsKICBjb25zdCByQyA9IG1hcmdpbiArIGNvbnRlbnRXaWR0aCAvIDIgKyA1OwogIGRvYy5zZXRGb250U2l6ZSg3KTsgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsgZG9jLnRleHQoJ0FkcmVzc2UgZGUgZmFjdHVyYXRpb24nLCByQywgeSArIDYpOwogIGRvYy5zZXRGb250U2l6ZSgxMSk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmJsYWNrKTsgZG9jLnRleHQoZGF0YS5jbGllbnRBZGRyZXNzIHx8ICfigJQnLCByQywgeSArIDEyKTsKICBkb2Muc2V0Rm9udFNpemUoOCk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7IGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7CiAgaWYgKGRhdGEuY2xpZW50Q2l0eSB8fCBkYXRhLmNsaWVudFBvc3RhbENvZGUpIGRvYy50ZXh0KGAke2RhdGEuY2xpZW50UG9zdGFsQ29kZSB8fCAnJ30gJHtkYXRhLmNsaWVudENpdHkgfHwgJyd9YC50cmltKCksIHJDLCB5ICsgMTcpOwoKICB5ICs9IDM2OwogIGRvYy5zZXRGb250U2l6ZSg4KTsgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdib2xkJyk7IGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7IGRvYy50ZXh0KCdEw4lUQUlMIEZBQ1RVUsOJJywgbWFyZ2luLCB5KTsgeSArPSA0OwogIGRvYy5zZXRGaWxsQ29sb3IoLi4ubGlnaHRHcmF5KTsgZG9jLnJlY3QobWFyZ2luLCB5LCBjb250ZW50V2lkdGgsIDgsICdGJyk7CiAgZG9jLnNldEZvbnRTaXplKDcpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsgZG9jLnNldFRleHRDb2xvciguLi5ncmF5KTsKICBkb2MudGV4dCgnRGVzY3JpcHRpb24nLCBtYXJnaW4gKyA0LCB5ICsgNS41KTsgZG9jLnRleHQoJ1F0w6knLCBtYXJnaW4gKyAxMTAsIHkgKyA1LjUpOyBkb2MudGV4dCgnUFUgSFQnLCBtYXJnaW4gKyAxMjUsIHkgKyA1LjUpOyBkb2MudGV4dCgnVG90YWwgSFQnLCBtYXJnaW4gKyAxNDgsIHkgKyA1LjUpOwogIHkgKz0gODsgZG9jLnNldERyYXdDb2xvcigyMjAsIDIyMCwgMjIwKTsgZG9jLmxpbmUobWFyZ2luLCB5LCBtYXJnaW4gKyBjb250ZW50V2lkdGgsIHkpOyB5ICs9IDM7CiAgZG9jLnNldEZvbnRTaXplKDkpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsgZG9jLnNldFRleHRDb2xvciguLi5ibGFjayk7IGRvYy50ZXh0KCdGcmFpcyBkZSByw6lzZXJ2YXRpb24g4oCTIG1pc2UgZW4gcmVsYXRpb24gcGxhdGVmb3JtZScsIG1hcmdpbiArIDQsIHkgKyA0KTsKICBkb2Muc2V0Rm9udFNpemUoNyk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7IGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7CiAgZG9jLnRleHQoIlLDqXNlcnZhdGlvbiBkJ3VuIGTDqW3DqW5hZ2V1ciB2aWEgbGEgcGxhdGVmb3JtZSIsIG1hcmdpbiArIDQsIHkgKyA5KTsKICBkb2MudGV4dCgnVFJPVVZFIFRPTiBEw4lNw4lOQUdFVVInLCBtYXJnaW4gKyA0LCB5ICsgMTMpOwogIGRvYy50ZXh0KGBEb3NzaWVyIDogJHtkYXRhLmRvc3NpZXJSZWZlcmVuY2V9YCwgbWFyZ2luICsgNCwgeSArIDE3KTsKICBkb2Muc2V0Rm9udFNpemUoOSk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7IGRvYy5zZXRUZXh0Q29sb3IoLi4uYmxhY2spOwogIGRvYy50ZXh0KCcxJywgbWFyZ2luICsgMTEyLCB5ICsgNCk7IGRvYy50ZXh0KGAke2RhdGEuYW1vdW50SFQudG9GaXhlZCgyKX0g4oKsYCwgbWFyZ2luICsgMTIzLCB5ICsgNCk7IGRvYy50ZXh0KGAke2RhdGEuYW1vdW50SFQudG9GaXhlZCgyKX0g4oKsYCwgbWFyZ2luICsgMTQ2LCB5ICsgNCk7CiAgeSArPSAyNDsgZG9jLmxpbmUobWFyZ2luLCB5LCBtYXJnaW4gKyBjb250ZW50V2lkdGgsIHkpOyB5ICs9IDY7CgogIGNvbnN0IHR2YUFtb3VudCA9IGRhdGEuYW1vdW50SFQgKiAoZGF0YS50dmFSYXRlIC8gMTAwKTsKICBjb25zdCB0b3RhbFRUQyA9IGRhdGEuYW1vdW50SFQgKyB0dmFBbW91bnQ7CiAgY29uc3QgdFggPSBtYXJnaW4gKyAxMDAsIHRWID0gbWFyZ2luICsgMTUwOwogIGRvYy5zZXRGaWxsQ29sb3IoMjQ4LCAyNTAsIDI1Mik7IGRvYy5yb3VuZGVkUmVjdCh0WCAtIDQsIHkgLSAzLCA3NCwgMzIsIDIsIDIsICdGJyk7CiAgZG9jLnNldEZvbnRTaXplKDkpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOyBkb2MudGV4dCgnU291cy10b3RhbCBIVCcsIHRYLCB5ICsgMyk7CiAgZG9jLnNldFRleHRDb2xvciguLi5ibGFjayk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnYm9sZCcpOyBkb2MudGV4dChgJHtkYXRhLmFtb3VudEhULnRvRml4ZWQoMil9IOKCrGAsIHRWLCB5ICsgMyk7IHkgKz0gOTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOyBkb2Muc2V0VGV4dENvbG9yKC4uLmdyYXkpOyBkb2MudGV4dChgVFZBICgke2RhdGEudHZhUmF0ZX0gJSlgLCB0WCwgeSArIDMpOwogIGRvYy5zZXRUZXh0Q29sb3IoLi4uYmxhY2spOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsgZG9jLnRleHQoYCR7dHZhQW1vdW50LnRvRml4ZWQoMil9IOKCrGAsIHRWLCB5ICsgMyk7IHkgKz0gOTsKICBkb2Muc2V0RHJhd0NvbG9yKDIwMCwgMjAwLCAyMDApOyBkb2MubGluZSh0WCwgeSwgdFggKyA2OCwgeSk7IHkgKz0gMjsKICBkb2Muc2V0Rm9udFNpemUoMTIpOyBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ2JvbGQnKTsgZG9jLnNldFRleHRDb2xvciguLi5kYXJrQmx1ZSk7IGRvYy50ZXh0KCdUb3RhbCBUVEMnLCB0WCwgeSArIDUpOyBkb2MudGV4dChgJHt0b3RhbFRUQy50b0ZpeGVkKDIpfSDigqxgLCB0ViAtIDIsIHkgKyA1KTsgeSArPSAxODsKCiAgZG9jLnNldERyYXdDb2xvciguLi5hY2NlbnRCbHVlKTsgZG9jLnNldExpbmVXaWR0aCgxKTsgZG9jLmxpbmUobWFyZ2luLCB5LCBtYXJnaW4sIHkgKyAxOCk7IGRvYy5zZXRMaW5lV2lkdGgoMC4yKTsKICBkb2Muc2V0Rm9udFNpemUoOCk7IGRvYy5zZXRGb250KCdoZWx2ZXRpY2EnLCAnbm9ybWFsJyk7IGRvYy5zZXRUZXh0Q29sb3IoLi4uYmxhY2spOwogIGRvYy50ZXh0KCdDZXMgZnJhaXMgY29ycmVzcG9uZGVudCDDoCBsYSBjb21taXNzaW9uIGRlIG1pc2UgZW4gcmVsYXRpb24gZGUgbGEgcGxhdGVmb3JtZSBldCBuZSBjb25zdGl0dWVudCBwYXMgdW4nLCBtYXJnaW4gKyA0LCB5ICsgNCk7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdib2xkJyk7IGRvYy50ZXh0KCdhY29tcHRlIHN1ciBsYSBwcmVzdGF0aW9uIGRlIGTDqW3DqW5hZ2VtZW50LicsIG1hcmdpbiArIDQsIHkgKyA5KTsKICBkb2Muc2V0Rm9udCgnaGVsdmV0aWNhJywgJ25vcm1hbCcpOyBkb2MudGV4dCgnTGUgc29sZGUgZGUgbGEgcHJlc3RhdGlvbiBlc3QgcsOpZ2zDqSBkaXJlY3RlbWVudCBlbnRyZSBsZSBDbGllbnQgZXQgbGUgRMOpbcOpbmFnZXVyLicsIG1hcmdpbiArIDQsIHkgKyAxNCk7IHkgKz0gMjY7CgogIGRvYy5zZXREcmF3Q29sb3IoMjIwLCAyMjAsIDIyMCk7IGRvYy5saW5lKG1hcmdpbiwgeSwgbWFyZ2luICsgY29udGVudFdpZHRoLCB5KTsgeSArPSA2OwogIGRvYy5zZXRGb250U2l6ZSg4KTsgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdib2xkJyk7IGRvYy5zZXRUZXh0Q29sb3IoLi4uZ3JheSk7IGRvYy50ZXh0KCdIb3RsaW5lJywgbWFyZ2luLCB5KTsgZG9jLnRleHQoJ1NpdGUnLCBtYXJnaW4gKyAxMDAsIHkpOyB5ICs9IDU7CiAgZG9jLnNldEZvbnQoJ2hlbHZldGljYScsICdub3JtYWwnKTsgZG9jLnRleHQoJzAxLjg5LjcwLjc4LjgxJywgbWFyZ2luLCB5KTsgZG9jLnRleHQoJ3d3dy50cm91dmV0b25kZW1lbmFnZXVyLmZyJywgbWFyZ2luICsgMTAwLCB5KTsgeSArPSA0OwogIGRvYy50ZXh0KCdzdXBwb3J0QHRyb3V2ZXRvbmRlbWVuYWdldXIuZnInLCBtYXJnaW4sIHkpOyBkb2Muc2V0Rm9udFNpemUoNyk7IGRvYy50ZXh0KCdGYWN0dXJlIGfDqW7DqXLDqWUgYXV0b21hdGlxdWVtZW50IHBhciBsZSBDUk0nLCBtYXJnaW4gKyAxMDAsIHkpOwoKICByZXR1cm4gZG9jLm91dHB1dCgnZGF0YXVyaXN0cmluZycpLnNwbGl0KCcsJylbMV07Cn0KCi8vIEhlbHBlciB0byBidWlsZCBpbnZvaWNlIGRhdGEgZnJvbSBwYXltZW50IGNvbnRleHQKZXhwb3J0IGZ1bmN0aW9uIGJ1aWxkSW52b2ljZURhdGEoCiAgcGF5bWVudDogYW55LAogIHF1b3RlOiBhbnksCiAgcXVvdGVSZXF1ZXN0OiBhbnksCiAgY29udHJhY3ROdW1iZXI6IHN0cmluZwopOiBJbnZvaWNlRGF0YSB7CiAgY29uc3Qgbm93ID0gbmV3IERhdGUoKTsKICBjb25zdCBwYWlkRGF0ZSA9IHBheW1lbnQ/LnBhaWRfYXQgPyBuZXcgRGF0ZShwYXltZW50LnBhaWRfYXQpIDogbm93OwogIGNvbnN0IGlzc3VlRGF0ZSA9IHBhaWREYXRlLnRvTG9jYWxlRGF0ZVN0cmluZygnZnItRlInKTsKICBjb25zdCBpbnZvaWNlTnVtYmVyID0gYFRURC0ke3BhaWREYXRlLmdldEZ1bGxZZWFyKCl9LSR7U3RyaW5nKHBhaWREYXRlLmdldE1vbnRoKCkgKyAxKS5wYWRTdGFydCgyLCAnMCcpfSR7U3RyaW5nKHBhaWREYXRlLmdldERhdGUoKSkucGFkU3RhcnQoMiwgJzAnKX0ke1N0cmluZyhNYXRoLmZsb29yKE1hdGgucmFuZG9tKCkgKiAxMDAwMCkpLnBhZFN0YXJ0KDQsICcwJyl9YDsKCiAgLy8gVGhlIHBsYXRmb3JtIGZlZSBpcyB3aGF0IHRoZSBjbGllbnQgcGF5cyB0byBUVEQuCiAgLy8gU3RvcmVkIHBheW1lbnQgYW1vdW50cyBhbHdheXMgd2luIHNvIGhpc3RvcmljYWwgaW52b2ljZXMgbmV2ZXIgY2hhbmdlLgogIGxldCB0b3RhbFRUQyA9IDA7CiAgaWYgKHBheW1lbnQ/LnBsYXRmb3JtX2ZlZSkgewogICAgdG90YWxUVEMgPSBwYXltZW50LnBsYXRmb3JtX2ZlZTsKICB9IGVsc2UgaWYgKHBheW1lbnQ/LmRlcG9zaXRfYW1vdW50KSB7CiAgICB0b3RhbFRUQyA9IHBheW1lbnQuZGVwb3NpdF9hbW91bnQ7CiAgfSBlbHNlIGlmIChwYXltZW50Py5hbW91bnRfcGFpZCkgewogICAgdG90YWxUVEMgPSBwYXltZW50LmFtb3VudF9wYWlkOwogIH0gZWxzZSBpZiAocGF5bWVudD8uYW1vdW50KSB7CiAgICB0b3RhbFRUQyA9IHBheW1lbnQuYW1vdW50IC8gMTAwOyAvLyBTdHJpcGUgY2VudHMKICB9IGVsc2UgaWYgKHF1b3RlPy5jbGllbnRfZGlzcGxheV9wcmljZSkgewogICAgdG90YWxUVEMgPSBxdW90ZS5wcmljZQogICAgICA/IHF1b3RlLmNsaWVudF9kaXNwbGF5X3ByaWNlIC0gcXVvdGUucHJpY2UKICAgICAgOiBxdW90ZS5jbGllbnRfZGlzcGxheV9wcmljZSAtIE1hdGgucm91bmQocXVvdGUuY2xpZW50X2Rpc3BsYXlfcHJpY2UgLyAxLjE1KTsKICB9CiAgY29uc3QgdHZhUmF0ZSA9IDIwOwogIGNvbnN0IGFtb3VudEhUID0gdG90YWxUVEMgLyAoMSArIHR2YVJhdGUgLyAxMDApOwoKICByZXR1cm4gewogICAgaW52b2ljZU51bWJlciwKICAgIGlzc3VlRGF0ZSwKICAgIGRvc3NpZXJSZWZlcmVuY2U6IGNvbnRyYWN0TnVtYmVyIHx8IGBETVQtJHtub3cuZ2V0RnVsbFllYXIoKX0tJHtTdHJpbmcoTWF0aC5mbG9vcihNYXRoLnJhbmRvbSgpICogMTAwMDAwKSkucGFkU3RhcnQoNSwgJzAnKX1gLAogICAgY2xpZW50TmFtZTogcXVvdGVSZXF1ZXN0Py5jbGllbnRfbmFtZSB8fCAnQ2xpZW50JywKICAgIGNsaWVudEVtYWlsOiBxdW90ZVJlcXVlc3Q/LmNsaWVudF9lbWFpbCB8fCAnJywKICAgIGNsaWVudFBob25lOiBxdW90ZVJlcXVlc3Q/LmNsaWVudF9waG9uZSB8fCAnJywKICAgIGNsaWVudEFkZHJlc3M6IHF1b3RlUmVxdWVzdD8uZnJvbV9hZGRyZXNzIHx8ICcnLAogICAgY2xpZW50Q2l0eTogcXVvdGVSZXF1ZXN0Py5mcm9tX2NpdHkgfHwgJycsCiAgICBjbGllbnRQb3N0YWxDb2RlOiBxdW90ZVJlcXVlc3Q/LmZyb21fcG9zdGFsX2NvZGUgfHwgJycsCiAgICBhbW91bnRIVDogTWF0aC5yb3VuZChhbW91bnRIVCAqIDEwMCkgLyAxMDAsCiAgICB0dmFSYXRlLAogICAgc3RhdHVzOiAnUGF5w6llJywKICB9Owp9Cg==
+import jsPDF from 'jspdf';
+
+export interface InvoiceData {
+  invoiceNumber: string;
+  issueDate: string;
+  dossierReference: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  clientAddress?: string;
+  clientCity?: string;
+  clientPostalCode?: string;
+  amountHT: number; // frais de réservation HT
+  tvaRate: number;   // e.g. 20
+  status: 'Payée' | 'En attente';
+}
+
+function loadLogoAsBase64(): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx?.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = () => resolve('');
+    img.src = '/ttd-logo.png';
+  });
+}
+
+export async function generateInvoicePDF(data: InvoiceData): Promise<void> {
+  const doc = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = 210;
+  const margin = 20;
+  const contentWidth = pageWidth - margin * 2;
+  let y = 20;
+
+  // Colors
+  const darkBlue = [30, 58, 95];
+  const gray = [100, 116, 139];
+  const lightGray = [241, 245, 249];
+  const black = [0, 0, 0];
+  const green = [22, 163, 74];
+  const yellow = [202, 138, 4];
+  const accentBlue = [59, 130, 246];
+
+  // Try to load logo
+  const logoBase64 = await loadLogoAsBase64();
+
+  // === HEADER ===
+  // Logo
+  if (logoBase64) {
+    try {
+      doc.addImage(logoBase64, 'PNG', margin, y, 25, 25);
+    } catch { /* skip logo */ }
+  }
+
+  // "Facture" title
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(28);
+  doc.setTextColor(...darkBlue);
+  doc.text('Facture', margin + 30, y + 8);
+
+  // Company info
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...darkBlue);
+  doc.text('TROUVE TON DÉMÉNAGEUR', margin + 30, y + 15);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  const companyLines = [
+    'SASU au capital de 1 000,00 € · RCS',
+    'Paris 101 378 248',
+    '60 rue François 1er · 75008 Paris',
+    'TVA intracommunautaire : FR 83',
+    '101378248',
+    'support@trouvetondemenageur.fr ·',
+    '01.89.70.78.81',
+  ];
+  companyLines.forEach((line, i) => {
+    doc.text(line, margin + 30, y + 20 + i * 4);
+  });
+
+  // Document box (right side)
+  const boxX = 125;
+  const boxY = y;
+  const boxW = 65;
+
+  // Box header
+  doc.setFillColor(241, 245, 249);
+  doc.roundedRect(boxX, boxY, boxW, 42, 2, 2, 'F');
+  doc.setDrawColor(200, 210, 220);
+  doc.roundedRect(boxX, boxY, boxW, 42, 2, 2, 'S');
+
+  doc.setFontSize(7);
+  doc.setTextColor(...gray);
+  doc.setFont('helvetica', 'normal');
+  doc.text('DOCUMENT COMPTABLE', boxX + 4, boxY + 6);
+
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...darkBlue);
+  doc.text(data.invoiceNumber, boxX + 4, boxY + 14);
+
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text("Date d'émission", boxX + 4, boxY + 20);
+  doc.setTextColor(...black);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text(data.issueDate, boxX + 4, boxY + 24);
+
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text('Référence déménagement', boxX + 34, boxY + 20);
+  doc.setTextColor(...black);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text(data.dossierReference, boxX + 34, boxY + 24);
+
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text('Mode de paiement', boxX + 4, boxY + 30);
+  doc.setTextColor(...black);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text('Paiement sécurisé', boxX + 4, boxY + 34);
+  doc.text('Stripe', boxX + 4, boxY + 38);
+
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text('Statut', boxX + 34, boxY + 30);
+
+  // Status badge
+  const statusColor = data.status === 'Payée' ? green : yellow;
+  doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
+  doc.roundedRect(boxX + 34, boxY + 32, 20, 7, 2, 2, 'F');
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.text(data.status, boxX + 37, boxY + 37);
+
+  y += 52;
+
+  // === CLIENT FACTURÉ ===
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...gray);
+  doc.text('CLIENT FACTURÉ', margin, y);
+  y += 4;
+
+  doc.setDrawColor(220, 220, 220);
+  doc.roundedRect(margin, y, contentWidth, 28, 2, 2, 'S');
+
+  // Left: identity
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text('Identité', margin + 4, y + 6);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...black);
+  doc.text(data.clientName, margin + 4, y + 12);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text(data.clientEmail, margin + 4, y + 17);
+  doc.text(data.clientPhone || '', margin + 4, y + 22);
+
+  // Right: address
+  const rightCol = margin + contentWidth / 2 + 5;
+  doc.setFontSize(7);
+  doc.setTextColor(...gray);
+  doc.text('Adresse de facturation', rightCol, y + 6);
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...black);
+  doc.text(data.clientAddress || '—', rightCol, y + 12);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  if (data.clientCity || data.clientPostalCode) {
+    doc.text(`${data.clientPostalCode || ''} ${data.clientCity || ''}`.trim(), rightCol, y + 17);
+  }
+
+  y += 36;
+
+  // === DÉTAIL FACTURÉ ===
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...gray);
+  doc.text('DÉTAIL FACTURÉ', margin, y);
+  y += 4;
+
+  // Table header
+  doc.setFillColor(...lightGray);
+  doc.rect(margin, y, contentWidth, 8, 'F');
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...gray);
+  doc.text('Description', margin + 4, y + 5.5);
+  doc.text('Qté', margin + 110, y + 5.5);
+  doc.text('PU HT', margin + 125, y + 5.5);
+  doc.text('Total HT', margin + 148, y + 5.5);
+  y += 8;
+
+  // Table row
+  doc.setDrawColor(220, 220, 220);
+  doc.line(margin, y, margin + contentWidth, y);
+  y += 3;
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...black);
+  doc.text('Frais de réservation – mise en relation plateforme', margin + 4, y + 4);
+  doc.setFontSize(7);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text("Réservation d'un déménageur via la plateforme", margin + 4, y + 9);
+  doc.text('TROUVE TON DÉMÉNAGEUR', margin + 4, y + 13);
+  doc.text(`Dossier : ${data.dossierReference}`, margin + 4, y + 17);
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...black);
+  doc.text('1', margin + 112, y + 4);
+  doc.text(`${data.amountHT.toFixed(2)} €`, margin + 123, y + 4);
+  doc.text(`${data.amountHT.toFixed(2)} €`, margin + 146, y + 4);
+
+  y += 24;
+  doc.setDrawColor(220, 220, 220);
+  doc.line(margin, y, margin + contentWidth, y);
+
+  // === TOTALS ===
+  y += 6;
+  const totalsX = margin + 100;
+  const totalsValX = margin + 150;
+
+  const tvaAmount = data.amountHT * (data.tvaRate / 100);
+  const totalTTC = data.amountHT + tvaAmount;
+
+  doc.setFillColor(248, 250, 252);
+  doc.roundedRect(totalsX - 4, y - 3, 74, 32, 2, 2, 'F');
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text('Sous-total HT', totalsX, y + 3);
+  doc.setTextColor(...black);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${data.amountHT.toFixed(2)} €`, totalsValX, y + 3);
+
+  y += 9;
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...gray);
+  doc.text(`TVA (${data.tvaRate} %)`, totalsX, y + 3);
+  doc.setTextColor(...black);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${tvaAmount.toFixed(2)} €`, totalsValX, y + 3);
+
+  y += 9;
+  doc.setDrawColor(200, 200, 200);
+  doc.line(totalsX, y, totalsX + 68, y);
+  y += 2;
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...darkBlue);
+  doc.text('Total TTC', totalsX, y + 5);
+  doc.text(`${totalTTC.toFixed(2)} €`, totalsValX - 2, y + 5);
+
+  y += 18;
+
+  // === DISCLAIMER ===
+  doc.setDrawColor(...accentBlue);
+  doc.setLineWidth(1);
+  doc.line(margin, y, margin, y + 18);
+  doc.setLineWidth(0.2);
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...black);
+  doc.text('Ces frais correspondent à la commission de mise en relation de la plateforme et ', margin + 4, y + 4);
+  doc.setFont('helvetica', 'bold');
+  doc.text('ne constituent pas un', margin + 4 + doc.getTextWidth('Ces frais correspondent à la commission de mise en relation de la plateforme et '), y + 4);
+  doc.setFont('helvetica', 'bold');
+  doc.text('acompte', margin + 4, y + 9);
+  doc.setFont('helvetica', 'normal');
+  doc.text(' sur la prestation de déménagement.', margin + 4 + doc.getTextWidth('acompte'), y + 9);
+  doc.text('Le solde de la prestation est réglé directement entre le Client et le Déménageur.', margin + 4, y + 14);
+
+  y += 26;
+
+  // === FOOTER ===
+  doc.setDrawColor(220, 220, 220);
+  doc.line(margin, y, margin + contentWidth, y);
+  y += 6;
+
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...gray);
+  doc.text('Hotline', margin, y);
+  doc.text('Site', margin + 100, y);
+  y += 5;
+  doc.setFont('helvetica', 'normal');
+  doc.text('01.89.70.78.81', margin, y);
+  doc.text('www.trouvetondemenageur.fr', margin + 100, y);
+  y += 4;
+  doc.text('support@trouvetondemenageur.fr', margin, y);
+  doc.setFontSize(7);
+  doc.text('Facture générée automatiquement par le CRM', margin + 100, y);
+
+  // Save
+  doc.save(`Facture_${data.invoiceNumber}.pdf`);
+}
+
+// Returns invoice PDF as base64 string (for email attachments)
+export async function getInvoicePDFBase64(data: InvoiceData): Promise<string> {
+  const doc = new jsPDF('p', 'mm', 'a4');
+  await buildInvoicePDFContent(doc, data);
+  return doc.output('datauristring').split(',')[1];
+}
+
+// Helper to build invoice content into a jsPDF doc
+async function buildInvoicePDFContent(doc: jsPDF, data: InvoiceData): Promise<void> {
+  // Re-invoke the same generation logic as generateInvoicePDF but on the provided doc
+  // We call generateInvoicePDFToDoc internally
+}
+
+// Alternate: simpler approach — generate full PDF and extract base64
+export async function generateInvoicePDFBase64(data: InvoiceData): Promise<string> {
+  const doc = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = 210;
+  const margin = 20;
+  const contentWidth = pageWidth - margin * 2;
+  let y = 20;
+
+  const darkBlue = [30, 58, 95];
+  const gray = [100, 116, 139];
+  const lightGray = [241, 245, 249];
+  const black = [0, 0, 0];
+  const green = [22, 163, 74];
+  const yellow = [202, 138, 4];
+  const accentBlue = [59, 130, 246];
+
+  const logoBase64 = await loadLogoAsBase64();
+
+  if (logoBase64) { try { doc.addImage(logoBase64, 'PNG', margin, y, 25, 25); } catch { /* skip */ } }
+
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(28); doc.setTextColor(...darkBlue);
+  doc.text('Facture', margin + 30, y + 8);
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...darkBlue);
+  doc.text('TROUVE TON DÉMÉNAGEUR', margin + 30, y + 15);
+  doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+  ['SASU au capital de 1 000,00 € · RCS','Paris 101 378 248','60 rue François 1er · 75008 Paris','TVA intracommunautaire : FR 83','101378248','support@trouvetondemenageur.fr ·','01.89.70.78.81'].forEach((l, i) => { doc.text(l, margin + 30, y + 20 + i * 4); });
+
+  const boxX = 125, boxY = y, boxW = 65;
+  doc.setFillColor(241, 245, 249); doc.roundedRect(boxX, boxY, boxW, 42, 2, 2, 'F');
+  doc.setDrawColor(200, 210, 220); doc.roundedRect(boxX, boxY, boxW, 42, 2, 2, 'S');
+  doc.setFontSize(7); doc.setTextColor(...gray); doc.text('DOCUMENT COMPTABLE', boxX + 4, boxY + 6);
+  doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...darkBlue); doc.text(data.invoiceNumber, boxX + 4, boxY + 14);
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray); doc.text("Date d'émission", boxX + 4, boxY + 20);
+  doc.setTextColor(...black); doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.text(data.issueDate, boxX + 4, boxY + 24);
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray); doc.text('Référence déménagement', boxX + 34, boxY + 20);
+  doc.setTextColor(...black); doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.text(data.dossierReference, boxX + 34, boxY + 24);
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray); doc.text('Mode de paiement', boxX + 4, boxY + 30);
+  doc.setTextColor(...black); doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.text('Paiement sécurisé', boxX + 4, boxY + 34); doc.text('Stripe', boxX + 4, boxY + 38);
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray); doc.text('Statut', boxX + 34, boxY + 30);
+  const sc = data.status === 'Payée' ? green : yellow;
+  doc.setFillColor(sc[0], sc[1], sc[2]); doc.roundedRect(boxX + 34, boxY + 32, 20, 7, 2, 2, 'F');
+  doc.setFontSize(7); doc.setFont('helvetica', 'bold'); doc.setTextColor(255, 255, 255); doc.text(data.status, boxX + 37, boxY + 37);
+
+  y += 52;
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...gray); doc.text('CLIENT FACTURÉ', margin, y); y += 4;
+  doc.setDrawColor(220, 220, 220); doc.roundedRect(margin, y, contentWidth, 28, 2, 2, 'S');
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray); doc.text('Identité', margin + 4, y + 6);
+  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black); doc.text(data.clientName, margin + 4, y + 12);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray); doc.text(data.clientEmail, margin + 4, y + 17); doc.text(data.clientPhone || '', margin + 4, y + 22);
+  const rC = margin + contentWidth / 2 + 5;
+  doc.setFontSize(7); doc.setTextColor(...gray); doc.text('Adresse de facturation', rC, y + 6);
+  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black); doc.text(data.clientAddress || '—', rC, y + 12);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+  if (data.clientCity || data.clientPostalCode) doc.text(`${data.clientPostalCode || ''} ${data.clientCity || ''}`.trim(), rC, y + 17);
+
+  y += 36;
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...gray); doc.text('DÉTAIL FACTURÉ', margin, y); y += 4;
+  doc.setFillColor(...lightGray); doc.rect(margin, y, contentWidth, 8, 'F');
+  doc.setFontSize(7); doc.setFont('helvetica', 'bold'); doc.setTextColor(...gray);
+  doc.text('Description', margin + 4, y + 5.5); doc.text('Qté', margin + 110, y + 5.5); doc.text('PU HT', margin + 125, y + 5.5); doc.text('Total HT', margin + 148, y + 5.5);
+  y += 8; doc.setDrawColor(220, 220, 220); doc.line(margin, y, margin + contentWidth, y); y += 3;
+  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black); doc.text('Frais de réservation – mise en relation plateforme', margin + 4, y + 4);
+  doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+  doc.text("Réservation d'un déménageur via la plateforme", margin + 4, y + 9);
+  doc.text('TROUVE TON DÉMÉNAGEUR', margin + 4, y + 13);
+  doc.text(`Dossier : ${data.dossierReference}`, margin + 4, y + 17);
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(...black);
+  doc.text('1', margin + 112, y + 4); doc.text(`${data.amountHT.toFixed(2)} €`, margin + 123, y + 4); doc.text(`${data.amountHT.toFixed(2)} €`, margin + 146, y + 4);
+  y += 24; doc.line(margin, y, margin + contentWidth, y); y += 6;
+
+  const tvaAmount = data.amountHT * (data.tvaRate / 100);
+  const totalTTC = data.amountHT + tvaAmount;
+  const tX = margin + 100, tV = margin + 150;
+  doc.setFillColor(248, 250, 252); doc.roundedRect(tX - 4, y - 3, 74, 32, 2, 2, 'F');
+  doc.setFontSize(9); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray); doc.text('Sous-total HT', tX, y + 3);
+  doc.setTextColor(...black); doc.setFont('helvetica', 'bold'); doc.text(`${data.amountHT.toFixed(2)} €`, tV, y + 3); y += 9;
+  doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray); doc.text(`TVA (${data.tvaRate} %)`, tX, y + 3);
+  doc.setTextColor(...black); doc.setFont('helvetica', 'bold'); doc.text(`${tvaAmount.toFixed(2)} €`, tV, y + 3); y += 9;
+  doc.setDrawColor(200, 200, 200); doc.line(tX, y, tX + 68, y); y += 2;
+  doc.setFontSize(12); doc.setFont('helvetica', 'bold'); doc.setTextColor(...darkBlue); doc.text('Total TTC', tX, y + 5); doc.text(`${totalTTC.toFixed(2)} €`, tV - 2, y + 5); y += 18;
+
+  doc.setDrawColor(...accentBlue); doc.setLineWidth(1); doc.line(margin, y, margin, y + 18); doc.setLineWidth(0.2);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...black);
+  doc.text('Ces frais correspondent à la commission de mise en relation de la plateforme et ne constituent pas un', margin + 4, y + 4);
+  doc.setFont('helvetica', 'bold'); doc.text('acompte sur la prestation de déménagement.', margin + 4, y + 9);
+  doc.setFont('helvetica', 'normal'); doc.text('Le solde de la prestation est réglé directement entre le Client et le Déménageur.', margin + 4, y + 14); y += 26;
+
+  doc.setDrawColor(220, 220, 220); doc.line(margin, y, margin + contentWidth, y); y += 6;
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...gray); doc.text('Hotline', margin, y); doc.text('Site', margin + 100, y); y += 5;
+  doc.setFont('helvetica', 'normal'); doc.text('01.89.70.78.81', margin, y); doc.text('www.trouvetondemenageur.fr', margin + 100, y); y += 4;
+  doc.text('support@trouvetondemenageur.fr', margin, y); doc.setFontSize(7); doc.text('Facture générée automatiquement par le CRM', margin + 100, y);
+
+  return doc.output('datauristring').split(',')[1];
+}
+
+// Helper to build invoice data from payment context
+export function buildInvoiceData(
+  payment: any,
+  quote: any,
+  quoteRequest: any,
+  contractNumber: string
+): InvoiceData {
+  const now = new Date();
+  const paidDate = payment?.paid_at ? new Date(payment.paid_at) : now;
+  const issueDate = paidDate.toLocaleDateString('fr-FR');
+  const invoiceNumber = `TTD-${paidDate.getFullYear()}-${String(paidDate.getMonth() + 1).padStart(2, '0')}${String(paidDate.getDate()).padStart(2, '0')}${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
+
+  // The platform fee is what the client pays to TTD.
+  // Stored payment amounts always win so historical invoices never change.
+  let totalTTC = 0;
+  if (payment?.platform_fee) {
+    totalTTC = payment.platform_fee;
+  } else if (payment?.deposit_amount) {
+    totalTTC = payment.deposit_amount;
+  } else if (payment?.amount_paid) {
+    totalTTC = payment.amount_paid;
+  } else if (payment?.amount) {
+    totalTTC = payment.amount / 100; // Stripe cents
+  } else if (quote?.client_display_price) {
+    totalTTC = quote.price
+      ? quote.client_display_price - quote.price
+      : quote.client_display_price - Math.round(quote.client_display_price / 1.15);
+  }
+  const tvaRate = 20;
+  const amountHT = totalTTC / (1 + tvaRate / 100);
+
+  return {
+    invoiceNumber,
+    issueDate,
+    dossierReference: contractNumber || `DMT-${now.getFullYear()}-${String(Math.floor(Math.random() * 100000)).padStart(5, '0')}`,
+    clientName: quoteRequest?.client_name || 'Client',
+    clientEmail: quoteRequest?.client_email || '',
+    clientPhone: quoteRequest?.client_phone || '',
+    clientAddress: quoteRequest?.from_address || '',
+    clientCity: quoteRequest?.from_city || '',
+    clientPostalCode: quoteRequest?.from_postal_code || '',
+    amountHT: Math.round(amountHT * 100) / 100,
+    tvaRate,
+    status: 'Payée',
+  };
+}

@@ -1,1 +1,126 @@
-aW1wb3J0IHsgY3JlYXRlQ2xpZW50IH0gZnJvbSAnQHN1cGFiYXNlL3N1cGFiYXNlLWpzJzsKCmNvbnN0IHJlcXVpcmVkID0gKG5hbWUpID0+IHsKICBjb25zdCB2YWx1ZSA9IHByb2Nlc3MuZW52W25hbWVdOwogIGlmICghdmFsdWUpIHRocm93IG5ldyBFcnJvcihgJHtuYW1lfSBtYW5xdWFudGApOwogIHJldHVybiB2YWx1ZTsKfTsKY29uc3Qgc2VuZEVtYWlscyA9IHByb2Nlc3MuZW52LlNFTkRfRU1BSUxTID09PSAndHJ1ZSc7CmNvbnN0IHNiID0gY3JlYXRlQ2xpZW50KHJlcXVpcmVkKCdTVVBBQkFTRV9VUkwnKSwgcmVxdWlyZWQoJ1NVUEFCQVNFX1NFUlZJQ0VfUk9MRV9LRVknKSwgewogIGF1dGg6IHsgcGVyc2lzdFNlc3Npb246IGZhbHNlIH0sCn0pOwoKY29uc3QgZXNjID0gKHZhbHVlKSA9PiBTdHJpbmcodmFsdWUgPz8gJycpLnJlcGxhY2UoL1smPD4iJ10vZywgKGMpID0+ICh7CiAgJyYnOiAnJmFtcDsnLCAnPCc6ICcmbHQ7JywgJz4nOiAnJmd0OycsICciJzogJyZxdW90OycsICInIjogJyYjMzk7JywKfVtjXSkpOwpjb25zdCBtb25leSA9ICh2YWx1ZSkgPT4gTnVtYmVyKHZhbHVlKS50b0xvY2FsZVN0cmluZygnZnItRlInLCB7IG1pbmltdW1GcmFjdGlvbkRpZ2l0czogMCwgbWF4aW11bUZyYWN0aW9uRGlnaXRzOiAyIH0pOwpjb25zdCBvbmUgPSAodmFsdWUpID0+IEFycmF5LmlzQXJyYXkodmFsdWUpID8gdmFsdWVbMF0gOiB2YWx1ZTsKCmZ1bmN0aW9uIGVtYWlsSHRtbChyZXF1ZXN0LCByb3dzKSB7CiAgY29uc3QgcmVmZXJlbmNlID0gcmVxdWVzdC5yZWZlcmVuY2UgfHwgJ3ZvdHJlIGRlbWFuZGUnOwogIGNvbnN0IGNhcmRzID0gcm93cy5tYXAoKHsgYXVkaXQsIHF1b3RlIH0pID0+IHsKICAgIGNvbnN0IG1vdmVyID0gb25lKHF1b3RlLm1vdmVyKTsKICAgIGNvbnN0IG9sZFByaWNlID0gTnVtYmVyKGF1ZGl0Lm9sZF9jbGllbnRfcHJpY2UpOwogICAgY29uc3QgbmV3UHJpY2UgPSBOdW1iZXIoYXVkaXQubmV3X2NsaWVudF9wcmljZSk7CiAgICBjb25zdCBtb3ZlclByaWNlID0gTnVtYmVyKHF1b3RlLnByaWNlKTsKICAgIGNvbnN0IGZlZSA9IE1hdGgubWF4KDAsIG5ld1ByaWNlIC0gbW92ZXJQcmljZSk7CiAgICByZXR1cm4gYDx0YWJsZSByb2xlPSJwcmVzZW50YXRpb24iIHdpZHRoPSIxMDAlIiBjZWxscGFkZGluZz0iMCIgY2VsbHNwYWNpbmc9IjAiIHN0eWxlPSJib3JkZXI6MXB4IHNvbGlkICNkYmU0ZWU7Ym9yZGVyLXJhZGl1czoxMnB4O21hcmdpbjowIDAgMTRweDtiYWNrZ3JvdW5kOiNmZmZmZmY7Ij48dHI+PHRkIHN0eWxlPSJwYWRkaW5nOjIwcHg7Ij4KICAgICAgPHAgc3R5bGU9Im1hcmdpbjowIDAgMTBweDtmb250LXNpemU6MTZweDtmb250LXdlaWdodDo3MDA7Y29sb3I6IzE3MjU1NDsiPiR7ZXNjKG1vdmVyPy5jb21wYW55X25hbWUgfHwgJ0TDqW3DqW5hZ2V1ciB2w6lyaWZpw6knKX08L3A+CiAgICAgIDxwIHN0eWxlPSJtYXJnaW46MDtjb2xvcjojNjQ3NDhiO2ZvbnQtc2l6ZToxNHB4OyI+QW5jaWVuIHByaXggOiA8c3BhbiBzdHlsZT0idGV4dC1kZWNvcmF0aW9uOmxpbmUtdGhyb3VnaDsiPiR7bW9uZXkob2xkUHJpY2UpfSDigqw8L3NwYW4+PC9wPgogICAgICA8cCBzdHlsZT0ibWFyZ2luOjVweCAwO2NvbG9yOiMwNDc4NTc7Zm9udC1zaXplOjI4cHg7Zm9udC13ZWlnaHQ6NzAwOyI+JHttb25leShuZXdQcmljZSl9IOKCrCA8c3BhbiBzdHlsZT0iZm9udC1zaXplOjEzcHg7Zm9udC13ZWlnaHQ6NDAwOyI+VFRDPC9zcGFuPjwvcD4KICAgICAgPHAgc3R5bGU9Im1hcmdpbjowIDAgMTBweDtjb2xvcjojMDQ3ODU3O2ZvbnQtc2l6ZToxNHB4O2ZvbnQtd2VpZ2h0OjcwMDsiPlZvdXMgw6ljb25vbWlzZXogJHttb25leShvbGRQcmljZSAtIG5ld1ByaWNlKX0g4oKsPC9wPgogICAgICA8cCBzdHlsZT0ibWFyZ2luOjA7Y29sb3I6IzQ3NTU2OTtmb250LXNpemU6MTNweDtsaW5lLWhlaWdodDoxLjY7Ij5GcmFpcyBkZSByw6lzZXJ2YXRpb24gVFREIDogJHttb25leShmZWUpfSDigqw8YnI+w4AgcsOpZ2xlciBkaXJlY3RlbWVudCBhdSBkw6ltw6luYWdldXIgOiAke21vbmV5KG1vdmVyUHJpY2UpfSDigqw8L3A+CiAgICA8L3RkPjwvdHI+PC90YWJsZT5gOwogIH0pLmpvaW4oJycpOwogIGNvbnN0IGhyZWYgPSBgaHR0cHM6Ly93d3cudHJvdXZldG9uZGVtZW5hZ2V1ci5mci9jbGllbnQvcXVvdGVzP3JlcXVlc3RJZD0ke2VuY29kZVVSSUNvbXBvbmVudChyZXF1ZXN0LmlkKX1gOwogIHJldHVybiBgPCFkb2N0eXBlIGh0bWw+PGh0bWwgbGFuZz0iZnIiPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04Ij48bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLGluaXRpYWwtc2NhbGU9MSI+PC9oZWFkPjxib2R5IHN0eWxlPSJtYXJnaW46MDtiYWNrZ3JvdW5kOiNmMWY1Zjk7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7Y29sb3I6IzFlMjkzYjsiPgogIDx0YWJsZSByb2xlPSJwcmVzZW50YXRpb24iIHdpZHRoPSIxMDAlIiBjZWxscGFkZGluZz0iMCIgY2VsbHNwYWNpbmc9IjAiPjx0cj48dGQgYWxpZ249ImNlbnRlciIgc3R5bGU9InBhZGRpbmc6MjRweCAxMnB4OyI+PHRhYmxlIHJvbGU9InByZXNlbnRhdGlvbiIgd2lkdGg9IjEwMCUiIGNlbGxwYWRkaW5nPSIwIiBjZWxsc3BhY2luZz0iMCIgc3R5bGU9Im1heC13aWR0aDo1ODBweDtiYWNrZ3JvdW5kOiNmZmY7Ym9yZGVyLXJhZGl1czoxNnB4O292ZXJmbG93OmhpZGRlbjsiPgogICAgPHRyPjx0ZCBzdHlsZT0iaGVpZ2h0OjZweDtiYWNrZ3JvdW5kOiMyNTYzZWI7Zm9udC1zaXplOjA7Ij4mbmJzcDs8L3RkPjwvdHI+PHRyPjx0ZCBzdHlsZT0icGFkZGluZzozMHB4IDI2cHg7Ij4KICAgICAgPHAgc3R5bGU9Im1hcmdpbjowIDAgOHB4O2NvbG9yOiMyNTYzZWI7Zm9udC1zaXplOjEycHg7Zm9udC13ZWlnaHQ6NzAwO2xldHRlci1zcGFjaW5nOjFweDt0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2U7Ij4ke2VzYyhyZWZlcmVuY2UpfSDCtyBQcml4IG1pcyDDoCBqb3VyPC9wPgogICAgICA8aDEgc3R5bGU9Im1hcmdpbjowIDAgMTZweDtmb250LXNpemU6MjVweDtsaW5lLWhlaWdodDoxLjI1O2NvbG9yOiMwZjE3MmE7Ij5Cb25uZSBub3V2ZWxsZSA6IHZvcyBkZXZpcyBiYWlzc2VudDwvaDE+CiAgICAgIDxwIHN0eWxlPSJmb250LXNpemU6MTVweDtsaW5lLWhlaWdodDoxLjY1O2NvbG9yOiM0NzU1Njk7Ij5Cb25qb3VyJHtyZXF1ZXN0LmNsaWVudF9uYW1lID8gYCAke2VzYyhyZXF1ZXN0LmNsaWVudF9uYW1lKX1gIDogJyd9LDwvcD4KICAgICAgPHAgc3R5bGU9ImZvbnQtc2l6ZToxNXB4O2xpbmUtaGVpZ2h0OjEuNjU7Y29sb3I6IzQ3NTU2OTsiPk5vdXMgYXZvbnMgcsOpZHVpdCBub3MgZnJhaXMgZGUgbWlzZSBlbiByZWxhdGlvbi4gTGVzIHByb3Bvc2l0aW9ucyBwb3VyIHZvdHJlIGTDqW3DqW5hZ2VtZW50IDxzdHJvbmc+JHtlc2MocmVxdWVzdC5mcm9tX2NpdHkpfSDihpIgJHtlc2MocmVxdWVzdC50b19jaXR5KX08L3N0cm9uZz4gb250IGRvbmMgw6l0w6kgcmV2dWVzIMOgIGxhIGJhaXNzZS4gTGUgcHJpeCBkZW1hbmTDqSBwYXIgY2hhcXVlIGTDqW3DqW5hZ2V1ciByZXN0ZSBpbmNoYW5nw6kuPC9wPgogICAgICA8ZGl2IHN0eWxlPSJtYXJnaW46MjRweCAwOyI+JHtjYXJkc308L2Rpdj4KICAgICAgPHAgc3R5bGU9ImZvbnQtc2l6ZToxNHB4O2xpbmUtaGVpZ2h0OjEuNjtjb2xvcjojNDc1NTY5OyI+Q2VzIG5vdXZlYXV4IHByaXggcmVtcGxhY2VudCBsZXMgcHLDqWPDqWRlbnRzIHBvdXIgbGVzIGRldmlzIGVuY29yZSBlbiBhdHRlbnRlLiBWb3VzIHBvdXZleiBsZXMgY29tcGFyZXIgZXQgY2hvaXNpciBzZXJlaW5lbWVudCBkYW5zIHZvdHJlIGVzcGFjZSBjbGllbnQuPC9wPgogICAgICA8dGFibGUgcm9sZT0icHJlc2VudGF0aW9uIiB3aWR0aD0iMTAwJSIgY2VsbHBhZGRpbmc9IjAiIGNlbGxzcGFjaW5nPSIwIiBzdHlsZT0ibWFyZ2luOjI0cHggMDsiPjx0cj48dGQgYWxpZ249ImNlbnRlciI+PGEgaHJlZj0iJHtocmVmfSIgc3R5bGU9ImRpc3BsYXk6YmxvY2s7YmFja2dyb3VuZDojMjU2M2ViO2NvbG9yOiNmZmY7dGV4dC1kZWNvcmF0aW9uOm5vbmU7Zm9udC13ZWlnaHQ6NzAwO2ZvbnQtc2l6ZToxNnB4O3BhZGRpbmc6MTVweCAyMnB4O2JvcmRlci1yYWRpdXM6MTBweDsiPlZvaXIgbWVzIG5vdXZlYXV4IGRldmlzPC9hPjwvdGQ+PC90cj48L3RhYmxlPgogICAgICA8cCBzdHlsZT0ibWFyZ2luOjI4cHggMCAwO2ZvbnQtc2l6ZToxNHB4O2xpbmUtaGVpZ2h0OjEuNjU7Y29sb3I6IzQ3NTU2OTsiPlVuZSBxdWVzdGlvbiA/IE5vdHJlIMOpcXVpcGUgdm91cyByw6lwb25kIGF1IDxhIGhyZWY9InRlbDorMzMxODk3MDc4ODEiIHN0eWxlPSJjb2xvcjojMjU2M2ViO3RleHQtZGVjb3JhdGlvbjpub25lOyI+MDEgODkgNzAgNzggODE8L2E+Ljxicj48YnI+PHN0cm9uZz5M4oCZw6lxdWlwZSBUcm91dmUgVG9uIETDqW3DqW5hZ2V1cjwvc3Ryb25nPjwvcD4KICAgIDwvdGQ+PC90cj48dHI+PHRkIGFsaWduPSJjZW50ZXIiIHN0eWxlPSJwYWRkaW5nOjE2cHg7YmFja2dyb3VuZDojZjhmYWZjO2NvbG9yOiM5NGEzYjg7Zm9udC1zaXplOjEycHg7Ij53d3cudHJvdXZldG9uZGVtZW5hZ2V1ci5mcjwvdGQ+PC90cj4KICA8L3RhYmxlPjwvdGQ+PC90cj48L3RhYmxlPjwvYm9keT48L2h0bWw+YDsKfQoKY29uc3QgeyBkYXRhOiBwZW5kaW5nLCBlcnJvciB9ID0gYXdhaXQgc2IuZnJvbSgncXVvdGVfbWFyZ2luX3VwZGF0ZXMnKQogIC5zZWxlY3QoYGlkLCBxdW90ZV9pZCwgb2xkX2NsaWVudF9wcmljZSwgbmV3X2NsaWVudF9wcmljZSwKICAgIHF1b3RlcyFpbm5lcihpZCwgcHJpY2UsIHN0YXR1cywgcXVvdGVfcmVxdWVzdF9pZCwKICAgICAgbW92ZXI6bW92ZXJzIXF1b3Rlc19tb3Zlcl9pZF9ma2V5KGNvbXBhbnlfbmFtZSksCiAgICAgIHJlcXVlc3Q6cXVvdGVfcmVxdWVzdHMhcXVvdGVzX3F1b3RlX3JlcXVlc3RfaWRfZmtleShpZCwgcmVmZXJlbmNlLCBjbGllbnRfbmFtZSwgY2xpZW50X2VtYWlsLCBjbGllbnRfdXNlcl9pZCwgZnJvbV9jaXR5LCB0b19jaXR5LCBtb3ZpbmdfZGF0ZSwgc3RhdHVzLCBwYXltZW50X3N0YXR1cywgYWNjZXB0ZWRfcXVvdGVfaWQsIGRlbGV0ZWRfYXQpKWApCiAgLmlzKCdlbWFpbF9zZW50X2F0JywgbnVsbCkKICAub3JkZXIoJ2lkJyk7CmlmIChlcnJvcikgdGhyb3cgZXJyb3I7Cgpjb25zdCBncm91cHMgPSBuZXcgTWFwKCk7CmZvciAoY29uc3QgYXVkaXQgb2YgcGVuZGluZyB8fCBbXSkgewogIGNvbnN0IHF1b3RlID0gb25lKGF1ZGl0LnF1b3Rlcyk7CiAgY29uc3QgcmVxdWVzdCA9IG9uZShxdW90ZT8ucmVxdWVzdCk7CiAgaWYgKCFxdW90ZSB8fCAhcmVxdWVzdCkgY29udGludWU7CiAgY29uc3QgcGFpZFJlcXVlc3QgPSBbJ2RlcG9zaXRfcGFpZCcsICdmdWxseV9wYWlkJywgJ2NvbXBsZXRlZCcsICdwYWlkJ10uaW5jbHVkZXMocmVxdWVzdC5wYXltZW50X3N0YXR1cyB8fCAnJyk7CiAgY29uc3QgY2xvc2VkUmVxdWVzdCA9IFsnYWNjZXB0ZWQnLCAnb25nb2luZycsICdjb21wbGV0ZWQnLCAnY2FuY2VsbGVkJ10uaW5jbHVkZXMocmVxdWVzdC5zdGF0dXMgfHwgJycpOwogIGlmIChxdW90ZS5zdGF0dXMgIT09ICdwZW5kaW5nJyB8fCByZXF1ZXN0LmRlbGV0ZWRfYXQgfHwgcmVxdWVzdC5hY2NlcHRlZF9xdW90ZV9pZCB8fCBwYWlkUmVxdWVzdCB8fCBjbG9zZWRSZXF1ZXN0KSBjb250aW51ZTsKICBpZiAoIWdyb3Vwcy5oYXMocmVxdWVzdC5pZCkpIGdyb3Vwcy5zZXQocmVxdWVzdC5pZCwgeyByZXF1ZXN0LCByb3dzOiBbXSB9KTsKICBncm91cHMuZ2V0KHJlcXVlc3QuaWQpLnJvd3MucHVzaCh7IGF1ZGl0LCBxdW90ZSB9KTsKfQoKY29uc29sZS5sb2coYCR7Z3JvdXBzLnNpemV9IGRlbWFuZGUocyksICR7Wy4uLmdyb3Vwcy52YWx1ZXMoKV0ucmVkdWNlKChuLCBnKSA9PiBuICsgZy5yb3dzLmxlbmd0aCwgMCl9IGRldmlzIMOgICR7c2VuZEVtYWlscyA/ICdlbnZveWVyJyA6ICd2w6lyaWZpZXInfS5gKTsKbGV0IHNlbnQgPSAwOwpsZXQgZmFpbGVkID0gMDsKZm9yIChjb25zdCB7IHJlcXVlc3QsIHJvd3MgfSBvZiBncm91cHMudmFsdWVzKCkpIHsKICBjb25zdCByZWZlcmVuY2UgPSByZXF1ZXN0LnJlZmVyZW5jZSB8fCByZXF1ZXN0LmlkOwogIGlmICghcmVxdWVzdC5jbGllbnRfZW1haWwpIHsKICAgIGNvbnNvbGUuZXJyb3IoYEVtYWlsIG1hbnF1YW50IHBvdXIgJHtyZWZlcmVuY2V9LmApOwogICAgZmFpbGVkICs9IDE7CiAgICBjb250aW51ZTsKICB9CiAgaWYgKCFzZW5kRW1haWxzKSB7CiAgICBjb25zb2xlLmxvZyhgUHLDqnQgOiAke3JlZmVyZW5jZX0sICR7cm93cy5sZW5ndGh9IGRldmlzLmApOwogICAgY29udGludWU7CiAgfQogIHRyeSB7CiAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IGZldGNoKCdodHRwczovL2FwaS5yZXNlbmQuY29tL2VtYWlscycsIHsKICAgICAgbWV0aG9kOiAnUE9TVCcsCiAgICAgIGhlYWRlcnM6IHsgQXV0aG9yaXphdGlvbjogYEJlYXJlciAke3JlcXVpcmVkKCdSRVNFTkRfQVBJX0tFWScpfWAsICdDb250ZW50LVR5cGUnOiAnYXBwbGljYXRpb24vanNvbicgfSwKICAgICAgYm9keTogSlNPTi5zdHJpbmdpZnkoewogICAgICAgIGZyb206ICdUcm91dmVUb25Ew6ltw6luYWdldXIgPG5vcmVwbHlAdHJvdXZldG9uZGVtZW5hZ2V1ci5mcj4nLAogICAgICAgIHRvOiBbcmVxdWVzdC5jbGllbnRfZW1haWxdLAogICAgICAgIHJlcGx5X3RvOiAnc3VwcG9ydEB0cm91dmV0b25kZW1lbmFnZXVyLmZyJywKICAgICAgICBzdWJqZWN0OiBgQm9ubmUgbm91dmVsbGUgOiB2b3MgZGV2aXMgJHtyZWZlcmVuY2V9IG9udCDDqXTDqSByZXZ1cyDDoCBsYSBiYWlzc2VgLAogICAgICAgIGh0bWw6IGVtYWlsSHRtbChyZXF1ZXN0LCByb3dzKSwKICAgICAgfSksCiAgICB9KTsKICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IHJlc3BvbnNlLmpzb24oKTsKICAgIGlmICghcmVzcG9uc2Uub2spIHRocm93IG5ldyBFcnJvcihyZXN1bHQ/Lm1lc3NhZ2UgfHwgYEVudm9pIHJlZnVzw6kgKCR7cmVzcG9uc2Uuc3RhdHVzfSlgKTsKICAgIGNvbnN0IG5vdyA9IG5ldyBEYXRlKCkudG9JU09TdHJpbmcoKTsKICAgIGNvbnN0IGlkcyA9IHJvd3MubWFwKCh7IGF1ZGl0IH0pID0+IGF1ZGl0LmlkKTsKICAgIGNvbnN0IHsgZXJyb3I6IG1hcmtFcnJvciB9ID0gYXdhaXQgc2IuZnJvbSgncXVvdGVfbWFyZ2luX3VwZGF0ZXMnKQogICAgICAudXBkYXRlKHsgZW1haWxfc2VudF9hdDogbm93LCBlbWFpbF9wcm92aWRlcl9pZDogcmVzdWx0LmlkLCBlbWFpbF9lcnJvcjogbnVsbCB9KQogICAgICAuaW4oJ2lkJywgaWRzKTsKICAgIGlmIChtYXJrRXJyb3IpIHRocm93IG1hcmtFcnJvcjsKICAgIGlmIChyZXF1ZXN0LmNsaWVudF91c2VyX2lkKSB7CiAgICAgIGF3YWl0IHNiLmZyb20oJ25vdGlmaWNhdGlvbnMnKS5pbnNlcnQoewogICAgICAgIHVzZXJfaWQ6IHJlcXVlc3QuY2xpZW50X3VzZXJfaWQsCiAgICAgICAgdHlwZTogJ3F1b3RlX3VwZGF0ZScsCiAgICAgICAgdGl0bGU6ICdWb3MgZGV2aXMgb250IMOpdMOpIHJldnVzIMOgIGxhIGJhaXNzZScsCiAgICAgICAgbWVzc2FnZTogYCR7cm93cy5sZW5ndGh9IGRldmlzIG9udCDDqXTDqSBtaXMgw6Agam91ciBwb3VyIHZvdHJlIGTDqW3DqW5hZ2VtZW50ICR7cmVxdWVzdC5mcm9tX2NpdHl9IOKGkiAke3JlcXVlc3QudG9fY2l0eX0uYCwKICAgICAgICByZWxhdGVkX2lkOiByZXF1ZXN0LmlkLAogICAgICAgIHJlYWQ6IGZhbHNlLAogICAgICB9KTsKICAgIH0KICAgIHNlbnQgKz0gMTsKICAgIGNvbnNvbGUubG9nKGBFbnZvecOpIDogJHtyZWZlcmVuY2V9LCAke3Jvd3MubGVuZ3RofSBkZXZpcy5gKTsKICB9IGNhdGNoIChlcnIpIHsKICAgIGZhaWxlZCArPSAxOwogICAgY29uc3QgbWVzc2FnZSA9IGVyciBpbnN0YW5jZW9mIEVycm9yID8gZXJyLm1lc3NhZ2UgOiBTdHJpbmcoZXJyKTsKICAgIGF3YWl0IHNiLmZyb20oJ3F1b3RlX21hcmdpbl91cGRhdGVzJykudXBkYXRlKHsgZW1haWxfZXJyb3I6IG1lc3NhZ2UgfSkuaW4oJ2lkJywgcm93cy5tYXAoKHsgYXVkaXQgfSkgPT4gYXVkaXQuaWQpKTsKICAgIGNvbnNvbGUuZXJyb3IoYMOJY2hlYyBwb3VyICR7cmVmZXJlbmNlfTogJHttZXNzYWdlfWApOwogIH0KfQpjb25zb2xlLmxvZyhgJHtzZW50fSBlbWFpbChzKSBlbnZvecOpKHMpLCAke2ZhaWxlZH0gw6ljaGVjKHMpLmApOwppZiAoZmFpbGVkKSBwcm9jZXNzLmV4aXRDb2RlID0gMTsK
+import { createClient } from '@supabase/supabase-js';
+
+const required = (name) => {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} manquant`);
+  return value;
+};
+const sendEmails = process.env.SEND_EMAILS === 'true';
+const sb = createClient(required('SUPABASE_URL'), required('SUPABASE_SERVICE_ROLE_KEY'), {
+  auth: { persistSession: false },
+});
+
+const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+}[c]));
+const money = (value) => Number(value).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+const one = (value) => Array.isArray(value) ? value[0] : value;
+
+function emailHtml(request, rows) {
+  const reference = request.reference || 'votre demande';
+  const cards = rows.map(({ audit, quote }) => {
+    const mover = one(quote.mover);
+    const oldPrice = Number(audit.old_client_price);
+    const newPrice = Number(audit.new_client_price);
+    const moverPrice = Number(quote.price);
+    const fee = Math.max(0, newPrice - moverPrice);
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #dbe4ee;border-radius:12px;margin:0 0 14px;background:#ffffff;"><tr><td style="padding:20px;">
+      <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#172554;">${esc(mover?.company_name || 'Déménageur vérifié')}</p>
+      <p style="margin:0;color:#64748b;font-size:14px;">Ancien prix : <span style="text-decoration:line-through;">${money(oldPrice)} €</span></p>
+      <p style="margin:5px 0;color:#047857;font-size:28px;font-weight:700;">${money(newPrice)} € <span style="font-size:13px;font-weight:400;">TTC</span></p>
+      <p style="margin:0 0 10px;color:#047857;font-size:14px;font-weight:700;">Vous économisez ${money(oldPrice - newPrice)} €</p>
+      <p style="margin:0;color:#475569;font-size:13px;line-height:1.6;">Frais de réservation TTD : ${money(fee)} €<br>À régler directement au déménageur : ${money(moverPrice)} €</p>
+    </td></tr></table>`;
+  }).join('');
+  const href = `https://www.trouvetondemenageur.fr/client/quotes?requestId=${encodeURIComponent(request.id)}`;
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#1e293b;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background:#fff;border-radius:16px;overflow:hidden;">
+    <tr><td style="height:6px;background:#2563eb;font-size:0;">&nbsp;</td></tr><tr><td style="padding:30px 26px;">
+      <p style="margin:0 0 8px;color:#2563eb;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">${esc(reference)} · Prix mis à jour</p>
+      <h1 style="margin:0 0 16px;font-size:25px;line-height:1.25;color:#0f172a;">Bonne nouvelle : vos devis baissent</h1>
+      <p style="font-size:15px;line-height:1.65;color:#475569;">Bonjour${request.client_name ? ` ${esc(request.client_name)}` : ''},</p>
+      <p style="font-size:15px;line-height:1.65;color:#475569;">Nous avons réduit nos frais de mise en relation. Les propositions pour votre déménagement <strong>${esc(request.from_city)} → ${esc(request.to_city)}</strong> ont donc été revues à la baisse. Le prix demandé par chaque déménageur reste inchangé.</p>
+      <div style="margin:24px 0;">${cards}</div>
+      <p style="font-size:14px;line-height:1.6;color:#475569;">Ces nouveaux prix remplacent les précédents pour les devis encore en attente. Vous pouvez les comparer et choisir sereinement dans votre espace client.</p>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr><td align="center"><a href="${href}" style="display:block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:15px 22px;border-radius:10px;">Voir mes nouveaux devis</a></td></tr></table>
+      <p style="margin:28px 0 0;font-size:14px;line-height:1.65;color:#475569;">Une question ? Notre équipe vous répond au <a href="tel:+33189707881" style="color:#2563eb;text-decoration:none;">01 89 70 78 81</a>.<br><br><strong>L’équipe Trouve Ton Déménageur</strong></p>
+    </td></tr><tr><td align="center" style="padding:16px;background:#f8fafc;color:#94a3b8;font-size:12px;">www.trouvetondemenageur.fr</td></tr>
+  </table></td></tr></table></body></html>`;
+}
+
+const { data: pending, error } = await sb.from('quote_margin_updates')
+  .select(`id, quote_id, old_client_price, new_client_price,
+    quotes!inner(id, price, status, quote_request_id,
+      mover:movers!quotes_mover_id_fkey(company_name),
+      request:quote_requests!quotes_quote_request_id_fkey(id, reference, client_name, client_email, client_user_id, from_city, to_city, moving_date, status, payment_status, accepted_quote_id, deleted_at))`)
+  .is('email_sent_at', null)
+  .order('id');
+if (error) throw error;
+
+const groups = new Map();
+for (const audit of pending || []) {
+  const quote = one(audit.quotes);
+  const request = one(quote?.request);
+  if (!quote || !request) continue;
+  const paidRequest = ['deposit_paid', 'fully_paid', 'completed', 'paid'].includes(request.payment_status || '');
+  const closedRequest = ['accepted', 'ongoing', 'completed', 'cancelled'].includes(request.status || '');
+  if (quote.status !== 'pending' || request.deleted_at || request.accepted_quote_id || paidRequest || closedRequest) continue;
+  if (!groups.has(request.id)) groups.set(request.id, { request, rows: [] });
+  groups.get(request.id).rows.push({ audit, quote });
+}
+
+console.log(`${groups.size} demande(s), ${[...groups.values()].reduce((n, g) => n + g.rows.length, 0)} devis à ${sendEmails ? 'envoyer' : 'vérifier'}.`);
+let sent = 0;
+let failed = 0;
+for (const { request, rows } of groups.values()) {
+  const reference = request.reference || request.id;
+  if (!request.client_email) {
+    console.error(`Email manquant pour ${reference}.`);
+    failed += 1;
+    continue;
+  }
+  if (!sendEmails) {
+    console.log(`Prêt : ${reference}, ${rows.length} devis.`);
+    continue;
+  }
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${required('RESEND_API_KEY')}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'TrouveTonDéménageur <noreply@trouvetondemenageur.fr>',
+        to: [request.client_email],
+        reply_to: 'support@trouvetondemenageur.fr',
+        subject: `Bonne nouvelle : vos devis ${reference} ont été revus à la baisse`,
+        html: emailHtml(request, rows),
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result?.message || `Envoi refusé (${response.status})`);
+    const now = new Date().toISOString();
+    const ids = rows.map(({ audit }) => audit.id);
+    const { error: markError } = await sb.from('quote_margin_updates')
+      .update({ email_sent_at: now, email_provider_id: result.id, email_error: null })
+      .in('id', ids);
+    if (markError) throw markError;
+    if (request.client_user_id) {
+      await sb.from('notifications').insert({
+        user_id: request.client_user_id,
+        type: 'quote_update',
+        title: 'Vos devis ont été revus à la baisse',
+        message: `${rows.length} devis ont été mis à jour pour votre déménagement ${request.from_city} → ${request.to_city}.`,
+        related_id: request.id,
+        read: false,
+      });
+    }
+    sent += 1;
+    console.log(`Envoyé : ${reference}, ${rows.length} devis.`);
+  } catch (err) {
+    failed += 1;
+    const message = err instanceof Error ? err.message : String(err);
+    await sb.from('quote_margin_updates').update({ email_error: message }).in('id', rows.map(({ audit }) => audit.id));
+    console.error(`Échec pour ${reference}: ${message}`);
+  }
+}
+console.log(`${sent} email(s) envoyé(s), ${failed} échec(s).`);
+if (failed) process.exitCode = 1;

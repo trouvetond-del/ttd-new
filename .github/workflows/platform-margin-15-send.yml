@@ -1,1 +1,22 @@
-bmFtZTogRW52b3llciBsZXMgZGV2aXMgcmV2dXMgw6AgMTUgJQpvbjoKICB3b3JrZmxvd19kaXNwYXRjaDoge30KcGVybWlzc2lvbnM6CiAgY29udGVudHM6IHJlYWQKY29uY3VycmVuY3k6CiAgZ3JvdXA6IHBsYXRmb3JtLW1hcmdpbi0xNQogIGNhbmNlbC1pbi1wcm9ncmVzczogZmFsc2UKam9iczoKICBzZW5kOgogICAgcnVucy1vbjogdWJ1bnR1LWxhdGVzdAogICAgc3RlcHM6CiAgICAgIC0gdXNlczogYWN0aW9ucy9jaGVja291dEB2NAogICAgICAtIG5hbWU6IEluc3RhbGxlciBsZXMgZMOpcGVuZGFuY2VzCiAgICAgICAgcnVuOiBucG0gY2kgLS1pZ25vcmUtc2NyaXB0cyAtLW5vLWF1ZGl0IC0tbm8tZnVuZAogICAgICAtIG5hbWU6IEVudm95ZXIgdW5lIHNldWxlIGZvaXMgY2hhcXVlIG5vdXZlYXUgZGV2aXMKICAgICAgICBlbnY6CiAgICAgICAgICBTVVBBQkFTRV9VUkw6ICR7eyBzZWNyZXRzLlNVUEFCQVNFX1VSTCB9fQogICAgICAgICAgU1VQQUJBU0VfU0VSVklDRV9ST0xFX0tFWTogJHt7IHNlY3JldHMuU1VQQUJBU0VfU0VSVklDRV9ST0xFX0tFWSB9fQogICAgICAgICAgUkVTRU5EX0FQSV9LRVk6ICR7eyBzZWNyZXRzLlJFU0VORF9BUElfS0VZIH19CiAgICAgICAgICBTRU5EX0VNQUlMUzogJ3RydWUnCiAgICAgICAgcnVuOiBub2RlIHNjcmlwdHMvcXVvdGVzL3NlbmQtbWFyZ2luLXVwZGF0ZXMubWpzCg==
+name: Envoyer les devis revus à 15 %
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: platform-margin-15
+  cancel-in-progress: false
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer les dépendances
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Envoyer une seule fois chaque nouveau devis
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SEND_EMAILS: 'true'
+        run: node scripts/quotes/send-margin-updates.mjs

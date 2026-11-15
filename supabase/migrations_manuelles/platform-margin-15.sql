@@ -1,1 +1,83 @@
-LS0gVGVtcG9yYXJ5IDE1JSBwbGF0Zm9ybSBtYXJnaW4sIHJlcXVlc3RlZCBvbiAyMDI2LTExLTE1LgotLSBPbmx5IHBlbmRpbmcsIHVucGFpZCwgdW5hY2NlcHRlZCBxdW90ZXMgYXJlIHJlcHJpY2VkLiBIaXN0b3JpY2FsIGNvbnRyYWN0cyBzdGF5IHVuY2hhbmdlZC4KQkVHSU47CgpDUkVBVEUgVEFCTEUgSUYgTk9UIEVYSVNUUyBwdWJsaWMucXVvdGVfbWFyZ2luX3VwZGF0ZXMgKAogIGlkIGJpZ2ludCBHRU5FUkFURUQgQUxXQVlTIEFTIElERU5USVRZIFBSSU1BUlkgS0VZLAogIHF1b3RlX2lkIHV1aWQgTk9UIE5VTEwgVU5JUVVFIFJFRkVSRU5DRVMgcHVibGljLnF1b3RlcyhpZCkgT04gREVMRVRFIENBU0NBREUsCiAgb2xkX2NsaWVudF9wcmljZSBudW1lcmljKDEyLDIpIE5PVCBOVUxMLAogIG5ld19jbGllbnRfcHJpY2UgbnVtZXJpYygxMiwyKSBOT1QgTlVMTCwKICBtYXJnaW5fcmF0ZSBudW1lcmljKDUsNCkgTk9UIE5VTEwgREVGQVVMVCAwLjE1LAogIHJlcHJpY2VkX2F0IHRpbWVzdGFtcHR6IE5PVCBOVUxMIERFRkFVTFQgbm93KCksCiAgZW1haWxfc2VudF9hdCB0aW1lc3RhbXB0eiwKICBlbWFpbF9wcm92aWRlcl9pZCB0ZXh0LAogIGVtYWlsX2Vycm9yIHRleHQKKTsKR1JBTlQgQUxMIE9OIHB1YmxpYy5xdW90ZV9tYXJnaW5fdXBkYXRlcyBUTyBzZXJ2aWNlX3JvbGU7CkdSQU5UIFVTQUdFLCBTRUxFQ1QgT04gU0VRVUVOQ0UgcHVibGljLnF1b3RlX21hcmdpbl91cGRhdGVzX2lkX3NlcSBUTyBzZXJ2aWNlX3JvbGU7CkFMVEVSIFRBQkxFIHB1YmxpYy5xdW90ZV9tYXJnaW5fdXBkYXRlcyBFTkFCTEUgUk9XIExFVkVMIFNFQ1VSSVRZOwoKQ1JFQVRFIE9SIFJFUExBQ0UgRlVOQ1RJT04gcHVibGljLmNhbGN1bGF0ZV9xdW90ZV9jbGllbnRfcHJpY2UoKQpSRVRVUk5TIFRSSUdHRVIKTEFOR1VBR0UgcGxwZ3NxbApTRVQgc2VhcmNoX3BhdGggPSBwdWJsaWMsIHBnX3RlbXAKQVMgJCQKQkVHSU4KICBJRiBORVcucHJpY2UgSVMgTk9UIE5VTEwgQU5EICgKICAgIFRHX09QID0gJ0lOU0VSVCcKICAgIE9SIE5FVy5jbGllbnRfZGlzcGxheV9wcmljZSBJUyBOVUxMCiAgICBPUiBORVcucHJpY2UgSVMgRElTVElOQ1QgRlJPTSBPTEQucHJpY2UKICApIFRIRU4KICAgIE5FVy5jbGllbnRfZGlzcGxheV9wcmljZSA6PSBST1VORChORVcucHJpY2UgKiAxLjE1KTsKICBFTkQgSUY7CgogIElGIE5FVy5tYXJrZXRfcHJpY2VfZXN0aW1hdGUgSVMgTlVMTCBUSEVOCiAgICBORVcubWFya2V0X3ByaWNlX2VzdGltYXRlIDo9IFJPVU5EKE5FVy5wcmljZSAqIDEuMDgpOwogIEVORCBJRjsKCiAgSUYgTkVXLnByaWNlIElTIE5PVCBOVUxMIEFORCBORVcubWFya2V0X3ByaWNlX2VzdGltYXRlIElTIE5PVCBOVUxMIFRIRU4KICAgIERFQ0xBUkUgcHJpY2VfcmF0aW8gbnVtZXJpYzsKICAgIEJFR0lOCiAgICAgIHByaWNlX3JhdGlvIDo9IChORVcucHJpY2U6Om51bWVyaWMgLSBORVcubWFya2V0X3ByaWNlX2VzdGltYXRlOjpudW1lcmljKSAvIE5FVy5tYXJrZXRfcHJpY2VfZXN0aW1hdGU6Om51bWVyaWM7CiAgICAgIElGIHByaWNlX3JhdGlvIDw9IC0wLjA1IFRIRU4KICAgICAgICBORVcucHJpY2VfaW5kaWNhdG9yIDo9ICdncmVlbic7CiAgICAgIEVMU0lGIHByaWNlX3JhdGlvIDw9IDAuMTUgVEhFTgogICAgICAgIE5FVy5wcmljZV9pbmRpY2F0b3IgOj0gJ29yYW5nZSc7CiAgICAgIEVMU0UKICAgICAgICBORVcucHJpY2VfaW5kaWNhdG9yIDo9ICdyZWQnOwogICAgICBFTkQgSUY7CiAgICBFTkQ7CiAgRU5EIElGOwogIFJFVFVSTiBORVc7CkVORDsKJCQ7CgpXSVRIIGVsaWdpYmxlIEFTICgKICBTRUxFQ1QgcS5pZCwgcS5jbGllbnRfZGlzcGxheV9wcmljZSBBUyBvbGRfcHJpY2UKICBGUk9NIHB1YmxpYy5xdW90ZXMgcQogIEpPSU4gcHVibGljLnF1b3RlX3JlcXVlc3RzIHFyIE9OIHFyLmlkID0gcS5xdW90ZV9yZXF1ZXN0X2lkCiAgV0hFUkUgcS5zdGF0dXMgPSAncGVuZGluZycKICAgIEFORCBxLnByaWNlID4gMAogICAgQU5EIHEuY2xpZW50X2Rpc3BsYXlfcHJpY2UgSVMgRElTVElOQ1QgRlJPTSBST1VORChxLnByaWNlICogMS4xNSkKICAgIEFORCBxci5kZWxldGVkX2F0IElTIE5VTEwKICAgIEFORCBxci5hY2NlcHRlZF9xdW90ZV9pZCBJUyBOVUxMCiAgICBBTkQgQ09BTEVTQ0UocXIuc3RhdHVzLCAnJykgTk9UIElOICgnYWNjZXB0ZWQnLCAnb25nb2luZycsICdjb21wbGV0ZWQnLCAnY2FuY2VsbGVkJykKICAgIEFORCBDT0FMRVNDRShxci5wYXltZW50X3N0YXR1cywgJycpIE5PVCBJTiAoJ2RlcG9zaXRfcGFpZCcsICdmdWxseV9wYWlkJywgJ2NvbXBsZXRlZCcsICdwYWlkJykKICAgIEFORCBOT1QgRVhJU1RTICgKICAgICAgU0VMRUNUIDEgRlJPTSBwdWJsaWMucGF5bWVudHMgcAogICAgICBXSEVSRSBwLnF1b3RlX2lkID0gcS5pZAogICAgICAgIEFORCBDT0FMRVNDRShwLnBheW1lbnRfc3RhdHVzLCAnJykgSU4gKCdjb21wbGV0ZWQnLCAnZGVwb3NpdF9yZWxlYXNlZCcsICdyZWxlYXNlZF90b19tb3ZlcicsICdwYWlkJykKICAgICkKICAgIEFORCBOT1QgRVhJU1RTIChTRUxFQ1QgMSBGUk9NIHB1YmxpYy5xdW90ZV9tYXJnaW5fdXBkYXRlcyBoIFdIRVJFIGgucXVvdGVfaWQgPSBxLmlkKQopLCB1cGRhdGVkIEFTICgKICBVUERBVEUgcHVibGljLnF1b3RlcyBxCiAgU0VUIGNsaWVudF9kaXNwbGF5X3ByaWNlID0gUk9VTkQocS5wcmljZSAqIDEuMTUpLCB1cGRhdGVkX2F0ID0gbm93KCkKICBGUk9NIGVsaWdpYmxlIGUKICBXSEVSRSBxLmlkID0gZS5pZAogIFJFVFVSTklORyBxLmlkLCBlLm9sZF9wcmljZSwgcS5jbGllbnRfZGlzcGxheV9wcmljZSBBUyBuZXdfcHJpY2UKKQpJTlNFUlQgSU5UTyBwdWJsaWMucXVvdGVfbWFyZ2luX3VwZGF0ZXMgKHF1b3RlX2lkLCBvbGRfY2xpZW50X3ByaWNlLCBuZXdfY2xpZW50X3ByaWNlKQpTRUxFQ1QgaWQsIG9sZF9wcmljZSwgbmV3X3ByaWNlIEZST00gdXBkYXRlZApPTiBDT05GTElDVCAocXVvdGVfaWQpIERPIE5PVEhJTkc7CgpDT01NSVQ7Cg==
+-- Temporary 15% platform margin, requested on 2026-11-15.
+-- Only pending, unpaid, unaccepted quotes are repriced. Historical contracts stay unchanged.
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS public.quote_margin_updates (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  quote_id uuid NOT NULL UNIQUE REFERENCES public.quotes(id) ON DELETE CASCADE,
+  old_client_price numeric(12,2) NOT NULL,
+  new_client_price numeric(12,2) NOT NULL,
+  margin_rate numeric(5,4) NOT NULL DEFAULT 0.15,
+  repriced_at timestamptz NOT NULL DEFAULT now(),
+  email_sent_at timestamptz,
+  email_provider_id text,
+  email_error text
+);
+GRANT ALL ON public.quote_margin_updates TO service_role;
+GRANT USAGE, SELECT ON SEQUENCE public.quote_margin_updates_id_seq TO service_role;
+ALTER TABLE public.quote_margin_updates ENABLE ROW LEVEL SECURITY;
+
+CREATE OR REPLACE FUNCTION public.calculate_quote_client_price()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF NEW.price IS NOT NULL AND (
+    TG_OP = 'INSERT'
+    OR NEW.client_display_price IS NULL
+    OR NEW.price IS DISTINCT FROM OLD.price
+  ) THEN
+    NEW.client_display_price := ROUND(NEW.price * 1.15);
+  END IF;
+
+  IF NEW.market_price_estimate IS NULL THEN
+    NEW.market_price_estimate := ROUND(NEW.price * 1.08);
+  END IF;
+
+  IF NEW.price IS NOT NULL AND NEW.market_price_estimate IS NOT NULL THEN
+    DECLARE price_ratio numeric;
+    BEGIN
+      price_ratio := (NEW.price::numeric - NEW.market_price_estimate::numeric) / NEW.market_price_estimate::numeric;
+      IF price_ratio <= -0.05 THEN
+        NEW.price_indicator := 'green';
+      ELSIF price_ratio <= 0.15 THEN
+        NEW.price_indicator := 'orange';
+      ELSE
+        NEW.price_indicator := 'red';
+      END IF;
+    END;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+WITH eligible AS (
+  SELECT q.id, q.client_display_price AS old_price
+  FROM public.quotes q
+  JOIN public.quote_requests qr ON qr.id = q.quote_request_id
+  WHERE q.status = 'pending'
+    AND q.price > 0
+    AND q.client_display_price IS DISTINCT FROM ROUND(q.price * 1.15)
+    AND qr.deleted_at IS NULL
+    AND qr.accepted_quote_id IS NULL
+    AND COALESCE(qr.status, '') NOT IN ('accepted', 'ongoing', 'completed', 'cancelled')
+    AND COALESCE(qr.payment_status, '') NOT IN ('deposit_paid', 'fully_paid', 'completed', 'paid')
+    AND NOT EXISTS (
+      SELECT 1 FROM public.payments p
+      WHERE p.quote_id = q.id
+        AND COALESCE(p.payment_status, '') IN ('completed', 'deposit_released', 'released_to_mover', 'paid')
+    )
+    AND NOT EXISTS (SELECT 1 FROM public.quote_margin_updates h WHERE h.quote_id = q.id)
+), updated AS (
+  UPDATE public.quotes q
+  SET client_display_price = ROUND(q.price * 1.15), updated_at = now()
+  FROM eligible e
+  WHERE q.id = e.id
+  RETURNING q.id, e.old_price, q.client_display_price AS new_price
+)
+INSERT INTO public.quote_margin_updates (quote_id, old_client_price, new_client_price)
+SELECT id, old_price, new_price FROM updated
+ON CONFLICT (quote_id) DO NOTHING;
+
+COMMIT;

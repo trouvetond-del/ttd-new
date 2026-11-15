@@ -1,1 +1,142 @@
-aW1wb3J0IHsgQ2hlY2tDaXJjbGUsIEZpbGVUZXh0LCBDYWxlbmRhciwgUGhvbmUsIE1haWwsIFNoaWVsZCwgQWxlcnRUcmlhbmdsZSB9IGZyb20gJ2x1Y2lkZS1yZWFjdCc7CmltcG9ydCB7IHVzZU5hdmlnYXRlLCB1c2VTZWFyY2hQYXJhbXMgfSBmcm9tICdyZWFjdC1yb3V0ZXItZG9tJzsKaW1wb3J0IHsgdXNlRWZmZWN0LCB1c2VSZWYgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7IENsaWVudExheW91dCB9IGZyb20gJy4uL2NvbXBvbmVudHMvQ2xpZW50TGF5b3V0JzsKaW1wb3J0IHsgc3VwYWJhc2UgfSBmcm9tICcuLi9saWIvc3VwYWJhc2UnOwppbXBvcnQgeyB0cmFja0FkRXZlbnQgfSBmcm9tICcuLi9saWIvYWRzJzsKCmludGVyZmFjZSBDbGllbnRQYXltZW50U3VjY2Vzc1BhZ2VQcm9wcyB7CiAgb25Db250aW51ZT86ICgpID0+IHZvaWQ7Cn0KCmV4cG9ydCBkZWZhdWx0IGZ1bmN0aW9uIENsaWVudFBheW1lbnRTdWNjZXNzUGFnZSh7b25Db250aW51ZSB9OiBDbGllbnRQYXltZW50U3VjY2Vzc1BhZ2VQcm9wcykgewogIGNvbnN0IG5hdmlnYXRlID0gdXNlTmF2aWdhdGUoKTsKICBjb25zdCBbc2VhcmNoUGFyYW1zXSA9IHVzZVNlYXJjaFBhcmFtcygpOwogIGNvbnN0IHRyYWNrZWRSZWYgPSB1c2VSZWYoZmFsc2UpOwoKICB1c2VFZmZlY3QoKCkgPT4gewogICAgaWYgKHRyYWNrZWRSZWYuY3VycmVudCkgcmV0dXJuOwogICAgdHJhY2tlZFJlZi5jdXJyZW50ID0gdHJ1ZTsKCiAgICBjb25zdCB0cmFja1B1cmNoYXNlID0gYXN5bmMgKCkgPT4gewogICAgICBjb25zdCBxdW90ZUlkID0gc2VhcmNoUGFyYW1zLmdldCgncXVvdGVJZCcpOwogICAgICBsZXQgZGVwb3NpdFZhbHVlOiBudW1iZXIgfCB1bmRlZmluZWQ7CgogICAgICBpZiAocXVvdGVJZCkgewogICAgICAgIHRyeSB7CiAgICAgICAgICBjb25zdCB7IGRhdGEgfSA9IGF3YWl0IHN1cGFiYXNlCiAgICAgICAgICAgIC5mcm9tKCdxdW90ZXMnKQogICAgICAgICAgICAuc2VsZWN0KCdjbGllbnRfZGlzcGxheV9wcmljZSwgcHJpY2UnKQogICAgICAgICAgICAuZXEoJ2lkJywgcXVvdGVJZCkKICAgICAgICAgICAgLm1heWJlU2luZ2xlKCk7CiAgICAgICAgICBpZiAoZGF0YT8uY2xpZW50X2Rpc3BsYXlfcHJpY2UpIHsKICAgICAgICAgICAgY29uc3QgbW92ZXJQcmljZSA9IGRhdGEucHJpY2UgfHwgTWF0aC5yb3VuZChkYXRhLmNsaWVudF9kaXNwbGF5X3ByaWNlIC8gMS4xNSk7CiAgICAgICAgICAgIGRlcG9zaXRWYWx1ZSA9IE1hdGgucm91bmQoKGRhdGEuY2xpZW50X2Rpc3BsYXlfcHJpY2UgLSBtb3ZlclByaWNlKSAqIDEwMCkgLyAxMDA7CiAgICAgICAgICB9CiAgICAgICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgICAgICBjb25zb2xlLmVycm9yKCdUcmFja2luZzogaW1wb3NzaWJsZSBkZSByw6ljdXDDqXJlciBsZSBtb250YW50IGR1IGRldmlzJywgZXJyKTsKICAgICAgICB9CiAgICAgIH0KCiAgICAgIGNvbnN0IGV2ZW50RGF0YTogUmVjb3JkPHN0cmluZywgdW5rbm93bj4gPSB7IGN1cnJlbmN5OiAnRVVSJyB9OwogICAgICBpZiAoZGVwb3NpdFZhbHVlICE9PSB1bmRlZmluZWQpIGV2ZW50RGF0YS52YWx1ZSA9IGRlcG9zaXRWYWx1ZTsKICAgICAgdHJhY2tBZEV2ZW50KCdQdXJjaGFzZScsIGV2ZW50RGF0YSk7CiAgICAgIGlmICh0eXBlb2YgKHdpbmRvdyBhcyBhbnkpLmd0YWcgPT09ICdmdW5jdGlvbicpIHsKICAgICAgICAod2luZG93IGFzIGFueSkuZ3RhZygnZXZlbnQnLCAnY29udmVyc2lvbicsIHsKICAgICAgICAgIHNlbmRfdG86ICdBVy0xODAxNDgxMzgzNC9zcmNvQ0pqSmtPQWNFSXI5a0k1RCcsCiAgICAgICAgICB2YWx1ZTogZGVwb3NpdFZhbHVlLAogICAgICAgICAgY3VycmVuY3k6ICdFVVInLAogICAgICAgICAgdHJhbnNhY3Rpb25faWQ6IHF1b3RlSWQgfHwgJycsCiAgICAgICAgfSk7CiAgICAgIH0KICAgIH07CgogICAgdHJhY2tQdXJjaGFzZSgpOwogIH0sIFtzZWFyY2hQYXJhbXNdKTsKCiAgcmV0dXJuICgKICAgIDxDbGllbnRMYXlvdXQgdGl0bGU9IlBhaWVtZW50IGNvbmZpcm3DqSI+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy0yeGwgbXgtYXV0byI+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImJnLXdoaXRlIHJvdW5kZWQteGwgc2hhZG93LXhsIHctZnVsbCBwLTgiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LWNlbnRlciBtYi04Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ3LTIwIGgtMjAgYmctZ3JlZW4tMTAwIHJvdW5kZWQtZnVsbCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBteC1hdXRvIG1iLTQiPgogICAgICAgICAgICA8Q2hlY2tDaXJjbGUgY2xhc3NOYW1lPSJ3LTEyIGgtMTIgdGV4dC1ncmVlbi02MDAiIC8+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxoMSBjbGFzc05hbWU9InRleHQtM3hsIGZvbnQtYm9sZCB0ZXh0LXNsYXRlLTgwMCBtYi0yIj5Gw6lsaWNpdGF0aW9ucywgdm90cmUgZMOpbcOpbmFnZW1lbnQgZXN0IHLDqXNlcnbDqSAhPC9oMT4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbGF0ZS02MDAiPgogICAgICAgICAgICBWb3RyZSByw6lzZXJ2YXRpb24gYSDDqXTDqSB2YWxpZMOpZSBhdmVjIHN1Y2PDqHMgdmlhIGxhIHBsYXRlZm9ybWUgVFJPVVZFIFRPTiBEw4lNw4lOQUdFVVIuCiAgICAgICAgICA8L3A+CiAgICAgICAgPC9kaXY+CgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJiZy1ibHVlLTUwIGJvcmRlciBib3JkZXItYmx1ZS0yMDAgcm91bmRlZC1sZyBwLTYgbWItNiI+CiAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJmb250LXNlbWlib2xkIHRleHQtYmx1ZS05MDAgbWItMyBmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiI+CiAgICAgICAgICAgIDxGaWxlVGV4dCBjbGFzc05hbWU9InctNSBoLTUiIC8+CiAgICAgICAgICAgIFLDqWNhcGl0dWxhdGlmIGZpbmFuY2llcgogICAgICAgICAgPC9oMj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJzcGFjZS15LTMgdGV4dC1zbSB0ZXh0LWJsdWUtODAwIj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggZ2FwLTMiPgogICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idy02IGgtNiBiZy1ibHVlLTIwMCByb3VuZGVkLWZ1bGwgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgZmxleC1zaHJpbmstMCBmb250LXNlbWlib2xkIj4xPC9zcGFuPgogICAgICAgICAgICAgIDxwPjxzdHJvbmc+RnJhaXMgZGUgcsOpc2VydmF0aW9uPC9zdHJvbmc+IOKAlCBMZXMgZnJhaXMgZGUgcsOpc2VydmF0aW9uIG9udCDDqXTDqSByw6lnbMOpcyB2aWEgbGEgcGxhdGVmb3JtZS4gQ2VzIGZyYWlzIGNvcnJlc3BvbmRlbnQgw6AgbGEgY29tbWlzc2lvbiBkZSBtaXNlIGVuIHJlbGF0aW9uIGV0IG5lIGNvbnN0aXR1ZW50IHBhcyB1biBhY29tcHRlIHN1ciBsYSBwcmVzdGF0aW9uIGRlIGTDqW3DqW5hZ2VtZW50LjwvcD4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGdhcC0zIj4KICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InctNiBoLTYgYmctYmx1ZS0yMDAgcm91bmRlZC1mdWxsIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIGZsZXgtc2hyaW5rLTAgZm9udC1zZW1pYm9sZCI+Mjwvc3Bhbj4KICAgICAgICAgICAgICA8cD48c3Ryb25nPlNvbGRlIGRlIGxhIHByZXN0YXRpb248L3N0cm9uZz4g4oCUIExlIHByaXggZGVtYW5kw6kgcGFyIGxlIGTDqW3DqW5hZ2V1ciBlc3QgcsOpZ2zDqSBkaXJlY3RlbWVudCBlbnRyZSB2b3VzIGV0IGx1aSBhdSBtb21lbnQgZGUgbCdleMOpY3V0aW9uIGRlIGxhIHByZXN0YXRpb24uIFRURCBuJ2ludGVydmllbnQgcGFzIGRhbnMgY2UgcGFpZW1lbnQuPC9wPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgoKICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYmctZ3JlZW4tNTAgYm9yZGVyIGJvcmRlci1ncmVlbi0yMDAgcm91bmRlZC1sZyBwLTYgbWItNiI+CiAgICAgICAgICA8aDIgY2xhc3NOYW1lPSJmb250LXNlbWlib2xkIHRleHQtZ3JlZW4tOTAwIG1iLTMgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIiPgogICAgICAgICAgICA8U2hpZWxkIGNsYXNzTmFtZT0idy01IGgtNSIgLz4KICAgICAgICAgICAgUHJvdG9jb2xlIGRlIHByZXV2ZSBudW3DqXJpcXVlCiAgICAgICAgICA8L2gyPgogICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIHRleHQtZ3JlZW4tODAwIG1iLTIiPkZpbmFsaXNleiB2b3RyZSBpbnZlbnRhaXJlIHBob3RvZ3JhcGhpcXVlIHZpYSB2b3RyZSBFc3BhY2UgQ2xpZW50IGF2YW50IGwnYXJyaXbDqWUgZHUgRMOpbcOpbmFnZXVyLiBMZXMgY2xpY2jDqXMgaG9yb2RhdMOpcyBwZXJtZXR0ZW50IGQnw6l0YWJsaXIgdW4gw6l0YXQgdmlzdWVsIGRlIHLDqWbDqXJlbmNlLjwvcD4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LWdyZWVuLTgwMCI+RW4gY2FzIGRlIGRvbW1hZ2UgZMOpY2xhcsOpLCBjZXMgw6lsw6ltZW50cyBwZXV2ZW50IMOqdHJlIGFuYWx5c8OpcyBwb3VyIGZhY2lsaXRlciBsYSBjb25zdGl0dXRpb24gZCd1biBkb3NzaWVyIGF1cHLDqHMgZGUgbCdhc3N1cmFuY2UgZHUgRMOpbcOpbmFnZXVyLjwvcD4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImJnLXNsYXRlLTUwIHJvdW5kZWQtbGcgcC02IG1iLTYiPgogICAgICAgICAgPGgzIGNsYXNzTmFtZT0iZm9udC1zZW1pYm9sZCB0ZXh0LXNsYXRlLTgwMCBtYi0zIj5JbmZvcm1hdGlvbnMgaW1wb3J0YW50ZXM8L2gzPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InNwYWNlLXktMyB0ZXh0LXNtIHRleHQtc2xhdGUtNzAwIj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtc3RhcnQgZ2FwLTIiPgogICAgICAgICAgICAgIDxDYWxlbmRhciBjbGFzc05hbWU9InctNCBoLTQgdGV4dC1zbGF0ZS02MDAgbXQtMC41IGZsZXgtc2hyaW5rLTAiIC8+CiAgICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0ibWItMSI+PHN0cm9uZz5Db25kaXRpb25zIGQnYW5udWxhdGlvbiA6PC9zdHJvbmc+PC9wPgogICAgICAgICAgICAgICAgPHVsIGNsYXNzTmFtZT0ic3BhY2UteS0xIG1sLTIiPgogICAgICAgICAgICAgICAgICA8bGkgY2xhc3NOYW1lPSJ0ZXh0LWdyZWVuLTcwMCI+4pyTIOKJpSAxNCBqb3VycyBhdmFudCA6IHJlbWJvdXJzZW1lbnQgaW50w6lncmFsIChob3JzIGZyYWlzIFN0cmlwZSk8L2xpPgogICAgICAgICAgICAgICAgICA8bGkgY2xhc3NOYW1lPSJ0ZXh0LXllbGxvdy03MDAiPiEgRW50cmUgMTAgZXQgMTMgam91cnMgOiA1MCAlIGRlcyBmcmFpcyBjb25zZXJ2w6lzPC9saT4KICAgICAgICAgICAgICAgICAgPGxpIGNsYXNzTmFtZT0idGV4dC1yZWQtNzAwIj7inJcgJmx0OyAxMCBqb3VycyA6IGZyYWlzIGludMOpZ3JhbGVtZW50IGNvbnNlcnbDqXM8L2xpPgogICAgICAgICAgICAgICAgPC91bD4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLXN0YXJ0IGdhcC0yIj4KICAgICAgICAgICAgICA8QWxlcnRUcmlhbmdsZSBjbGFzc05hbWU9InctNCBoLTQgdGV4dC1zbGF0ZS02MDAgbXQtMC41IGZsZXgtc2hyaW5rLTAiIC8+CiAgICAgICAgICAgICAgPHA+PHN0cm9uZz5Ew6ljbGFyYXRpb24gZGUgZG9tbWFnZSA6PC9zdHJvbmc+IFZvdXMgZGlzcG9zZXogZGUgNDggaGV1cmVzIGFwcsOocyBsYSBmaW4gZGUgbGEgcHJlc3RhdGlvbiBwb3VyIGTDqWNsYXJlciB0b3V0IGRvbW1hZ2UgdmlhIHZvdHJlIEVzcGFjZSBDbGllbnQsIGF2ZWMgcGhvdG9zIGV0IGRlc2NyaXB0aWYuPC9wPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtc3RhcnQgZ2FwLTIiPgogICAgICAgICAgICAgIDxQaG9uZSBjbGFzc05hbWU9InctNCBoLTQgdGV4dC1zbGF0ZS02MDAgbXQtMC41IGZsZXgtc2hyaW5rLTAiIC8+CiAgICAgICAgICAgICAgPHA+PHN0cm9uZz5Db250YWN0IGTDqW3DqW5hZ2V1ciA6PC9zdHJvbmc+IExlcyBjb29yZG9ubsOpZXMgY29tcGzDqHRlcyBkdSBkw6ltw6luYWdldXIgc29udCBkYW5zIGxhIGxldHRyZSBkZSBtaXNzaW9uIGVudm95w6llIHBhciBlbWFpbC48L3A+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1zdGFydCBnYXAtMiI+CiAgICAgICAgICAgICAgPE1haWwgY2xhc3NOYW1lPSJ3LTQgaC00IHRleHQtc2xhdGUtNjAwIG10LTAuNSBmbGV4LXNocmluay0wIiAvPgogICAgICAgICAgICAgIDxwPjxzdHJvbmc+U3VwcG9ydCA6PC9zdHJvbmc+IHN1cHBvcnRAdHJvdXZldG9uZGVtZW5hZ2V1ci5mciDigJQgMDEuODkuNzAuNzguODE8L3A+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJiZy1hbWJlci01MCBib3JkZXIgYm9yZGVyLWFtYmVyLTIwMCByb3VuZGVkLWxnIHAtNCBtYi02Ij4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1zbSB0ZXh0LWFtYmVyLTgwMCI+CiAgICAgICAgICAgIDxzdHJvbmc+UmFwcGVsIDo8L3N0cm9uZz4gUmV0cm91dmV6IMOgIHRvdXQgbW9tZW50IHZvcyBkb2N1bWVudHMgKGZhY3R1cmUgZGUgcsOpc2VydmF0aW9uLCBjb250cmF0IGRlIHRyYW5zcG9ydCBldCBpbnZlbnRhaXJlIG51bcOpcmlxdWUpIHN1ciB2b3RyZSB0YWJsZWF1IGRlIGJvcmQgc8OpY3VyaXPDqS4gVsOpcmlmaWV6IMOpZ2FsZW1lbnQgdm90cmUgYm/DrnRlIGVtYWlsIChldCB2b3Mgc3BhbXMpIHBvdXIgbGEgbGV0dHJlIGRlIG1pc3Npb24uCiAgICAgICAgICA8L3A+CiAgICAgICAgPC9kaXY+CgogICAgICAgIDxidXR0b24KICAgICAgICAgIG9uQ2xpY2s9eygpID0+IG5hdmlnYXRlKCcvY2xpZW50L2Rhc2hib2FyZCcpfQogICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgcHktMyBiZy1ibHVlLTYwMCB0ZXh0LXdoaXRlIHJvdW5kZWQtbGcgaG92ZXI6YmctYmx1ZS03MDAgdHJhbnNpdGlvbi1jb2xvcnMgZm9udC1zZW1pYm9sZCIKICAgICAgICA+CiAgICAgICAgICBSZXRvdXIgYXUgdGFibGVhdSBkZSBib3JkCiAgICAgICAgPC9idXR0b24+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9DbGllbnRMYXlvdXQ+CiAgKTsKfQo=
+import { CheckCircle, FileText, Calendar, Phone, Mail, Shield, AlertTriangle } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { ClientLayout } from '../components/ClientLayout';
+import { supabase } from '../lib/supabase';
+import { trackAdEvent } from '../lib/ads';
+
+interface ClientPaymentSuccessPageProps {
+  onContinue?: () => void;
+}
+
+export default function ClientPaymentSuccessPage({onContinue }: ClientPaymentSuccessPageProps) {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const trackedRef = useRef(false);
+
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+
+    const trackPurchase = async () => {
+      const quoteId = searchParams.get('quoteId');
+      let depositValue: number | undefined;
+
+      if (quoteId) {
+        try {
+          const { data } = await supabase
+            .from('quotes')
+            .select('client_display_price, price')
+            .eq('id', quoteId)
+            .maybeSingle();
+          if (data?.client_display_price) {
+            const moverPrice = data.price || Math.round(data.client_display_price / 1.15);
+            depositValue = Math.round((data.client_display_price - moverPrice) * 100) / 100;
+          }
+        } catch (err) {
+          console.error('Tracking: impossible de récupérer le montant du devis', err);
+        }
+      }
+
+      const eventData: Record<string, unknown> = { currency: 'EUR' };
+      if (depositValue !== undefined) eventData.value = depositValue;
+      trackAdEvent('Purchase', eventData);
+      if (typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'conversion', {
+          send_to: 'AW-18014813834/srcoCJjJkOAcEIr9kI5D',
+          value: depositValue,
+          currency: 'EUR',
+          transaction_id: quoteId || '',
+        });
+      }
+    };
+
+    trackPurchase();
+  }, [searchParams]);
+
+  return (
+    <ClientLayout title="Paiement confirmé">
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-xl shadow-xl w-full p-8">
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-12 h-12 text-green-600" />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-800 mb-2">Félicitations, votre déménagement est réservé !</h1>
+          <p className="text-slate-600">
+            Votre réservation a été validée avec succès via la plateforme TROUVE TON DÉMÉNAGEUR.
+          </p>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+          <h2 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            Récapitulatif financier
+          </h2>
+          <div className="space-y-3 text-sm text-blue-800">
+            <div className="flex gap-3">
+              <span className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 font-semibold">1</span>
+              <p><strong>Frais de réservation</strong> — Les frais de réservation ont été réglés via la plateforme. Ces frais correspondent à la commission de mise en relation et ne constituent pas un acompte sur la prestation de déménagement.</p>
+            </div>
+            <div className="flex gap-3">
+              <span className="w-6 h-6 bg-blue-200 rounded-full flex items-center justify-center flex-shrink-0 font-semibold">2</span>
+              <p><strong>Solde de la prestation</strong> — Le prix demandé par le déménageur est réglé directement entre vous et lui au moment de l'exécution de la prestation. TTD n'intervient pas dans ce paiement.</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
+          <h2 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
+            <Shield className="w-5 h-5" />
+            Protocole de preuve numérique
+          </h2>
+          <p className="text-sm text-green-800 mb-2">Finalisez votre inventaire photographique via votre Espace Client avant l'arrivée du Déménageur. Les clichés horodatés permettent d'établir un état visuel de référence.</p>
+          <p className="text-sm text-green-800">En cas de dommage déclaré, ces éléments peuvent être analysés pour faciliter la constitution d'un dossier auprès de l'assurance du Déménageur.</p>
+        </div>
+
+        <div className="bg-slate-50 rounded-lg p-6 mb-6">
+          <h3 className="font-semibold text-slate-800 mb-3">Informations importantes</h3>
+          <div className="space-y-3 text-sm text-slate-700">
+            <div className="flex items-start gap-2">
+              <Calendar className="w-4 h-4 text-slate-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="mb-1"><strong>Conditions d'annulation :</strong></p>
+                <ul className="space-y-1 ml-2">
+                  <li className="text-green-700">✓ ≥ 14 jours avant : remboursement intégral (hors frais Stripe)</li>
+                  <li className="text-yellow-700">! Entre 10 et 13 jours : 50 % des frais conservés</li>
+                  <li className="text-red-700">✗ &lt; 10 jours : frais intégralement conservés</li>
+                </ul>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-slate-600 mt-0.5 flex-shrink-0" />
+              <p><strong>Déclaration de dommage :</strong> Vous disposez de 48 heures après la fin de la prestation pour déclarer tout dommage via votre Espace Client, avec photos et descriptif.</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <Phone className="w-4 h-4 text-slate-600 mt-0.5 flex-shrink-0" />
+              <p><strong>Contact déménageur :</strong> Les coordonnées complètes du déménageur sont dans la lettre de mission envoyée par email.</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <Mail className="w-4 h-4 text-slate-600 mt-0.5 flex-shrink-0" />
+              <p><strong>Support :</strong> support@trouvetondemenageur.fr — 01.89.70.78.81</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+          <p className="text-sm text-amber-800">
+            <strong>Rappel :</strong> Retrouvez à tout moment vos documents (facture de réservation, contrat de transport et inventaire numérique) sur votre tableau de bord sécurisé. Vérifiez également votre boîte email (et vos spams) pour la lettre de mission.
+          </p>
+        </div>
+
+        <button
+          onClick={() => navigate('/client/dashboard')}
+          className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+        >
+          Retour au tableau de bord
+        </button>
+        </div>
+      </div>
+    </ClientLayout>
+  );
+}
