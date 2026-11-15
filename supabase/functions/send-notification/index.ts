@@ -13,6 +13,11 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
+const emailEscape = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+}[char] ?? char));
+const emailMoney = (value: unknown) => Number(value || 0).toLocaleString("fr-FR", { maximumFractionDigits: 2 });
+
 // Helper function to create email template wrapper
 const createEmailTemplate = (title: string, subtitle: string, content: string) => `
   <!DOCTYPE html>
@@ -268,6 +273,36 @@ Deno.serve(async (req: Request) => {
           `
         );
         break;
+
+      case "quote_margin_updated": {
+        const reference = emailEscape(data.reference || "votre demande");
+        const requestId = encodeURIComponent(String(data.requestId || ""));
+        const cards = (Array.isArray(data.quotes) ? data.quotes : []).map((quote: {
+          companyName?: string; oldPrice?: number; newPrice?: number; moverPrice?: number; fee?: number;
+        }) => `
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #dbe4ee;border-radius:12px;margin:0 0 14px;background:#ffffff;"><tr><td style="padding:20px;">
+            <p style="margin:0 0 10px;font-size:16px;font-weight:700;color:#172554;">${emailEscape(quote.companyName || "Déménageur vérifié")}</p>
+            <p style="margin:0;color:#64748b;font-size:14px;">Ancien prix : <span style="text-decoration:line-through;">${emailMoney(quote.oldPrice)} €</span></p>
+            <p style="margin:5px 0;color:#047857;font-size:28px;font-weight:700;">${emailMoney(quote.newPrice)} € <span style="font-size:13px;font-weight:400;">TTC</span></p>
+            <p style="margin:0 0 10px;color:#047857;font-size:14px;font-weight:700;">Vous économisez ${emailMoney(Number(quote.oldPrice) - Number(quote.newPrice))} €</p>
+            <p style="margin:0;color:#475569;font-size:13px;line-height:1.6;">Frais de réservation TTD : ${emailMoney(quote.fee)} €<br>À régler directement au déménageur : ${emailMoney(quote.moverPrice)} €</p>
+          </td></tr></table>`).join("");
+        subject = `Bonne nouvelle : vos devis ${reference} ont été revus à la baisse`;
+        htmlContent = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;color:#1e293b;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px 12px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;background:#fff;border-radius:16px;overflow:hidden;">
+            <tr><td style="height:6px;background:#2563eb;font-size:0;">&nbsp;</td></tr><tr><td style="padding:30px 26px;">
+              <p style="margin:0 0 8px;color:#2563eb;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">${reference} · Prix mis à jour</p>
+              <h1 style="margin:0 0 16px;font-size:25px;line-height:1.25;color:#0f172a;">Bonne nouvelle : vos devis baissent</h1>
+              <p style="font-size:15px;line-height:1.65;color:#475569;">Bonjour${data.clientName ? ` ${emailEscape(data.clientName)}` : ""},</p>
+              <p style="font-size:15px;line-height:1.65;color:#475569;">Nous avons réduit nos frais de mise en relation. Les propositions pour votre déménagement <strong>${emailEscape(data.fromCity)} → ${emailEscape(data.toCity)}</strong> ont donc été revues à la baisse. Le prix demandé par chaque déménageur reste inchangé.</p>
+              <div style="margin:24px 0;">${cards}</div>
+              <p style="font-size:14px;line-height:1.6;color:#475569;">Ces nouveaux prix remplacent les précédents pour les devis encore en attente. Vous pouvez les comparer et choisir sereinement dans votre espace client.</p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr><td align="center"><a href="https://www.trouvetondemenageur.fr/client/quotes?requestId=${requestId}" style="display:block;background:#2563eb;color:#fff;text-decoration:none;font-weight:700;font-size:16px;padding:15px 22px;border-radius:10px;">Voir mes nouveaux devis</a></td></tr></table>
+              <p style="margin:28px 0 0;font-size:14px;line-height:1.65;color:#475569;">Une question ? Notre équipe vous répond au <a href="tel:+33189707881" style="color:#2563eb;text-decoration:none;">01 89 70 78 81</a>.<br><br><strong>L’équipe Trouve Ton Déménageur</strong></p>
+            </td></tr><tr><td align="center" style="padding:16px;background:#f8fafc;color:#94a3b8;font-size:12px;">www.trouvetondemenageur.fr</td></tr>
+          </table></td></tr></table></body></html>`;
+        break;
+      }
 
       case "quote_received":
         subject = "Nouveau devis reçu pour votre déménagement";

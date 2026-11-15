@@ -15,8 +15,7 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Envoyer une seule fois chaque nouveau devis
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           SEND_EMAILS: 'true'
         run: node scripts/quotes/send-margin-updates.mjs

@@ -5,6 +5,7 @@ on:
     paths:
       - 'supabase/migrations_manuelles/platform-margin-15.sql'
       - 'scripts/quotes/send-margin-updates.mjs'
+      - 'supabase/functions/send-notification/index.ts'
       - '.github/workflows/platform-margin-15.yml'
   workflow_dispatch: {}
 permissions:
@@ -19,21 +20,21 @@ jobs:
       - uses: actions/checkout@v4
       - name: Appliquer la marge aux devis en attente non payés
         run: psql "${{ secrets.SUPABASE_DB_URL }}" -v ON_ERROR_STOP=1 -f supabase/migrations_manuelles/platform-margin-15.sql
-      - name: Installer les dépendances
-        run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Vérifier ou envoyer les nouveaux devis
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          SEND_EMAILS: 'false'
-        run: node scripts/quotes/send-margin-updates.mjs
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - name: Mettre à jour le calcul du paiement
+      - name: Mettre à jour le calcul du paiement et l’email
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           supabase functions deploy create-payment-intent --project-ref bvvbkaluajgdurxnnqqu --yes
           supabase functions deploy stripe-webhook --project-ref bvvbkaluajgdurxnnqqu --yes
+          supabase functions deploy send-notification --project-ref bvvbkaluajgdurxnnqqu --no-verify-jwt --yes
+      - name: Installer les dépendances
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Vérifier les nouveaux devis sans envoyer
+        env:
+          SUPABASE_URL: https://bvvbkaluajgdurxnnqqu.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SEND_EMAILS: 'false'
+        run: node scripts/quotes/send-margin-updates.mjs
