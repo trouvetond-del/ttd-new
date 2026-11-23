@@ -53,7 +53,7 @@ export default function CityPage() {
       return;
     }
     setCity(data);
-    document.title = `Déménagement à ${data.nom_ville} — Devis gratuit de déménageurs vérifiés | TrouveTonDéménageur`;
+    document.title = `Déménageur à ${data.nom_ville} : devis gratuits, pros vérifiés`;
     supabase.from('city_pages').select('slug, nom_ville').eq('statut', 'published').order('nom_ville')
       .then(({ data: list }) => setOtherCities((list || []).filter((c) => c.slug !== citySlug)));
 

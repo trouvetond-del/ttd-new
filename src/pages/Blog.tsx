@@ -67,7 +67,7 @@ export default function Blog() {
   const [filter, setFilter] = useState('Tous');
 
   useEffect(() => {
-    document.title = 'Blog Déménagement — Conseils & Guides | TrouveTonDéménageur';
+    document.title = 'Blog déménagement : conseils et guides | TrouveTonDéménageur';
     const meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute('content', 'Guides, conseils et comparatifs pour réussir votre déménagement en France.');

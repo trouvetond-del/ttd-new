@@ -75,7 +75,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity
 
 // --- Accueil ---
 write('/', {
-  title: 'Devis gratuit déménagement : comparez des déménageurs vérifiés | TrouveTonDéménageur',
+  title: 'Devis déménagement gratuit : déménageurs vérifiés en France',
   description: "Recevez jusqu'à 3 devis gratuits de déménageurs vérifiés sous 24 h. Particuliers et professionnels, partout en France. Un humain vous accompagne à chaque étape.",
   root: `<h1>Devis gratuit déménagement : comparez des déménageurs vérifiés</h1>
 <p>TrouveTonDéménageur met en relation les particuliers et les professionnels qui déménagent avec des déménageurs vérifiés partout en France. Vous décrivez votre déménagement une seule fois et vous recevez jusqu'à 3 devis sous 24 h, gratuitement et sans engagement. Un humain reste joignable à chaque étape, du premier devis à la dernière caisse.</p>
@@ -205,4 +205,27 @@ write('/blog', {
 ${articles.map((a) => `<article><h2><a href="/blog/${a.slug}">${esc(clean(a.titre))}</a></h2><p>${esc(excerpt(a.contenu))}…</p></article>`).join('')}
 <h2>Pour aller plus loin</h2><p><a href="/guide-demenagement">Guide du déménagement</a> · <a href="/tarifs-demenagement-2026">Tarifs 2026</a> · <a href="/calculateur-prix-demenagement">Calculateur de prix</a> · <a href="/faq">FAQ</a></p>
 <p>Vous déménagez bientôt ? <a href="/client/auth-choice">Recevez jusqu'à 3 devis gratuits</a> de déménageurs vérifiés sous 24 h.</p>`,
+});
+
+// --- Pages signalées par l'audit SEO sans titre H1 dans le HTML ---
+write('/client/auth-choice', {
+  title: 'Demander un devis de déménagement | TrouveTonDéménageur',
+  description: "Créez votre compte ou connectez-vous pour décrire votre déménagement et recevoir jusqu'à 3 devis gratuits de déménageurs vérifiés.",
+  root: `<h1>Recevez vos devis de déménagement gratuits</h1>
+<p>Créez votre compte ou connectez-vous pour décrire votre déménagement : adresses, étages, date et volume. Des déménageurs vérifiés vous envoient leurs devis.</p>
+<p><a href="/client/signup">Créer mon compte</a> · <a href="/client/login">Me connecter</a> · <a href="/devis-rapide">Être rappelé</a></p>`,
+});
+write('/legal/privacy-policy', {
+  title: 'Politique de confidentialité | TrouveTonDéménageur',
+  description: 'Comment TrouveTonDéménageur collecte, utilise et protège vos données personnelles, et comment exercer vos droits (RGPD).',
+  root: `<h1>Politique de confidentialité</h1>
+<p>La présente politique explique comment la société TROUVE TON DÉMÉNAGEUR traite les données personnelles des utilisateurs de www.trouvetondemenageur.fr, conformément au RGPD.</p>
+<p><a href="/legal/mentions">Mentions légales</a> · <a href="/legal/sales-terms">CGU / CGV</a></p>`,
+});
+write('/legal/terms-of-service', {
+  title: "Conditions générales d'utilisation | TrouveTonDéménageur",
+  description: "Conditions générales d'utilisation de la plateforme TrouveTonDéménageur : services, obligations des clients et des déménageurs.",
+  root: `<h1>Conditions générales d'utilisation</h1>
+<p>Les conditions d'utilisation et de vente de TrouveTonDéménageur sont réunies sur une seule page.</p>
+<p><a href="/legal/sales-terms">Lire les CGU / CGV</a></p>`,
 });

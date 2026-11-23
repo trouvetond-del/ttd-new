@@ -15,7 +15,7 @@ export default function PublicMovesPage() {
   });
 
   useEffect(() => {
-    document.title = 'Déménagements disponibles pour les déménageurs | TrouveTonDéménageur';
+    document.title = 'Déménagements disponibles pour déménageurs | TTD';
     supabase.rpc('list_open_moves').then(({ data }) => { setMoves(data || []); setLoading(false); });
   }, []);
 

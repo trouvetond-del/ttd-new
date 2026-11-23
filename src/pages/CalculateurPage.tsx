@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Calculator } from 'lucide-react';
 import seoContent from '../data/seo-content.json';
 
-const TITLE = 'Calculateur prix déménagement 2026 : estimation gratuite | TrouveTonDéménageur';
+const TITLE = 'Calculateur prix déménagement 2026 : estimation gratuite';
 
 // "400 à 700 €" -> [400, 700]
 function range(s: string): [number, number] {

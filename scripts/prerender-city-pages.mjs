@@ -62,7 +62,7 @@ function cityFaq(n) {
 }
 
 function buildHtml(city, counts, allCities = []) {
-  const title = `Déménagement à ${city.nom_ville} — Devis gratuit de déménageurs vérifiés | TrouveTonDéménageur`;
+  const title = `Déménageur à ${city.nom_ville} : devis gratuits, pros vérifiés`;
   const description = `Trouvez un déménageur vérifié à ${city.nom_ville}. ${city.intro_locale.split('.')[0]}. Devis gratuit et sans engagement en 2 minutes.`;
   const url = `${SITE_URL}/demenagement/${city.slug}`;
 

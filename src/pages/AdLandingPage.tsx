@@ -9,7 +9,7 @@ import { saveQuotePrefill } from '../utils/quotePrefill';
 import { trackAdEvent } from '../lib/ads';
 
 const SIZES = ['Studio', 'T1', 'T2', 'T3', 'T4', 'T5+'];
-const TITLE = 'Devis déménagement gratuit : jusqu’à 3 déménageurs vérifiés | TrouveTonDéménageur';
+const TITLE = 'Devis déménagement gratuit : 3 déménageurs vérifiés';
 
 function setMeta(name: string, content: string) {
   let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;

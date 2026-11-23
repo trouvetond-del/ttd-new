@@ -7,7 +7,7 @@ import { VOLUME_ROOMS, computeVolume, homeSizeForVolume } from '../utils/volumeC
 import { rememberAcquisitionSource } from '../utils/acquisitionSource';
 import { saveQuotePrefill } from '../utils/quotePrefill';
 
-const TITLE = 'Calculateur de volume de déménagement (m³) pièce par pièce | TrouveTonDéménageur';
+const TITLE = 'Calculateur de volume de déménagement (m³) | TTD';
 
 export default function VolumeCalculatorPage() {
   const navigate = useNavigate();

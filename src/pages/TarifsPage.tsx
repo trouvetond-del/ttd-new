@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import seoContent from '../data/seo-content.json';
 
-const TITLE = 'Tarifs déménagement 2026 : prix moyens par m³ et par logement | TrouveTonDéménageur';
+const TITLE = 'Tarifs déménagement 2026 : prix par m³ et par logement';
 
 const FAQ: [string, string][] = [
   ['Quel est le prix moyen d\'un déménagement en 2026 ?', 'Pour un déménagement local, comptez en général de 400 à 1 000 € pour un studio, de 1 000 à 2 300 € pour un T3 et de 1 600 à 3 500 € pour une maison, selon la formule. Ces fourchettes sont indicatives : seul un devis basé sur votre volume réel donne le bon prix.'],

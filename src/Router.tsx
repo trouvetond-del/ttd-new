@@ -2,93 +2,97 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import NotFoundPage from './pages/NotFoundPage';
 import { useAuth } from './contexts/AuthContext';
 import { LandingPage } from './pages/LandingPage';
-import { QuickLeadPage } from './pages/QuickLeadPage';
-import { ClientCreateQuickLeadPasswordPage } from './pages/ClientCreateQuickLeadPasswordPage';
-import { MoverQuickLeadPage } from './pages/MoverQuickLeadPage';
-import { MoverCreateQuickLeadPasswordPage } from './pages/MoverCreateQuickLeadPasswordPage';
-import { ClientQuotePage } from './pages/ClientQuotePage';
-import ClientQuoteResumePage from './pages/ClientQuoteResumePage';
-import { ClientAuthPage } from './pages/ClientAuthPage';
-import { ClientAuthChoice } from './pages/ClientAuthChoice';
-import { ClientDashboard } from './pages/ClientDashboard';
-import ClientQuotesPage from './pages/ClientQuotesPage';
-import ClientPaymentPage from './pages/ClientPaymentPageNew';
-import ClientPaymentSuccessPage from './pages/ClientPaymentSuccessPage';
-import ClientContractsPage from './pages/ClientContractsPage';
-import ClientNotificationsPage from './pages/ClientNotificationsPage';
-import ClientPhotosPage from './pages/ClientPhotosPage';
-import ClientChecklistPage from './pages/ClientChecklistPage';
-import ClientFavoritesPage from './pages/ClientFavoritesPage';
-import { MoverAuthPage } from './pages/MoverAuthPage';
-import { MoverSignupPage } from './pages/MoverSignupPage';
-import MoverProfileCompletionPage from './pages/MoverProfileCompletionPage';
-import MoverEmailSignup from './components/MoverEmailSignup';
-import MoverVerifyEmailPage from './pages/MoverVerifyEmailPage';
-import { MoverSignupSuccess } from './pages/MoverSignupSuccess';
-import { MoverGoogleCallbackPage } from './pages/MoverGoogleCallbackPage';
-import { ClientGoogleCallbackPage } from './pages/ClientGoogleCallbackPage';
-import MoverInviteSignupPage from './pages/MoverInviteSignupPage';
-import ClientInviteSignupPage from './pages/ClientInviteSignupPage';
-import { MoverDashboard } from './pages/MoverDashboard';
-import MoverQuoteRequestsPage from './pages/MoverQuoteRequestsPage';
-import MoverFindMovesPage from './pages/MoverFindMovesPage';
-import MoverDriversPage from './pages/MoverDriversPage';
-import DriverPage from './pages/DriverPage';
-import DriverLoginPage from './pages/DriverLoginPage';
-import MoverMyQuotesPage from './pages/MoverMyQuotesPage';
-import MoverMovingsList from './pages/MoverMovingsList';
-import MoverDamagePhotos from './pages/MoverDamagePhotos';
-import MoverFinancesPage from './pages/MoverFinancesPage';
-import MoverContractsPage from './pages/MoverContractsPage';
-import MoverDocumentsPage from './pages/MoverDocumentsPage';
-import MoverPortfolioPage from './pages/MoverPortfolioPage';
-import MoverCompanyInfoPage from './pages/MoverCompanyInfoPage';
-import MoverNotificationsPage from './pages/MoverNotificationsPage';
-import MovingTracking from './pages/MovingTracking';
-import DamageReport from './pages/DamageReport';
-import { AdminAuthPage } from './pages/AdminAuthPage';
-import AdminDashboard from './pages/AdminDashboard';
-import { AboutUsPage } from './pages/AboutUsPage';
-import { MissionPage } from './pages/MissionPage';
-import { FAQPage } from './pages/FAQPage';
-import PublicMovesPage from './pages/PublicMovesPage';
-import { ContactPage } from './pages/ContactPage';
-import { TechnologyPage } from './pages/TechnologyPage';
-import { PricingPage } from './pages/PricingPage';
-import { PressPage } from './pages/PressPage';
-import { HelpCenterPage } from './pages/HelpCenterPage';
-import { MovingGuidePage } from './pages/MovingGuidePage';
-import Blog from './pages/Blog';
-import CityPage from './pages/CityPage';
-import TarifsPage from './pages/TarifsPage';
-import CalculateurPage from './pages/CalculateurPage';
-import VolumeCalculatorPage from './pages/VolumeCalculatorPage';
-import AdLandingPage from './pages/AdLandingPage';
-import BlogArticle from './pages/BlogArticle';
-import { EmailVerificationPage } from './pages/EmailVerificationPage';
-import { CheckEmailPage } from './pages/CheckEmailPage';
-import { ResendVerificationPage } from './pages/ResendVerificationPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
-import { ResetPasswordPage } from './pages/ResetPasswordPage';
-import { ResetPasswordWithCodePage } from './pages/ResetPasswordWithCodePage';
-import { EmailVerificationCodePage } from './pages/EmailVerificationCodePage';
-import { ClientProfileCompletionPage } from './pages/ClientProfileCompletionPage';
-import LegalMentionsPage from './pages/LegalMentionsPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsOfServicePage from './pages/TermsOfServicePage';
-import SalesTermsPage from './pages/SalesTermsPage';
-import CookiesPage from './pages/CookiesPage';
-import { MoverInfoPage } from './pages/MoverInfoPage';
-import { ForClientPage } from './pages/ForClientPage';
-import { ForMoverPage } from './pages/ForMoverPage';
-import { PartnersPage } from './pages/PartnersPage';
-import { UnauthorizedPage } from './pages/UnauthorizedPage';
-import ChangePasswordPage from './pages/ChangePasswordPage';
-import ClientSettingsPage from './pages/ClientSettingsPage';
-import MoverSettingsPage from './pages/MoverSettingsPage';
-import { ToastContainer } from './components/ToastContainer';
 import { supabase } from './lib/supabase';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { ToastContainer } from './components/ToastContainer';
+import { SeoNormalizer } from './components/SeoNormalizer';
+
+// Chaque page (sauf l'accueil) est chargée à la demande : le téléphone ne
+// télécharge plus tout le site (admin, espace déménageur...) avant d'afficher l'accueil.
+const QuickLeadPage = lazy(() => import('./pages/QuickLeadPage').then((m) => ({ default: m.QuickLeadPage })));
+const ClientCreateQuickLeadPasswordPage = lazy(() => import('./pages/ClientCreateQuickLeadPasswordPage').then((m) => ({ default: m.ClientCreateQuickLeadPasswordPage })));
+const MoverQuickLeadPage = lazy(() => import('./pages/MoverQuickLeadPage').then((m) => ({ default: m.MoverQuickLeadPage })));
+const MoverCreateQuickLeadPasswordPage = lazy(() => import('./pages/MoverCreateQuickLeadPasswordPage').then((m) => ({ default: m.MoverCreateQuickLeadPasswordPage })));
+const ClientQuotePage = lazy(() => import('./pages/ClientQuotePage').then((m) => ({ default: m.ClientQuotePage })));
+const ClientQuoteResumePage = lazy(() => import('./pages/ClientQuoteResumePage'));
+const ClientAuthPage = lazy(() => import('./pages/ClientAuthPage').then((m) => ({ default: m.ClientAuthPage })));
+const ClientAuthChoice = lazy(() => import('./pages/ClientAuthChoice').then((m) => ({ default: m.ClientAuthChoice })));
+const ClientDashboard = lazy(() => import('./pages/ClientDashboard').then((m) => ({ default: m.ClientDashboard })));
+const ClientQuotesPage = lazy(() => import('./pages/ClientQuotesPage'));
+const ClientPaymentPage = lazy(() => import('./pages/ClientPaymentPageNew'));
+const ClientPaymentSuccessPage = lazy(() => import('./pages/ClientPaymentSuccessPage'));
+const ClientContractsPage = lazy(() => import('./pages/ClientContractsPage'));
+const ClientNotificationsPage = lazy(() => import('./pages/ClientNotificationsPage'));
+const ClientPhotosPage = lazy(() => import('./pages/ClientPhotosPage'));
+const ClientChecklistPage = lazy(() => import('./pages/ClientChecklistPage'));
+const ClientFavoritesPage = lazy(() => import('./pages/ClientFavoritesPage'));
+const MoverAuthPage = lazy(() => import('./pages/MoverAuthPage').then((m) => ({ default: m.MoverAuthPage })));
+const MoverSignupPage = lazy(() => import('./pages/MoverSignupPage').then((m) => ({ default: m.MoverSignupPage })));
+const MoverProfileCompletionPage = lazy(() => import('./pages/MoverProfileCompletionPage'));
+const MoverEmailSignup = lazy(() => import('./components/MoverEmailSignup'));
+const MoverVerifyEmailPage = lazy(() => import('./pages/MoverVerifyEmailPage'));
+const MoverSignupSuccess = lazy(() => import('./pages/MoverSignupSuccess').then((m) => ({ default: m.MoverSignupSuccess })));
+const MoverGoogleCallbackPage = lazy(() => import('./pages/MoverGoogleCallbackPage').then((m) => ({ default: m.MoverGoogleCallbackPage })));
+const ClientGoogleCallbackPage = lazy(() => import('./pages/ClientGoogleCallbackPage').then((m) => ({ default: m.ClientGoogleCallbackPage })));
+const MoverInviteSignupPage = lazy(() => import('./pages/MoverInviteSignupPage'));
+const ClientInviteSignupPage = lazy(() => import('./pages/ClientInviteSignupPage'));
+const MoverDashboard = lazy(() => import('./pages/MoverDashboard').then((m) => ({ default: m.MoverDashboard })));
+const MoverQuoteRequestsPage = lazy(() => import('./pages/MoverQuoteRequestsPage'));
+const MoverFindMovesPage = lazy(() => import('./pages/MoverFindMovesPage'));
+const MoverDriversPage = lazy(() => import('./pages/MoverDriversPage'));
+const DriverPage = lazy(() => import('./pages/DriverPage'));
+const DriverLoginPage = lazy(() => import('./pages/DriverLoginPage'));
+const MoverMyQuotesPage = lazy(() => import('./pages/MoverMyQuotesPage'));
+const MoverMovingsList = lazy(() => import('./pages/MoverMovingsList'));
+const MoverDamagePhotos = lazy(() => import('./pages/MoverDamagePhotos'));
+const MoverFinancesPage = lazy(() => import('./pages/MoverFinancesPage'));
+const MoverContractsPage = lazy(() => import('./pages/MoverContractsPage'));
+const MoverDocumentsPage = lazy(() => import('./pages/MoverDocumentsPage'));
+const MoverPortfolioPage = lazy(() => import('./pages/MoverPortfolioPage'));
+const MoverCompanyInfoPage = lazy(() => import('./pages/MoverCompanyInfoPage'));
+const MoverNotificationsPage = lazy(() => import('./pages/MoverNotificationsPage'));
+const MovingTracking = lazy(() => import('./pages/MovingTracking'));
+const DamageReport = lazy(() => import('./pages/DamageReport'));
+const AdminAuthPage = lazy(() => import('./pages/AdminAuthPage').then((m) => ({ default: m.AdminAuthPage })));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AboutUsPage = lazy(() => import('./pages/AboutUsPage').then((m) => ({ default: m.AboutUsPage })));
+const MissionPage = lazy(() => import('./pages/MissionPage').then((m) => ({ default: m.MissionPage })));
+const FAQPage = lazy(() => import('./pages/FAQPage').then((m) => ({ default: m.FAQPage })));
+const PublicMovesPage = lazy(() => import('./pages/PublicMovesPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage').then((m) => ({ default: m.ContactPage })));
+const TechnologyPage = lazy(() => import('./pages/TechnologyPage').then((m) => ({ default: m.TechnologyPage })));
+const PricingPage = lazy(() => import('./pages/PricingPage').then((m) => ({ default: m.PricingPage })));
+const PressPage = lazy(() => import('./pages/PressPage').then((m) => ({ default: m.PressPage })));
+const HelpCenterPage = lazy(() => import('./pages/HelpCenterPage').then((m) => ({ default: m.HelpCenterPage })));
+const MovingGuidePage = lazy(() => import('./pages/MovingGuidePage').then((m) => ({ default: m.MovingGuidePage })));
+const Blog = lazy(() => import('./pages/Blog'));
+const CityPage = lazy(() => import('./pages/CityPage'));
+const TarifsPage = lazy(() => import('./pages/TarifsPage'));
+const CalculateurPage = lazy(() => import('./pages/CalculateurPage'));
+const VolumeCalculatorPage = lazy(() => import('./pages/VolumeCalculatorPage'));
+const AdLandingPage = lazy(() => import('./pages/AdLandingPage'));
+const BlogArticle = lazy(() => import('./pages/BlogArticle'));
+const EmailVerificationPage = lazy(() => import('./pages/EmailVerificationPage').then((m) => ({ default: m.EmailVerificationPage })));
+const CheckEmailPage = lazy(() => import('./pages/CheckEmailPage').then((m) => ({ default: m.CheckEmailPage })));
+const ResendVerificationPage = lazy(() => import('./pages/ResendVerificationPage').then((m) => ({ default: m.ResendVerificationPage })));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })));
+const ResetPasswordWithCodePage = lazy(() => import('./pages/ResetPasswordWithCodePage').then((m) => ({ default: m.ResetPasswordWithCodePage })));
+const EmailVerificationCodePage = lazy(() => import('./pages/EmailVerificationCodePage').then((m) => ({ default: m.EmailVerificationCodePage })));
+const ClientProfileCompletionPage = lazy(() => import('./pages/ClientProfileCompletionPage').then((m) => ({ default: m.ClientProfileCompletionPage })));
+const LegalMentionsPage = lazy(() => import('./pages/LegalMentionsPage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage'));
+const SalesTermsPage = lazy(() => import('./pages/SalesTermsPage'));
+const CookiesPage = lazy(() => import('./pages/CookiesPage'));
+const MoverInfoPage = lazy(() => import('./pages/MoverInfoPage').then((m) => ({ default: m.MoverInfoPage })));
+const ForClientPage = lazy(() => import('./pages/ForClientPage').then((m) => ({ default: m.ForClientPage })));
+const ForMoverPage = lazy(() => import('./pages/ForMoverPage').then((m) => ({ default: m.ForMoverPage })));
+const PartnersPage = lazy(() => import('./pages/PartnersPage').then((m) => ({ default: m.PartnersPage })));
+const UnauthorizedPage = lazy(() => import('./pages/UnauthorizedPage').then((m) => ({ default: m.UnauthorizedPage })));
+const ChangePasswordPage = lazy(() => import('./pages/ChangePasswordPage'));
+const ClientSettingsPage = lazy(() => import('./pages/ClientSettingsPage'));
+const MoverSettingsPage = lazy(() => import('./pages/MoverSettingsPage'));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -450,7 +454,9 @@ export function AppRouter() {
   return (
     <BrowserRouter>
       <AnalyticsRouteTracker />
+      <SeoNormalizer />
       <div className="min-h-screen smooth-scroll">
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
@@ -828,6 +834,7 @@ export function AppRouter() {
           {/* Fallback */}
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </Suspense>
         <ToastContainer />
       </div>
     </BrowserRouter>

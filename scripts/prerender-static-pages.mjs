@@ -48,7 +48,7 @@ const tarifsRoot = `<div style="max-width:56rem;margin:0 auto;padding:3rem 1.5re
 </div>`;
 fs.mkdirSync(path.join(DIST, 'tarifs-demenagement-2026'), { recursive: true });
 fs.writeFileSync(path.join(DIST, 'tarifs-demenagement-2026', 'index.html'), withHead(base, {
-  title: 'Tarifs déménagement 2026 : prix moyens par m³ et par logement | TrouveTonDéménageur',
+  title: 'Tarifs déménagement 2026 : prix par m³ et par logement',
   description: 'Prix moyen d’un déménagement en 2026 : studio, T2, T3, maison. Fourchettes par volume et formule, conseils pour payer moins cher et devis gratuits.',
   url,
   extraHead: `<script type="application/ld+json">${JSON.stringify(faqLd)}</script>`,
@@ -69,7 +69,7 @@ console.log('[prerender-static-pages] Généré: /tarifs-demenagement-2026');
 </div>`;
   fs.mkdirSync(path.join(DIST, 'calculateur-prix-demenagement'), { recursive: true });
   fs.writeFileSync(path.join(DIST, 'calculateur-prix-demenagement', 'index.html'), withHead(base, {
-    title: 'Calculateur prix déménagement 2026 : estimation gratuite | TrouveTonDéménageur',
+    title: 'Calculateur prix déménagement 2026 : estimation gratuite',
     description: 'Calculez gratuitement le prix de votre déménagement : volume estimé et fourchette de prix selon logement, formule et distance. Puis jusqu’à 3 devis sous 24 h.',
     url: curl,
     root,

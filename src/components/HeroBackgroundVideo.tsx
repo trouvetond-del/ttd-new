@@ -14,10 +14,16 @@ export function HeroBackgroundVideo() {
   useEffect(() => {
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
     const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    const update = () => setAllowMotion(!preference.matches && !connection?.saveData);
-    update();
+    // Sur téléphone, on garde l'image fixe : la vidéo ralentirait l'affichage.
+    // Sur ordinateur, elle démarre seulement une fois la page chargée.
+    const isPhone = window.matchMedia('(max-width: 767px)').matches;
+    const update = () => setAllowMotion(!isPhone && !preference.matches && !connection?.saveData);
+    let timer = 0;
+    const start = () => { timer = window.setTimeout(update, 1500); };
+    if (document.readyState === 'complete') start();
+    else window.addEventListener('load', start, { once: true });
     preference.addEventListener('change', update);
-    return () => preference.removeEventListener('change', update);
+    return () => { window.clearTimeout(timer); window.removeEventListener('load', start); preference.removeEventListener('change', update); };
   }, []);
 
   useEffect(() => {
