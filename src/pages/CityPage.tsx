@@ -4,7 +4,7 @@ import { ArrowRight, MapPin, Shield, Star, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import seoContent from '../data/seo-content.json';
 
-type CityGuide = { quartiers: string[]; conseils: string[] };
+type CityGuide = { quartiers: string[]; conseils: string[]; referencement_local?: { titre: string; paragraphes: string[]; lien: string }[] };
 const cityGuides = seoContent.villes as Record<string, CityGuide>;
 
 interface CityPageData {
@@ -73,6 +73,8 @@ export default function CityPage() {
     return null;
   }
 
+  const localSections = cityGuides[city.slug]?.referencement_local ?? [];
+
   const communeSlug = (name: string) => name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const communeLink = (name: string) => otherCities.find((c) => c.slug === communeSlug(name))?.slug;
 
@@ -134,6 +136,16 @@ export default function CityPage() {
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>
+
+        {localSections.map((section) => (
+          <section key={section.titre} className="border-t border-gray-100 pt-10 mb-10">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{section.titre}</h2>
+            {section.paragraphes.map((paragraph) => (
+              <p key={paragraph} className="text-gray-600 leading-relaxed mb-4">{paragraph}</p>
+            ))}
+            <a href="/client/quote" className="text-blue-600 underline font-semibold">{section.lien}</a>
+          </section>
+        ))}
 
         {cityGuides[city.slug] && (
           <>

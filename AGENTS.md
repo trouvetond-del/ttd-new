@@ -31,3 +31,5 @@
 - Administrative list removal uses an admin-only reversible visibility ledger, not auth deletion; account/mover entries synchronize while contracts, signatures, payments and end-user access remain intact.
 - Ad traffic lands on `/devis-demenagement` (no menu); it stores the visitor's source (`acquisitionSource.ts`) and a prefill (`quotePrefill.ts`) reused by the full quote form, so the account is still created only at full submission. Why: one tracked entry point keeps cost per request measurable.
 - Client follow-up of unfinished requests is a fixed 3-email sequence defined in `send-partial-lead-reminder/sequence.ts` and stops as soon as a finished request exists for the same email. Why: avoids over-mailing and reminding people who already converted.
+
+- City-specific SEO sections live in seo-content.json and are rendered in both CityPage and the city prerenderer; keep their quote links pointed at the complete client form. Why: crawlers and visitors must receive the same local content without bypassing required move details.
