@@ -6,6 +6,7 @@ on:
     paths:
       - 'supabase/functions/admin-client-actions/**'
       - 'src/lib/clientPendingQuotes.ts'
+      - 'src/lib/disassemblyDetails.ts'
       - 'supabase/functions/_shared/followup-email.ts'
       - '.github/workflows/deploy-admin-client-actions.yml'
 jobs:

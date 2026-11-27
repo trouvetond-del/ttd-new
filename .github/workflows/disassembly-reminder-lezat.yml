@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/disassembly-reminder-lezat.yml'
+      - 'src/lib/disassemblyDetails.ts'
 jobs:
   send:
     runs-on: ubuntu-latest

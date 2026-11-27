@@ -1,6 +1,7 @@
 // Règles « Démontage / Remontage » : liste obligatoire dans les commentaires,
 // photos conseillées (visibles par l'admin uniquement), relance email client.
-import { escapeEmail } from './clientPendingQuotes';
+// Pas d'import : ce fichier est aussi chargé par une fonction Deno.
+const escapeEmail = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c));
 
 const DISASSEMBLY_SERVICES = ['Démontage/Remontage meubles', 'furniture_disassembly', 'furniture_assembly'];
 export const MIN_DISASSEMBLY_DETAILS = 10;
