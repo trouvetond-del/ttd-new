@@ -15,7 +15,7 @@ const COLUMNS = `id, reference, client_user_id, client_name, client_email, clien
   to_address, to_city, to_postal_code, moving_date, home_size, home_type, floor_from, floor_to, elevator_from, elevator_to,
   from_home_type, from_home_size, from_surface_m2, to_home_type, to_home_size, to_surface_m2, volume_m3, surface_m2,
   furniture_lift_needed_departure, furniture_lift_needed_arrival, date_flexibility_days, additional_info, services_needed,
-  furniture_inventory, furniture_photos, accepts_groupage, status, created_at, updated_at, is_data_masked, distance_km`;
+  furniture_inventory, elevator_capacity_from, elevator_capacity_to, accepts_groupage, status, created_at, updated_at, is_data_masked, distance_km`;
 
 export default function MoverFindMovesPage({ groupageOnly = false }: { groupageOnly?: boolean }) {
   const { user } = useAuth();

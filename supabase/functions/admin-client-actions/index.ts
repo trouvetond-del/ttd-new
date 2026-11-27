@@ -6,6 +6,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { canRemind, canRespond, pendingQuoteEmail, escapeEmail } from "../../../src/lib/clientPendingQuotes.ts";
 import { sendFollowupEmail } from "../_shared/followup-email.ts";
+import { disassemblyReminderEmail, needsDisassemblyDetails } from "../../../src/lib/disassemblyDetails.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -22,7 +23,11 @@ Deno.serve(async (req: Request) => {
     if (!authHeader) return json({ error: "Non authentifié" }, 401);
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-    const { data: userData, error: userError } = await admin.auth.getUser(authHeader.replace("Bearer ", ""));
+    // Appel interne (workflow GitHub) avec la clé service : traité comme admin.
+    const isService = authHeader === `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`;
+    const { data: userData, error: userError } = isService
+      ? { data: { user: { id: "service", email: null } as any }, error: null }
+      : await admin.auth.getUser(authHeader.replace("Bearer ", ""));
     if (userError || !userData.user) return json({ error: "Session invalide" }, 401);
     const { action, clientUserId, quoteRequestId, reason, detail = "" } = await req.json();
     if (action === "quote_feedback") {
@@ -34,7 +39,17 @@ Deno.serve(async (req: Request) => {
       return json({ ok: true });
     }
     const { data: adminRow } = await admin.from("admins").select("id").eq("email", userData.user.email).maybeSingle();
-    if (!adminRow) return json({ error: "Accès réservé aux administrateurs" }, 403);
+    if (!adminRow && !isService) return json({ error: "Accès réservé aux administrateurs" }, 403);
+
+    if (action === "disassembly_details") {
+      const { data: request, error } = await admin.from("quote_requests").select("id, reference, client_name, client_email, from_city, to_city, services_needed").eq("id", quoteRequestId).is("deleted_at", null).maybeSingle();
+      if (error || !request) return json({ error: "Demande introuvable" }, 404);
+      if (!needsDisassemblyDetails(request.services_needed)) return json({ error: "Le client n'a pas demandé de démontage/remontage" }, 409);
+      if (!request.client_email) return json({ error: "Email client manquant" }, 409);
+      const sent = await sendFollowupEmail(request.client_email, "Votre déménagement : quels meubles faut-il démonter ?", disassemblyReminderEmail(request));
+      if (!sent.ok) return json({ error: sent.error }, 502);
+      return json({ ok: true });
+    }
 
     if (action === "quote_reminder") {
       const { data: request, error } = await admin.from("quote_requests").select("id, reference, client_name, client_email, client_user_id, from_city, to_city, deleted_at, is_draft, status, accepted_quote_id").eq("id", quoteRequestId).maybeSingle();

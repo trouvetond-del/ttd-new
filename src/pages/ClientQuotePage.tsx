@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { VolumeCalculator, type FurnitureInventory } from '../components/VolumeCalculator';
 import AddressAutocomplete from '../components/AddressAutocomplete';
 import { FurniturePhotoUpload } from '../components/FurniturePhotoUpload';
+import { disassemblyDetailsMissing, needsDisassemblyDetails } from '../lib/disassemblyDetails';
 import { validateEmail, validatePhone, getEmailValidationMessage, getPhoneValidationMessage } from '../utils/validation';
 import { validateNoContactInfo } from '../utils/contactInfoValidator';
 import { showToast } from '../utils/toast';
@@ -529,6 +530,10 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
     if (!additionalInfoValidation.isValid) {
       errors.additional_info = 'Les informations complémentaires contiennent des données interdites';
       setAdditionalInfoErrors(additionalInfoValidation.blockedReasons);
+    }
+
+    if (disassemblyDetailsMissing(formData.services_needed, formData.additional_info)) {
+      errors.additional_info = 'Vous avez choisi le démontage/remontage : listez dans les commentaires les meubles à démonter et remonter (ex. : 1 lit double, 1 armoire).';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -1816,8 +1821,13 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Commentaires additionnels
+                        Commentaires additionnels{needsDisassemblyDetails(formData.services_needed) && <span className="text-red-600"> * (meubles à démonter/remonter obligatoires)</span>}
                       </label>
+                      {needsDisassemblyDetails(formData.services_needed) && (
+                        <p className="mb-2 text-sm text-blue-800 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                          Listez les meubles à démonter et remonter (ex. : 1 lit double, 1 armoire 3 portes). Ajoutez aussi des photos de ces meubles ci-dessus : seule notre équipe les voit, les déménageurs reçoivent uniquement la liste.
+                        </p>
+                      )}
                       <textarea
                         value={formData.additional_info}
                         onChange={(e) => {
@@ -1834,6 +1844,9 @@ export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequest
                             : 'border-gray-300 focus:ring-blue-500'
                         }`}
                       />
+                      {fieldErrors.additional_info && additionalInfoErrors.length === 0 && (
+                        <p className="mt-2 text-sm text-red-600">{fieldErrors.additional_info}</p>
+                      )}
                       {additionalInfoErrors.length > 0 && (
                         <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                           <div className="flex items-start gap-2">

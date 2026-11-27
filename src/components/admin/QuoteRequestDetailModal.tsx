@@ -10,6 +10,8 @@ import { VolumeCalculator, type FurnitureInventory } from '../VolumeCalculator';
 import { QuoteRequestChangesDisplay } from '../QuoteRequestChangesDisplay';
 import QuotesListModal from './QuotesListModal';
 import ClientQuoteReminderButton from './ClientQuoteReminderButton';
+import DisassemblyReminderButton from './DisassemblyReminderButton';
+import { needsDisassemblyDetails } from '../../lib/disassemblyDetails';
 
 interface QuoteRequestDetailModalProps {
   quoteRequestId: string;
@@ -362,6 +364,7 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
             </div>
             <div className="flex items-center justify-end gap-2 flex-wrap">
               <ClientQuoteReminderButton quoteRequestId={quoteRequestId} />
+              {needsDisassemblyDetails(formData.services_needed) && <DisassemblyReminderButton quoteRequestId={quoteRequestId} />}
               <button type="button" onClick={() => setShowQuotes(true)} className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium flex items-center gap-2"><FileText className="w-4 h-4" />Voir les devis</button>
               {formData.furniture_inventory && (
                 <button
@@ -537,27 +540,41 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className={`flex items-center space-x-2 cursor-pointer px-3 py-1.5 rounded-lg border ${formData.elevator_from ? 'bg-green-50 border-green-500 text-green-800 font-semibold' : 'border-transparent'}`}>
                   <input
                     type="checkbox"
                     checked={formData.elevator_from || false}
                     onChange={(e) => setFormData({ ...formData, elevator_from: e.target.checked })}
                     disabled={!canEdit}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-5 h-5 accent-green-600 rounded disabled:cursor-not-allowed"
                   />
-                  <span className="text-sm text-gray-700">Ascenseur</span>
+                  <span className="text-sm">Ascenseur</span>
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className={`flex items-center space-x-2 cursor-pointer px-3 py-1.5 rounded-lg border ${formData.furniture_lift_needed_departure ? 'bg-green-50 border-green-500 text-green-800 font-semibold' : 'border-transparent'}`}>
                   <input
                     type="checkbox"
                     checked={formData.furniture_lift_needed_departure || false}
                     onChange={(e) => setFormData({ ...formData, furniture_lift_needed_departure: e.target.checked })}
                     disabled={!canEdit}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-5 h-5 accent-green-600 rounded disabled:cursor-not-allowed"
                   />
-                  <span className="text-sm text-gray-700">Monte-meuble</span>
+                  <span className="text-sm">Monte-meuble</span>
                 </label>
               </div>
+              {formData.elevator_from && (
+                <div className="max-w-xs">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Taille de l'ascenseur</label>
+                  <select
+                    value={formData.elevator_capacity_from || ''}
+                    onChange={(e) => setFormData({ ...formData, elevator_capacity_from: e.target.value })}
+                    disabled={!canEdit}
+                    className="w-full px-4 py-2 border border-green-300 bg-green-50 rounded-lg disabled:cursor-not-allowed"
+                  >
+                    <option value="">Non précisée par le client</option>
+                    {elevatorCapacities.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              )}
             </div>
           </div>
 
@@ -658,27 +675,41 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className={`flex items-center space-x-2 cursor-pointer px-3 py-1.5 rounded-lg border ${formData.elevator_to ? 'bg-green-50 border-green-500 text-green-800 font-semibold' : 'border-transparent'}`}>
                   <input
                     type="checkbox"
                     checked={formData.elevator_to || false}
                     onChange={(e) => setFormData({ ...formData, elevator_to: e.target.checked })}
                     disabled={!canEdit}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-5 h-5 accent-green-600 rounded disabled:cursor-not-allowed"
                   />
-                  <span className="text-sm text-gray-700">Ascenseur</span>
+                  <span className="text-sm">Ascenseur</span>
                 </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className={`flex items-center space-x-2 cursor-pointer px-3 py-1.5 rounded-lg border ${formData.furniture_lift_needed_arrival ? 'bg-green-50 border-green-500 text-green-800 font-semibold' : 'border-transparent'}`}>
                   <input
                     type="checkbox"
                     checked={formData.furniture_lift_needed_arrival || false}
                     onChange={(e) => setFormData({ ...formData, furniture_lift_needed_arrival: e.target.checked })}
                     disabled={!canEdit}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-5 h-5 accent-green-600 rounded disabled:cursor-not-allowed"
                   />
-                  <span className="text-sm text-gray-700">Monte-meuble</span>
+                  <span className="text-sm">Monte-meuble</span>
                 </label>
               </div>
+              {formData.elevator_to && (
+                <div className="max-w-xs">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Taille de l'ascenseur</label>
+                  <select
+                    value={formData.elevator_capacity_to || ''}
+                    onChange={(e) => setFormData({ ...formData, elevator_capacity_to: e.target.value })}
+                    disabled={!canEdit}
+                    className="w-full px-4 py-2 border border-green-300 bg-green-50 rounded-lg disabled:cursor-not-allowed"
+                  >
+                    <option value="">Non précisée par le client</option>
+                    {elevatorCapacities.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              )}
             </div>
           </div>
 
@@ -768,7 +799,7 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
                     checked={formData.services_needed?.includes(service)}
                     onChange={() => toggleService(service)}
                     disabled={!canEdit}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-5 h-5 accent-green-600 rounded disabled:cursor-not-allowed"
                   />
                   <span className="ml-3 text-sm text-gray-700">{service}</span>
                 </label>
@@ -789,6 +820,20 @@ export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSav
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
               placeholder="Informations supplémentaires..."
             />
+            <div className="mt-4">
+              <p className="text-sm font-semibold text-gray-800 mb-2">Photos des meubles (visibles par l'admin uniquement)</p>
+              {Array.isArray(formData.furniture_photos) && formData.furniture_photos.length > 0 ? (
+                <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
+                  {formData.furniture_photos.map((url: string) => (
+                    <a key={url} href={url} target="_blank" rel="noopener noreferrer" className="block aspect-square overflow-hidden rounded-lg border border-gray-200">
+                      <img src={url} alt="Meuble du client" loading="lazy" className="w-full h-full object-cover" />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">Aucune photo ajoutée par le client.</p>
+              )}
+            </div>
           </div>
         </div>
 

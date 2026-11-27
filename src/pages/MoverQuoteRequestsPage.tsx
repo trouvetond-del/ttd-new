@@ -162,7 +162,8 @@ export default function MoverQuoteRequestsPage() {
           additional_info,
           services_needed,
           furniture_inventory,
-          furniture_photos,
+          elevator_capacity_from,
+          elevator_capacity_to,
           accepts_groupage,
           status,
           created_at,
@@ -449,7 +450,7 @@ export default function MoverQuoteRequestsPage() {
                               {request.elevator_from && (
                                 <span className="ml-2 inline-flex items-center gap-1 text-green-600">
                                   <ArrowUp className="w-3 h-3" />
-                                  <span className="text-xs">Ascenseur</span>
+                                  <span className="text-xs">Ascenseur{(request as any).elevator_capacity_from ? ` (${(request as any).elevator_capacity_from})` : ''}</span>
                                 </span>
                               )}
                               {!request.elevator_from && (
@@ -492,7 +493,7 @@ export default function MoverQuoteRequestsPage() {
                               {request.elevator_to && (
                                 <span className="ml-2 inline-flex items-center gap-1 text-green-600">
                                   <ArrowUp className="w-3 h-3" />
-                                  <span className="text-xs">Ascenseur</span>
+                                  <span className="text-xs">Ascenseur{(request as any).elevator_capacity_to ? ` (${(request as any).elevator_capacity_to})` : ''}</span>
                                 </span>
                               )}
                               {!request.elevator_to && (
