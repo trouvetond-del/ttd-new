@@ -24,7 +24,16 @@ Deno.serve(async (req: Request) => {
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
     // Appel interne (workflow GitHub) avec la clé service : traité comme admin.
-    const isService = authHeader === `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`;
+    const bearer = authHeader.replace("Bearer ", "");
+    let isService = bearer === Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!isService && !bearer.includes(".")) {
+      // Clé secrète (sb_secret_…) : seule une clé service peut lister les comptes.
+      const probe = createClient(Deno.env.get("SUPABASE_URL")!, bearer, { auth: { persistSession: false } });
+      const { error: probeError } = await probe.auth.admin.listUsers({ page: 1, perPage: 1 });
+      isService = !probeError;
+    } else if (!isService) {
+      try { isService = JSON.parse(atob(bearer.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).role === "service_role" && !(await createClient(Deno.env.get("SUPABASE_URL")!, bearer, { auth: { persistSession: false } }).auth.admin.listUsers({ page: 1, perPage: 1 })).error; } catch { isService = false; }
+    }
     const { data: userData, error: userError } = isService
       ? { data: { user: { id: "service", email: null } as any }, error: null }
       : await admin.auth.getUser(authHeader.replace("Bearer ", ""));

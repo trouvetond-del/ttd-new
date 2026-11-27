@@ -23,12 +23,15 @@ jobs:
           KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           python3 - <<'PY'
-          import os, json, urllib.request
+          import os, json, urllib.request, urllib.error
           U="https://bvvbkaluajgdurxnnqqu.supabase.co"; K=os.environ["KEY"]
           H={"Authorization":"Bearer "+K,"apikey":K,"Content-Type":"application/json"}
           q=json.load(urllib.request.urlopen(urllib.request.Request(U+"/rest/v1/quote_requests?select=id,reference,services_needed,additional_info,furniture_photos,elevator_capacity_from&client_email=eq.lezatbeatrice@orange.fr&deleted_at=is.null&order=created_at.desc&limit=1",headers=H)))
           assert q, "Demande introuvable"
           q=q[0]; print("Demande", q["reference"], q["services_needed"], "| photos:", len(q.get("furniture_photos") or []), "| taille ascenseur:", q.get("elevator_capacity_from"))
-          r=urllib.request.urlopen(urllib.request.Request(U+"/functions/v1/admin-client-actions",data=json.dumps({"action":"disassembly_details","quoteRequestId":q["id"]}).encode(),headers=H,method="POST"))
-          print("Réponse", r.status, r.read().decode())
+          try:
+            r=urllib.request.urlopen(urllib.request.Request(U+"/functions/v1/admin-client-actions",data=json.dumps({"action":"disassembly_details","quoteRequestId":q["id"]}).encode(),headers=H,method="POST"))
+            print("Réponse", r.status, r.read().decode())
+          except urllib.error.HTTPError as e:
+            print("Échec", e.code, e.read().decode()); raise
           PY
