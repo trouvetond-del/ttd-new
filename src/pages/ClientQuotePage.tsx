@@ -1,3 +1,4 @@
+import { CLIENT_SERVICES } from '../lib/moverServices';
 import { NumberInput } from '../components/NumberInput';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ArrowLeft, ArrowRight, MapPin, Home, Package, CheckCircle, Calculator, User, Shield, AlertCircle, Clock, Navigation } from 'lucide-react';
@@ -25,14 +26,7 @@ type ClientQuotePageProps = {
 const homeSizes = ['Studio', 'T1', 'T2', 'T3', 'T4', 'T5+'];
 const homeTypes = ['Appartement', 'Maison', 'Bureau'];
 const elevatorCapacities = ['2-3 pers', '3-4 pers', '4-5 pers', '6+ pers'];
-const services = [
-  'Emballage/Déballage',
-  'Fourniture de cartons',
-  'Démontage/Remontage meubles',
-  'Garde-meubles',
-  'Transport d\'objets fragiles',
-  'Nettoyage après déménagement'
-];
+const services = CLIENT_SERVICES;
 
 export function ClientQuotePage({ editingQuoteRequestId: propEditingQuoteRequestId }: ClientQuotePageProps) {
   const { user, signIn } = useAuth();

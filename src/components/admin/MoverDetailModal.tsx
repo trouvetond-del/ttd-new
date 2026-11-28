@@ -1,3 +1,5 @@
+import { FurnitureLiftBadge } from '../MoverEquipment';
+import { ownsFurnitureLift, serviceLabel } from '../../lib/moverServices';
 import { useState, useEffect } from 'react';
 import { X, Download, Edit2, Save, Truck, Mail, Phone, Calendar, MapPin, FileText, CheckCircle, Award, Package, Euro, Eye, Check, XCircle, AlertTriangle, RefreshCw, Upload, Plus, Landmark, Clock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -15,6 +17,9 @@ interface MoverInfo {
   user_id: string;
   email: string;
   company_name: string;
+  has_furniture_lift?: boolean;
+  services?: string[];
+  specialties?: string[];
   siret: string;
   phone: string;
   address: string;
@@ -782,6 +787,13 @@ export default function MoverDetailModal({ moverId, onClose, onUpdate }: MoverDe
         </div>
 
         <div className="p-6 space-y-6">
+          <section className="space-y-3" aria-label="Prestations et équipement">
+            <h3 className="font-semibold">Prestations et équipement</h3>
+            {ownsFurnitureLift(moverInfo) ? <FurnitureLiftBadge /> : <p>Monte-meuble possédé : non déclaré</p>}
+            <ul className="flex flex-wrap gap-2">
+              {Array.from(new Set([...(moverInfo.services || []), ...(moverInfo.specialties || [])].map(serviceLabel))).map(service => <li key={service} className="equipment-service">{service}</li>)}
+            </ul>
+          </section>
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">

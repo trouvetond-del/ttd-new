@@ -1,3 +1,5 @@
+import { MOVER_SERVICE_LABELS } from '../lib/moverServices';
+import { FurnitureLiftChoice } from './MoverEquipment';
 import { validInteger } from '../lib/editableNumbers';
 import { NumberInput } from './NumberInput';
 import { useState, useEffect } from 'react';
@@ -394,6 +396,12 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Spécialités
           </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+            {MOVER_SERVICE_LABELS.map(service => <label key={service} className="equipment-service">
+              <input type="checkbox" checked={profile.specialties.includes(service)} onChange={() => setProfile({ ...profile, specialties: profile.specialties.includes(service) ? profile.specialties.filter(value => value !== service) : [...profile.specialties, service] })} />
+              <span>{service}</span>
+            </label>)}
+          </div>
           <div className="flex gap-2 mb-3">
             <input
               type="text"
@@ -428,22 +436,7 @@ export function MoverProfileEditor({ moverId }: MoverProfileEditorProps) {
           </div>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={profile.has_furniture_lift}
-              onChange={(e) => setProfile({ ...profile, has_furniture_lift: e.target.checked })}
-              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <div>
-              <span className="text-sm font-medium text-gray-900">Monte-meuble disponible</span>
-              <p className="text-xs text-gray-600 mt-1">
-                Cochez cette case si vous disposez d'un monte-meuble pour faciliter les déménagements
-              </p>
-            </div>
-          </label>
-        </div>
+        <FurnitureLiftChoice checked={profile.has_furniture_lift} onChange={checked => setProfile({ ...profile, has_furniture_lift: checked })} />
 
         <div className="pt-4">
           <label className="block text-sm font-medium text-gray-900 mb-3">Véhicules</label>

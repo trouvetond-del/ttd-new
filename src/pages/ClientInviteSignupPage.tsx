@@ -1,3 +1,4 @@
+import { CLIENT_SERVICES } from '../lib/moverServices';
 import { NumberInput } from '../components/NumberInput';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -16,7 +17,7 @@ interface ProspectData {
 
 const HOME_SIZES = ['Studio', 'T1', 'T2', 'T3', 'T4', 'T5+'];
 const HOME_TYPES = ['Appartement', 'Maison', 'Bureau'];
-const SERVICES = ['Emballage/Déballage', 'Fourniture de cartons', 'Démontage/Remontage meubles', 'Garde-meubles', "Transport d'objets fragiles", 'Nettoyage après déménagement'];
+const SERVICES = CLIENT_SERVICES;
 const FORMULAS = [
   { id: 'eco', label: 'ECO', desc: 'Aucun service' },
   { id: 'standard', label: 'STANDARD', desc: 'Démontage/Remontage' },

@@ -1,3 +1,5 @@
+import { MOVER_SERVICE_LABELS, moverServiceFields } from '../lib/moverServices';
+import { FurnitureLiftChoice } from '../components/MoverEquipment';
 import { NumberInput } from '../components/NumberInput';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,20 +15,7 @@ type MoverSignupPageProps = {
   onSuccess?: () => void;
 };
 
-const serviceOptions = [
-  'Déménagement local',
-  'Déménagement national',
-  'Déménagement longue distance',
-  'Déménagement international',
-  'Emballage/Déballage',
-  'Fourniture de cartons',
-  'Démontage/Remontage meubles',
-  'Monte-meuble',
-  'Garde-meubles',
-  'Transport d\'objets fragiles',
-  'Nettoyage',
-  'Piano et objets volumineux'
-];
+const serviceOptions = MOVER_SERVICE_LABELS;
 
 export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
   const navigate = useNavigate();
@@ -62,6 +51,7 @@ export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
     postal_code: '',
     description: '',
     services: [] as string[],
+    has_furniture_lift: false,
     coverage_area: '',
     // Bank details for receiving payments
     iban: '',
@@ -529,7 +519,7 @@ export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
         manager_phone: managerData.manager_phone,
         description: companyData.description || '',
         coverage_area: coverageArray,
-        services: companyData.services,
+        ...moverServiceFields(companyData.services, companyData.has_furniture_lift),
         verification_status: 'pending',
         is_active: false,
         vehicle_ownership: vehicleOwnership,
@@ -1545,6 +1535,8 @@ export function MoverSignupPage({ onSuccess }: MoverSignupPageProps) {
                   ))}
                 </div>
               </div>
+
+              <FurnitureLiftChoice checked={companyData.has_furniture_lift} onChange={checked => setCompanyData(prev => ({ ...prev, has_furniture_lift: checked }))} />
 
               <GeographicAreaSelector
                 selectedAreas={geographicAreas}

@@ -1,3 +1,5 @@
+import { MOVER_SERVICE_LABELS, moverServiceFields } from '../lib/moverServices';
+import { FurnitureLiftChoice } from '../components/MoverEquipment';
 import { NumberInput } from '../components/NumberInput';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -26,6 +28,8 @@ export default function MoverInviteSignupPage() {
   const [submitting, setSubmitting] = useState(false);
 
   // Editable company fields (issue 6)
+  const [services, setServices] = useState<string[]>([]);
+  const [hasFurnitureLift, setHasFurnitureLift] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [siret, setSiret] = useState('');
   const [companyPhone, setCompanyPhone] = useState('');
@@ -70,6 +74,7 @@ export default function MoverInviteSignupPage() {
       if (data.invitation_status === 'signed_up') { setError('Vous êtes déjà inscrit ! Connectez-vous.'); return; }
       if (data.invitation_expires_at && new Date(data.invitation_expires_at) < new Date()) { setError('Ce lien a expiré. Contactez-nous.'); return; }
       setProspect(data);
+      setServices([data.activity || 'Déménagement local']);
       setCompanyName(data.company_name || '');
       setSiret(data.siret || '');
       setCompanyPhone(data.phone || '');
@@ -91,6 +96,7 @@ export default function MoverInviteSignupPage() {
 
   const handleSubmit = async () => {
     if (!prospect) return;
+    if (services.length === 0) { showToast('Sélectionnez au moins une prestation', 'error'); setStep('vehicles'); return; }
     if (!companyName.trim()) { showToast('Raison sociale requise', 'error'); setStep('verify'); return; }
     if (!managerFirstname.trim() || !managerLastname.trim()) { showToast('Nom et prénom requis', 'error'); setStep('verify'); return; }
     const fnCheck = validateName(managerFirstname); if (!fnCheck.isValid) { showToast(fnCheck.error!, 'error'); setStep('verify'); return; }
@@ -150,7 +156,7 @@ export default function MoverInviteSignupPage() {
         email: prospect.email, phone: companyPhone || companyMobile || '', address: companyAddress || '',
         city: city || '', postal_code: postalCode || '', manager_firstname: managerFirstname,
         manager_lastname: managerLastname, manager_phone: managerPhone || '', description: '',
-        coverage_area: cov, services: [prospect.activity || 'Déménagement'], verification_status: 'pending',
+        coverage_area: cov, ...moverServiceFields(services, hasFurnitureLift), verification_status: 'pending',
         is_active: false, invitation_token: token, invited_at: new Date().toISOString(), invitation_source: 'import',
         vehicle_ownership: vehicleOwnership,
         iban: iban || null, bic: bic || null, bank_name: bankName || null,
@@ -300,10 +306,21 @@ export default function MoverInviteSignupPage() {
               </div>
             )}
 
+            <fieldset className="space-y-3">
+              <legend className="font-semibold">Services proposés *</legend>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {Array.from(new Set([...MOVER_SERVICE_LABELS, ...services])).map(service => <label key={service} className="equipment-service">
+                  <input type="checkbox" checked={services.includes(service)} onChange={() => setServices(prev => prev.includes(service) ? prev.filter(value => value !== service) : [...prev, service])} />
+                  <span>{service}</span>
+                </label>)}
+              </div>
+            </fieldset>
+            <FurnitureLiftChoice checked={hasFurnitureLift} onChange={setHasFurnitureLift} />
             <div className="flex justify-between">
               <button onClick={() => setStep('documents')} className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Retour</button>
               <button onClick={() => {
                 if (vehicleOwnership === 'owns') { for (const tr of trucks) { if (!tr.registration_number.trim() || !tr.capacity_m3 || tr.capacity_m3 <= 0 || !tr.registration_card_files.length) { showToast('Complétez tous les véhicules', 'error'); return; } } }
+                if (services.length === 0) { showToast('Sélectionnez au moins une prestation', 'error'); return; }
                 setStep('password');
               }} className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Continuer <ArrowRight className="w-4 h-4" /></button>
             </div>

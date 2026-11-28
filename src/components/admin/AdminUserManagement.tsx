@@ -1,3 +1,5 @@
+import { FurnitureLiftBadge } from '../MoverEquipment';
+import { ownsFurnitureLift } from '../../lib/moverServices';
 import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
 import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useState, useEffect } from 'react';
@@ -33,6 +35,7 @@ interface User {
   role: string;
   created_at: string;
   company_name?: string;
+  has_furniture_lift?: boolean;
   siret?: string;
   phone?: string;
   region?: string | null;
@@ -64,6 +67,7 @@ export default function AdminUserManagement({
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [userType, setUserType] = useState<UserType>(initialUserType);
+  const [liftOnly, setLiftOnly] = useState(false);
   const [userStatus, setUserStatus] = useState<UserStatus>(initialUserStatus);
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [editingClient, setEditingClient] = useState<User | null>(null);
@@ -93,6 +97,7 @@ export default function AdminUserManagement({
               role: 'mover',
               created_at: m.created_at,
               company_name: m.company_name,
+              has_furniture_lift: ownsFurnitureLift(m),
               siret: m.siret,
               phone: m.phone,
               city: m.city,
@@ -206,6 +211,7 @@ export default function AdminUserManagement({
                 role: 'mover',
                 created_at: m.created_at,
                 company_name: m.company_name,
+              has_furniture_lift: ownsFurnitureLift(m),
                 siret: m.siret,
                 phone: m.phone,
                 verification_status: m.verification_status,
@@ -221,6 +227,7 @@ export default function AdminUserManagement({
                 role: 'mover',
                 created_at: m.created_at,
                 company_name: m.company_name,
+              has_furniture_lift: ownsFurnitureLift(m),
                 siret: m.siret,
                 phone: m.phone,
                 verification_status: m.verification_status,
@@ -277,6 +284,8 @@ export default function AdminUserManagement({
           user.phone?.replace(/\s/g, '').includes(searchTerm.replace(/\s/g, ''))
       );
     }
+
+    if (liftOnly && userType !== 'clients') filtered = filtered.filter(user => user.role === 'mover' && ownsFurnitureLift(user));
 
     if (userStatus !== 'all') {
       filtered = filtered.filter((user) => {
@@ -340,7 +349,7 @@ export default function AdminUserManagement({
 
   useEffect(() => {
     applyFilters(users);
-  }, [searchTerm, userStatus, users, dateSortDirection, removal.includes]);
+  }, [searchTerm, userStatus, users, dateSortDirection, removal.includes, liftOnly, userType]);
 
   const handleSelectAll = () => {
     if (selectedUsers.size === filteredUsers.length) {
@@ -611,6 +620,10 @@ export default function AdminUserManagement({
           </div>
         </div>
 
+        {userType !== 'clients' && <label className="equipment-filter mb-4">
+          <input type="checkbox" checked={liftOnly} onChange={event => setLiftOnly(event.target.checked)} />
+          Propriétaires de monte-meuble uniquement
+        </label>}
         <AdminListRemovalBar removal={removal} ids={filteredUsers.map(u=>u.id)} />
         {selectedUsers.size > 0 && (
           <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-between">
@@ -711,6 +724,7 @@ export default function AdminUserManagement({
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {user.company_name || user.email}
                         </p>
+                        {user.role === 'mover' && ownsFurnitureLift(user) && <FurnitureLiftBadge />}
                         {user.company_name && (
                           <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
                         )}

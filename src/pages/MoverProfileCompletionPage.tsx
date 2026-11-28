@@ -1,3 +1,5 @@
+import { MOVER_SERVICES, moverServiceFields } from '../lib/moverServices';
+import { FurnitureLiftChoice } from '../components/MoverEquipment';
 import { NumberInput } from '../components/NumberInput';
 // MoverProfileCompletionPage with 3-step wizard UI
 // Steps: 1. Gérant, 2. Entreprise, 3. Documents
@@ -15,18 +17,7 @@ import { GeographicAreaSelector } from '../components/GeographicAreaSelector';
 import { User, Building2, FileText, Check, ChevronRight, ChevronLeft, AlertCircle, Truck, Settings, Landmark } from 'lucide-react';
 
 // Available services list
-const AVAILABLE_SERVICES = [
-  { id: 'demenagement_complet', label: 'Déménagement complet', description: 'Emballage, transport et déballage' },
-  { id: 'transport_seul', label: 'Transport seul', description: 'Uniquement le transport des biens' },
-  { id: 'emballage', label: 'Service d\'emballage', description: 'Emballage professionnel de vos affaires' },
-  { id: 'montage_meubles', label: 'Montage/Démontage meubles', description: 'Assemblage et désassemblage de meubles' },
-  { id: 'garde_meuble', label: 'Garde-meuble', description: 'Stockage temporaire de vos biens' },
-  { id: 'piano', label: 'Transport de piano', description: 'Transport spécialisé pour pianos' },
-  { id: 'objets_lourds', label: 'Objets lourds/volumineux', description: 'Coffres-forts, billards, etc.' },
-  { id: 'international', label: 'Déménagement international', description: 'Déménagements vers l\'étranger' },
-  { id: 'entreprise', label: 'Déménagement d\'entreprise', description: 'Bureaux et locaux professionnels' },
-  { id: 'monte_meuble', label: 'Monte-meuble', description: 'Élévation par l\'extérieur' },
-];
+const AVAILABLE_SERVICES = MOVER_SERVICES;
 
 interface CompanyData {
   company_name: string;
@@ -39,6 +30,7 @@ interface CompanyData {
   description: string;
   coverage_area: string;
   services: string[];
+  has_furniture_lift: boolean;
   iban: string;
   bic: string;
   bank_name: string;
@@ -168,6 +160,7 @@ export default function MoverProfileCompletionPage() {
     description: '',
     coverage_area: '',
     services: [],
+    has_furniture_lift: false,
     iban: '',
     bic: '',
     bank_name: '',
@@ -607,7 +600,7 @@ export default function MoverProfileCompletionPage() {
           postal_code: companyData.postal_code,
           description: companyData.description,
           coverage_area: coverageArray,
-          services: companyData.services,
+          ...moverServiceFields(companyData.services, companyData.has_furniture_lift),
           manager_firstname: managerData.manager_firstname,
           manager_lastname: managerData.manager_lastname,
           manager_phone: managerData.manager_phone,
@@ -1216,6 +1209,8 @@ export default function MoverProfileCompletionPage() {
           })}
         </div>
       </div>
+
+      <FurnitureLiftChoice checked={companyData.has_furniture_lift} onChange={checked => setCompanyData(prev => ({ ...prev, has_furniture_lift: checked }))} />
 
       {/* Coordonnées bancaires (RIB) — retiré de l'inscription initiale.
           Nouveau modèle : le client paie la commission plateforme via

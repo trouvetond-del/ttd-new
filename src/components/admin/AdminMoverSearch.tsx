@@ -1,3 +1,5 @@
+import { FurnitureLiftBadge } from '../MoverEquipment';
+import { ownsFurnitureLift } from '../../lib/moverServices';
 import { useAdminListRemoval } from '../../hooks/useAdminListRemoval';
 import { AdminListRemovalBar, AdminListCheckbox } from './AdminListRemovalBar';
 import { useState, useEffect, useCallback, useMemo } from 'react';
@@ -9,6 +11,7 @@ interface MoverResult {
   id: string;
   user_id: string;
   company_name: string;
+  has_furniture_lift: boolean;
   siret: string;
   email: string;
   phone: string;
@@ -26,6 +29,7 @@ interface MoverResult {
 
 export default function AdminMoverSearch() {
   const removal = useAdminListRemoval('movers');
+  const [liftOnly, setLiftOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchField, setSearchField] = useState<'all' | 'name' | 'email' | 'phone' | 'siret'>('all');
   const [allMovers, setAllMovers] = useState<MoverResult[]>([]);
@@ -38,7 +42,7 @@ export default function AdminMoverSearch() {
     try {
       const { data, error } = await supabase
         .from('movers')
-        .select('id, user_id, company_name, siret, email, phone, manager_firstname, manager_lastname, manager_phone, city, postal_code, verification_status, is_active, is_suspended, is_banned, created_at')
+        .select('id, user_id, company_name, has_furniture_lift, siret, email, phone, manager_firstname, manager_lastname, manager_phone, city, postal_code, verification_status, is_active, is_suspended, is_banned, created_at')
         .order('company_name', { ascending: true });
 
       if (error) {
@@ -62,11 +66,12 @@ export default function AdminMoverSearch() {
   // Client-side filtering — fast and reliable
   const filteredResults = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
-    if (term.length < 2) return [];
+    if (term.length < 2 && !liftOnly) return [];
 
     const termClean = term.replace(/\s/g, '');
 
-    return allMovers.filter(mover => removal.includes(mover.id)).filter((mover) => {
+    return allMovers.filter(mover => removal.includes(mover.id)).filter(mover => !liftOnly || ownsFurnitureLift(mover)).filter((mover) => {
+      if (term.length < 2) return true;
       const companyName = (mover.company_name || '').toLowerCase();
       const firstName = (mover.manager_firstname || '').toLowerCase();
       const lastName = (mover.manager_lastname || '').toLowerCase();
@@ -102,10 +107,10 @@ export default function AdminMoverSearch() {
           );
       }
     });
-  }, [searchTerm, searchField, allMovers, removal.includes]);
+  }, [searchTerm, searchField, allMovers, removal.includes, liftOnly]);
 
   const activeMoverCount = allMovers.filter(m => removal.isActive(m.id)).length;
-  const hasSearched = searchTerm.trim().length >= 2;
+  const hasSearched = searchTerm.trim().length >= 2 || liftOnly;
 
   const getStatusBadge = (mover: MoverResult) => {
     if (mover.is_banned) return { label: 'Banni', color: 'bg-red-100 text-red-700', icon: XCircle };
@@ -173,6 +178,10 @@ export default function AdminMoverSearch() {
             ))}
           </div>
 
+          <label className="equipment-filter">
+            <input type="checkbox" checked={liftOnly} onChange={event => setLiftOnly(event.target.checked)} />
+            Propriétaires de monte-meuble uniquement
+          </label>
           {/* Search input */}
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -249,6 +258,7 @@ export default function AdminMoverSearch() {
                         <h3 className="font-bold text-gray-900 text-lg truncate">
                           {highlightMatch(mover.company_name)}
                         </h3>
+                        {ownsFurnitureLift(mover) && <FurnitureLiftBadge />}
                         <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${status.color}`}>
                           <StatusIcon className="w-3.5 h-3.5" />
                           {status.label}

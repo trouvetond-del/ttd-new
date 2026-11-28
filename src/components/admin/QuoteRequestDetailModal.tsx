@@ -1,3 +1,4 @@
+import { CLIENT_SERVICES } from '../../lib/moverServices';
 import { NumberInput } from '../NumberInput';
 import { useState, useEffect } from 'react';
 import { X, MapPin, Home, Calendar, Package, FileText, AlertCircle, Save, Loader, Navigation, Edit } from 'lucide-react';
@@ -23,14 +24,7 @@ interface QuoteRequestDetailModalProps {
 const homeSizes = ['Studio', 'T1', 'T2', 'T3', 'T4', 'T5+'];
 const homeTypes = ['Appartement', 'Maison', 'Bureau'];
 const elevatorCapacities = ['2-3 pers', '3-4 pers', '4-5 pers', '6+ pers'];
-const services = [
-  'Emballage/Déballage',
-  'Fourniture de cartons',
-  'Démontage/Remontage meubles',
-  'Garde-meubles',
-  'Transport d\'objets fragiles',
-  'Nettoyage après déménagement'
-];
+const services = CLIENT_SERVICES;
 
 export default function QuoteRequestDetailModal({ quoteRequestId, onClose, onSave, readOnly = false }: QuoteRequestDetailModalProps) {
   const [loading, setLoading] = useState(true);

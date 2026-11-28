@@ -33,3 +33,5 @@
 - Client follow-up of unfinished requests is a fixed 3-email sequence defined in `send-partial-lead-reminder/sequence.ts` and stops as soon as a finished request exists for the same email. Why: avoids over-mailing and reminding people who already converted.
 
 - City-specific SEO sections live in seo-content.json and are rendered in both CityPage and the city prerenderer; keep their quote links pointed at the complete client form. Why: crawlers and visitors must receive the same local content without bypassing required move details.
+
+- Service catalogs are centralized in moverServices; signup paths synchronize services/specialties while equipment ownership uses the existing explicit has_furniture_lift flag, never inferred from offering the service. Why: admin lift-only searches must identify declared equipment owners, not rental providers.
