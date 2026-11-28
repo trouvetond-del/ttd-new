@@ -20,6 +20,8 @@ import { showToast } from '../../utils/toast';
 import ClientDetailModal from './ClientDetailModal';
 import MoverDetailModal from './MoverDetailModal';
 import ImportUsersModal from './ImportUsersModal';
+import ClientEditModal from './ClientEditModal';
+import { Pencil, Trash2 } from 'lucide-react';
 import { regionFromPostalCode } from '../../utils/frenchRegion';
 
 type UserType = 'all' | 'movers' | 'clients';
@@ -64,6 +66,7 @@ export default function AdminUserManagement({
   const [userType, setUserType] = useState<UserType>(initialUserType);
   const [userStatus, setUserStatus] = useState<UserStatus>(initialUserStatus);
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  const [editingClient, setEditingClient] = useState<User | null>(null);
   const [viewingClientDetails, setViewingClientDetails] = useState<string | null>(null);
   const [viewingMoverDetails, setViewingMoverDetails] = useState<string | null>(null);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -629,6 +632,13 @@ export default function AdminUserManagement({
               >
                 Suspendre
               </button>
+              <button
+                onClick={() => void removal.change(removal.selectedVisible(filteredUsers.map(u => u.id)))}
+                disabled={removal.busy || !removal.ready}
+                className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700 disabled:opacity-50"
+              >
+                {removal.trash ? 'Restaurer' : 'Supprimer'}
+              </button>
             </div>
           </div>
         )}
@@ -752,6 +762,25 @@ export default function AdminUserManagement({
                           <Eye className="w-4 h-4" />
                           Détails
                         </button>
+                        {user.role === 'client' && !removal.trash && (
+                          <button
+                            onClick={() => setEditingClient(user)}
+                            className="inline-flex items-center gap-1 px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                            title="Modifier ce client"
+                          >
+                            <Pencil className="w-4 h-4" />
+                            Modifier
+                          </button>
+                        )}
+                        <button
+                          onClick={() => void removal.change([user.id])}
+                          disabled={removal.busy || !removal.ready}
+                          className="inline-flex items-center gap-1 px-3 py-2 border border-red-300 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 disabled:opacity-50"
+                          title={removal.trash ? 'Restaurer' : 'Mettre dans la corbeille'}
+                        >
+                          {removal.trash ? <RotateCcw className="w-4 h-4" /> : <Trash2 className="w-4 h-4" />}
+                          {removal.trash ? 'Restaurer' : 'Supprimer'}
+                        </button>
                         
                         {user.role === 'mover' && user.verification_status === 'verified' && user.is_active && (
                           <button
@@ -807,6 +836,16 @@ export default function AdminUserManagement({
         />
       )}
 
+      {editingClient && (
+        <ClientEditModal
+          clientId={editingClient.id}
+          clientEmail={editingClient.email}
+          clientName={editingClient.company_name === 'Non renseigné' ? '' : editingClient.company_name}
+          clientPhone={editingClient.phone === 'Non renseigné' ? '' : editingClient.phone}
+          onClose={() => setEditingClient(null)}
+          onSave={() => { setEditingClient(null); loadUsers(); }}
+        />
+      )}
       {showImportModal && (
         <ImportUsersModal
           onClose={() => setShowImportModal(false)}
